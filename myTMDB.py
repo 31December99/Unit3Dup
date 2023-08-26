@@ -5,8 +5,8 @@ import os
 import guessit
 from decouple import config
 
-
 TMDB_APIKEY = config('TMDB_APIKEY')
+
 
 class Myguessit:
 
@@ -314,5 +314,3 @@ class TmdbSeries:
                             return video_id
         else:
             return self.confronto[0][1]
-
-
