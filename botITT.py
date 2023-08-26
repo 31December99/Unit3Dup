@@ -101,6 +101,3 @@ class ITtorrents:
 
         else:
             pvtTracker.Utility.console(f"Non è stato possibile fare l'upload => {tracker_response}", 1)
-
-
-ittorrents = ITtorrents("1x01 Patagonia.mkv")
