@@ -1,5 +1,5 @@
 #!/usr/bin/env python3.9
-
+import argparse
 import sys
 import time
 import requests
@@ -10,11 +10,11 @@ import pvtTracker
 import myTMDB
 from decouple import config
 
-
 ITT_PASS_KEY = config('ITT_PASS_KEY')
 ITT_API_TOKEN = config('ITT_API_TOKEN')
 QBIT_USER = config('QBIT_USER')
 QBIT_PASS = config('QBIT_PASS')
+
 
 class ITtorrents:
 
@@ -100,3 +100,10 @@ class ITtorrents:
 
         else:
             pvtTracker.Utility.console(f"Non è stato possibile fare l'upload => {tracker_response}", 1)
+
+
+parser = argparse.ArgumentParser(description='Commands', add_help=False)
+parser.add_argument('-dw', '--dw', nargs=1, type=str, help='FileName')
+args = parser.parse_args()
+if args.dw:
+    ittorrents = ITtorrents(args.dw[0])
