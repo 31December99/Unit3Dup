@@ -1,7 +1,6 @@
 #!/usr/bin/env python3.9
 
 import sys
-import os
 import time
 import requests
 from pymediainfo import MediaInfo
