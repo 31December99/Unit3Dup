@@ -1,7 +1,6 @@
 #!/usr/bin/env python3.9
 from datetime import datetime
 from tmdbv3api import TMDb, Movie, TV
-import os
 import guessit
 from decouple import config
 
