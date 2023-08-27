@@ -14,6 +14,7 @@ ITT_PASS_KEY = config('ITT_PASS_KEY')
 ITT_API_TOKEN = config('ITT_API_TOKEN')
 QBIT_USER = config('QBIT_USER')
 QBIT_PASS = config('QBIT_PASS')
+QBIT_PORT = config('QBIT_PORT')
 
 
 class ITtorrents:
@@ -36,7 +37,7 @@ class ITtorrents:
         mytorrent.write(self.file_name)
 
         try:
-            self.qb = Client('http://127.0.0.1:58672/')
+            self.qb = Client(f'http://127.0.0.1:{QBIT_PORT}/')
         except Exception:
             pvtTracker.Utility.console(f"Non riesco a connettermi con Qbittorent.", 1)
             sys.exit()
@@ -54,7 +55,7 @@ class ITtorrents:
         self.Itt.data['description'] = descrizione
 
         if 'movie' in self.myguess.type:
-            self.Itt.data['name'] = self.file_name.replace('.' ,' ')
+            self.Itt.data['name'] = self.file_name.replace('.', ' ')
             self.tmdb_movie = myTMDB.TmdbMovie(self.myguess)
             self.video_id = self.tmdb_movie.cerca()
             self.Itt.data['category_id'] = 1
