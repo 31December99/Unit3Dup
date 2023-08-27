@@ -7,7 +7,6 @@ import requests
 import os
 from decouple import config
 
-
 IMGBB_KEY = config('IMGBB_KEY')
 
 
@@ -18,6 +17,8 @@ class Screenshot:
         self.file_name = file_name
         self.samples_n = 7
         self.video_capture = cv2.VideoCapture(self.file_name)
+        self.standard = 1 if self.video_capture.get(cv2.CAP_PROP_FRAME_WIDTH) < 720 else '0'
+
 
     @property
     def total_frames(self) -> cv2:
@@ -51,10 +52,13 @@ class Screenshot:
             ret, frame = self.video_capture.read()
             if not ret:
                 continue
+            new_width = 320
+            new_height = 240
+            resized_frame = cv2.resize(frame, (new_width, new_height))
             screenshot_name = f'screenshot_{frame_number}.png'
             print(screenshot_name)
             frames_list.append(screenshot_name)
-            cv2.imwrite(screenshot_name, frame)
+            cv2.imwrite(screenshot_name, resized_frame)
         self.video_capture.release()
         cv2.destroyAllWindows()
         return frames_list
