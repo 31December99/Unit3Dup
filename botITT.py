@@ -1,5 +1,6 @@
 #!/usr/bin/env python3.9
 import argparse
+import os.path
 import sys
 import time
 import requests
@@ -25,11 +26,25 @@ class ITtorrents:
             return
 
         self.file_name = file_name
+        self.file_size = os.path.getsize(self.file_name)
+        self.file_size = round(int(self.file_size / (1024 * 1024 * 1024)))
+        if self.file_size >= 20:
+            self.freelech = 100
+        elif self.file_size >= 15:
+            self.freelech = 75
+        elif self.file_size >= 10:
+            self.freelech = 50
+        elif self.file_size >= 5:
+            self.freelech = 25
+        else:
+            self.freelech = 0
+
         self.Itt = pvtTracker.ITT(base_url="https://itatorrents.xyz/", api_token=ITT_API_TOKEN,
                                   pass_key=ITT_PASS_KEY)
-
         self.media_info = MediaInfo.parse(self.file_name, output="STRING", full=False)
         self.myguess = myTMDB.Myguessit(self.file_name)
+        sc = pvtTorrent.Screenshot(file_name=self.file_name)
+
         mytorrent = pvtTorrent.Mytorrent(file_name=self.file_name)
         mytorrent.announce_list = f"https://itatorrents.xyz/announce/{ITT_PASS_KEY}/"
         mytorrent.comment = "ciao"
@@ -42,13 +57,15 @@ class ITtorrents:
             pvtTracker.Utility.console(f"Non riesco a connettermi con Qbittorent.", 1)
             sys.exit()
         self.qb.login(username=QBIT_USER, password=QBIT_PASS)
+        self.Itt.data['free'] = self.freelech
+        self.Itt.data['sd'] = sc.standard
 
         descrizione = f"[center]\n"
-        sc = pvtTorrent.Screenshot(file_name=self.file_name)
         sc.samples_n = 6
         for f in sc.frames:
             img_host = pvtTorrent.ImgBB(f)
-            descrizione += f"[url={img_host.upload['data']['display_url']}][img=350]{img_host.upload['data']['display_url']}[/img][/url]"
+            descrizione += (f"[url={img_host.upload['data']['display_url']}][img=350]"
+                            f"{img_host.upload['data']['display_url']}[/img][/url]")
         descrizione += "\n[/center]"
 
         self.Itt.data['mediainfo'] = self.media_info
