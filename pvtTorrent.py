@@ -127,13 +127,5 @@ class Mytorrent:
         self.mytorr.name = value
 
     @property
-    def announce_list(self):
-        return self.mytorr.announce_list
-
-    @announce_list.setter
-    def announce_list(self, value):
-        self.mytorr.announce_list = [value]
-
-    @property
     def info_hash(self):
         return self.mytorr.infohash
