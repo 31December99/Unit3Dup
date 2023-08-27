@@ -2,29 +2,6 @@
 from datetime import datetime
 import requests
 
-
-# 05 Agosto 2023 - 00
-# comunicazione verso UNIT3D
-# 06 Agosto 2023 - 01
-# implementato mediainfo
-# implementato qbittorent per il seed ( qbittorent-api ?)
-# 09 Agosto 2023 - 01
-# Funziona : ricordarsi di mettere il file dove è stato caricato anche il torrent ! se no  va installo !
-# 09 Agosto 2023 - 03
-# Aggiunto TMDB
-# 10 Agosto 2023 - 04
-# aggiunto imgbb
-# clean sostituito da guessit
-# 10 Agosto 2023 - 05
-# aggiunto verifica doppioni
-# 11 Agosto 2023 - 05
-# aggiunto comand -one/-foler
-# non formatta più bene mediainfo sul sito ?
-# 12 Agosto 2023 - 07
-# revampata la classe e create classi nuovi con
-# implementate la maggior parte delle chiamate API
-
-
 class bcolors:
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
@@ -88,12 +65,12 @@ class Myhttp:
             "igdb": 0,  # no ancora implementato
             "anonymous": "0",
             "stream": "0",  # no ancora implementato
-            "sd": "0",  # no ancora implementato
+            "sd": "0",
             "keywords": "",
             "personal_release": "0",  # no ancora implementato
             "internal": 0,  # no ancora implementato
             "featured": 0,  # no ancora implementato
-            "free": 0,  # no ancora implementato
+            "free": 0,
             "doubleup": 0,  # no ancora implementato
             "sticky": 0  # no ancora implementato
         }
