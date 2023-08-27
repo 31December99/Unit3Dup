@@ -52,13 +52,10 @@ class Screenshot:
             ret, frame = self.video_capture.read()
             if not ret:
                 continue
-            new_width = 320
-            new_height = 240
-            resized_frame = cv2.resize(frame, (new_width, new_height))
             screenshot_name = f'screenshot_{frame_number}.png'
             print(screenshot_name)
             frames_list.append(screenshot_name)
-            cv2.imwrite(screenshot_name, resized_frame)
+            cv2.imwrite(screenshot_name, frame)
         self.video_capture.release()
         cv2.destroyAllWindows()
         return frames_list
