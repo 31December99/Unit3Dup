@@ -54,7 +54,7 @@ class ITtorrents:
         self.Itt.data['description'] = descrizione
 
         if 'movie' in self.myguess.type:
-            self.Itt.data['name'] = self.myguess.guessit_title
+            self.Itt.data['name'] = self.file_name.replace('.' ,' ')
             self.tmdb_movie = myTMDB.TmdbMovie(self.myguess)
             self.video_id = self.tmdb_movie.cerca()
             self.Itt.data['category_id'] = 1
@@ -62,7 +62,7 @@ class ITtorrents:
             self.tmdb_series = myTMDB.TmdbSeries(self.myguess)
             self.video_id = self.tmdb_series.cerca()
             self.Itt.data['category_id'] = 2
-            self.Itt.data['name'] = self.myguess.guessit_title
+            self.Itt.data['name'] = self.file_name.replace('.', ' ')
             self.Itt.data['season_number'] = self.myguess.guessit_season
             self.Itt.data['episode_number'] = self.myguess.guessit_episode
 
