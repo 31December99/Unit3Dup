@@ -86,7 +86,7 @@ class ITtorrents:
                 torrent_file = open(f'{self.file_name}.torrent', 'rb')
                 self.qb.download_from_file(torrent_file)
                 print("Attendi..")
-                time.sleep(5)
+                time.sleep(2)
                 # Ottieni la lista dei torrent
                 torrents = self.qb.torrents()
                 # Trova il torrent desiderato
