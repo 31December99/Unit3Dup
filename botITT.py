@@ -9,6 +9,7 @@ from qbittorrent import Client
 import pvtTorrent
 import pvtTracker
 import myTMDB
+import pvtVideo
 from decouple import config
 
 ITT_PASS_KEY = config('ITT_PASS_KEY')
@@ -20,56 +21,28 @@ QBIT_PORT = config('QBIT_PORT')
 
 class ITtorrents:
 
-    def __init__(self, file_name: str):
+    def __init__(self, contents: str):
+
         if not ITT_PASS_KEY or not ITT_API_TOKEN or not QBIT_PASS or not QBIT_USER:
             print("il file .env non è stato configurato o i nomi delle variabili sono errate.")
             return
 
-        self.file_name = file_name
-        self.file_size = os.path.getsize(self.file_name)
-        self.file_size = round(int(self.file_size / (1024 * 1024 * 1024)))
-        if self.file_size >= 20:
-            self.freelech = 100
-        elif self.file_size >= 15:
-            self.freelech = 75
-        elif self.file_size >= 10:
-            self.freelech = 50
-        elif self.file_size >= 5:
-            self.freelech = 25
-        else:
-            self.freelech = 0
-
         self.Itt = pvtTracker.ITT(base_url="https://itatorrents.xyz/", api_token=ITT_API_TOKEN,
                                   pass_key=ITT_PASS_KEY)
-        self.media_info = MediaInfo.parse(self.file_name, output="STRING", full=False)
+
+        self.video = pvtVideo.Video(contents=contents)
+        self.file_name = self.video.file_name
+        self.standard = self.video.standard
+        self.freelech = self.video.freeLech
+        self.media_info = self.video.mediainfo
+        self.descrizione = self.video.description
+        self.torrent = self.video.torrent
         self.myguess = myTMDB.Myguessit(self.file_name)
-        sc = pvtTorrent.Screenshot(file_name=self.file_name)
 
-        mytorrent = pvtTorrent.Mytorrent(file_name=self.file_name)
-        mytorrent.announce_list = f"https://itatorrents.xyz/announce/{ITT_PASS_KEY}/"
-        mytorrent.comment = "ciao"
-        mytorrent.name = self.file_name
-        mytorrent.write(self.file_name)
-
-        try:
-            self.qb = Client(f'http://127.0.0.1:{QBIT_PORT}/')
-        except Exception:
-            pvtTracker.Utility.console(f"Non riesco a connettermi con Qbittorent.", 1)
-            sys.exit()
-        self.qb.login(username=QBIT_USER, password=QBIT_PASS)
         self.Itt.data['free'] = self.freelech
-        self.Itt.data['sd'] = sc.standard
-
-        descrizione = f"[center]\n"
-        sc.samples_n = 6
-        for f in sc.frames:
-            img_host = pvtTorrent.ImgBB(f)
-            descrizione += (f"[url={img_host.upload['data']['display_url']}][img=350]"
-                            f"{img_host.upload['data']['display_url']}[/img][/url]")
-        descrizione += "\n[/center]"
-
+        self.Itt.data['sd'] = self.standard
         self.Itt.data['mediainfo'] = self.media_info
-        self.Itt.data['description'] = descrizione
+        self.Itt.data['description'] = self.descrizione
 
         if 'movie' in self.myguess.type:
             self.Itt.data['name'] = self.file_name.replace('.', ' ')
@@ -101,6 +74,14 @@ class ITtorrents:
                 with open(f'{self.file_name}.torrent', 'wb') as file:
                     file.write(download_torrent_dal_tracker.content)
                 torrent_file = open(f'{self.file_name}.torrent', 'rb')
+
+                try:
+                    self.qb = Client(f'http://127.0.0.1:{QBIT_PORT}/')
+                except Exception:
+                    pvtTracker.Utility.console(f"Non riesco a connettermi con Qbittorent.", 1)
+                    sys.exit()
+                self.qb.login(username=QBIT_USER, password=QBIT_PASS)
+
                 self.qb.download_from_file(torrent_file)
                 print("Attendi..")
                 time.sleep(2)
@@ -109,7 +90,7 @@ class ITtorrents:
                 # Trova il torrent desiderato
                 infohash = None
                 for torrent in torrents:
-                    if torrent['name'] == mytorrent.name:
+                    if torrent['name'] == self.torrent.name:
                         infohash = torrent['hash']
                         break
                 pvtTracker.Utility.console(f'HASH: {infohash}...Finito', 2)
@@ -120,6 +101,8 @@ class ITtorrents:
             pvtTracker.Utility.console(f"Non è stato possibile fare l'upload => {tracker_response}", 1)
 
 
+if os.name == 'nt':
+    os.system('color')
 parser = argparse.ArgumentParser(description='Commands', add_help=False)
 parser.add_argument('-dw', '--dw', nargs=1, type=str, help='FileName')
 args = parser.parse_args()
