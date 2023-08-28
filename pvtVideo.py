@@ -3,6 +3,7 @@ import random
 import cv2
 import os
 import pvtTorrent
+import imageHost
 from pymediainfo import MediaInfo
 from decouple import config
 
@@ -116,7 +117,7 @@ class Video:
     def description(self) -> str:
         descrizione = f"[center]\n"
         for f in self.frames:
-            img_host = pvtTorrent.ImgBB(f)
+            img_host = imageHost.ImgBB(f)
             descrizione += (f"[url={img_host.upload['data']['display_url']}][img=350]"
                             f"{img_host.upload['data']['display_url']}[/img][/url]")
         descrizione += "\n[/center]"
