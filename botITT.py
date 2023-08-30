@@ -4,9 +4,7 @@ import os.path
 import sys
 import time
 import requests
-from pymediainfo import MediaInfo
 from qbittorrent import Client
-import pvtTorrent
 import pvtTracker
 import myTMDB
 import pvtVideo
@@ -38,7 +36,6 @@ class ITtorrents:
         self.descrizione = self.video.description
         self.torrent = self.video.torrent
         self.myguess = myTMDB.Myguessit(self.file_name)
-
         self.Itt.data['free'] = self.freelech
         self.Itt.data['sd'] = self.standard
         self.Itt.data['mediainfo'] = self.media_info
@@ -57,9 +54,7 @@ class ITtorrents:
             self.Itt.data['season_number'] = self.myguess.guessit_season
             self.Itt.data['episode_number'] = self.myguess.guessit_episode
 
-        open_torrent = open(f'{self.file_name}.torrent', 'rb')
-        files = {'torrent': open_torrent}
-        tracker_response = self.Itt.upload_t(file=files, data=self.Itt.data, video_id=self.video_id)
+        tracker_response = self.Itt.upload_t(data=self.Itt.data, video_id=self.video_id, file_name=self.file_name)
         upload_success = tracker_response['success']
 
         if upload_success:
@@ -77,7 +72,7 @@ class ITtorrents:
 
                 try:
                     self.qb = Client(f'http://127.0.0.1:{QBIT_PORT}/')
-                except Exception:
+                except Exception: # todo
                     pvtTracker.Utility.console(f"Non riesco a connettermi con Qbittorent.", 1)
                     sys.exit()
                 self.qb.login(username=QBIT_USER, password=QBIT_PASS)
