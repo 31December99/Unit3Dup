@@ -2,6 +2,7 @@
 from datetime import datetime
 import requests
 
+
 class bcolors:
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
@@ -179,9 +180,11 @@ class Torrents(Tracker):
 
 
 class Uploader(Tracker):
-    def upload_t(self, file: dict, data: dict, video_id: int = None) -> requests:
+    def upload_t(self, data: dict, file_name: str, video_id: int = None) -> requests:
         self.data['tmdb'] = video_id
-        return self._post(file=file, data=data, params=self.params)
+        with open(f'{file_name}.torrent', 'rb') as torrent:
+            file_torrent = {'torrent': torrent}
+            return self._post(file=file_torrent, data=data, params=self.params)
 
 
 class ITT(filterAPI, Torrents, Uploader):

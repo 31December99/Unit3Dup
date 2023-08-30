@@ -1,10 +1,24 @@
 #!/usr/bin/env python3.9
 from datetime import datetime
-from tmdbv3api import TMDb, Movie, TV
+
+import fasttext
 import guessit
 from decouple import config
+from tmdbv3api import TMDb, Movie, TV
 
 TMDB_APIKEY = config('TMDB_APIKEY')
+
+
+class Manage_titles:
+    marks = [',', ';', ':', '!', '?', '"', '(', ')', '[', ']', '{', '}', '/', '\\', '&', '*',
+             '$', '%', '#', '@', '_']
+
+    @staticmethod
+    def clean(filename: str):
+        name = filename
+        for punct in Manage_titles.marks:
+            name = name.replace(punct, '')
+        return name
 
 
 class Myguessit:
@@ -81,6 +95,8 @@ class TmdbMovie:
         self.mv_tmdb = Movie()
         self.result = None
         self.myguessit = myguessit
+
+        self.myguessit.guessit_title.lower()
 
     def _search(self, attributo: str) -> list:
 
@@ -197,13 +213,27 @@ class TmdbSeries:
     def __init__(self, myguessit: Myguessit):
 
         # TMDB
+        # todo: rimuovere i ':' dal file_name e dal name in tmdb poi confrontare
+        # todo: rimuovere il confronto con la data in serie se non disponibile da field_name
+
+        """
+         anche se il risultato delle ricerca commuta la lingua non posso fare il confronto con due lingue
+         diverse
+
+        :param myguessit:
+        """
+        self.myguessit = myguessit
+        # https://github.com/facebookresearch/fastText/issues/1067#issue-617428110
+        fasttext.FastText.eprint = lambda x: None
+        self.model = fasttext.load_model("lid.176.bin")
+        self.predict_lang = self.model.predict(self.myguessit.guessit_title, k=3)
+        self.lang = self.predict_lang[0][0].split('__label__')[1].replace('en', 'us')
         self.tmdb = TMDb()
         self.tmdb.api_key = TMDB_APIKEY
-        self.tmdb.language = 'it'
+        self.tmdb.language = self.lang
         self.tmdb.debug = True
         self.tv_tmdb = TV()
         self.result = None
-        self.myguessit = myguessit
 
     def _search(self, attributo: str) -> list:
 
@@ -214,21 +244,34 @@ class TmdbSeries:
         """
 
         self.result = self.tv_tmdb.search(self.myguessit.guessit_title)
+
         """
         Cerca nei risultati con l'attributo scelto es: 'title' e ritorna una lista  
         """
-        return [(item[attributo], item['id'], datetime.strptime(item['first_air_date'], '%Y-%m-%d').year)
+
+        return [(item[attributo], item['id'], datetime.strptime(item['first_air_date'],
+                                                                '%Y-%m-%d').year)
                 for item in self.result if item['first_air_date']]
 
     @property
     def confronto(self) -> list:
         """
         un elenco di chiamate API per svolgere le funzioni principali
+        Se la data nel file_name è disponibile viene confrontata con i risultati in tmdb per filtrare
+        eventuali video con lo stesso nome ma con data differenti.
+        Se non disponibile confronta solo il titolo prendendo il primo risulato in cima alla lista
+        todo: con quale altro dato in and posso confrontarlo in questo caso ?
+
         :return: ritorna il titolo con lo stesso anno di uscita e titolo identico
         """
         candidate = self._search('name')
-        return [(title, video_id, year) for title, video_id, year in candidate if year == self.myguessit.guessit_year
-                and title.lower() == self.myguessit.guessit_title.lower()]
+        if self.myguessit.guessit_year:
+            return [(title, video_id, year) for title, video_id, year in candidate if
+                    year == self.myguessit.guessit_year
+                    and Manage_titles.clean(title.lower()) == Manage_titles.clean(self.myguessit.guessit_title.lower())]
+        else:
+            return [(title, video_id, year) for title, video_id, year in candidate
+                    if Manage_titles.clean(title.lower()) == Manage_titles.clean(self.myguessit.guessit_title.lower())]
 
     @property
     def adult(self):
@@ -294,6 +337,7 @@ class TmdbSeries:
         Creo una lista di dizionari dove viene riportato per ogni dizionario titolo tradotto,tagline,videoid
         :return:
         """
+
         details_dictionary_list = []
         for title, video_id, year in self.video_id:
             details = self.tv_tmdb.details(video_id)
@@ -306,10 +350,12 @@ class TmdbSeries:
 
     def cerca(self):
         if not self.confronto:
-            for det, video_id in self.details:
-                for det2 in det:
-                    if self.myguessit.guessit_alternative.lower() in det2['title_key'].lower():
-                        if self.myguessit.guessit_title.lower() in det2['title_key'].lower():
+            for title_keys, video_id in self.details:
+                for title_key in title_keys:
+                    if Manage_titles.clean(self.myguessit.guessit_title.lower()) in Manage_titles.clean(
+                            title_key['title_key'].lower()):
+                        if Manage_titles.clean(self.myguessit.guessit_alternative.lower()) in Manage_titles.clean(
+                                title_key['title_key'].lower()):
                             return video_id
         else:
             return self.confronto[0][1]
