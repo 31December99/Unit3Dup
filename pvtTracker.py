@@ -53,19 +53,18 @@ class Myhttp:
 
         self.data = {
             "name": "TEST.torrent",
-            "description": "",
+            "description": "",  # mandatory
             "mediainfo": "",
             "bdinfo": " ",
-            "category_id": "1",  # ?
-            "type_id": "3",  # ?
-            "resolution_id": "3",  # ?
-            "tmdb": "",
+            "type_id": "1",  # web_dl etcc
+            "resolution_id": "3",  # mandatory todo: implementare
+            "tmdb": "",  # mandatory
             "imdb": "0",  # no ancora implementato
             "tvdb": "0",  # no ancora implementato
             "mal": "0",  # no ancora implementato
-            "igdb": 0,  # no ancora implementato
+            "igdb": "0",  # no ancora implementato
             "anonymous": "0",
-            "stream": "0",  # no ancora implementato
+            "stream": "1",  # no ancora implementato
             "sd": "0",
             "keywords": "",
             "personal_release": "0",  # no ancora implementato
