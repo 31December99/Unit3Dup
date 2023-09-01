@@ -8,7 +8,9 @@ from qbittorrent import Client
 import pvtTracker
 import myTMDB
 import pvtVideo
+import utitlity
 from decouple import config
+
 
 ITT_PASS_KEY = config('ITT_PASS_KEY')
 ITT_API_TOKEN = config('ITT_API_TOKEN')
@@ -40,6 +42,7 @@ class ITtorrents:
         self.Itt.data['sd'] = self.standard
         self.Itt.data['mediainfo'] = self.media_info
         self.Itt.data['description'] = self.descrizione
+        self.Itt.data['type_id'] = utitlity.Manage_titles.filterType(self.file_name)
 
         if 'movie' in self.myguess.type:
             self.Itt.data['category_id'] = 1
@@ -80,7 +83,7 @@ class ITtorrents:
                 self.qb.download_from_file(torrent_file)
 
                 print(f"Attendi..")
-                time.sleep(2)
+                time.sleep(1)
                 # Ottieni la lista dei torrent
                 torrents = self.qb.torrents()
                 # Trova il torrent desiderato
