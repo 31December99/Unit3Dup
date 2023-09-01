@@ -22,7 +22,7 @@ This Python script generates and uploads torrents based on input provided for mo
 ## Dependencies
 
 - requiremensts.txt
-
+- https://dl.fbaipublicfiles.com/fasttext/supervised-models/lid.176.bin
 ## Installation
 
 1. Clone this repository.
