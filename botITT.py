@@ -42,19 +42,20 @@ class ITtorrents:
         self.Itt.data['description'] = self.descrizione
 
         if 'movie' in self.myguess.type:
+            self.Itt.data['category_id'] = 1
             self.Itt.data['name'] = self.file_name.replace('.', ' ')
             self.tmdb_movie = myTMDB.TmdbMovie(self.myguess)
             self.video_id = self.tmdb_movie.cerca()
-            self.Itt.data['category_id'] = 1
+
         else:
             self.tmdb_series = myTMDB.TmdbSeries(self.myguess)
             self.video_id = self.tmdb_series.cerca()
             self.Itt.data['category_id'] = 2
-            self.Itt.data['name'] = self.file_name.replace('.', ' ')
+            self.Itt.data['name'] = self.video.torrentName
             self.Itt.data['season_number'] = self.myguess.guessit_season
             self.Itt.data['episode_number'] = self.myguess.guessit_episode
 
-        tracker_response = self.Itt.upload_t(data=self.Itt.data, video_id=self.video_id, file_name=self.file_name)
+        tracker_response = self.Itt.upload_t(data=self.Itt.data, video_id=self.video_id, file_name=self.video.file_name)
         upload_success = tracker_response['success']
 
         if upload_success:
@@ -64,7 +65,6 @@ class ITtorrents:
             pvtTracker.Utility.console(link_torrent_dal_tracker, 2)
             pvtTracker.Utility.console(messaggio_dal_tracker, 2)
             download_torrent_dal_tracker = requests.get(link_torrent_dal_tracker)
-
             if download_torrent_dal_tracker.status_code == 200:
                 with open(f'{self.file_name}.torrent', 'wb') as file:
                     file.write(download_torrent_dal_tracker.content)
@@ -78,14 +78,15 @@ class ITtorrents:
                 self.qb.login(username=QBIT_USER, password=QBIT_PASS)
 
                 self.qb.download_from_file(torrent_file)
-                print("Attendi..")
+
+                print(f"Attendi..")
                 time.sleep(2)
                 # Ottieni la lista dei torrent
                 torrents = self.qb.torrents()
                 # Trova il torrent desiderato
                 infohash = None
                 for torrent in torrents:
-                    if torrent['name'] == self.torrent.name:
+                    if torrent['name'] == self.file_name:
                         infohash = torrent['hash']
                         break
                 pvtTracker.Utility.console(f'HASH: {infohash}...Finito', 2)
