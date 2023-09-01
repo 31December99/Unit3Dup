@@ -43,3 +43,4 @@ class Manage_titles:
             if word in lista:
                 # Tracker type starts from zero
                 return lista.index(word) + 1
+        return 15  # Altro
