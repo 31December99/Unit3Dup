@@ -23,20 +23,15 @@ class Video:
 
     """
 
-    marks = [',', ';', ':', '!', '?', '"', '(', ')', '[', ']', '{', '}', '/', '\\', '&', '*',
-             '$', '%', '#', '@', '_']
-
     def __init__(self, contents: str):
         self.contents = contents
         if os.path.isdir(self.contents):
             self.folder_name = os.path.basename(self.contents)
             self.file_name = os.listdir(self.contents)[0]
             self.mytorrent = pvtTorrent.Mytorrent(contents=self.contents)
+
         else:
             self.file_name = self.contents
-            for punct in self.marks:
-                self.file_name = self.file_name.replace(punct, ' ')
-
             self.mytorrent = pvtTorrent.Mytorrent(contents=self.file_name)
 
         # video file size
@@ -47,6 +42,10 @@ class Video:
         self.samples_n = 6
         # Catturo i frames del video
         self.video_capture = cv2.VideoCapture(self.file_name)
+
+    @property
+    def torrentName(self) -> str:
+        return self.mytorrent.name
 
     @property
     def freeLech(self) -> int:
@@ -120,23 +119,18 @@ class Video:
 
     @property
     def description(self) -> str:
-        """
         descrizione = f"[center]\n"
         for f in self.frames:
             img_host = imageHost.ImgBB(f)
             descrizione += (f"[url={img_host.upload['data']['display_url']}][img=350]"
                             f"{img_host.upload['data']['display_url']}[/img][/url]")
         descrizione += "\n[/center]"
-        """
 
-        return "aaaaaaa"
+        return descrizione
 
     @property
     def torrent(self) -> pvtTorrent:
-        self.mytorrent.announce_list = [f"https://itatorrents.xyz/announce/{ITT_PASS_KEY}/"]
-        self.mytorrent.comment = "ciao"
-        self.mytorrent.name = self.file_name
-        self.mytorrent.write(f"{self.file_name}")
+        self.mytorrent.write()
         return self.mytorrent
 
     def _freelech(self) -> int:
