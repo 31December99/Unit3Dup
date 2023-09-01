@@ -3,22 +3,11 @@ from datetime import datetime
 
 import fasttext
 import guessit
+import utitlity
 from decouple import config
 from tmdbv3api import TMDb, Movie, TV
 
 TMDB_APIKEY = config('TMDB_APIKEY')
-
-
-class Manage_titles:
-    marks = [',', ';', ':', '!', '?', '"', '(', ')', '[', ']', '{', '}', '/', '\\', '&', '*',
-             '$', '%', '#', '@', '_']
-
-    @staticmethod
-    def clean(filename: str):
-        name = filename
-        for punct in Manage_titles.marks:
-            name = name.replace(punct, '')
-        return name
 
 
 class Myguessit:
@@ -268,10 +257,12 @@ class TmdbSeries:
         if self.myguessit.guessit_year:
             return [(title, video_id, year) for title, video_id, year in candidate if
                     year == self.myguessit.guessit_year
-                    and Manage_titles.clean(title.lower()) == Manage_titles.clean(self.myguessit.guessit_title.lower())]
+                    and utitlity.Manage_titles.clean(title.lower()) ==
+                    utitlity.Manage_titles.clean(self.myguessit.guessit_title.lower())]
         else:
             return [(title, video_id, year) for title, video_id, year in candidate
-                    if Manage_titles.clean(title.lower()) == Manage_titles.clean(self.myguessit.guessit_title.lower())]
+                    if utitlity.Manage_titles.clean(title.lower()) ==
+                    utitlity.Manage_titles.clean(self.myguessit.guessit_title.lower())]
 
     @property
     def adult(self):
@@ -352,10 +343,10 @@ class TmdbSeries:
         if not self.confronto:
             for title_keys, video_id in self.details:
                 for title_key in title_keys:
-                    if Manage_titles.clean(self.myguessit.guessit_title.lower()) in Manage_titles.clean(
-                            title_key['title_key'].lower()):
-                        if Manage_titles.clean(self.myguessit.guessit_alternative.lower()) in Manage_titles.clean(
-                                title_key['title_key'].lower()):
+                    if (utitlity.Manage_titles.clean(self.myguessit.guessit_title.lower()) in
+                            utitlity.Manage_titles.clean(title_key['title_key'].lower())):
+                        if (utitlity.Manage_titles.clean(self.myguessit.guessit_alternative.lower())
+                                in utitlity.Manage_titles.clean(title_key['title_key'].lower())):
                             return video_id
         else:
             return self.confronto[0][1]
