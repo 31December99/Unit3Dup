@@ -34,7 +34,7 @@ class ITtorrents:
             metainfo = self.content.folder()
             self.myguess = myTMDB.Myguessit(self.content.base_name)
             self.Itt.data['type_id'] = utitlity.Manage_titles.filterType(self.content.base_name)
-            self.Itt.data['name'] = self.content.base_name
+            self.Itt.data['name'] = utitlity.Manage_titles.clean(self.content.base_name)
             self.mytorrent = pvtTorrent.Mytorrent(contents=self.content, meta=metainfo)
 
         if args.file:
@@ -42,7 +42,7 @@ class ITtorrents:
             metainfo = self.content.file()
             self.myguess = myTMDB.Myguessit(self.content.file_name)
             self.Itt.data['type_id'] = utitlity.Manage_titles.filterType(self.content.file_name)
-            self.Itt.data['name'] = self.content.tracker_file_name
+            self.Itt.data['name'] = utitlity.Manage_titles.clean(self.content.tracker_file_name)
             self.mytorrent = pvtTorrent.Mytorrent(contents=self.content, meta=metainfo)
 
         self.video = pvtVideo.Video(fileName=os.path.join(self.content.path, self.content.file_name))
