@@ -2,7 +2,6 @@
 import random
 import cv2
 import os
-import pvtTorrent
 import imageHost
 from pymediainfo import MediaInfo
 from decouple import config
@@ -23,17 +22,9 @@ class Video:
 
     """
 
-    def __init__(self, contents: str):
-        self.contents = contents
-        if os.path.isdir(self.contents):
-            self.folder_name = os.path.basename(self.contents)
-            self.file_name = os.listdir(self.contents)[0]
-            self.mytorrent = pvtTorrent.Mytorrent(contents=self.contents)
+    def __init__(self, fileName: str):
 
-        else:
-            self.file_name = self.contents
-            self.mytorrent = pvtTorrent.Mytorrent(contents=self.file_name)
-
+        self.file_name = fileName
         # video file size
         self.file_size = None
         # Frame count
@@ -44,20 +35,12 @@ class Video:
         self.video_capture = cv2.VideoCapture(self.file_name)
 
     @property
-    def torrentName(self) -> str:
-        return self.mytorrent.name
-
-    @property
     def freeLech(self) -> int:
         return self._freelech()
 
     @property
     def fileName(self) -> str:
         return self.file_name
-
-    @property
-    def folderName(self) -> str:
-        return self.folder_name
 
     @property
     def standard(self) -> int:
@@ -127,11 +110,6 @@ class Video:
         descrizione += "\n[/center]"
 
         return descrizione
-
-    @property
-    def torrent(self) -> pvtTorrent:
-        self.mytorrent.write()
-        return self.mytorrent
 
     def _freelech(self) -> int:
         if self.size >= 20:
