@@ -30,18 +30,19 @@ class Console:
 
 
 class Manage_titles:
-    marks = [',', ';', ':', '!', '?', '"', '(', ')', '[', ']', '{', '}', '/', '\\', '&', '*',
+    marks = ['.', ',', ';', ':', '!', '?', '"', '(', ')', '[', ']', '{', '}', '/', '\\', '&', '*',
              '$', '%', '#', '@', '_']
 
     @staticmethod
     def clean(filename: str):
         name = filename
         for punct in Manage_titles.marks:
-            name = name.replace(punct, '')
+            name = name.replace(punct, ' ')
         return name
 
     @staticmethod
     def filterType(file_name: str) -> int:
+        file_name = Manage_titles.clean(file_name)
         word_list = file_name.lower().strip().split(" ")
         lista = [
             "fulldisc",
