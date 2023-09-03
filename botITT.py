@@ -1,52 +1,63 @@
 #!/usr/bin/env python3.9
 import argparse
 import os.path
-import sys
-import time
 import requests
-from qbittorrent import Client
 import pvtTracker
 import myTMDB
 import pvtVideo
+import pvtTorrent
 import utitlity
+import Contents
 from decouple import config
-
 
 ITT_PASS_KEY = config('ITT_PASS_KEY')
 ITT_API_TOKEN = config('ITT_API_TOKEN')
-QBIT_USER = config('QBIT_USER')
-QBIT_PASS = config('QBIT_PASS')
-QBIT_PORT = config('QBIT_PORT')
 
 
 class ITtorrents:
 
-    def __init__(self, contents: str):
+    def __init__(self):
 
-        if not ITT_PASS_KEY or not ITT_API_TOKEN or not QBIT_PASS or not QBIT_USER:
+        if not ITT_PASS_KEY or not ITT_API_TOKEN:
             print("il file .env non è stato configurato o i nomi delle variabili sono errate.")
             return
 
         self.Itt = pvtTracker.ITT(base_url="https://itatorrents.xyz/", api_token=ITT_API_TOKEN,
                                   pass_key=ITT_PASS_KEY)
 
-        self.video = pvtVideo.Video(contents=contents)
-        self.file_name = self.video.file_name
+        parser = argparse.ArgumentParser(description='Commands', add_help=False)
+        parser.add_argument('-serie', '--serie', nargs=1, type=str, help='FileName')
+        parser.add_argument('-file', '--file', nargs=1, type=str, help='FileName')
+        args = parser.parse_args()
+        if args.serie:
+            self.content = Contents.Args(args.serie)
+            metainfo = self.content.folder()
+            self.myguess = myTMDB.Myguessit(self.content.base_name)
+            self.Itt.data['type_id'] = utitlity.Manage_titles.filterType(self.content.base_name)
+            self.Itt.data['name'] = self.content.base_name
+            self.mytorrent = pvtTorrent.Mytorrent(contents=self.content, meta=metainfo)
+
+        if args.file:
+            self.content = Contents.Args(args.file)
+            metainfo = self.content.file()
+            self.myguess = myTMDB.Myguessit(self.content.file_name)
+            self.Itt.data['type_id'] = utitlity.Manage_titles.filterType(self.content.file_name)
+            self.Itt.data['name'] = self.content.tracker_file_name
+            self.mytorrent = pvtTorrent.Mytorrent(contents=self.content, meta=metainfo)
+
+        self.video = pvtVideo.Video(fileName=os.path.join(self.content.path, self.content.file_name))
+        self.torrent = self.mytorrent.write
         self.standard = self.video.standard
-        self.freelech = self.video.freeLech
         self.media_info = self.video.mediainfo
         self.descrizione = self.video.description
-        self.torrent = self.video.torrent
-        self.myguess = myTMDB.Myguessit(self.file_name)
+        self.freelech = self.video.freeLech
         self.Itt.data['free'] = self.freelech
         self.Itt.data['sd'] = self.standard
         self.Itt.data['mediainfo'] = self.media_info
         self.Itt.data['description'] = self.descrizione
-        self.Itt.data['type_id'] = utitlity.Manage_titles.filterType(self.file_name)
 
         if 'movie' in self.myguess.type:
             self.Itt.data['category_id'] = 1
-            self.Itt.data['name'] = self.file_name.replace('.', ' ')
             self.tmdb_movie = myTMDB.TmdbMovie(self.myguess)
             self.video_id = self.tmdb_movie.cerca()
 
@@ -54,11 +65,13 @@ class ITtorrents:
             self.tmdb_series = myTMDB.TmdbSeries(self.myguess)
             self.video_id = self.tmdb_series.cerca()
             self.Itt.data['category_id'] = 2
-            self.Itt.data['name'] = self.video.torrentName
             self.Itt.data['season_number'] = self.myguess.guessit_season
             self.Itt.data['episode_number'] = self.myguess.guessit_episode
 
-        tracker_response = self.Itt.upload_t(data=self.Itt.data, video_id=self.video_id, file_name=self.video.file_name)
+        tracker_response = self.Itt.upload_t(data=self.Itt.data,
+                                             video_id=self.video_id,
+                                             file_name=os.path.join(self.content.path,
+                                                                    self.mytorrent.read()))  # self.video.file_name)
         upload_success = tracker_response['success']
 
         if upload_success:
@@ -67,34 +80,10 @@ class ITtorrents:
             pvtTracker.Utility.console(upload_success, 2)
             pvtTracker.Utility.console(link_torrent_dal_tracker, 2)
             pvtTracker.Utility.console(messaggio_dal_tracker, 2)
+
             download_torrent_dal_tracker = requests.get(link_torrent_dal_tracker)
             if download_torrent_dal_tracker.status_code == 200:
-                with open(f'{self.file_name}.torrent', 'wb') as file:
-                    file.write(download_torrent_dal_tracker.content)
-                torrent_file = open(f'{self.file_name}.torrent', 'rb')
-
-                try:
-                    self.qb = Client(f'http://127.0.0.1:{QBIT_PORT}/')
-                except Exception: # todo
-                    pvtTracker.Utility.console(f"Non riesco a connettermi con Qbittorent.", 1)
-                    sys.exit()
-                self.qb.login(username=QBIT_USER, password=QBIT_PASS)
-
-                self.qb.download_from_file(torrent_file)
-
-                print(f"Attendi..")
-                time.sleep(1)
-                # Ottieni la lista dei torrent
-                torrents = self.qb.torrents()
-                # Trova il torrent desiderato
-                infohash = None
-                for torrent in torrents:
-                    if torrent['name'] == self.file_name:
-                        infohash = torrent['hash']
-                        break
-                pvtTracker.Utility.console(f'HASH: {infohash}...Finito', 2)
-                self.qb.recheck(infohash_list=infohash)
-                self.qb.set_automatic_torrent_management(infohash_list=infohash, enable='True')
+                self.mytorrent.qbit(download_torrent_dal_tracker)
 
         else:
             pvtTracker.Utility.console(f"Non è stato possibile fare l'upload => {tracker_response}", 1)
@@ -102,8 +91,5 @@ class ITtorrents:
 
 if os.name == 'nt':
     os.system('color')
-parser = argparse.ArgumentParser(description='Commands', add_help=False)
-parser.add_argument('-dw', '--dw', nargs=1, type=str, help='FileName')
-args = parser.parse_args()
-if args.dw:
-    ittorrents = ITtorrents(args.dw[0])
+
+ittorrents = ITtorrents()
