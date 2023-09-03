@@ -48,7 +48,6 @@ class Myhttp:
         }
         self.params = {
             "api_token": self.api_token,
-            # "categories": 1,
         }
 
         self.data = {
