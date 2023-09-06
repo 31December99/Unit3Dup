@@ -45,7 +45,7 @@ class Myguessit:
         Estrae il numero di episodio dal titolo
         :return:
         """
-        return self.guessit['episode'] if 'episode' in self.guessit else None
+        return self.guessit['episode'] if 'episode' in self.guessit else 0
 
     @property
     def guessit_season(self):
@@ -53,7 +53,7 @@ class Myguessit:
         Estrae il numero di stagione dal titolo
         :return:
         """
-        return self.guessit['season'] if 'season' in self.guessit else None
+        return self.guessit['season'] if 'season' in self.guessit else 0
 
     @property
     def type(self):
