@@ -1,6 +1,7 @@
 #!/usr/bin/env python3.9
 import json
 import os
+import sys
 
 
 class Args:
@@ -47,15 +48,18 @@ class Args:
             self.type = False
             self.file_name = os.path.basename(self.arg)
             self.base_name = None
-            abs_path = os.path.abspath(self.file_name)
-            self.path = os.path.dirname(abs_path)
-            self.tracker_file_name, ext = os.path.splitext(self.file_name)
-            print(self.file_name)
-            print(self.path)
 
-            size = os.path.getsize(self.file_name)
-            metainfo = [{'length': size, 'path': [self.file_name]}]
-            return json.dumps(metainfo, indent=4)
+            self.path = self.arg.replace(self.file_name, '')
+            if os.path.exists(self.path):
+                self.tracker_file_name, ext = os.path.splitext(self.file_name)
+                size = os.path.getsize(os.path.join(self.path, self.file_name))
+                metainfo = [{'length': size, 'path': [self.file_name]}]
+                return json.dumps(metainfo, indent=4)
+            #todo: path not exists
+            else:
+                print("Args: path not exists")
+                input("premi un tasto per uscire")
+                sys.exit()
 
     def listdir(self):
         """
