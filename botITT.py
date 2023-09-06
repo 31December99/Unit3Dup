@@ -36,6 +36,8 @@ class ITtorrents:
             self.Itt.data['type_id'] = utitlity.Manage_titles.filterType(self.content.base_name)
             self.Itt.data['name'] = utitlity.Manage_titles.clean(self.content.base_name)
             self.mytorrent = pvtTorrent.Mytorrent(contents=self.content, meta=metainfo)
+            self.Itt.data['season_number'] = int(self.myguess.guessit_season)
+            self.Itt.data['episode_number'] = 0  # Pack ( season folder)
 
         if args.file:
             self.content = Contents.Args(args.file)
@@ -44,6 +46,8 @@ class ITtorrents:
             self.Itt.data['type_id'] = utitlity.Manage_titles.filterType(self.content.file_name)
             self.Itt.data['name'] = utitlity.Manage_titles.clean(self.content.tracker_file_name)
             self.mytorrent = pvtTorrent.Mytorrent(contents=self.content, meta=metainfo)
+            self.Itt.data['season_number'] = int(self.myguess.guessit_season)
+            self.Itt.data['episode_number'] = int(self.myguess.guessit_season)
 
         self.video = pvtVideo.Video(fileName=os.path.join(self.content.path, self.content.file_name))
         self.torrent = self.mytorrent.write
@@ -65,8 +69,6 @@ class ITtorrents:
             self.tmdb_series = myTMDB.TmdbSeries(self.myguess)
             self.video_id = self.tmdb_series.cerca()
             self.Itt.data['category_id'] = 2
-            self.Itt.data['season_number'] = self.myguess.guessit_season
-            self.Itt.data['episode_number'] = self.myguess.guessit_episode
 
         tracker_response = self.Itt.upload_t(data=self.Itt.data,
                                              video_id=self.video_id,
