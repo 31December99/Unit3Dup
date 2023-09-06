@@ -44,7 +44,6 @@ class Args:
     def file(self) -> str:
         # percorso + file_name
         if os.path.isfile(self.arg):
-            print("Percorso + file /file")
             self.type = False
             self.file_name = os.path.basename(self.arg)
             self.base_name = None
