@@ -106,10 +106,12 @@ class TmdbMovie:
         """
         un elenco di chiamate API per svolgere le funzioni principali
         :return: ritorna il titolo con lo stesso anno di uscita e titolo identico
+        elimina ogni carattere di punteggiatura in title e in title tmdb
         """
         candidate = self._search('title')
         return [(title, video_id, year) for title, video_id, year in candidate if year == self.myguessit.guessit_year
-                and title.lower() == self.myguessit.guessit_title.lower()]
+                and utitlity.Manage_titles.clean(title.lower()) ==
+                utitlity.Manage_titles.clean(self.myguessit.guessit_title.lower())]
 
     @property
     def adult(self):
