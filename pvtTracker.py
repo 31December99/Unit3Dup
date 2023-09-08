@@ -63,7 +63,7 @@ class Myhttp:
             "mal": "0",  # no ancora implementato
             "igdb": "0",  # no ancora implementato
             "anonymous": "0",
-            "stream": "1",  # no ancora implementato
+            "stream": "0",  # no ancora implementato
             "sd": "0",
             "keywords": "",
             "personal_release": "0",  # no ancora implementato
@@ -178,8 +178,7 @@ class Torrents(Tracker):
 
 
 class Uploader(Tracker):
-    def upload_t(self, data: dict, file_name: str, video_id: int = None) -> requests:
-        self.data['tmdb'] = video_id
+    def upload_t(self, data: dict, file_name: str) -> requests:
         with open(f'{file_name}.torrent', 'rb') as torrent:
             file_torrent = {'torrent': torrent}
             return self._post(file=file_torrent, data=data, params=self.params)
