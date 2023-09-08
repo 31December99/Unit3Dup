@@ -193,8 +193,10 @@ class TmdbMovie:
         if not self.confronto:
             for det in self.details:
                 for det2 in det:
-                    if self.myguessit.guessit_alternative.lower() in det2['title_key'].lower():
-                        if self.myguessit.guessit_title.lower() in det2['title_key'].lower():
+                    if (utitlity.Manage_titles.clean(self.myguessit.guessit_alternative.lower()) in
+                            utitlity.Manage_titles.clean(det2['title_key'].lower())):
+                        if (utitlity.Manage_titles.clean(self.myguessit.guessit_title.lower()) in
+                                utitlity.Manage_titles.clean(det2['title_key'].lower())):
                             return det2['video_id']
         else:
             return self.confronto[0][1]
