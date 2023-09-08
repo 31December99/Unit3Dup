@@ -42,6 +42,12 @@ class Manage_titles:
 
     @staticmethod
     def filterType(file_name: str) -> int:
+        """
+        Cerca le keyword nel titolo
+        Cerca eventuali codec nel titolo e lo setta come codice con il valore di ritorno
+        :param file_name:
+        :return:
+        """
         file_name = Manage_titles.clean(file_name)
         word_list = file_name.lower().strip().split(" ")
         lista = [
@@ -70,6 +76,88 @@ class Manage_titles:
 
         for word in word_list:
             if word in lista:
-                # Tracker type starts from zero
                 return lista.index(word) + 1
+
+        if Manage_titles.filterCodec(file_name):
+            return 2  # encode
+
         return 15  # Altro
+
+    @staticmethod
+    def filterCodec(file_name: str) -> bool:
+
+        file_name = Manage_titles.clean(file_name)
+        word_list = file_name.lower().strip().split(" ")
+
+        video_codecs = [
+            "h261",
+            "h262",
+            "h263",
+            "h264",
+            "avc",
+            "h265",
+            "hevc",
+            "vp8",
+            "vp9",
+            "av1",
+            "mpeg-1",
+            "mpeg-4",
+            "wmv",
+            "theora",
+            "divx",
+            "xvid",
+            "prores",
+            "dnxhd",
+            "cinepak",
+            "indeo",
+            "dv",
+            "ffv1",
+            "sorenson",
+            "rv40",
+            "cineform",
+            "huffyuv",
+            "mjpeg",
+            "lagarith",
+            "msu",
+            "rle",
+            "dirac",
+            "wmv3",
+            "vorbis",
+            "smpte",
+            "mjpeg",
+            "ffvhuff",
+            "v210",
+            "yuv4:2:2",
+            "yuv4:4:4",
+            "hap",
+            "sheervideo",
+            "ut",
+            "quicktime",
+            "rududu",
+            "h.266",
+            "vvc",
+            "mjpeg 4:2:0",
+            "h.263+",
+            "h.263++",
+            "vp4",
+            "vp5",
+            "vp6",
+            "vp7",
+            "vp8",
+            "vp9",
+            "vp10",
+            "vp11",
+            "vp12",
+            "theora (tremor)",
+            "theora (libtheora)",
+            "vp3",
+            "vp2",
+            "vp1",
+            "amv",
+            "daala",
+            "gecko"
+        ]
+        for word in word_list:
+            if word in video_codecs:
+                return True
+        return False
