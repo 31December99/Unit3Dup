@@ -38,7 +38,9 @@ class Manage_titles:
         name = filename
         for punct in Manage_titles.marks:
             name = name.replace(punct, ' ')
-        return name
+        name = name.split()
+        return ' '.join(name)
+
 
     @staticmethod
     def filterType(file_name: str) -> int:
