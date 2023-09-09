@@ -33,10 +33,10 @@ class Args:
                 size = os.path.getsize(os.path.join(self.path, t))
                 metainfo.append({'length': size, 'path': [t]})
 
-            print(json.dumps(metainfo, indent=4))
-            print(self.base_name)
-            print(self.file_name)
-            print(self.path)
+            # print(json.dumps(metainfo, indent=4))
+            # print(self.base_name)
+            # print(self.file_name)
+            # print(self.path)
 
             return json.dumps(metainfo, indent=4)
 
