@@ -3,6 +3,8 @@ import json
 import os
 import sys
 
+import utitlity
+
 
 class Args:
     """
@@ -53,11 +55,13 @@ class Args:
                 size = os.path.getsize(os.path.join(self.path, self.file_name))
                 metainfo = [{'length': size, 'path': [self.file_name]}]
                 return json.dumps(metainfo, indent=4)
-            #todo: path not exists
-            else:
+            else:  # todo: path not exists
                 print("Args: path not exists")
                 input("premi un tasto per uscire")
                 sys.exit()
+        if not self.file_name:
+            utitlity.Console.print("Non è stato possibile ottenere il nome del file", 1)
+            sys.exit()
 
     def listdir(self):
         """
