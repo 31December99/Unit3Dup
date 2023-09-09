@@ -86,14 +86,10 @@ class ITtorrents:
         if upload_success:
             link_torrent_dal_tracker = tracker_response['data']
             messaggio_dal_tracker = tracker_response['message']
-            pvtTracker.Utility.console(upload_success, 2)
-            pvtTracker.Utility.console(link_torrent_dal_tracker, 2)
             pvtTracker.Utility.console(messaggio_dal_tracker, 2)
-
             download_torrent_dal_tracker = requests.get(link_torrent_dal_tracker)
             if download_torrent_dal_tracker.status_code == 200:
                 self.mytorrent.qbit(download_torrent_dal_tracker)
-
         else:
             pvtTracker.Utility.console(f"Non è stato possibile fare l'upload => {tracker_response}", 1)
 
