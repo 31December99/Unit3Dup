@@ -67,7 +67,6 @@ class Mytorrent:
         self.qb.login(username=QBIT_USER, password=QBIT_PASS)
         self.qb.download_from_file(torrent_file)
         print("Attendi..")
-        time.sleep(1)
         # Ottieni la lista dei torrent
         torrents = self.qb.torrents()
         # Trova il torrent desiderato
@@ -76,7 +75,7 @@ class Mytorrent:
             if torrent['name'] == self.mytorr.name:
                 infohash = torrent['hash']
                 break
-        utitlity.Console.print(f'HASH: {infohash}...Finito', 2)
+        utitlity.Console.print(f'...Finito', 2)
         self.qb.recheck(infohash_list=infohash)
         self.qb.set_torrent_location(infohash_list=infohash, location=self.path)
 
