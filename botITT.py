@@ -13,6 +13,7 @@ from decouple import config
 ITT_PASS_KEY = config('ITT_PASS_KEY')
 ITT_API_TOKEN = config('ITT_API_TOKEN')
 
+
 class ITtorrents:
 
     def __init__(self):
@@ -64,6 +65,7 @@ class ITtorrents:
         self.Itt.data['episode_number'] = int(self.myguess.guessit_season)
         self.Itt.data['tmdb'] = self.video_tmdb_id
         self.Itt.data['category_id'] = self.category
+        self.Itt.data['resolution_id'] = utitlity.Manage_titles.filterResolution(self.content.file_name)
 
         if not self.video_tmdb_id:
             while True:
