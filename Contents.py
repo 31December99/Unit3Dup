@@ -47,8 +47,8 @@ class Args:
             self.type = False
             self.file_name = os.path.basename(self.arg)
             self.base_name = None
-
             self.path = self.arg.replace(self.file_name, '')
+            self.path = self.path.rstrip('/')
             if os.path.exists(self.path):
                 self.tracker_file_name, ext = os.path.splitext(self.file_name)
                 size = os.path.getsize(os.path.join(self.path, self.file_name))
