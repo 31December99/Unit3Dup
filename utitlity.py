@@ -61,22 +61,25 @@ class Manage_titles:
             "flac": 7,
             "alac": 8,
             # "ac3": 9,
-            # "mp3": 10,
-            "mac": 11,
-            "windows": 12,
-            "cinema": 13,
-            "altro": 14,
-            "pdf": 15,
-            "nintendo": 16,
-            "ps4": 17,
-            "epub": 18,
-            "mp4": 19,
-            "pack": 20,
-            "avi": 21,
+            # "aac": 10,
+            # "mp3": 11,
+            "mac": 12,
+            "windows": 13,
+            "cinema": 14,
+            "altro": 15,
+            "pdf": 16,
+            "nintendo": 17,
+            "ps4": 18,
+            "epub": 19,
+            "mp4": 20,
+            "pack": 22,
+            "avi": 23,
         }
         for word in word_list:
             for key, value in type_dict.items():
                 if word == key:
+                    print(word,key,type_dict[word])
+                    input(">>")
                     return type_dict[word]
 
         # Se non trova la keyword 'codec' cerca eventuli nomi di codec
@@ -95,6 +98,8 @@ class Manage_titles:
             "h262",
             "h263",
             "h264",
+            "x264",
+            "x265",
             "avc",
             "h265",
             "hevc",
