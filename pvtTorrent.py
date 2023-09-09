@@ -20,6 +20,7 @@ class Mytorrent:
 
     def __init__(self, contents: Contents, meta: str):
 
+        self.qb = None
         self.file_name = contents.file_name
         self.path = contents.path
         self.content_type = contents.type
@@ -58,7 +59,6 @@ class Mytorrent:
 
     def qbit(self, link: requests) -> bool:
         torrent_file = self._download(link)
-
         try:
             self.qb = Client(f'http://127.0.0.1:{QBIT_PORT}/')
         except Exception:  # todo
@@ -68,7 +68,6 @@ class Mytorrent:
         self.qb.download_from_file(torrent_file)
         print(f"Attendi..{torrent_file.name}")
         time.sleep(1)
-
         # Ottieni la lista dei torrent
         torrents = self.qb.torrents()
         # Trova il torrent desiderato
@@ -79,7 +78,8 @@ class Mytorrent:
                 break
         utitlity.Console.print(f'HASH: {infohash}...Finito', 2)
         self.qb.recheck(infohash_list=infohash)
-        self.qb.set_automatic_torrent_management(infohash_list=infohash, enable='True')
+        self.qb.set_torrent_location(infohash_list=infohash, location=self.path)
+
 
     @property
     def comment(self):
