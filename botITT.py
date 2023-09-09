@@ -70,12 +70,13 @@ class ITtorrents:
         if not self.video_tmdb_id:
             while True:
                 utitlity.Console.print("Non è stato possibile identificare il TMDB ID. Inserisci un numero..", 2)
-                self.video_id = input("> ")
-                if not self.video_id.isdigit():
+                self.video_tmdb_id = input(f"> ")
+                if not self.video_tmdb_id.isdigit():
                     continue
-                utitlity.Console.print(f"Hai digitato {self.video_id}", 2)
+                utitlity.Console.print(f"Hai digitato {self.video_tmdb_id}", 2)
                 user_answ = input("Sei sicuro ? (s/n)> ")
                 if 's' == user_answ.lower():
+                    self.Itt.data['tmdb'] = self.video_tmdb_id
                     break
 
         tracker_response = self.Itt.upload_t(data=self.Itt.data, file_name=os.path.join(self.content.path,
