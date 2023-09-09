@@ -22,7 +22,6 @@ class Args:
     def folder(self) -> str:
         # Solo percorso -
         if os.path.isdir(self.arg):
-            print("Solo percorso")
             self.type = True
             self.path = self.arg
             self.base_name = os.path.basename(self.arg)
