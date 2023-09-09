@@ -66,7 +66,7 @@ class Mytorrent:
 
         self.qb.login(username=QBIT_USER, password=QBIT_PASS)
         self.qb.download_from_file(torrent_file)
-        print(f"Attendi..{torrent_file.name}")
+        print("Attendi..")
         time.sleep(1)
         # Ottieni la lista dei torrent
         torrents = self.qb.torrents()
