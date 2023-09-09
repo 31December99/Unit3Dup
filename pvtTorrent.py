@@ -40,14 +40,14 @@ class Mytorrent:
     def write(self):
         torrent_name = os.path.join(self.path, self.file_name) \
             if not self.base_name else os.path.join(self.path, self.base_name)
-        print("MyTorrent -> ", torrent_name)
+        # print("MyTorrent -> ", torrent_name)
         self.mytorr.write(f"{torrent_name}.torrent")
         return self.mytorr
 
     def read(self) -> str:
         torrent_name = os.path.join(self.path, self.file_name) \
             if not self.base_name else os.path.join(self.path, self.base_name)
-        print("MyTorrent Read-> ", torrent_name)
+        # print("MyTorrent Read-> ", torrent_name)
         return torrent_name
 
     def _download(self, link: requests) -> typing.IO:
