@@ -39,8 +39,10 @@ class Args:
             # print(self.base_name)
             # print(self.file_name)
             # print(self.path)
-
             return json.dumps(metainfo, indent=4)
+        if not self.file_name:
+            utitlity.Console.print("Non è stato possibile ottenere il nome della cartella", 1)
+            sys.exit()
 
     def file(self) -> str:
         # percorso + file_name
