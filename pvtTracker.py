@@ -55,8 +55,8 @@ class Myhttp:
             "description": "",  # mandatory
             "mediainfo": "",
             "bdinfo": " ",
-            "type_id": "1",  # web_dl etcc
-            "resolution_id": "3",  # mandatory todo: implementare
+            "type_id": "1",
+            "resolution_id": "10",  # mandatory
             "tmdb": "",  # mandatory
             "imdb": "0",  # no ancora implementato
             "tvdb": "0",  # no ancora implementato
