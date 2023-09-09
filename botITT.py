@@ -80,7 +80,6 @@ class ITtorrents:
 
         tracker_response = self.Itt.upload_t(data=self.Itt.data, file_name=os.path.join(self.content.path,
                                                                                         self.mytorrent.read()))
-
         upload_success = tracker_response['success']
 
         if upload_success:
