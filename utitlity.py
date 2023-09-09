@@ -41,7 +41,6 @@ class Manage_titles:
         name = name.split()
         return ' '.join(name)
 
-
     @staticmethod
     def filterType(file_name: str) -> int:
         """
@@ -52,38 +51,38 @@ class Manage_titles:
         """
         file_name = Manage_titles.clean(file_name)
         word_list = file_name.lower().strip().split(" ")
-        lista = [
-            "fulldisc",
-            "remux",
-            "encode",
-            "web-dl",
-            "webrip",
-            "hdtv",
-            "flac",
-            "alac",
-            "ac3",
-            "mp3",
-            "mac",
-            "windows",
-            "cinema",
-            "altro",
-            "pdf",
-            "nintendo",
-            "ps4",
-            "epub",
-            "mp4",
-            "pack",
-            "avi",
-        ]
-
+        type_dict = {
+            "full-disc": 1,
+            "remux": 2,
+            "encode": 3,
+            "web-dl": 4,
+            "webrip": 5,
+            "hdtv": 6,
+            "flac": 7,
+            "alac": 8,
+            # "ac3": 9,
+            # "mp3": 10,
+            "mac": 11,
+            "windows": 12,
+            "cinema": 13,
+            "altro": 14,
+            "pdf": 15,
+            "nintendo": 16,
+            "ps4": 17,
+            "epub": 18,
+            "mp4": 19,
+            "pack": 20,
+            "avi": 21,
+        }
         for word in word_list:
-            if word in lista:
-                return lista.index(word) + 1
+            for key, value in type_dict.items():
+                if word == key:
+                    return type_dict[word]
 
+        # Se non trova la keyword 'codec' cerca eventuli nomi di codec
         if Manage_titles.filterCodec(file_name):
-            return 2  # encode
-
-        return 15  # Altro
+            return type_dict['encode']  # encode
+        return type_dict['altro']
 
     @staticmethod
     def filterCodec(file_name: str) -> bool:
@@ -150,8 +149,6 @@ class Manage_titles:
             "vp10",
             "vp11",
             "vp12",
-            "theora (tremor)",
-            "theora (libtheora)",
             "vp3",
             "vp2",
             "vp1",
@@ -163,3 +160,27 @@ class Manage_titles:
             if word in video_codecs:
                 return True
         return False
+
+    @staticmethod
+    def filterResolution(file_name: str) -> int:
+
+        file_name = Manage_titles.clean(file_name)
+        word_list = file_name.lower().strip().split(" ")
+
+        resulution_dict = {
+            "4320p": 1,
+            "2160p": 2,
+            "1080p": 3,
+            "1080i": 4,
+            "720p": 5,
+            "576p": 6,
+            "576i": 7,
+            "480p": 8,
+            "480i": 9,
+            "altro": 10,
+        }
+        for word in word_list:
+            for key, value in resulution_dict.items():
+                if word == key:
+                    return resulution_dict[word]
+        return resulution_dict['altro']
