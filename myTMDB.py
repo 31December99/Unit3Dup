@@ -1,4 +1,5 @@
 #!/usr/bin/env python3.9
+import sys
 from datetime import datetime
 
 import fasttext
@@ -189,7 +190,6 @@ class TmdbMovie:
         return details_dictionary_list
 
     def cerca(self):
-
         if not self.confronto:
             for det in self.details:
                 for det2 in det:
@@ -237,6 +237,9 @@ class TmdbSeries:
         """
 
         self.result = self.tv_tmdb.search(self.myguessit.guessit_title)
+        if not self.result['results']:
+            utitlity.Console.print("La cartella non sembra contenere una serie tv..Verifica", 1)
+            sys.exit()
 
         """
         Cerca nei risultati con l'attributo scelto es: 'title' e ritorna una lista  
