@@ -1,6 +1,7 @@
 #!/usr/bin/env python3.9
 import json
 import os, time
+import sys
 import typing
 import torf
 import requests
@@ -41,7 +42,11 @@ class Mytorrent:
         torrent_name = os.path.join(self.path, self.file_name) \
             if not self.base_name else os.path.join(self.path, self.base_name)
         # print("MyTorrent -> ", torrent_name)
-        self.mytorr.write(f"{torrent_name}.torrent")
+        try:
+            self.mytorr.write(f"{torrent_name}.torrent")
+        except torf.TorfError as e:
+            print(e)
+            sys.exit()
         return self.mytorr
 
     def read(self) -> str:
