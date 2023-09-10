@@ -29,17 +29,18 @@ class Args:
             self.base_name = os.path.basename(self.arg)
             # il primo in elenco come input a mediainfo
             dir_list = self.listdir()
-            self.file_name = dir_list[0]
-            metainfo = []
-            for t in dir_list:
-                size = os.path.getsize(os.path.join(self.path, t))
-                metainfo.append({'length': size, 'path': [t]})
+            if dir_list:
+                self.file_name = dir_list[0]
+                metainfo = []
+                for t in dir_list:
+                    size = os.path.getsize(os.path.join(self.path, t))
+                    metainfo.append({'length': size, 'path': [t]})
 
-            # print(json.dumps(metainfo, indent=4))
-            # print(self.base_name)
-            # print(self.file_name)
-            # print(self.path)
-            return json.dumps(metainfo, indent=4)
+                # print(json.dumps(metainfo, indent=4))
+                # print(self.base_name)
+                # print(self.file_name)
+                # print(self.path)
+                return json.dumps(metainfo, indent=4)
         if not self.file_name:
             utitlity.Console.print("Non è stato possibile ottenere il nome della cartella", 1)
             sys.exit()
