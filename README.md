@@ -27,7 +27,8 @@ This Python script generates and uploads torrents based on input provided for mo
 
 1. Clone this repository.
 2. Install the required dependencies using PIP.
-3. Make sure to change the video file name inside the script and have a video in the same folder before proceeding with any changes.
+3. Make sure to run the script followed by the command "-movie" and the path to the file or "-serie" followed
+   by the folder containing the series.
 4. Run the script with botITT.py
 
 ## Configuration
