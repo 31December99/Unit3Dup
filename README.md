@@ -52,7 +52,8 @@ This project is licensed under the MIT License
 - IMGBB_KEY=xxxxxx
 - QBIT_USER=xxxxxxx
 - QBIT_PASS=xxxxxx
-
+- QBIT_PORT=xxxxxx
+- 
 # ITT_BASE_URL
 Tracker URL
 
