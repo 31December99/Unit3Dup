@@ -79,16 +79,33 @@ class TmdbMovie:
 
     def __init__(self, myguessit: Myguessit):
 
+        self.myguessit = myguessit
+        # modello per l'italiano python -m spacy download it_core_news_md
+        # Per il momento uso spacy. Forse un pochino esagerato..
+        nlp = spacy.load("it_core_news_md")
+        Language.factory("language_detector", func=self.get_lang_detector)
+        nlp.add_pipe('sentencizer')
+        nlp.add_pipe('language_detector', last=True)
+        self.myguessit.guessit_title.lower()
+        text = self.myguessit.guessit_title
+        check = nlp(text)
+        # Lingua rilevata
+        self.lang = check._.language['language']
+        # Percentuale
+        self.score = check._.language['score']
+        print(f"Title: {self.myguessit.guessit_title}")
+        print(f"Lang: {self.lang}")
+        print(f"Score: {self.score}")
         # TMDB
         self.tmdb = TMDb()
         self.tmdb.api_key = TMDB_APIKEY
-        self.tmdb.language = 'it'
+        self.tmdb.language = self.lang
         self.tmdb.debug = True
         self.mv_tmdb = Movie()
         self.result = None
-        self.myguessit = myguessit
 
-        self.myguessit.guessit_title.lower()
+    def get_lang_detector(self, nlp, name):
+        return LanguageDetector()
 
     def _search(self, attributo: str) -> list:
 
@@ -241,7 +258,7 @@ class TmdbSeries:
         self.tv_tmdb = TV()
         self.result = None
 
-    def get_lang_detector(self):
+    def get_lang_detector(self, nlp, name):
         return LanguageDetector()
 
     def _search(self, attributo: str) -> list:
