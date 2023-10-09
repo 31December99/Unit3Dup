@@ -1,12 +1,14 @@
 #!/usr/bin/env python3.9
-import sys
 from datetime import datetime
-
-import fasttext
-import guessit
-import utitlity
+from spacy.language import Language
+from spacy_langdetect import LanguageDetector
 from decouple import config
 from tmdbv3api import TMDb, Movie, TV
+
+import sys
+import guessit
+import utitlity
+import spacy
 
 TMDB_APIKEY = config('TMDB_APIKEY')
 
@@ -216,17 +218,31 @@ class TmdbSeries:
         :param myguessit:
         """
         self.myguessit = myguessit
-        # https://github.com/facebookresearch/fastText/issues/1067#issue-617428110
-        fasttext.FastText.eprint = lambda x: None
-        self.model = fasttext.load_model("lid.176.bin")
-        self.predict_lang = self.model.predict(self.myguessit.guessit_title, k=3)
-        self.lang = self.predict_lang[0][0].split('__label__')[1].replace('en', 'us')
+
+        # modello per l'italiano python -m spacy download it_core_news_md
+        # Per il momento uso spacy. Forse un pochino esagerato..
+        nlp = spacy.load("it_core_news_md")
+        Language.factory("language_detector", func=self.get_lang_detector)
+        nlp.add_pipe('sentencizer')
+        nlp.add_pipe('language_detector', last=True)
+        text = self.myguessit.guessit_title
+        check = nlp(text)
+        # Lingua rilevata
+        self.lang = check._.language['language']
+        # Percentuale
+        self.score = check._.language['score']
+        print(f"Title: {self.myguessit.guessit_title}")
+        print(f"Lang: {self.lang}")
+        print(f"Score: {self.score}")
         self.tmdb = TMDb()
         self.tmdb.api_key = TMDB_APIKEY
         self.tmdb.language = self.lang
         self.tmdb.debug = True
         self.tv_tmdb = TV()
         self.result = None
+
+    def get_lang_detector(self):
+        return LanguageDetector()
 
     def _search(self, attributo: str) -> list:
 
