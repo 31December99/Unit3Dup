@@ -12,6 +12,7 @@ This Python script generates and uploads torrents based on input provided for mo
 - Generates meta-info derived from the video.
 - Searches for the corresponding ID on TMDB (The Movie Database).
 - Uploads the content to the UNIT3D Next Generation tracker platform.
+- Seeding in qbittorrent
 
 ## Usage
 
