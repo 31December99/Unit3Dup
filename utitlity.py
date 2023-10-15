@@ -78,8 +78,6 @@ class Manage_titles:
         for word in word_list:
             for key, value in type_dict.items():
                 if word == key:
-                    print(word,key,type_dict[word])
-                    input(">>")
                     return type_dict[word]
 
         # Se non trova la keyword 'codec' cerca eventuli nomi di codec
