@@ -66,7 +66,9 @@ class Mytorrent:
         torrent_file = self._download(link)
         try:
             self.qb = Client(f'http://127.0.0.1:{QBIT_PORT}/')
-        except Exception:  # todo
+        except Exception as e:  # todo
+            utitlity.Console.print("Non è stato possibile collegarsi a qbittorent. Verifica WEBUI", 2)
+            utitlity.Console.print(f"{e}", 2)
             return False
 
         self.qb.login(username=QBIT_USER, password=QBIT_PASS)
@@ -82,6 +84,7 @@ class Mytorrent:
                 self.qb.recheck(infohash_list=infohash)
                 self.qb.set_torrent_location(infohash_list=infohash, location=self.path)
                 return True
+        utitlity.Console.print(f"Non ho trovato nessun torrents in list corripondente al tuo {self.mytorr.name}", 2)
         return False
 
     @property
