@@ -82,7 +82,6 @@ class Mytorrent:
                 infohash = torrent['hash']
                 utitlity.Console.print(f'Infohash {infohash}', 2)
                 self.qb.recheck(infohash_list=infohash)
-                self.qb.set_torrent_location(infohash_list=infohash, location=self.path)
                 return True
         utitlity.Console.print(f"Non ho trovato nessun torrents in list corripondente al tuo {self.mytorr.name}", 2)
         return False
