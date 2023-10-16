@@ -30,8 +30,9 @@ This Python script generates and uploads torrents based on input provided for mo
 2. Install the required dependencies using PIP.
 3. Make sure to run the script followed by the command "-movie" and the path to the file or "-serie" followed
    by the folder containing the series.
-4. Config address and port for qbittorent webui
-5. Run the script with botITT.py
+4. Config address and port for qbittorrent webui
+5. Set default save path in qbittorrent as the main download folder
+6. Run the script with botITT.py
 
 ## Configuration
 
