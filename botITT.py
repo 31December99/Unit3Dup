@@ -81,9 +81,7 @@ class ITtorrents:
 
         tracker_response = self.Itt.upload_t(data=self.Itt.data, file_name=os.path.join(self.content.path,
                                                                                         self.mytorrent.read()))
-        upload_success = tracker_response['success']
-
-        if upload_success:
+        if tracker_response['success']:
             pvtTracker.Utility.console(tracker_response['message'], 2)
             download_torrent_dal_tracker = requests.get(tracker_response['data'])
             if download_torrent_dal_tracker.status_code == 200:
