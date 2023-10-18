@@ -84,10 +84,8 @@ class ITtorrents:
         upload_success = tracker_response['success']
 
         if upload_success:
-            link_torrent_dal_tracker = tracker_response['data']
-            messaggio_dal_tracker = tracker_response['message']
-            pvtTracker.Utility.console(messaggio_dal_tracker, 2)
-            download_torrent_dal_tracker = requests.get(link_torrent_dal_tracker)
+            pvtTracker.Utility.console(tracker_response['message'], 2)
+            download_torrent_dal_tracker = requests.get(tracker_response['data'])
             if download_torrent_dal_tracker.status_code == 200:
                 self.mytorrent.qbit(download_torrent_dal_tracker)
         else:
