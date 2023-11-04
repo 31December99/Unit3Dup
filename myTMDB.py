@@ -218,7 +218,10 @@ class TmdbMovie:
                                 utitlity.Manage_titles.clean(det2['title_key'].lower())):
                             return det2['video_id']
         else:
+            # todo: con più risultati per titoli identici scegli il primo per default
+            # todo: Se l'anno è disponibile sceglie quello con titolo e anno identico
             return self.confronto[0][1]
+
 
 
 class TmdbSeries:
