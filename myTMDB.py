@@ -17,6 +17,8 @@ class Myguessit:
 
     def __init__(self, filename: str):
         self.guessit = guessit.guessit(filename)
+        print(self.guessit)
+        self.filename = filename
 
     @property
     def guessit_title(self):
@@ -24,7 +26,13 @@ class Myguessit:
         Estrae la stringa con il titolo dal nome del file film_title o title(serie ?)
         :return:
         """
-        return self.guessit['film_title'] if 'film_title' in self.guessit else self.guessit['title']
+        #
+        # Se fallisce guessit ad esempio in questo caso :
+        # titolo : 1923 ( nessun altra informazione nel titolo)
+        # MatchesDict([('year', 1923), ('type', 'movie')])
+        # dove non trova ne title e film_title e erroneamente lo credo un movie..
+        # bypass guessit e ritorna filename alla ricerca di tmdb
+        return self.guessit.get('film_title', self.guessit.get('title', self.filename))
 
     @property
     def guessit_alternative(self):
@@ -32,7 +40,7 @@ class Myguessit:
         Estrae la stringa con il titolo dal nome del file film_title o title(serie ?)
         :return:
         """
-        return self.guessit['alternative_title'] if 'alternative_title' in self.guessit else self.guessit['title']
+        return self.guessit.get('alternative_title', self.guessit.get('title', self.filename))
 
     @property
     def guessit_year(self):
@@ -221,7 +229,6 @@ class TmdbMovie:
             # todo: con più risultati per titoli identici scegli il primo per default
             # todo: Se l'anno è disponibile sceglie quello con titolo e anno identico
             return self.confronto[0][1]
-
 
 
 class TmdbSeries:
