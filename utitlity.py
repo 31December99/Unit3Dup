@@ -56,6 +56,7 @@ class Manage_titles:
             "remux": 2,
             "encode": 3,
             "web-dl": 4,
+            "webdl": 4,
             "webrip": 5,
             "hdtv": 6,
             "flac": 7,
