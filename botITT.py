@@ -49,7 +49,7 @@ class ITtorrents:
             self.category = 1
 
         self.mytorrent = pvtTorrent.Mytorrent(contents=self.content, meta=self.metainfo)
-        self.video = pvtVideo.Video(fileName=os.path.join(self.content.path, self.content.file_name))
+        self.video = pvtVideo.Video(fileName=str(os.path.join(self.content.path, self.content.file_name)))
         self.torrent = self.mytorrent.write
         self.standard = self.video.standard
         self.media_info = self.video.mediainfo
