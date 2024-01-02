@@ -78,7 +78,7 @@ class ITtorrents:
                 if 's' == user_answ.lower():
                     self.Itt.data['tmdb'] = self.video_tmdb_id
                     break
-
+        self.Itt.data['keywords'] = self.tmdb_movie.keywords(self.Itt.data['tmdb'])
         tracker_response = self.Itt.upload_t(data=self.Itt.data, file_name=os.path.join(self.content.path,
                                                                                         self.mytorrent.read()))
         if tracker_response['success']:
