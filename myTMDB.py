@@ -17,7 +17,6 @@ class Myguessit:
 
     def __init__(self, filename: str):
         self.guessit = guessit.guessit(filename)
-        print(self.guessit)
         self.filename = filename
 
     @property
@@ -215,6 +214,13 @@ class TmdbMovie:
                                 for t in details['translations']['translations'] if t['data']['title']]
                 details_dictionary_list.append(details_list)
         return details_dictionary_list
+
+    def keywords(self, video_id: int) -> str:
+        details = self.mv_tmdb.details(video_id)
+        keywords = details.keywords
+        if keywords['keywords']:
+            keywords = ','.join([key['name'] for key in keywords['keywords']])
+            return keywords
 
     def cerca(self):
         if not self.confronto:
