@@ -100,9 +100,7 @@ class TmdbMovie:
         self.lang = check._.language['language']
         # Percentuale
         self.score = check._.language['score']
-        print(f"Title: {self.myguessit.guessit_title}")
-        print(f"Lang: {self.lang}")
-        print(f"Score: {self.score}")
+        print(f"\n* {self.myguessit.guessit_title.upper()} *")
         # TMDB
         self.tmdb = TMDb()
         self.tmdb.api_key = TMDB_APIKEY
