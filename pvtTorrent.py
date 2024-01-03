@@ -9,12 +9,20 @@ import Contents
 import utitlity
 from decouple import config
 from qbittorrent import Client
+from tqdm import tqdm
 
 ITT_PASS_KEY = config('ITT_PASS_KEY')
 ITT_API_TOKEN = config('ITT_API_TOKEN')
 QBIT_USER = config('QBIT_USER')
 QBIT_PASS = config('QBIT_PASS')
 QBIT_PORT = config('QBIT_PORT')
+
+
+class HashProgressBar(tqdm):
+    def callback(self, mytorr, path, current_num_hashed, total_pieces):
+        progress_percentage = (current_num_hashed / total_pieces) * 100
+        self.total = 100
+        self.update(int(progress_percentage) - self.n)
 
 
 class Mytorrent:
@@ -32,10 +40,11 @@ class Mytorrent:
         self.mytorr.announce_list = [f"https://itatorrents.xyz/announce/{ITT_PASS_KEY}/"]
         self.mytorr.comment = "ciao"
         self.mytorr.name = self.file_name if not self.base_name else self.base_name
-        self.mytorr.generate()
         self.mytorr.created_by = "bITT"
         self.mytorr.private = True
         self.mytorr.segments = 16 * 1024 * 1024  # 16MB
+        with HashProgressBar() as progress:
+            self.mytorr.generate(threads=0, callback=progress.callback, interval=0)
 
     @property
     def write(self):
