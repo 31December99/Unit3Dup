@@ -240,7 +240,10 @@ class MyTmdb:
                                 return page
 
     def keywords(self, video_id: int) -> str:
-        details = self.tmdb.details(video_id)
+        try:
+            details = self.tmdb.details(video_id)
+        except tmdbv3api.exceptions.TMDbException as e:
+            return str(e)
         if "keywords" in details:
             keywords = details.keywords
             if keywords['keywords']:
