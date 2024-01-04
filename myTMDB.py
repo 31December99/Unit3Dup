@@ -1,14 +1,12 @@
-#!/usr/bin/env python3.9
-from datetime import datetime
-from spacy.language import Language
-from spacy_langdetect import LanguageDetector
+# -*- coding: utf-8 -*-
+from unidecode import unidecode
+from utitlity import Manage_titles
 from decouple import config
 from tmdbv3api import TMDb, Movie, TV
-
-import sys
+from results import Results
+import tmdbv3api.exceptions
 import guessit
-import utitlity
-import spacy
+from thefuzz import fuzz
 
 TMDB_APIKEY = config('TMDB_APIKEY')
 
@@ -82,325 +80,169 @@ class Myguessit:
         return True if not self.season else False
 
 
-class TmdbMovie:
+class MyTmdb:
 
-    def __init__(self, myguessit: Myguessit):
+    def __init__(self, table: str, year='', videoid=''):
+        self.table = table
+        self.ext_title = None
+        self.year = year
+        self.videoid = videoid
+        self.tmdb = None
+        self._tmdb = TMDb()
+        self._tmdb.language = 'it-EN'  # todo: problema con titoli per metà ita o en or it-en ? commuta da solo ?
+        self._tmdb.api_key = TMDB_APIKEY
+        self.__mv_tmdb = Movie()
+        self.__tv_tmdb = TV()
+        self.__result = None
+        self.__page = []
 
-        self.myguessit = myguessit
-        # modello per l'italiano python -m spacy download it_core_news_md
-        # Per il momento uso spacy. Forse un pochino esagerato..
-        nlp = spacy.load("it_core_news_md")
-        Language.factory("language_detector", func=self.get_lang_detector)
-        nlp.add_pipe('sentencizer')
-        nlp.add_pipe('language_detector', last=True)
-        self.myguessit.guessit_title.lower()
-        text = self.myguessit.guessit_title
-        check = nlp(text)
-        # Lingua rilevata
-        self.lang = check._.language['language']
-        # Percentuale
-        self.score = check._.language['score']
-        print(f"\n* {self.myguessit.guessit_title.upper()} *")
-        # TMDB
-        self.tmdb = TMDb()
-        self.tmdb.api_key = TMDB_APIKEY
-        self.tmdb.language = self.lang
-        self.tmdb.debug = True
-        self.mv_tmdb = Movie()
-        self.result = None
+        if self.table == 'Serie':
+            self.tmdb = self.__tv_tmdb
 
-    def get_lang_detector(self, nlp, name):
-        return LanguageDetector()
+        if self.table == 'Movie':
+            self.tmdb = self.__mv_tmdb
 
-    def _search(self, attributo: str) -> list:
+    def search(self, ext_title: str):
+        self.ext_title = ext_title
+        self.__requests()
+        result = self.__search_titles()
+        if not result:
+            result = self.__search_alternative()
+            if not result:
+                result = self.__search_translations()
+        if result:
+            result.keywords = self.keywords(result.video_id)
+        return result
 
+    def __requests(self):
+        self.ext_title = self.ext_title  # Manage_titles.prefil(self.ext_title)
+        self.__result = self.tmdb.search(self.ext_title)
+        print(f"\n[TMDB Search]..........  {self.ext_title}")
+        print(f"[TMDB obj].............  {self.tmdb}")
+        print(f"[TMDB total-results]...  {self.__result['total_results']}")
+        print(f"[TMDB total-pages].....  {self.__result['total_pages']}")
+        if self.__result['total_results'] > 0:
+            for result in self.__result:
+                results = Results()
+                try:
+                    if isinstance(self.tmdb, TV):
+                        results.title = result['name']
+                        results.original_title = result['original_name']
+                        results.date = result['first_air_date']
+
+                    if isinstance(self.tmdb, Movie):
+                        results.title = result['title']
+                        results.original_title = result['original_title']
+                        results.date = getattr(result, 'release_date', '')
+                    # ALL
+                    results.genre_ids = getattr(result, 'genre_ids', '')
+                    results.video_id = result['id']
+                    results.poster_path = result['poster_path']
+                    results.backdrop_path = result['backdrop_path']
+                    results.overview = result['overview']
+                    results.popularity = getattr(result, 'popularity', '')
+                    details = self.tmdb.details(result['id'])
+
+                    if 'translations' in details:
+                        for iso in details['translations']['translations']:
+                            results.translations.append(iso)
+                        results.alternative.append(self.tmdb.alternative_titles(result['id']))
+                except tmdbv3api.exceptions.TMDbException as e:
+                    # print(f">>>>>>>> ** TMDB ** <<<<<<<<<{e} - tmdb details non disponibile")
+                    results.translations = []
+                    results.alternative = []
+                self.__page.append(results)
+
+    def details(self, video_id: str):
+        return self.tmdb.details(video_id)
+
+    def __search_alternative(self):
+        field = 'titles' if isinstance(self.tmdb, Movie) else 'results'
+        for index, page in enumerate(self.__page):
+            # print(f".:: ALTERNATIVE n°{index} ::.")
+            for iso in page.alternative:
+                results = iso[field]
+                ext_title = Manage_titles.clean(unidecode(self.ext_title))
+                if len(iso[field]) > 0:
+                    for result in results:
+                        title = Manage_titles.clean(unidecode(result['title']))
+                        # print(f"EXT_T: {ext_title} = ALTERNATIVE TITLE: {title}")
+                        if ext_title == title:
+                            return page
+                        else:
+                            ratio = fuzz.ratio(ext_title, title)
+                            # print(f"EXT_T: {ext_title} VS ALTERNATIVE TITLE: {title} RATIO: {ratio}\n")
+                            if ratio > 95:
+                                return page
+
+    def __search_titles(self):
         """
-        Determina se cercare in movies o series ( Vale per TMDB)
-        :param attributo:
+         Confronto il titolo di ogni risultato nella pagina con il titolo in input
         :return:
         """
-        self.result = self.mv_tmdb.search(self.myguessit.guessit_title)
+        for index, page in enumerate(self.__page):
+            original_title = Manage_titles.clean(Manage_titles.accented_remove(page.original_title))
+            title = Manage_titles.clean(Manage_titles.accented_remove(page.title))
+            ext_title = Manage_titles.clean(Manage_titles.accented_remove(self.ext_title))
+            # print(f".:: RESULT n°{index} ::.")
+            if original_title:
+                # print(f"EXT_T: {ext_title} = ORIGINAL TITLE: {original_title}")
+                if ext_title == original_title:
+                    return page
+                else:
+                    ratio = fuzz.ratio(ext_title, original_title)
+                    # print(f"EXT_T: {ext_title} VS ORIGINAL TITLE: {original_title} RATIO: {ratio}\n")
+                    if ratio > 95:
+                        return page
+            if title:
+                # print(f"EXT_T: {ext_title} = TITLE: {title}")
+                if ext_title == title:
+                    return page
+                else:
+                    ratio = fuzz.ratio(ext_title, title)
+                    # print(f"EXT_T: {ext_title} VS TITLE:{title} RATIO: {ratio}\n")
+                    if ratio > 95:
+                        return page
+
+    def __search_translations(self):
         """
-        Cerca nei risultati con l'attributo scelto es: 'title' e ritorna una lista  
-        """
-        return [(item[attributo], item['id'], datetime.strptime(item['release_date'], '%Y-%m-%d').year)
-                for item in self.result if item['release_date']]
-
-    @property
-    def confronto(self) -> list:
-        """
-        un elenco di chiamate API per svolgere le funzioni principali
-        :return: ritorna il titolo con lo stesso anno di uscita e titolo identico
-        elimina ogni carattere di punteggiatura in title e in title tmdb
-        """
-        candidate = self._search('title')
-        return [(title, video_id, year) for title, video_id, year in candidate if year == self.myguessit.guessit_year
-                and utitlity.Manage_titles.clean(title.lower()) ==
-                utitlity.Manage_titles.clean(self.myguessit.guessit_title.lower())]
-
-    @property
-    def adult(self):
-        return self._search('adult')
-
-    @property
-    def backdrop_path(self):
-        return self._search('backdrop_path')
-
-    @property
-    def genre_ids(self):
-        return self._search('genre_ids')
-
-    @property
-    def video_id(self):
-        return self._search('id')
-
-    @property
-    def original_language(self):
-        return self._search('original_language')
-
-    @property
-    def overview(self):
-        return self._search('overview')
-
-    @property
-    def popularity(self):
-        return self._search('popularity')
-
-    @property
-    def poster_path(self):
-        return self._search('poster_path')
-
-    @property
-    def vote_average(self):
-        return self._search('vote_average')
-
-    @property
-    def vote_count(self):
-        return self._search('vote_count')
-
-    @property
-    def title(self) -> list:
-        return self._search('title')
-
-    @property
-    def original_title(self):
-        return self._search('original_title')
-
-    @property
-    def release_date(self):
-        return self._search('release_date')
-
-    @property
-    def translations(self):
-        details = self.mv_tmdb.details(self.video_id)
-        if getattr(details, 'tagline', False):
-            return [r['data']['title'] for r in details['translations']['translations']]
-
-    @property
-    def details(self):
-        """
-        Creo una lista di dizionari dove viene riportato per ogni dizionario titolo tradotto,tagline,videoid
+         Confronto le traduzioni di ogni risultato nella pagina con il titolo in input
         :return:
         """
-        details_dictionary_list = []
-        for title, video_id, year in self.video_id:
-            details = self.mv_tmdb.details(video_id)
-
-            if getattr(details, 'translations', False):
-                details_list = [({"title_key": t['data']['title'], "tagline_value": t['data']['tagline'],
-                                  "video_id": video_id})
-                                for t in details['translations']['translations'] if t['data']['title']]
-                details_dictionary_list.append(details_list)
-        return details_dictionary_list
+        for index, page in enumerate(self.__page):
+            for translation in page.translations:
+                if 'title' in translation['data']:
+                    name = translation['data'].get('title', '')
+                else:
+                    name = translation['data'].get('name', '')
+                name = Manage_titles.clean(unidecode(name))
+                tagline = Manage_titles.clean(Manage_titles.accented_remove(translation['data']['tagline']))
+                ext_title = Manage_titles.clean(unidecode(self.ext_title))
+                if name:
+                    if ext_title == name:
+                        # todo aggiungere anche confronto con Year ?
+                        return page
+                    else:
+                        ratio = fuzz.ratio(ext_title, name)
+                        # print(f"EXT_T: {ext_title} VS TRANSLATION NAME {name} RATIO {ratio}\n")
+                        if ratio > 95:
+                            return page
+                if tagline:
+                    if ext_title == tagline:
+                        # print(f"EXT_T: {ext_title} = TAGLINE {tagline} ?")
+                        if self.ext_title in tagline:
+                            # todo aggiungere anche confronto con Year ?
+                            return page
+                        else:
+                            ratio = fuzz.ratio(ext_title, tagline)
+                            # print(f"EXT_T: {ext_title} = TAGLINE {tagline} RATIO {ratio}\n")
+                            if ratio > 95:
+                                return page
 
     def keywords(self, video_id: int) -> str:
-        details = self.mv_tmdb.details(video_id)
-        keywords = details.keywords
-        if keywords['keywords']:
-            keywords = ','.join([key['name'] for key in keywords['keywords']])
-            return keywords
-
-    def cerca(self):
-        if not self.confronto:
-            for det in self.details:
-                for det2 in det:
-                    if (utitlity.Manage_titles.clean(self.myguessit.guessit_alternative.lower()) in
-                            utitlity.Manage_titles.clean(det2['title_key'].lower())):
-                        if (utitlity.Manage_titles.clean(self.myguessit.guessit_title.lower()) in
-                                utitlity.Manage_titles.clean(det2['title_key'].lower())):
-                            return det2['video_id']
-        else:
-            # todo: con più risultati per titoli identici scegli il primo per default
-            # todo: Se l'anno è disponibile sceglie quello con titolo e anno identico
-            return self.confronto[0][1]
-
-
-class TmdbSeries:
-    def __init__(self, myguessit: Myguessit):
-
-        # TMDB
-        # todo: rimuovere i ':' dal file_name e dal name in tmdb poi confrontare
-        # todo: rimuovere il confronto con la data in serie se non disponibile da field_name
-
-        """
-         anche se il risultato delle ricerca commuta la lingua non posso fare il confronto con due lingue
-         diverse
-
-        :param myguessit:
-        """
-        self.myguessit = myguessit
-
-        # modello per l'italiano python -m spacy download it_core_news_md
-        # Per il momento uso spacy. Forse un pochino esagerato..
-        nlp = spacy.load("it_core_news_md")
-        Language.factory("language_detector", func=self.get_lang_detector)
-        nlp.add_pipe('sentencizer')
-        nlp.add_pipe('language_detector', last=True)
-        text = self.myguessit.guessit_title
-        check = nlp(text)
-        # Lingua rilevata
-        self.lang = check._.language['language']
-        # Percentuale
-        self.score = check._.language['score']
-        print(f"Title: {self.myguessit.guessit_title}")
-        print(f"Lang: {self.lang}")
-        print(f"Score: {self.score}")
-        self.tmdb = TMDb()
-        self.tmdb.api_key = TMDB_APIKEY
-        self.tmdb.language = self.lang
-        self.tmdb.debug = True
-        self.tv_tmdb = TV()
-        self.result = None
-
-    def get_lang_detector(self, nlp, name):
-        return LanguageDetector()
-
-    def _search(self, attributo: str) -> list:
-
-        """
-        Determina se cercare in movies o series ( Vale per TMDB)
-        :param attributo:
-        :return:
-        """
-
-        self.result = self.tv_tmdb.search(self.myguessit.guessit_title)
-        if not self.result['results']:
-            utitlity.Console.print("La cartella non sembra contenere una serie tv..Verifica", 1)
-            sys.exit()
-
-        """
-        Cerca nei risultati con l'attributo scelto es: 'title' e ritorna una lista  
-        """
-
-        return [(item[attributo], item['id'], datetime.strptime(item['first_air_date'],
-                                                                '%Y-%m-%d').year)
-                for item in self.result if item['first_air_date']]
-
-    @property
-    def confronto(self) -> list:
-        """
-        un elenco di chiamate API per svolgere le funzioni principali
-        Se la data nel file_name è disponibile viene confrontata con i risultati in tmdb per filtrare
-        eventuali video con lo stesso nome ma con data differenti.
-        Se non disponibile confronta solo il titolo prendendo il primo risulato in cima alla lista
-        todo: con quale altro dato in and posso confrontarlo in questo caso ?
-
-        :return: ritorna il titolo con lo stesso anno di uscita e titolo identico
-        """
-        candidate = self._search('name')
-        if self.myguessit.guessit_year:
-            return [(title, video_id, year) for title, video_id, year in candidate if
-                    year == self.myguessit.guessit_year
-                    and utitlity.Manage_titles.clean(title.lower()) ==
-                    utitlity.Manage_titles.clean(self.myguessit.guessit_title.lower())]
-        else:
-            return [(title, video_id, year) for title, video_id, year in candidate
-                    if utitlity.Manage_titles.clean(title.lower()) ==
-                    utitlity.Manage_titles.clean(self.myguessit.guessit_title.lower())]
-
-    @property
-    def adult(self):
-        return self._search('adult')
-
-    @property
-    def backdrop_path(self):
-        return self._search('backdrop_path')
-
-    @property
-    def genre_ids(self):
-        return self._search('genre_ids')
-
-    @property
-    def video_id(self):
-        return self._search('id')
-
-    @property
-    def original_language(self):
-        return self._search('original_language')
-
-    @property
-    def overview(self):
-        return self._search('overview')
-
-    @property
-    def popularity(self):
-        return self._search('popularity')
-
-    @property
-    def poster_path(self):
-        return self._search('poster_path')
-
-    @property
-    def vote_average(self):
-        return self._search('vote_average')
-
-    @property
-    def vote_count(self):
-        return self._search('vote_count')
-
-    @property
-    def title(self) -> list:
-        return self._search('name')
-
-    @property
-    def original_title(self):
-        return self._search('original_name')
-
-    @property
-    def release_date(self):
-        return self._search('first_air_date')
-
-    @property
-    def translations(self):
-        details = self.tv_tmdb.details(self.video_id)
-        if getattr(details, 'tagline', False):
-            return [r['data']['title'] for r in details['translations']['translations']]
-
-    @property
-    def details(self):
-        """
-        Creo una lista di dizionari dove viene riportato per ogni dizionario titolo tradotto,tagline,videoid
-        :return:
-        """
-
-        details_dictionary_list = []
-        for title, video_id, year in self.video_id:
-            details = self.tv_tmdb.details(video_id)
-            if getattr(details, 'translations', False):
-                details_list = [({"title_key": t['data']['name'], "tagline_value": t['data']['tagline'],
-                                  "video_id": video_id})
-                                for t in details['translations']['translations'] if t['data']['name']]
-                details_dictionary_list.append([details_list, video_id])
-        return details_dictionary_list
-
-    def cerca(self):
-        if not self.confronto:
-            for title_keys, video_id in self.details:
-                for title_key in title_keys:
-                    if (utitlity.Manage_titles.clean(self.myguessit.guessit_title.lower()) in
-                            utitlity.Manage_titles.clean(title_key['title_key'].lower())):
-                        if (utitlity.Manage_titles.clean(self.myguessit.guessit_alternative.lower())
-                                in utitlity.Manage_titles.clean(title_key['title_key'].lower())):
-                            return video_id
-        else:
-            return self.confronto[0][1]
+        details = self.tmdb.details(video_id)
+        if "keywords" in details:
+            keywords = details.keywords
+            if keywords['keywords']:
+                keywords = ','.join([key['name'] for key in keywords['keywords']])
+                return keywords
