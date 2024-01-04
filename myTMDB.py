@@ -115,7 +115,6 @@ class MyTmdb:
         return result
 
     def __requests(self):
-        self.ext_title = self.ext_title  # Manage_titles.prefil(self.ext_title)
         self.__result = self.tmdb.search(self.ext_title)
         print(f"\n[TMDB Search]..........  {self.ext_title}")
         print(f"[TMDB obj].............  {self.tmdb}")
@@ -126,12 +125,14 @@ class MyTmdb:
                 results = Results()
                 try:
                     if isinstance(self.tmdb, TV):
-                        results.title = result['name']
+                        # Solo per tmdb esclude type (web-dl ecc)
+                        results.title = result['name'].replace('-', ' ')
                         results.original_title = result['original_name']
                         results.date = result['first_air_date']
 
                     if isinstance(self.tmdb, Movie):
-                        results.title = result['title']
+                        # Solo per tmdb esclude type (web-dl ecc)
+                        results.title = result['title'].replace('-', ' ')
                         results.original_title = result['original_title']
                         results.date = getattr(result, 'release_date', '')
                     # ALL
