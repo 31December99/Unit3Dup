@@ -23,3 +23,8 @@ class SearchTvShow:
             print(f"[TMDB BACKDROP]..........  {url_backdrop}")
             print(f"[TMDB KEYWORDS]..........  {result.keywords}\n")
             return result
+
+    def get_keywords(self, videoid: int) -> str:
+        return self.mytmdb.keywords(video_id=videoid)
+
+
