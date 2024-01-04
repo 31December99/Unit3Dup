@@ -32,6 +32,7 @@ class Video:
         # Screenshots samples
         self.samples_n = 6
         # Catturo i frames del video
+        print(f"[ CAPTURING SCREEN... ]")
         self.video_capture = cv2.VideoCapture(self.file_name)
 
     @property
@@ -44,8 +45,13 @@ class Video:
 
     @property
     def standard(self) -> int:
-        # is this a standard video ?
-        return 1 if self.video_capture.get(cv2.CAP_PROP_FRAME_WIDTH) < 720 else '0'
+        # SD o HD ?
+        if self.video_capture.get(cv2.CAP_PROP_FRAME_WIDTH) < 720:
+            print(f"[HD]........... YES")
+            return 1
+        else:
+            print(f"[HD]........... NO")
+            return 0
 
     @property
     def size(self) -> int:
@@ -91,7 +97,6 @@ class Video:
             if not ret:
                 continue
             screenshot_name = f'screenshot_{frame_number}.jpg'
-            print(screenshot_name)
             frames_list.append(screenshot_name)
             quality = 90
             cv2.imwrite(screenshot_name, frame, [cv2.IMWRITE_JPEG_QUALITY, quality])
@@ -105,10 +110,10 @@ class Video:
         descrizione = f"[center]\n"
         for f in self.frames:
             img_host = imageHost.ImgBB(f)
-            descrizione += (f"[url={img_host.upload['data']['display_url']}][img=350]"
-                            f"{img_host.upload['data']['display_url']}[/img][/url]")
+            img_url = img_host.upload['data']['display_url']
+            descrizione += (f"[url={img_url}][img=350]"
+                            f"{img_url}[/img][/url]")
         descrizione += "\n[/center]"
-
         return descrizione
 
     def _freelech(self) -> int:
