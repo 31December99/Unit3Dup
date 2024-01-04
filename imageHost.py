@@ -37,4 +37,5 @@ class ImgBB(ImgHost):
             'image': (None, self.image),
         }
         response = requests.post('https://api.imgbb.com/1/upload', params=params, files=files)
+        print(f"[IMG]..........  {response.json()['data']['url_viewer']}")
         return response.json()
