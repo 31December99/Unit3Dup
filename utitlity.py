@@ -35,7 +35,7 @@ class Manage_titles:
 
     @staticmethod
     def clean(filename: str):
-        name = filename
+        name = filename.lower()
         for punct in Manage_titles.marks:
             name = name.replace(punct, ' ')
         name = name.split()
@@ -90,6 +90,7 @@ class Manage_titles:
         for word in word_list:
             for key, value in type_dict.items():
                 if word == key:
+                    print(f"\n[TYPE]................  {word.upper()}\n")
                     return type_dict[word]
 
         # Se non trova la keyword 'codec' cerca eventuli nomi di codec
