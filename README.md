@@ -16,23 +16,23 @@ This Python script generates and uploads torrents based on input provided for mo
 
 ## Usage
 
-1. Provide a Movie or TV Series title as input.
+1. Make sure to run the script followed by the command "-movie" and the path to the file or "-serie" followed
+   by the folder containing the series.
+2. Provide a Movie or TV Series title as input.
 2. Run the Python script.
 3. The script will create a torrent, extract screenshots, generate meta-information, search for TMDB ID, and upload to UNIT3D.
 
 ## Dependencies
 
 - requiremensts.txt
-- python -m spacy download it_core_news_md
+
 ## Installation
 
 1. Clone this repository.
 2. Install the required dependencies using PIP.
-3. Make sure to run the script followed by the command "-movie" and the path to the file or "-serie" followed
-   by the folder containing the series.
-4. Config address and port for qbittorrent webui
-5. Set default save path in qbittorrent as the main download folder
-6. Run the script with botITT.py
+3. Config address and port for qbittorrent webui
+4. Set default save path in qbittorrent as the main download folder
+5. Run the script with botITT.py
 
 ## Configuration
 
