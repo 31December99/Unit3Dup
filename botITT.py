@@ -8,6 +8,7 @@ import pvtVideo
 import pvtTorrent
 import utitlity
 import Contents
+from search import SearchTvShow
 from decouple import config
 
 ITT_PASS_KEY = config('ITT_PASS_KEY')
@@ -31,21 +32,21 @@ class ITtorrents:
         parser.add_argument('-movie', '--movie', nargs=1, type=str, help='Movie')
         args = parser.parse_args()
         if args.serie:
+            self.mytmdb = SearchTvShow('Serie')
             self.content = Contents.Args(args.serie)
             self.metainfo = self.content.folder()
             self.Itt.data['name'] = utitlity.Manage_titles.clean(self.content.base_name)
-            self.myguess = myTMDB.Myguessit(self.content.base_name)
-            self.tmdb_series = myTMDB.TmdbSeries(self.myguess)
-            self.video_tmdb_id = self.tmdb_series.cerca()
+            self.myguess = myTMDB.Myguessit(self.content.file_name)
+            self.result = self.mytmdb.start(str(self.myguess.guessit_title))
             self.category = 2
 
         if args.movie:
+            self.mytmdb = SearchTvShow('Movie')
             self.content = Contents.Args(args.movie)
             self.metainfo = self.content.file()
             self.Itt.data['name'] = utitlity.Manage_titles.clean(self.content.tracker_file_name)
             self.myguess = myTMDB.Myguessit(self.content.file_name)
-            self.tmdb_movie = myTMDB.TmdbMovie(self.myguess)
-            self.video_tmdb_id = self.tmdb_movie.cerca()
+            self.result = self.mytmdb.start(str(self.myguess.guessit_title))
             self.category = 1
 
         self.mytorrent = pvtTorrent.Mytorrent(contents=self.content, meta=self.metainfo)
@@ -63,11 +64,12 @@ class ITtorrents:
         self.Itt.data['type_id'] = utitlity.Manage_titles.filterType(self.content.file_name)
         self.Itt.data['season_number'] = int(self.myguess.guessit_season)
         self.Itt.data['episode_number'] = int(self.myguess.guessit_season)
-        self.Itt.data['tmdb'] = self.video_tmdb_id
+        if self.result:
+            self.Itt.data['tmdb'] = self.result.video_id
         self.Itt.data['category_id'] = self.category
         self.Itt.data['resolution_id'] = utitlity.Manage_titles.filterResolution(self.content.file_name)
 
-        if not self.video_tmdb_id:
+        if not self.result:
             while True:
                 utitlity.Console.print("Non è stato possibile identificare il TMDB ID. Inserisci un numero..", 2)
                 self.video_tmdb_id = input(f"> ")
@@ -78,7 +80,7 @@ class ITtorrents:
                 if 's' == user_answ.lower():
                     self.Itt.data['tmdb'] = self.video_tmdb_id
                     break
-        self.Itt.data['keywords'] = self.tmdb_movie.keywords(self.Itt.data['tmdb'])
+        self.Itt.data['keywords'] = self.result.keywords
         tracker_response = self.Itt.upload_t(data=self.Itt.data, file_name=os.path.join(self.content.path,
                                                                                         self.mytorrent.read()))
         if tracker_response['success']:
