@@ -79,8 +79,14 @@ class ITtorrents:
                 user_answ = input("Sei sicuro ? (s/n)> ")
                 if 's' == user_answ.lower():
                     self.Itt.data['tmdb'] = self.video_tmdb_id
-                    break
-        self.Itt.data['keywords'] = self.result.keywords
+                    keywords = self.mytmdb.get_keywords(int(self.video_tmdb_id))
+                    if 'The resource you requested could not be found.' not in keywords:
+                        self.Itt.data['keywords'] = keywords
+                        break
+                    print("Riprova... ")
+        else:
+            self.Itt.data['keywords'] = self.result.keywords
+
         tracker_response = self.Itt.upload_t(data=self.Itt.data, file_name=os.path.join(self.content.path,
                                                                                         self.mytorrent.read()))
         if tracker_response['success']:
