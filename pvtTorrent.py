@@ -43,9 +43,10 @@ class Mytorrent:
         self.mytorr.created_by = "bITT"
         self.mytorr.private = True
         self.mytorr.segments = 16 * 1024 * 1024  # 16MB
+        print(f"[ HASHING ]")
         with HashProgressBar() as progress:
             self.mytorr.generate(threads=0, callback=progress.callback, interval=0)
-
+        print("\n")
     @property
     def write(self):
         torrent_name = os.path.join(self.path, self.file_name) \
