@@ -1,4 +1,5 @@
 #!/usr/bin/env python3.9
+import re
 from datetime import datetime
 
 
@@ -30,12 +31,13 @@ class Console:
 
 
 class Manage_titles:
+    # todo: rimvuoere '.' senza rimuoverli da DD5.1 H.264 ecc
     marks = ['.', ',', ';', ':', '!', '?', '"', '(', ')', '[', ']', '{', '}', '/', '\\', '&', '*',
-             '$', '%', '#', '@', '_',  '\'', '’', '–', '+'] # '-',
+             '$', '%', '#', '@', '_', '+']  # '-','’' ,'\'','–'
 
     @staticmethod
     def clean(filename: str):
-        name = filename.lower()
+        name = filename
         for punct in Manage_titles.marks:
             name = name.replace(punct, ' ')
         name = name.split()
@@ -68,6 +70,7 @@ class Manage_titles:
             "encode": 3,
             "web-dl": 4,
             "webdl": 4,
+            "web-dlmux": 4,
             "webrip": 5,
             "hdtv": 6,
             "flac": 7,
@@ -87,23 +90,21 @@ class Manage_titles:
             "pack": 22,
             "avi": 23,
         }
+
         for word in word_list:
             for key, value in type_dict.items():
                 if word == key:
                     print(f"\n[TYPE]................  {word.upper()}\n")
                     return type_dict[word]
 
-        # Se non trova la keyword 'codec' cerca eventuli nomi di codec
+        # Se non trova la keyword 'codec' cerca eventuali nomi di codec
         if Manage_titles.filterCodec(file_name):
             return type_dict['encode']  # encode
         return type_dict['altro']
 
     @staticmethod
     def filterCodec(file_name: str) -> bool:
-
-        file_name = Manage_titles.clean(file_name)
         word_list = file_name.lower().strip().split(" ")
-
         video_codecs = [
             "h261",
             "h262",
@@ -170,7 +171,8 @@ class Manage_titles:
             "vp1",
             "amv",
             "daala",
-            "gecko"
+            "gecko",
+
         ]
         for word in word_list:
             if word in video_codecs:
