@@ -103,7 +103,12 @@ class MyTmdb:
             self.tmdb = self.__mv_tmdb
 
     def search(self, ext_title: str):
-        self.ext_title = ext_title
+        self.ext_title = ext_title.lower()
+        self.ext_title = self.ext_title.replace('-', ' ')
+        self.ext_title = self.ext_title.replace('–', ' ')
+        self.ext_title = self.ext_title.replace('’', ' ')
+        self.ext_title = self.ext_title.replace('\'', ' ')
+
         self.__requests()
         result = self.__search_titles()
         if not result:
@@ -126,15 +131,30 @@ class MyTmdb:
                 try:
                     if isinstance(self.tmdb, TV):
                         # Solo per tmdb esclude type (web-dl ecc)
-                        results.title = result['name'].replace('-', ' ')
-                        results.original_title = result['original_name']
+                        results.title = result['name'].replace('-', ' ').lower()
+                        results.title = results.title.replace('–', ' ')
+                        results.title = results.title.replace('’', ' ')
+                        results.title = results.title.replace('\'', ' ')
+
+                        results.original_title = result['original_name'].replace('-', ' ').lower()
+                        results.original_title = results.original_title.replace('–', ' ')
+                        results.original_title = results.original_title.replace('’', ' ')
+                        results.original_title = results.original_title.replace('\'', ' ')
                         results.date = result['first_air_date']
 
                     if isinstance(self.tmdb, Movie):
                         # Solo per tmdb esclude type (web-dl ecc)
-                        results.title = result['title'].replace('-', ' ')
-                        results.original_title = result['original_title']
+                        results.title = result['title'].replace('-', ' ').lower()
+                        results.title = results.title.replace('–', ' ')
+                        results.title = results.title.replace('’', ' ')
+                        results.title = results.title.replace('\'', ' ')
+
+                        results.original_title = result['original_title'].replace('-', ' ').lower()
+                        results.original_title = results.original_title.replace('–', ' ')
+                        results.original_title = results.original_title.replace('’', ' ')
+                        results.original_title = results.original_title.replace('\'', ' ')
                         results.date = getattr(result, 'release_date', '')
+
                     # ALL
                     results.genre_ids = getattr(result, 'genre_ids', '')
                     results.video_id = result['id']
@@ -143,13 +163,12 @@ class MyTmdb:
                     results.overview = result['overview']
                     results.popularity = getattr(result, 'popularity', '')
                     details = self.tmdb.details(result['id'])
-
                     if 'translations' in details:
                         for iso in details['translations']['translations']:
                             results.translations.append(iso)
                         results.alternative.append(self.tmdb.alternative_titles(result['id']))
+
                 except tmdbv3api.exceptions.TMDbException as e:
-                    # print(f">>>>>>>> ** TMDB ** <<<<<<<<<{e} - tmdb details non disponibile")
                     results.translations = []
                     results.alternative = []
                 self.__page.append(results)
@@ -159,8 +178,8 @@ class MyTmdb:
 
     def __search_alternative(self):
         field = 'titles' if isinstance(self.tmdb, Movie) else 'results'
+        # print(f".:: ALTERNATIVE n°{len(self.__page)} ::.")
         for index, page in enumerate(self.__page):
-            # print(f".:: ALTERNATIVE n°{index} ::.")
             for iso in page.alternative:
                 results = iso[field]
                 ext_title = Manage_titles.clean(unidecode(self.ext_title))
@@ -181,11 +200,11 @@ class MyTmdb:
          Confronto il titolo di ogni risultato nella pagina con il titolo in input
         :return:
         """
+        # print(f".:: SEARCH_TITLES RESULT n°{len(self.__page)} ::.")
         for index, page in enumerate(self.__page):
             original_title = Manage_titles.clean(Manage_titles.accented_remove(page.original_title))
             title = Manage_titles.clean(Manage_titles.accented_remove(page.title))
             ext_title = Manage_titles.clean(Manage_titles.accented_remove(self.ext_title))
-            # print(f".:: RESULT n°{index} ::.")
             if original_title:
                 # print(f"EXT_T: {ext_title} = ORIGINAL TITLE: {original_title}")
                 if ext_title == original_title:
@@ -201,7 +220,7 @@ class MyTmdb:
                     return page
                 else:
                     ratio = fuzz.ratio(ext_title, title)
-                    # print(f"EXT_T: {ext_title} VS TITLE:{title} RATIO: {ratio}\n")
+                    # print(f"EXT_T: {ext_title} VS TITLE: {title} RATIO: {ratio}\n")
                     if ratio > 95:
                         return page
 
@@ -210,15 +229,27 @@ class MyTmdb:
          Confronto le traduzioni di ogni risultato nella pagina con il titolo in input
         :return:
         """
+        # print(f".:: TRANSLATION n°{len(self.__page)} ::.")
         for index, page in enumerate(self.__page):
             for translation in page.translations:
                 if 'title' in translation['data']:
                     name = translation['data'].get('title', '')
                 else:
                     name = translation['data'].get('name', '')
-                name = Manage_titles.clean(unidecode(name))
-                tagline = Manage_titles.clean(Manage_titles.accented_remove(translation['data']['tagline']))
+                name = Manage_titles.clean(unidecode(name)).lower()
+                tagline = Manage_titles.clean(Manage_titles.accented_remove(translation['data']['tagline'])).lower()
                 ext_title = Manage_titles.clean(unidecode(self.ext_title))
+
+                name = name.replace('-', ' ')
+                name = name.replace('–', ' ')
+                name = name.replace('’', ' ')
+                name = name.replace('\'', ' ')
+
+                tagline = tagline.replace('-', ' ')
+                tagline = tagline.replace('–', ' ')
+                tagline = tagline.replace('’', ' ')
+                tagline = tagline.replace('\'', ' ')
+
                 if name:
                     if ext_title == name:
                         # todo aggiungere anche confronto con Year ?
