@@ -48,7 +48,7 @@ This project is licensed under the MIT License
 
 # .env file Example:
 
-- ITT_BASE_URL=https://itatorrents.xyz/
+- ITT_BASE_URL=
 - ITT_PASS_KEY=xxxxxxxx
 - ITT_API_TOKEN=xxxxxx
 - TMDB_APIKEY=xxxxx
