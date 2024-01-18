@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.9
+# -*- coding: utf-8 -*-
 import random
 import cv2
 import os
