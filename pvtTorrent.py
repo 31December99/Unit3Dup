@@ -16,6 +16,7 @@ ITT_API_TOKEN = config('ITT_API_TOKEN')
 QBIT_USER = config('QBIT_USER')
 QBIT_PASS = config('QBIT_PASS')
 QBIT_PORT = config('QBIT_PORT')
+ANNOUNCE_LIST = config('ANNOUNCE_LIST')
 
 
 class HashProgressBar(tqdm):
@@ -37,10 +38,10 @@ class Mytorrent:
         self.metainfo = json.loads(meta)
         self.paths = self.path if self.content_type else os.path.join(self.path, self.file_name)
         self.mytorr = torf.Torrent(path=self.paths)
-        self.mytorr.announce_list = [f"https://itatorrents.xyz/announce/{ITT_PASS_KEY}/"]
+        self.mytorr.announce_list = [f"{ANNOUNCE_LIST}/{ITT_PASS_KEY}/"]
         self.mytorr.comment = "ciao"
         self.mytorr.name = self.file_name if not self.base_name else self.base_name
-        self.mytorr.created_by = "bITT"
+        self.mytorr.created_by = "bUnit"
         self.mytorr.private = True
         self.mytorr.segments = 16 * 1024 * 1024  # 16MB
         print(f"[ HASHING ]")
@@ -51,7 +52,6 @@ class Mytorrent:
     def write(self):
         torrent_name = os.path.join(self.path, self.file_name) \
             if not self.base_name else os.path.join(self.path, self.base_name)
-        # print("MyTorrent -> ", torrent_name)
         try:
             self.mytorr.write(f"{torrent_name}.torrent")
         except torf.TorfError as e:
@@ -62,7 +62,6 @@ class Mytorrent:
     def read(self) -> str:
         torrent_name = os.path.join(self.path, self.file_name) \
             if not self.base_name else os.path.join(self.path, self.base_name)
-        # print("MyTorrent Read-> ", torrent_name)
         return torrent_name
 
     def _download(self, link: requests) -> typing.IO:
