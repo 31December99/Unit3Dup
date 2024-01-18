@@ -1,5 +1,6 @@
 #!/usr/bin/env python3.9
 import argparse
+import json
 import os.path
 import requests
 import pvtTracker
@@ -13,6 +14,7 @@ from decouple import config
 
 ITT_PASS_KEY = config('ITT_PASS_KEY')
 ITT_API_TOKEN = config('ITT_API_TOKEN')
+ITT_BASE_URL = config('ITT_BASE_URL')
 
 
 class ITtorrents:
@@ -23,7 +25,7 @@ class ITtorrents:
             print("il file .env non è stato configurato o i nomi delle variabili sono errate.")
             return
 
-        self.Itt = pvtTracker.ITT(base_url="https://itatorrents.xyz/", api_token=ITT_API_TOKEN,
+        self.Itt = pvtTracker.ITT(base_url=ITT_BASE_URL, api_token=ITT_API_TOKEN,
                                   pass_key=ITT_PASS_KEY)
         self.category = None
 
@@ -89,9 +91,10 @@ class ITtorrents:
 
         tracker_response = self.Itt.upload_t(data=self.Itt.data, file_name=os.path.join(self.content.path,
                                                                                         self.mytorrent.read()))
-        if tracker_response['success']:
-            pvtTracker.Utility.console(tracker_response['message'], 2)
-            download_torrent_dal_tracker = requests.get(tracker_response['data'])
+        if tracker_response.status_code == 200:
+            tracker_response_body = json.loads(tracker_response.text)
+            pvtTracker.Utility.console(tracker_response_body['message'], 2)
+            download_torrent_dal_tracker = requests.get(tracker_response_body['data'])
             if download_torrent_dal_tracker.status_code == 200:
                 self.mytorrent.qbit(download_torrent_dal_tracker)
         else:
