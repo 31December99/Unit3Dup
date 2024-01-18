@@ -19,6 +19,7 @@ QBIT_USER = config('QBIT_USER')
 QBIT_PASS = config('QBIT_PASS')
 QBIT_PORT = config('QBIT_PORT')
 ANNOUNCE_LIST = config('ANNOUNCE_LIST')
+TORRENTS_FOLDER = config('TORRENTS_FOLDER')
 
 
 class HashProgressBar(tqdm):
@@ -92,8 +93,11 @@ class Mytorrent:
         for torrent in torrents:
             if torrent['name'] == self.mytorr.name:
                 infohash = torrent['hash']
-                logging.info(f'Infohash {infohash}')
+                # Location del torrent
+                self.qb.set_torrent_location(infohash, TORRENTS_FOLDER)
                 self.qb.recheck(infohash_list=infohash)
+                logging.info(f'[TORRENT INFOHASH]............  {infohash}')
+                logging.info(f'[TORRENT LOCATION]............  {self.mytorr.location}')
                 return True
         logging.info(f"Non ho trovato nessun torrents in list corripondente al tuo {self.mytorr.name}")
         return False
