@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.9
+# -*- coding: utf-8 -*-
 import argparse
 import json
 import os.path
@@ -9,8 +9,12 @@ import pvtVideo
 import pvtTorrent
 import utitlity
 import Contents
+import logging
 from search import SearchTvShow
 from decouple import config
+
+
+logging.basicConfig(level=logging.INFO)
 
 ITT_PASS_KEY = config('ITT_PASS_KEY')
 ITT_API_TOKEN = config('ITT_API_TOKEN')
@@ -73,11 +77,11 @@ class ITtorrents:
 
         if not self.result:
             while True:
-                utitlity.Console.print("Non è stato possibile identificare il TMDB ID. Inserisci un numero..", 2)
+                logging.info("Non è stato possibile identificare il TMDB ID. Inserisci un numero..")
                 self.video_tmdb_id = input(f"> ")
                 if not self.video_tmdb_id.isdigit():
                     continue
-                utitlity.Console.print(f"Hai digitato {self.video_tmdb_id}", 2)
+                logging.info(f"Hai digitato {self.video_tmdb_id}")
                 user_answ = input("Sei sicuro ? (s/n)> ")
                 if 's' == user_answ.lower():
                     self.Itt.data['tmdb'] = self.video_tmdb_id
@@ -93,15 +97,16 @@ class ITtorrents:
                                                                                         self.mytorrent.read()))
         if tracker_response.status_code == 200:
             tracker_response_body = json.loads(tracker_response.text)
-            pvtTracker.Utility.console(tracker_response_body['message'], 2)
+            logging.info(tracker_response_body['message'])
             download_torrent_dal_tracker = requests.get(tracker_response_body['data'])
             if download_torrent_dal_tracker.status_code == 200:
                 self.mytorrent.qbit(download_torrent_dal_tracker)
         else:
-            pvtTracker.Utility.console(f"Non è stato possibile fare l'upload => {tracker_response}", 1)
+            logging.info(f"Non è stato possibile fare l'upload => {tracker_response} {tracker_response.text}")
 
 
 if os.name == 'nt':
     os.system('color')
 
-ittorrents = ITtorrents()
+if __name__ == "__main__":
+    ittorrents = ITtorrents()
