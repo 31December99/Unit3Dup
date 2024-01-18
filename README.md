@@ -31,7 +31,7 @@ This Python script generates and uploads torrents based on input provided for mo
 1. Clone this repository.
 2. Install the required dependencies using PIP.
 3. Config address and port for qbittorrent webui
-4. Set default save path in qbittorrent as the main download folder
+4. Set the configuration .env file
 5. Run the script with botITT.py
 
 ## Configuration
@@ -48,7 +48,7 @@ This project is licensed under the MIT License
 
 # .env file Example:
 
-- ITT_BASE_URL=
+- ITT_BASE_URL=Tracker url
 - ITT_PASS_KEY=xxxxxxxx
 - ITT_API_TOKEN=xxxxxx
 - TMDB_APIKEY=xxxxx
@@ -56,7 +56,8 @@ This project is licensed under the MIT License
 - QBIT_USER=xxxxxxx
 - QBIT_PASS=xxxxxx
 - QBIT_PORT=xxxxxx
-- 
+- TORRENTS_FOLDER=
+
 # ITT_BASE_URL
 Tracker URL
 
@@ -77,3 +78,6 @@ Qbittorrent USER
 
 # QBIT_PASS
 Qbittorrent PASS
+
+# TORRENTS_FOLDER
+Torrent folder location
