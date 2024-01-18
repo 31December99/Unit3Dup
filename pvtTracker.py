@@ -44,7 +44,7 @@ class Myhttp:
 
         self.headers = {
             "User-Agent": "Test/0.0 (Linux 5.10.0-23-amd64)",
-            # "Content-Type": "application/json",
+            "Accept": "application/json",
         }
         self.params = {
             "api_token": self.api_token,
@@ -56,22 +56,22 @@ class Myhttp:
             "mediainfo": "",
             "bdinfo": " ",
             "type_id": "1",
-            "resolution_id": "10",  # mandatory
+            "resolution_id": 10,  # mandatory
             "tmdb": "",  # mandatory
             "imdb": "0",  # no ancora implementato
             "tvdb": "0",  # no ancora implementato
             "mal": "0",  # no ancora implementato
             "igdb": "0",  # no ancora implementato
             "anonymous": "0",
-            "stream": "0",  # no ancora implementato
+            "stream": "0",
             "sd": "0",
             "keywords": "",
-            "personal_release": "0",  # no ancora implementato
-            "internal": 0,  # no ancora implementato
-            "featured": 0,  # no ancora implementato
+            "personal_release": "0",
+            "internal": 0,
+            "featured": 0,
             "free": 0,
-            "doubleup": 0,  # no ancora implementato
-            "sticky": 0  # no ancora implementato
+            "doubleup": 0,
+            "sticky": 0
         }
 
     def _post(self, files: str, data: dict, params: dict):
@@ -87,7 +87,7 @@ class Tracker(Myhttp):
         return requests.get(url=self.filter_url, headers=self.headers, params=params).json()
 
     def _post(self, file: dict, data: dict, params: dict):
-        return requests.post(url=self.upload_url, files=file, data=data, headers=self.headers, params=params).json()
+        return requests.post(url=self.upload_url, files=file, data=data, headers=self.headers, params=params)
 
     def _fetch_all(self, params: dict) -> requests:
         return requests.get(url=self.fetch_url, headers=self.headers, params=params).json()
