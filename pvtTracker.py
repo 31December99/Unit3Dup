@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.9
+# -*- coding: utf-8 -*-
 from datetime import datetime
 import requests
 
@@ -13,21 +13,6 @@ class bcolors:
     ENDC = '\033[0m'
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
-
-
-class Utility:
-
-    @staticmethod
-    def console(message: str, level: int):
-        now = datetime.now()
-        date_now = datetime.today().strftime('%d-%m-%Y')
-        time_now = now.strftime("%H:%M:%S")
-        if level == 1:
-            print(f"<{date_now} {time_now}>{bcolors.FAIL}{message}{bcolors.ENDC}")
-        if level == 2:
-            print(f"<{date_now} {time_now}>{bcolors.OKGREEN}{message}{bcolors.ENDC}")
-        if level == 3:
-            print(f"<{date_now} {time_now}>{bcolors.WARNING}{message}{bcolors.ENDC}")
 
 
 class Myhttp:
