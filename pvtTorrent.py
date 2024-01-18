@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.9
+# -*- coding: utf-8 -*-
 import json
 import os, time
 import sys
@@ -6,10 +6,12 @@ import typing
 import torf
 import requests
 import Contents
-import utitlity
+import logging
 from decouple import config
 from qbittorrent import Client
 from tqdm import tqdm
+
+logging.basicConfig(level=logging.INFO)
 
 ITT_PASS_KEY = config('ITT_PASS_KEY')
 ITT_API_TOKEN = config('ITT_API_TOKEN')
@@ -48,6 +50,7 @@ class Mytorrent:
         with HashProgressBar() as progress:
             self.mytorr.generate(threads=0, callback=progress.callback, interval=0)
         print("\n")
+
     @property
     def write(self):
         torrent_name = os.path.join(self.path, self.file_name) \
@@ -62,7 +65,7 @@ class Mytorrent:
     def read(self) -> str:
         torrent_name = os.path.join(self.path, self.file_name) \
             if not self.base_name else os.path.join(self.path, self.base_name)
-        return torrent_name
+        return str(torrent_name)
 
     def _download(self, link: requests) -> typing.IO:
         torrent_name = os.path.join(self.path, self.file_name) \
@@ -76,8 +79,8 @@ class Mytorrent:
         try:
             self.qb = Client(f'http://127.0.0.1:{QBIT_PORT}/')
         except Exception as e:  # todo
-            utitlity.Console.print("Non è stato possibile collegarsi a qbittorent. Verifica WEBUI", 2)
-            utitlity.Console.print(f"{e}", 2)
+            logging.info("Non è stato possibile collegarsi a qbittorent. Verifica WEBUI")
+            logging.info(f"{e}")
             return False
 
         self.qb.login(username=QBIT_USER, password=QBIT_PASS)
@@ -89,10 +92,10 @@ class Mytorrent:
         for torrent in torrents:
             if torrent['name'] == self.mytorr.name:
                 infohash = torrent['hash']
-                utitlity.Console.print(f'Infohash {infohash}', 2)
+                logging.info(f'Infohash {infohash}')
                 self.qb.recheck(infohash_list=infohash)
                 return True
-        utitlity.Console.print(f"Non ho trovato nessun torrents in list corripondente al tuo {self.mytorr.name}", 2)
+        logging.info(f"Non ho trovato nessun torrents in list corripondente al tuo {self.mytorr.name}")
         return False
 
     @property
