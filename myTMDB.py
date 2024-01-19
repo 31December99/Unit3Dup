@@ -116,9 +116,29 @@ class MyTmdb:
             result = self.__search_alternative()
             if not result:
                 result = self.__search_translations()
-        if result:
+                if not result:
+                    result = self.input_tmdb()
+        else:
             result.keywords = self.keywords(result.video_id)
         return result
+
+    def input_tmdb(self) -> Results:
+        print("Non è stato possibile identificare il TMDB ID. Inserisci un numero..")
+        results = Results()
+        while True:
+            tmdb_id = input(f"> ")
+            if not tmdb_id.isdigit():
+                print(f"Non riconosco {tmdb_id} come un numero ..Riprova")
+                continue
+            print(f"Hai digitato {tmdb_id}")
+            user_answ = input("Sei sicuro ? (s/n)> ")
+            if 's' == user_answ.lower():
+                keywords = self.keywords(int(tmdb_id))
+                print(keywords)
+                if 'The resource you requested could not be found.' not in keywords:
+                    results.video_id = tmdb_id
+                    results.keywords = keywords
+                    return results
 
     def __requests(self):
         self.__result = self.tmdb.search(self.ext_title)
