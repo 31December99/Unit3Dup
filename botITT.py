@@ -20,7 +20,7 @@ ITT_API_TOKEN = config('ITT_API_TOKEN')
 ITT_BASE_URL = config('ITT_BASE_URL')
 
 
-class ITtorrents:
+class Bot:
 
     def __init__(self):
 
@@ -92,4 +92,4 @@ if os.name == 'nt':
     os.system('color')
 
 if __name__ == "__main__":
-    ittorrents = ITtorrents()
+    bot = Bot()
