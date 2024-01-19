@@ -2,8 +2,9 @@
 import json
 import os
 import sys
+import logging
 
-import utitlity
+logging.basicConfig(level=logging.INFO)
 
 
 class Args:
@@ -42,7 +43,7 @@ class Args:
                 # print(self.path)
                 return json.dumps(metainfo, indent=4)
         if not self.file_name:
-            utitlity.Console.print("Non è stato possibile ottenere il nome della cartella", 1)
+            logging.info("Non è stato possibile ottenere il nome della cartella")
             sys.exit()
 
     def file(self) -> str:
@@ -63,7 +64,7 @@ class Args:
                 input("premi un tasto per uscire")
                 sys.exit()
         if not self.file_name:
-            utitlity.Console.print("Non è stato possibile ottenere il nome del file", 1)
+            logging.info("Non è stato possibile ottenere il nome del file")
             sys.exit()
 
     def listdir(self):
