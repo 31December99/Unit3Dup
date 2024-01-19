@@ -13,7 +13,6 @@ import logging
 from search import SearchTvShow
 from decouple import config
 
-
 logging.basicConfig(level=logging.INFO)
 
 ITT_PASS_KEY = config('ITT_PASS_KEY')
@@ -29,6 +28,7 @@ class ITtorrents:
             print("il file .env non è stato configurato o i nomi delle variabili sono errate.")
             return
 
+        print(f"\n[TRACKER]..............  {ITT_BASE_URL}")
         self.Itt = pvtTracker.ITT(base_url=ITT_BASE_URL, api_token=ITT_API_TOKEN,
                                   pass_key=ITT_PASS_KEY)
         self.category = None
@@ -55,6 +55,9 @@ class ITtorrents:
             self.result = self.mytmdb.start(str(self.myguess.guessit_title))
             self.category = 1
 
+            self.Itt.data['tmdb'] = self.result.video_id
+            self.Itt.data['keywords'] = self.result.keywords
+
         self.mytorrent = pvtTorrent.Mytorrent(contents=self.content, meta=self.metainfo)
         self.video = pvtVideo.Video(fileName=str(os.path.join(self.content.path, self.content.file_name)))
         self.torrent = self.mytorrent.write
@@ -63,6 +66,8 @@ class ITtorrents:
         self.descrizione = self.video.description
         self.freelech = self.video.freeLech
 
+        self.Itt.data['category_id'] = self.category
+        self.Itt.data['resolution_id'] = utitlity.Manage_titles.filterResolution(self.content.file_name)
         self.Itt.data['free'] = self.freelech
         self.Itt.data['sd'] = self.standard
         self.Itt.data['mediainfo'] = self.media_info
@@ -70,28 +75,6 @@ class ITtorrents:
         self.Itt.data['type_id'] = utitlity.Manage_titles.filterType(self.content.file_name)
         self.Itt.data['season_number'] = int(self.myguess.guessit_season)
         self.Itt.data['episode_number'] = int(self.myguess.guessit_season)
-        if self.result:
-            self.Itt.data['tmdb'] = self.result.video_id
-        self.Itt.data['category_id'] = self.category
-        self.Itt.data['resolution_id'] = utitlity.Manage_titles.filterResolution(self.content.file_name)
-
-        if not self.result:
-            while True:
-                logging.info("Non è stato possibile identificare il TMDB ID. Inserisci un numero..")
-                self.video_tmdb_id = input(f"> ")
-                if not self.video_tmdb_id.isdigit():
-                    continue
-                logging.info(f"Hai digitato {self.video_tmdb_id}")
-                user_answ = input("Sei sicuro ? (s/n)> ")
-                if 's' == user_answ.lower():
-                    self.Itt.data['tmdb'] = self.video_tmdb_id
-                    keywords = self.mytmdb.get_keywords(int(self.video_tmdb_id))
-                    if 'The resource you requested could not be found.' not in keywords:
-                        self.Itt.data['keywords'] = keywords
-                        break
-                    print("Riprova... ")
-        else:
-            self.Itt.data['keywords'] = self.result.keywords
 
         tracker_response = self.Itt.upload_t(data=self.Itt.data, file_name=os.path.join(self.content.path,
                                                                                         self.mytorrent.read()))
