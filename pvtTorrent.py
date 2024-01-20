@@ -14,9 +14,9 @@ from tqdm import tqdm
 logging.basicConfig(level=logging.INFO)
 
 
-ITT_BASE_URL = config('ITT_BASE_URL')
-ITT_PASS_KEY = config('ITT_PASS_KEY')
-ITT_API_TOKEN = config('ITT_API_TOKEN')
+BASE_URL = config('BASE_URL')
+PASS_KEY = config('PASS_KEY')
+API_TOKEN = config('API_TOKEN')
 QBIT_USER = config('QBIT_USER')
 QBIT_PASS = config('QBIT_PASS')
 QBIT_PORT = config('QBIT_PORT')
@@ -42,7 +42,7 @@ class Mytorrent:
         self.metainfo = json.loads(meta)
         self.paths = self.path if self.content_type else os.path.join(self.path, self.file_name)
         self.mytorr = torf.Torrent(path=self.paths)
-        self.mytorr.announce_list = [f"{ITT_BASE_URL}/announce/{ITT_PASS_KEY}/"]
+        self.mytorr.announce_list = [f"{BASE_URL}/announce/{PASS_KEY}/"]
         self.mytorr.comment = "ciao"
         self.mytorr.name = self.file_name if not self.base_name else self.base_name
         self.mytorr.created_by = "bUnit"
