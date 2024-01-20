@@ -142,7 +142,6 @@ class MyTmdb:
 
     def __requests(self):
         self.__result = self.tmdb.search(self.ext_title)
-        print(f"[TMDB obj].............  {self.tmdb}")
         print(f"[TMDB total-results]...  {self.__result['total_results']}")
         print(f"[TMDB total-pages].....  {self.__result['total_pages']}")
         if self.__result['total_results'] > 0:
