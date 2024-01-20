@@ -32,7 +32,7 @@ This Python script generates and uploads torrents based on input provided for mo
 2. Install the required dependencies using PIP.
 3. Config address and port for qbittorrent webui
 4. Set the configuration .env file
-5. Run the script with botITT.py
+5. Run the script with python start.py
 
 ## Configuration
 
