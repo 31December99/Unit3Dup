@@ -10,29 +10,32 @@ import pvtTorrent
 import utitlity
 import Contents
 import logging
+from typing import Type, Any
 from search import SearchTvShow
 from decouple import config
-from database.itt import Data
+from database.trackers import ITT
 
 logging.basicConfig(level=logging.INFO)
 
-ITT_PASS_KEY = config('ITT_PASS_KEY')
-ITT_API_TOKEN = config('ITT_API_TOKEN')
-ITT_BASE_URL = config('ITT_BASE_URL')
+PASS_KEY = config('PASS_KEY')
+API_TOKEN = config('API_TOKEN')
+BASE_URL = config('BASE_URL')
+TRACKER = config('TRACK_NAME')
 
 
 class Bot:
 
-    def __init__(self):
+    def __init__(self, data: Type[Any]):
 
-        if not ITT_PASS_KEY or not ITT_API_TOKEN:
+        if not PASS_KEY or not API_TOKEN:
             print("il file .env non è stato configurato o i nomi delle variabili sono errate.")
             return
 
-        print(f"\n[TRACKER]..............  {ITT_BASE_URL}")
-        self.Itt = pvtTracker.ITT(base_url=ITT_BASE_URL, api_token=ITT_API_TOKEN,
-                                  pass_key=ITT_PASS_KEY)
+        print(f"\n[TRACKER]..............  {BASE_URL}")
+        self.Itt = pvtTracker.ITT(base_url=BASE_URL, api_token=API_TOKEN,
+                                  pass_key=PASS_KEY)
         self.category = None
+        self.data = data()
 
         parser = argparse.ArgumentParser(description='Commands', add_help=False)
         parser.add_argument('-serie', '--serie', nargs=1, type=str, help='Serie')
@@ -68,12 +71,12 @@ class Bot:
         self.freelech = self.video.freeLech
 
         self.Itt.data['category_id'] = self.category
-        self.Itt.data['resolution_id'] = Data.filterResolution(self.content.file_name)
+        self.Itt.data['resolution_id'] = self.data.filterResolution(self.content.file_name)
         self.Itt.data['free'] = self.freelech
         self.Itt.data['sd'] = self.standard
         self.Itt.data['mediainfo'] = self.media_info
         self.Itt.data['description'] = self.descrizione
-        self.Itt.data['type_id'] = data.filterType(self.content.file_name)
+        self.Itt.data['type_id'] = self.data.filterType(self.content.file_name)
         self.Itt.data['season_number'] = int(self.myguess.guessit_season)
         self.Itt.data['episode_number'] = int(self.myguess.guessit_season)
 
@@ -89,8 +92,8 @@ class Bot:
             logging.info(f"Non è stato possibile fare l'upload => {tracker_response} {tracker_response.text}")
 
 
-if os.name == 'nt':
-    os.system('color')
-
 if __name__ == "__main__":
-    bot = Bot(Data())
+    trackers = {
+        "itt": ITT,
+    }
+    bot = Bot(trackers.get(TRACKER))
