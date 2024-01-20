@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import utitlity
+from unit3d import utitlity
 
 
 class Config:
