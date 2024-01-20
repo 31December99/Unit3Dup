@@ -28,14 +28,20 @@ class Bot:
     def __init__(self, data: Type[Any]):
 
         if not PASS_KEY or not API_TOKEN:
-            print("il file .env non è stato configurato oppure i nomi delle variabili sono errate.")
+            logging.info("il file .env non è stato configurato oppure i nomi delle variabili sono errate.")
             return
 
+        if not data:
+            logging.info("Non riconosco il nome del tracker che hai impostato nel file .env di configurazione")
+            return
+
+        self.tracker_values = data()
         print(f"\n[TRACKER]..............  {BASE_URL}")
         self.tracker = pvtTracker.ITT(base_url=BASE_URL, api_token=API_TOKEN,
                                       pass_key=PASS_KEY)
         self.category = None
-        self.tracker_values = data()
+
+
 
         parser = argparse.ArgumentParser(description='Commands', add_help=False)
         parser.add_argument('-serie', '--serie', nargs=1, type=str, help='Serie')
@@ -95,6 +101,6 @@ class Bot:
 if __name__ == "__main__":
     trackers = {
         "itt": ITT,
-        "shisl": SHAISL,
+        "shaisl": SHAISL,
     }
     bot = Bot(trackers.get(TRACKER_NAME.lower()))
