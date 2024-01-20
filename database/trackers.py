@@ -3,7 +3,20 @@
 import utitlity
 
 
-class Data:
+class Config:
+
+    def filterType(self, file_name: str) -> int:
+        pass
+
+    def filterCodec(self, file_name: str) -> bool:
+        pass
+
+    def filterResolution(self, file_name: str) -> int:
+        pass
+
+
+class ITT(Config):
+
     def filterType(self, file_name: str) -> int:
         """
         Cerca le keyword nel titolo
