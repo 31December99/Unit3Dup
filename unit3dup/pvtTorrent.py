@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import json
-import os, time
+import os
+import time
 import sys
 import typing
 import torf
