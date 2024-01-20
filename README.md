@@ -19,8 +19,8 @@ This Python script generates and uploads torrents based on input provided for mo
 1. Make sure to run the script followed by the command "-movie" and the path to the file or "-serie" followed
    by the folder containing the series.
 2. Provide a Movie or TV Series title as input.
-2. Run the Python script.
-3. The script will create a torrent, extract screenshots, generate meta-information, search for TMDB ID, and upload to UNIT3D.
+3. Run the Python script.
+4. The script will create a torrent, extract screenshots, generate meta-information, search for TMDB ID, and upload to UNIT3D.
 
 ## Dependencies
 
