@@ -14,14 +14,12 @@ from unit3dup import Contents
 
 logging.basicConfig(level=logging.INFO)
 
-
 BASE_URL = config('BASE_URL')
 PASS_KEY = config('PASS_KEY')
 API_TOKEN = config('API_TOKEN')
 QBIT_USER = config('QBIT_USER')
 QBIT_PASS = config('QBIT_PASS')
 QBIT_PORT = config('QBIT_PORT')
-TORRENTS_FOLDER = config('TORRENTS_FOLDER')
 
 
 class HashProgressBar(tqdm):
@@ -37,18 +35,20 @@ class Mytorrent:
 
         self.qb = None
         self.file_name = contents.file_name
-        self.path = contents.path
+        self.torrent_path = contents.path
         self.content_type = contents.type
         self.base_name = contents.base_name
         self.metainfo = json.loads(meta)
-        self.paths = self.path if self.content_type else os.path.join(self.path, self.file_name)
+        self.paths = self.torrent_path if self.content_type else os.path.join(self.torrent_path, self.file_name)
         self.mytorr = torf.Torrent(path=self.paths)
         self.mytorr.announce_list = [f"{BASE_URL}/announce/{PASS_KEY}/"]
         self.mytorr.comment = "ciao"
         self.mytorr.name = self.file_name if not self.base_name else self.base_name
-        self.mytorr.created_by = "bUnit"
+        self.mytorr.created_by = "Unit3d-Up"
         self.mytorr.private = True
         self.mytorr.segments = 16 * 1024 * 1024  # 16MB
+        self.torrent_name = os.path.join(self.torrent_path, self.file_name) if not self.base_name \
+            else os.path.join(self.torrent_path, self.base_name)
         print(f"[ HASHING ]")
         with HashProgressBar() as progress:
             self.mytorr.generate(threads=0, callback=progress.callback, interval=0)
@@ -56,26 +56,32 @@ class Mytorrent:
 
     @property
     def write(self):
+        """
         torrent_name = os.path.join(self.path, self.file_name) \
             if not self.base_name else os.path.join(self.path, self.base_name)
+        """
         try:
-            self.mytorr.write(f"{torrent_name}.torrent")
+            self.mytorr.write(f"{self.torrent_name}.torrent")
         except torf.TorfError as e:
             print(e)
             sys.exit()
         return self.mytorr
 
     def read(self) -> str:
+        """
         torrent_name = os.path.join(self.path, self.file_name) \
             if not self.base_name else os.path.join(self.path, self.base_name)
-        return str(torrent_name)
+        """
+        return str(self.torrent_name)
 
     def _download(self, link: requests) -> typing.IO:
+        """
         torrent_name = os.path.join(self.path, self.file_name) \
             if not self.base_name else os.path.join(self.path, self.base_name)
-        with open(f'{torrent_name}.torrent', 'wb') as file:
+        """
+        with open(f'{self.torrent_name}.torrent', 'wb') as file:
             file.write(link.content)
-        return open(f'{torrent_name}.torrent', 'rb')
+        return open(f'{self.torrent_name}.torrent', 'rb')
 
     def qbit(self, link: requests) -> bool:
         torrent_file = self._download(link)
@@ -96,10 +102,11 @@ class Mytorrent:
             if torrent['name'] == self.mytorr.name:
                 infohash = torrent['hash']
                 # Location del torrent
-                self.qb.set_torrent_location(infohash, TORRENTS_FOLDER)
+                self.qb.set_torrent_location(infohash, self.mytorr.location)
                 self.qb.recheck(infohash_list=infohash)
                 logging.info(f'[TORRENT INFOHASH]............  {infohash}')
                 logging.info(f'[TORRENT LOCATION]............  {self.mytorr.location}')
+                logging.info(f'[TORRENT NAME]................  {self.torrent_name}.torrent')
                 return True
         logging.info(f"Non ho trovato nessun torrents in list corripondente al tuo {self.mytorr.name}")
         return False
