@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-from myTMDB import MyTmdb
+from unit3d.myTMDB import MyTmdb
 
 
-class SearchTvShow:
+class TvShow:
 
     def __init__(self, videotype: str):
         super().__init__()
