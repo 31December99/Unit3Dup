@@ -17,9 +17,11 @@ class ImgHost:
     @property
     def image(self) -> base64:
         if os.path.exists(self.filename):
-            open_image = open(self.filename, 'rb')
-            image_data = open_image.read()
-            return base64.b64encode(image_data)
+            with open(self.filename, 'rb') as open_image:
+                image_data = open_image.read()
+                image_encode = base64.b64encode(image_data)
+            os.remove(self.filename)
+            return image_encode
 
     def upload(self):
         pass
