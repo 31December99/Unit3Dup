@@ -5,8 +5,8 @@ from unidecode import unidecode
 from decouple import config
 from tmdbv3api import TMDb, Movie, TV
 from thefuzz import fuzz
-from unit3d.results import Results
-from unit3d.utitlity import Manage_titles
+from unit3dup.results import Results
+from unit3dup.utitlity import Manage_titles
 
 TMDB_APIKEY = config('TMDB_APIKEY')
 

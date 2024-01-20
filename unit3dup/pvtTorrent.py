@@ -9,7 +9,7 @@ import logging
 from decouple import config
 from qbittorrent import Client
 from tqdm import tqdm
-from unit3d import Contents
+from unit3dup import Contents
 
 logging.basicConfig(level=logging.INFO)
 
