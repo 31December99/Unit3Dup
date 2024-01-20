@@ -47,10 +47,10 @@ Contributions are welcome! Feel free to open an issue or submit a pull request.
 This project is licensed under the MIT License
 
 # .env file Example:
-
-- ITT_BASE_URL=Tracker url
-- ITT_PASS_KEY=xxxxxxxx
-- ITT_API_TOKEN=xxxxxx
+- TRACK_NAME=xxxx
+- BASE_URL=Tracker url
+- PASS_KEY=xxxxxxxx
+- API_TOKEN=xxxxxx
 - TMDB_APIKEY=xxxxx
 - IMGBB_KEY=xxxxxx
 - QBIT_USER=xxxxxxx
@@ -58,13 +58,16 @@ This project is licensed under the MIT License
 - QBIT_PORT=xxxxxx
 - TORRENTS_FOLDER=
 
-# ITT_BASE_URL
+# TRACK_NAME
 Tracker URL
 
-# ITT_PASS_KEY
+# BASE_URL
+Tracker name for specific tracker data
+
+# PASS_KEY
 Your tracker pass key ( Search for it in your user profile)
 
-# ITT_API_TOKEN
+# API_TOKEN
 As mentioned above
 
 # TMDB_APIKEY
