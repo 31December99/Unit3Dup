@@ -2,7 +2,7 @@
 
 
 from decouple import config
-from unit3d.uploader import Bot, trackers
+from unit3dup.uploader import Bot, trackers
 
 TRACKER_NAME = config('TRACK_NAME')
 

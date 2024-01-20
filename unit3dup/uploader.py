@@ -7,7 +7,7 @@ import logging
 from typing import Type, Any
 from decouple import config
 from database.trackers import ITT, SHAISL
-from unit3d import pvtTracker, myTMDB, pvtVideo, pvtTorrent, utitlity, Contents, search
+from unit3dup import pvtTracker, myTMDB, pvtVideo, pvtTorrent, utitlity, Contents, search
 
 logging.basicConfig(level=logging.INFO)
 

@@ -2,7 +2,7 @@
 import random
 import cv2
 import os
-from unit3d.imageHost import ImgBB
+from unit3dup.imageHost import ImgBB
 from pymediainfo import MediaInfo
 from decouple import config
 
