@@ -3,17 +3,11 @@ import argparse
 import json
 import os.path
 import requests
-import pvtTracker
-import myTMDB
-import pvtVideo
-import pvtTorrent
-import utitlity
-import Contents
 import logging
 from typing import Type, Any
-from search import SearchTvShow
 from decouple import config
 from database.trackers import ITT, SHAISL
+from unit3d import pvtTracker, myTMDB, pvtVideo, pvtTorrent, utitlity, Contents, search
 
 logging.basicConfig(level=logging.INFO)
 
@@ -21,6 +15,11 @@ PASS_KEY = config('PASS_KEY')
 API_TOKEN = config('API_TOKEN')
 BASE_URL = config('BASE_URL')
 TRACKER_NAME = config('TRACK_NAME')
+
+trackers = {
+    "itt": ITT,
+    "shaisl": SHAISL,
+}
 
 
 class Bot:
@@ -46,7 +45,7 @@ class Bot:
         parser.add_argument('-movie', '--movie', nargs=1, type=str, help='Movie')
         args = parser.parse_args()
         if args.serie:
-            self.mytmdb = SearchTvShow('Serie')
+            self.mytmdb = search.TvShow('Serie')
             self.content = Contents.Args(args.serie)
             self.metainfo = self.content.folder()
             self.tracker.data['name'] = utitlity.Manage_titles.clean(self.content.base_name)
@@ -55,7 +54,7 @@ class Bot:
             self.category = self.tracker_values.category['serie_tv']
 
         if args.movie:
-            self.mytmdb = SearchTvShow('Movie')
+            self.mytmdb = search.TvShow('Movie')
             self.content = Contents.Args(args.movie)
             self.metainfo = self.content.file()
             self.tracker.data['name'] = utitlity.Manage_titles.clean(self.content.tracker_file_name)
@@ -94,11 +93,3 @@ class Bot:
                 self.mytorrent.qbit(download_torrent_dal_tracker)
         else:
             logging.info(f"Non è stato possibile fare l'upload => {tracker_response} {tracker_response.text}")
-
-
-if __name__ == "__main__":
-    trackers = {
-        "itt": ITT,
-        "shaisl": SHAISL,
-    }
-    bot = Bot(trackers.get(TRACKER_NAME.lower()))
