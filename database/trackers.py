@@ -27,7 +27,7 @@ class ITT(Config):
             return 75
         elif size >= 10:
             return 50
-        elif size >= 1:
+        elif size >= 5:
             return 25
         else:
             return 0
