@@ -23,7 +23,7 @@ trackers = {
 
 
 class Bot:
-    def __init__(self, data: Type[Any]):
+    def __init__(self, data: Type[Any], args: argparse):
 
         if not PASS_KEY or not API_TOKEN:
             logging.info("il file .env non è stato configurato oppure i nomi delle variabili sono errate.")
@@ -36,16 +36,14 @@ class Bot:
             print("[BOT] Verifica ora il tuo file .env")
             return
 
+        if not args.serie and not args.movie:
+            print("Devi scegliere tra --movie e --serie. Esempio 'start.py -serie' seguito dal percorso completo")
+            return
+
         self.tracker_values = data()
         print(f"\n[TRACKER]..............  {BASE_URL}")
         self.tracker = pvtTracker.ITT(base_url=BASE_URL, api_token=API_TOKEN,
                                       pass_key=PASS_KEY)
-        self.category = None
-
-        parser = argparse.ArgumentParser(description='Commands', add_help=False)
-        parser.add_argument('-serie', '--serie', nargs=1, type=str, help='Serie')
-        parser.add_argument('-movie', '--movie', nargs=1, type=str, help='Movie')
-        args = parser.parse_args()
         if args.serie:
             self.mytmdb = search.TvShow('Serie')
             self.content = Contents.Args(args.serie)
