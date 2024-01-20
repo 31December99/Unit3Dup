@@ -56,31 +56,27 @@ This project is licensed under the MIT License
 - QBIT_USER=xxxxxxx
 - QBIT_PASS=xxxxxx
 - QBIT_PORT=xxxxxx
-- TORRENTS_FOLDER=
 
-# TRACK_NAME
+## TRACK_NAME
 Tracker URL
 
-# BASE_URL
+## BASE_URL
 Tracker name for specific tracker data
 
-# PASS_KEY
+## PASS_KEY
 Your tracker pass key ( Search for it in your user profile)
 
-# API_TOKEN
+## API_TOKEN
 As mentioned above
 
-# TMDB_APIKEY
+## TMDB_APIKEY
 Your TMDB Api key ( Search for it in your user profile)
 
-# IMGBB_KEY
+## IMGBB_KEY
 Your IMGBB Api key ( Search for it in your user profile)
 
-# QBIT_USER
+## QBIT_USER
 Qbittorrent USER
 
-# QBIT_PASS
+## QBIT_PASS
 Qbittorrent PASS
-
-# TORRENTS_FOLDER
-Torrent folder location
