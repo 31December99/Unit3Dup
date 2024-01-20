@@ -21,13 +21,15 @@ class Args:
         self.path = None
         self.type = None
         self.arg = arg[0]
+        if '/' in self.arg[-1]:
+            self.arg = self.arg[:-1]
 
     def folder(self) -> str:
         # Solo percorso -
         if os.path.isdir(self.arg):
             self.type = True
             self.path = self.arg
-            self.base_name = os.path.basename(self.arg)
+            self.base_name = os.path.basename(self.path)
             # il primo in elenco come input a mediainfo
             dir_list = self.listdir()
             if dir_list:
