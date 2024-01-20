@@ -2,7 +2,7 @@
 import random
 import cv2
 import os
-import imageHost
+from unit3d.imageHost import ImgBB
 from pymediainfo import MediaInfo
 from decouple import config
 
@@ -104,7 +104,7 @@ class Video:
     def description(self) -> str:
         descrizione = f"[center]\n"
         for f in self.frames:
-            img_host = imageHost.ImgBB(f)
+            img_host = ImgBB(f)
             img_url = img_host.upload['data']['display_url']
             descrizione += (f"[url={img_url}][img=350]"
                             f"{img_url}[/img][/url]")
