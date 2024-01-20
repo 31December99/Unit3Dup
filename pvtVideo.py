@@ -6,8 +6,8 @@ import imageHost
 from pymediainfo import MediaInfo
 from decouple import config
 
-ITT_PASS_KEY = config('ITT_PASS_KEY')
-ITT_API_TOKEN = config('ITT_API_TOKEN')
+PASS_KEY = config('PASS_KEY')
+API_TOKEN = config('API_TOKEN')
 
 
 class Video:
