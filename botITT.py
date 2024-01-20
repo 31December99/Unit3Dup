@@ -13,7 +13,7 @@ import logging
 from typing import Type, Any
 from search import SearchTvShow
 from decouple import config
-from database.trackers import ITT
+from database.trackers import ITT, SHAISL
 
 logging.basicConfig(level=logging.INFO)
 
@@ -28,14 +28,14 @@ class Bot:
     def __init__(self, data: Type[Any]):
 
         if not PASS_KEY or not API_TOKEN:
-            print("il file .env non è stato configurato o i nomi delle variabili sono errate.")
+            print("il file .env non è stato configurato oppure i nomi delle variabili sono errate.")
             return
 
         print(f"\n[TRACKER]..............  {BASE_URL}")
         self.Itt = pvtTracker.ITT(base_url=BASE_URL, api_token=API_TOKEN,
                                   pass_key=PASS_KEY)
         self.category = None
-        self.data = data()
+        self.tracker_data = data()
 
         parser = argparse.ArgumentParser(description='Commands', add_help=False)
         parser.add_argument('-serie', '--serie', nargs=1, type=str, help='Serie')
@@ -48,7 +48,7 @@ class Bot:
             self.Itt.data['name'] = utitlity.Manage_titles.clean(self.content.base_name)
             self.myguess = myTMDB.Myguessit(self.content.file_name)
             self.result = self.mytmdb.start(str(self.myguess.guessit_title))
-            self.category = 2
+            self.category = self.tracker_data.category['serie_tv']
 
         if args.movie:
             self.mytmdb = SearchTvShow('Movie')
@@ -57,10 +57,10 @@ class Bot:
             self.Itt.data['name'] = utitlity.Manage_titles.clean(self.content.tracker_file_name)
             self.myguess = myTMDB.Myguessit(self.content.file_name)
             self.result = self.mytmdb.start(str(self.myguess.guessit_title))
-            self.category = 1
+            self.category = self.tracker_data.category['movie']
 
-            self.Itt.data['tmdb'] = self.result.video_id
-            self.Itt.data['keywords'] = self.result.keywords
+        self.Itt.data['tmdb'] = self.result.video_id
+        self.Itt.data['keywords'] = self.result.keywords
 
         self.mytorrent = pvtTorrent.Mytorrent(contents=self.content, meta=self.metainfo)
         self.video = pvtVideo.Video(fileName=str(os.path.join(self.content.path, self.content.file_name)))
@@ -68,15 +68,15 @@ class Bot:
         self.standard = self.video.standard
         self.media_info = self.video.mediainfo
         self.descrizione = self.video.description
-        self.freelech = self.video.freeLech
+        self.freelech = self.tracker_data.get_freelech(self.video.size)
 
         self.Itt.data['category_id'] = self.category
-        self.Itt.data['resolution_id'] = self.data.filterResolution(self.content.file_name)
+        self.Itt.data['resolution_id'] = self.tracker_data.filterResolution(self.content.file_name)
         self.Itt.data['free'] = self.freelech
         self.Itt.data['sd'] = self.standard
         self.Itt.data['mediainfo'] = self.media_info
         self.Itt.data['description'] = self.descrizione
-        self.Itt.data['type_id'] = self.data.filterType(self.content.file_name)
+        self.Itt.data['type_id'] = self.tracker_data.filterType(self.content.file_name)
         self.Itt.data['season_number'] = int(self.myguess.guessit_season)
         self.Itt.data['episode_number'] = int(self.myguess.guessit_season)
 
@@ -95,5 +95,6 @@ class Bot:
 if __name__ == "__main__":
     trackers = {
         "itt": ITT,
+        "shisl": SHAISL,
     }
-    bot = Bot(trackers.get(TRACKER))
+    bot = Bot(trackers.get(TRACKER.lower()))
