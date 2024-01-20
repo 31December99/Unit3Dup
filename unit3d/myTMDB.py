@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
-from unidecode import unidecode
-from utitlity import Manage_titles
-from decouple import config
-from tmdbv3api import TMDb, Movie, TV
-from results import Results
 import tmdbv3api.exceptions
 import guessit
+from unidecode import unidecode
+from decouple import config
+from tmdbv3api import TMDb, Movie, TV
 from thefuzz import fuzz
+from unit3d.results import Results
+from unit3d.utitlity import Manage_titles
 
 TMDB_APIKEY = config('TMDB_APIKEY')
 
