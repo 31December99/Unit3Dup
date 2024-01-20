@@ -7,7 +7,7 @@ import logging
 from typing import Type, Any
 from decouple import config
 from database.trackers import ITT, SHAISL
-from unit3dup import pvtTracker, myTMDB, pvtVideo, pvtTorrent, utitlity, Contents, search
+from unit3dup import pvtTracker, pvtVideo, pvtTorrent, utitlity, Contents, search, title
 
 logging.basicConfig(level=logging.INFO)
 
@@ -49,7 +49,7 @@ class Bot:
             self.content = Contents.Args(args.serie)
             self.metainfo = self.content.folder()
             self.name = utitlity.Manage_titles.clean(self.content.base_name)
-            self.myguess = myTMDB.Myguessit(self.content.file_name)
+            self.myguess = title.Guessit(self.content.file_name)
             self.result = self.mytmdb.start(str(self.myguess.guessit_title))
             self.category = self.tracker_values.category['serie_tv']
 
@@ -58,7 +58,7 @@ class Bot:
             self.content = Contents.Args(args.movie)
             self.metainfo = self.content.file()
             self.name = utitlity.Manage_titles.clean(self.content.tracker_file_name)
-            self.myguess = myTMDB.Myguessit(self.content.file_name)
+            self.myguess = title.Guessit(self.content.file_name)
             self.result = self.mytmdb.start(str(self.myguess.guessit_title))
             self.category = self.tracker_values.category['movie']
 
