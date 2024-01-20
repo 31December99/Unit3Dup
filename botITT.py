@@ -20,7 +20,7 @@ logging.basicConfig(level=logging.INFO)
 PASS_KEY = config('PASS_KEY')
 API_TOKEN = config('API_TOKEN')
 BASE_URL = config('BASE_URL')
-TRACKER = config('TRACK_NAME')
+TRACKER_NAME = config('TRACK_NAME')
 
 
 class Bot:
@@ -32,10 +32,10 @@ class Bot:
             return
 
         print(f"\n[TRACKER]..............  {BASE_URL}")
-        self.Itt = pvtTracker.ITT(base_url=BASE_URL, api_token=API_TOKEN,
-                                  pass_key=PASS_KEY)
+        self.tracker = pvtTracker.ITT(base_url=BASE_URL, api_token=API_TOKEN,
+                                      pass_key=PASS_KEY)
         self.category = None
-        self.tracker_data = data()
+        self.tracker_values = data()
 
         parser = argparse.ArgumentParser(description='Commands', add_help=False)
         parser.add_argument('-serie', '--serie', nargs=1, type=str, help='Serie')
@@ -45,22 +45,22 @@ class Bot:
             self.mytmdb = SearchTvShow('Serie')
             self.content = Contents.Args(args.serie)
             self.metainfo = self.content.folder()
-            self.Itt.data['name'] = utitlity.Manage_titles.clean(self.content.base_name)
+            self.tracker.data['name'] = utitlity.Manage_titles.clean(self.content.base_name)
             self.myguess = myTMDB.Myguessit(self.content.file_name)
             self.result = self.mytmdb.start(str(self.myguess.guessit_title))
-            self.category = self.tracker_data.category['serie_tv']
+            self.category = self.tracker_values.category['serie_tv']
 
         if args.movie:
             self.mytmdb = SearchTvShow('Movie')
             self.content = Contents.Args(args.movie)
             self.metainfo = self.content.file()
-            self.Itt.data['name'] = utitlity.Manage_titles.clean(self.content.tracker_file_name)
+            self.tracker.data['name'] = utitlity.Manage_titles.clean(self.content.tracker_file_name)
             self.myguess = myTMDB.Myguessit(self.content.file_name)
             self.result = self.mytmdb.start(str(self.myguess.guessit_title))
-            self.category = self.tracker_data.category['movie']
+            self.category = self.tracker_values.category['movie']
 
-        self.Itt.data['tmdb'] = self.result.video_id
-        self.Itt.data['keywords'] = self.result.keywords
+        self.tracker.data['tmdb'] = self.result.video_id
+        self.tracker.data['keywords'] = self.result.keywords
 
         self.mytorrent = pvtTorrent.Mytorrent(contents=self.content, meta=self.metainfo)
         self.video = pvtVideo.Video(fileName=str(os.path.join(self.content.path, self.content.file_name)))
@@ -68,20 +68,20 @@ class Bot:
         self.standard = self.video.standard
         self.media_info = self.video.mediainfo
         self.descrizione = self.video.description
-        self.freelech = self.tracker_data.get_freelech(self.video.size)
+        self.freelech = self.tracker_values.get_freelech(self.video.size)
 
-        self.Itt.data['category_id'] = self.category
-        self.Itt.data['resolution_id'] = self.tracker_data.filterResolution(self.content.file_name)
-        self.Itt.data['free'] = self.freelech
-        self.Itt.data['sd'] = self.standard
-        self.Itt.data['mediainfo'] = self.media_info
-        self.Itt.data['description'] = self.descrizione
-        self.Itt.data['type_id'] = self.tracker_data.filterType(self.content.file_name)
-        self.Itt.data['season_number'] = int(self.myguess.guessit_season)
-        self.Itt.data['episode_number'] = int(self.myguess.guessit_season)
+        self.tracker.data['category_id'] = self.category
+        self.tracker.data['resolution_id'] = self.tracker_values.filterResolution(self.content.file_name)
+        self.tracker.data['free'] = self.freelech
+        self.tracker.data['sd'] = self.standard
+        self.tracker.data['mediainfo'] = self.media_info
+        self.tracker.data['description'] = self.descrizione
+        self.tracker.data['type_id'] = self.tracker_values.filterType(self.content.file_name)
+        self.tracker.data['season_number'] = int(self.myguess.guessit_season)
+        self.tracker.data['episode_number'] = int(self.myguess.guessit_season)
 
-        tracker_response = self.Itt.upload_t(data=self.Itt.data, file_name=os.path.join(self.content.path,
-                                                                                        self.mytorrent.read()))
+        tracker_response = self.tracker.upload_t(data=self.tracker.data, file_name=os.path.join(self.content.path,
+                                                                                                self.mytorrent.read()))
         if tracker_response.status_code == 200:
             tracker_response_body = json.loads(tracker_response.text)
             logging.info(tracker_response_body['message'])
@@ -97,4 +97,4 @@ if __name__ == "__main__":
         "itt": ITT,
         "shisl": SHAISL,
     }
-    bot = Bot(trackers.get(TRACKER.lower()))
+    bot = Bot(trackers.get(TRACKER_NAME.lower()))
