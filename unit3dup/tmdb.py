@@ -33,7 +33,7 @@ class MyTmdb:
             self.tmdb = self.__mv_tmdb
 
     def search(self, ext_title: str):
-        print(f"\n[TMDB Search]..........  {ext_title}")
+        print(f"\n[TMDB Search]..........  {self.ext_title}")
         self.ext_title = ext_title.lower()
         self.ext_title = self.ext_title.replace('-', ' ')
         self.ext_title = self.ext_title.replace('–', ' ')
