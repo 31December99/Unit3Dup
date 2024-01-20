@@ -26,7 +26,7 @@ class Video:
 
         self.file_name = fileName
         # video file size
-        self.file_size = None
+        self.file_size = round(os.path.getsize(self.file_name) / (1024 * 1024 * 1024))
         # Frame count
         self.numero_di_frame = None
         # Screenshots samples
@@ -34,10 +34,6 @@ class Video:
         # Catturo i frames del video
         print(f"[ CAPTURING SCREEN... ]")
         self.video_capture = cv2.VideoCapture(self.file_name)
-
-    @property
-    def freeLech(self) -> int:
-        return self._freelech()
 
     @property
     def fileName(self) -> str:
@@ -58,8 +54,7 @@ class Video:
         """
         :return: size in Gb
         """
-        self.file_size = os.path.getsize(self.file_name)
-        return round(self.file_size / (1024 * 1024 * 1024))
+        return self.file_size
 
     @property
     def mediainfo(self) -> str:
@@ -115,15 +110,3 @@ class Video:
                             f"{img_url}[/img][/url]")
         descrizione += "\n[/center]"
         return descrizione
-
-    def _freelech(self) -> int:
-        if self.size >= 20:
-            return 100
-        elif self.size >= 15:
-            return 75
-        elif self.size >= 10:
-            return 50
-        elif self.size >= 5:
-            return 25
-        else:
-            return 0
