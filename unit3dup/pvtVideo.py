@@ -32,7 +32,7 @@ class Video:
         # Screenshots samples
         self.samples_n = 6
         # Catturo i frames del video
-        print(f"[ CAPTURING SCREEN... ]")
+        print(f"[ CAPTURING SCREEN ]")
         self.video_capture = cv2.VideoCapture(self.file_name)
 
     @property
