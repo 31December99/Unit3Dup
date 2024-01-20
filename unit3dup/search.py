@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from unit3dup.myTMDB import MyTmdb
+from unit3dup.tmdb import MyTmdb
 
 
 class TvShow:
