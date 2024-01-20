@@ -94,7 +94,7 @@ class Bot:
         # // Seeding
         if tracker_response.status_code == 200:
             tracker_response_body = json.loads(tracker_response.text)
-            logging.info(tracker_response_body['message'])
+            logging.info(f"[TRACKER RESPONSE].............. {tracker_response_body['message'].upper()}")
             download_torrent_dal_tracker = requests.get(tracker_response_body['data'])
             if download_torrent_dal_tracker.status_code == 200:
                 self.mytorrent.qbit(download_torrent_dal_tracker)
