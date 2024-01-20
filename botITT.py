@@ -12,6 +12,7 @@ import Contents
 import logging
 from search import SearchTvShow
 from decouple import config
+from database.itt import Data
 
 logging.basicConfig(level=logging.INFO)
 
@@ -67,12 +68,12 @@ class Bot:
         self.freelech = self.video.freeLech
 
         self.Itt.data['category_id'] = self.category
-        self.Itt.data['resolution_id'] = utitlity.Manage_titles.filterResolution(self.content.file_name)
+        self.Itt.data['resolution_id'] = Data.filterResolution(self.content.file_name)
         self.Itt.data['free'] = self.freelech
         self.Itt.data['sd'] = self.standard
         self.Itt.data['mediainfo'] = self.media_info
         self.Itt.data['description'] = self.descrizione
-        self.Itt.data['type_id'] = utitlity.Manage_titles.filterType(self.content.file_name)
+        self.Itt.data['type_id'] = data.filterType(self.content.file_name)
         self.Itt.data['season_number'] = int(self.myguess.guessit_season)
         self.Itt.data['episode_number'] = int(self.myguess.guessit_season)
 
@@ -92,4 +93,4 @@ if os.name == 'nt':
     os.system('color')
 
 if __name__ == "__main__":
-    bot = Bot()
+    bot = Bot(Data())
