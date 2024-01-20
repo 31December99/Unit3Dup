@@ -23,15 +23,17 @@ trackers = {
 
 
 class Bot:
-
     def __init__(self, data: Type[Any]):
 
         if not PASS_KEY or not API_TOKEN:
             logging.info("il file .env non è stato configurato oppure i nomi delle variabili sono errate.")
             return
-
         if not data:
-            logging.info("Non riconosco il nome del tracker che hai impostato nel file .env di configurazione")
+            print("[BOT] Non riconosco il nome del tracker che hai impostato nel file .env di configurazione")
+            print("[BOT] Di seguito i nomi disponibili per il tuo tracker:")
+            for tracker in trackers:
+                print(f"[BOT] <{tracker}>")
+            print("[BOT] Verifica ora il tuo file .env")
             return
 
         self.tracker_values = data()
