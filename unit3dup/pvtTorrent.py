@@ -7,19 +7,17 @@ import typing
 import torf
 import requests
 import logging
-from decouple import config
+from decouple import Config, RepositoryEnv
 from qbittorrent import Client
 from tqdm import tqdm
 from unit3dup import Contents
 
 logging.basicConfig(level=logging.INFO)
 
-BASE_URL = config('BASE_URL')
-PASS_KEY = config('PASS_KEY')
-API_TOKEN = config('API_TOKEN')
-QBIT_USER = config('QBIT_USER')
-QBIT_PASS = config('QBIT_PASS')
-QBIT_PORT = config('QBIT_PORT')
+config_load = Config(RepositoryEnv('service.env'))
+QBIT_USER = config_load('QBIT_USER')
+QBIT_PASS = config_load('QBIT_PASS')
+QBIT_PORT = config_load('QBIT_PORT')
 
 
 class HashProgressBar(tqdm):
@@ -31,7 +29,7 @@ class HashProgressBar(tqdm):
 
 class Mytorrent:
 
-    def __init__(self, contents: Contents, meta: str):
+    def __init__(self, contents: Contents, meta: str, tracker_announce_list: list):
 
         self.qb = None
         self.file_name = contents.file_name
@@ -41,12 +39,13 @@ class Mytorrent:
         self.metainfo = json.loads(meta)
         self.paths = self.torrent_path if self.content_type else os.path.join(self.torrent_path, self.file_name)
         self.mytorr = torf.Torrent(path=self.paths)
-        self.mytorr.announce_list = [f"{BASE_URL}/announce/{PASS_KEY}/"]
+        self.mytorr.announce_list = tracker_announce_list
         self.mytorr.comment = "ciao"
         self.mytorr.name = self.file_name if not self.base_name else self.base_name
         self.mytorr.created_by = "Unit3d-Up"
         self.mytorr.private = True
         self.mytorr.segments = 16 * 1024 * 1024  # 16MB
+
         self.torrent_name = os.path.join(self.torrent_path, self.file_name) if not self.base_name \
             else os.path.join(self.torrent_path, self.base_name)
         print(f"[ HASHING ]")
@@ -54,12 +53,7 @@ class Mytorrent:
             self.mytorr.generate(threads=0, callback=progress.callback, interval=0)
         print("\n")
 
-    @property
     def write(self):
-        """
-        torrent_name = os.path.join(self.path, self.file_name) \
-            if not self.base_name else os.path.join(self.path, self.base_name)
-        """
         try:
             self.mytorr.write(f"{self.torrent_name}.torrent")
         except torf.TorfError as e:
@@ -68,17 +62,9 @@ class Mytorrent:
         return self.mytorr
 
     def read(self) -> str:
-        """
-        torrent_name = os.path.join(self.path, self.file_name) \
-            if not self.base_name else os.path.join(self.path, self.base_name)
-        """
         return str(self.torrent_name)
 
     def _download(self, link: requests) -> typing.IO:
-        """
-        torrent_name = os.path.join(self.path, self.file_name) \
-            if not self.base_name else os.path.join(self.path, self.base_name)
-        """
         with open(f'{self.torrent_name}.torrent', 'wb') as file:
             file.write(link.content)
         return open(f'{self.torrent_name}.torrent', 'rb')
