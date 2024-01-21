@@ -4,9 +4,8 @@ import json
 import os.path
 import requests
 import logging
-from typing import Type, Any
 from decouple import config
-from database.trackers import ITT, SHAISL
+from database.trackers import TrackerConfig
 from unit3dup import pvtTracker, pvtVideo, pvtTorrent, utitlity, Contents, search, title
 
 logging.basicConfig(level=logging.INFO)
@@ -16,24 +15,12 @@ API_TOKEN = config('API_TOKEN')
 BASE_URL = config('BASE_URL')
 TRACKER_NAME = config('TRACK_NAME')
 
-trackers = {
-    "itt": ITT,
-    "shaisl": SHAISL,
-}
-
 
 class Bot:
-    def __init__(self, data: Type[Any], args: argparse):
+    def __init__(self, args: argparse):
 
         if not PASS_KEY or not API_TOKEN:
             logging.info("il file .env non è stato configurato oppure i nomi delle variabili sono errate.")
-            return
-        if not data:
-            print("[BOT] Non riconosco il nome del tracker che hai impostato nel file .env di configurazione\n"
-                  "[BOT] Di seguito i nomi disponibili per il tuo tracker:")
-            for tracker in trackers:
-                print(f"[BOT] <{tracker}>")
-            print("[BOT] Verifica ora il tuo file .env")
             return
 
         if not args.serie and not args.movie:
@@ -41,7 +28,7 @@ class Bot:
             return
 
         print(f"\n[TRACKER]..............  {BASE_URL}")
-        self.tracker_values = data()
+        self.tracker_values = TrackerConfig(f"{TRACKER_NAME}.json")
 
         # // Options
         if args.serie:
@@ -51,7 +38,7 @@ class Bot:
             self.name = utitlity.Manage_titles.clean(self.content.base_name)
             self.myguess = title.Guessit(self.content.file_name)
             self.result = self.mytmdb.start(str(self.myguess.guessit_title))
-            self.category = self.tracker_values.category['serie_tv']
+            self.category = self.tracker_values.category('tvshow')
 
         if args.movie:
             self.mytmdb = search.TvShow('Movie')
@@ -60,7 +47,7 @@ class Bot:
             self.name = utitlity.Manage_titles.clean(self.content.tracker_file_name)
             self.myguess = title.Guessit(self.content.file_name)
             self.result = self.mytmdb.start(str(self.myguess.guessit_title))
-            self.category = self.tracker_values.category['movie']
+            self.category = self.tracker_values.category('movie')
 
         # // Video data
         self.video = pvtVideo.Video(fileName=str(os.path.join(self.content.path, self.content.file_name)))
