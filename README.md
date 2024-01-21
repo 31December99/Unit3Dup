@@ -16,11 +16,12 @@ This Python script generates and uploads torrents based on input provided for mo
 
 ### Usage
 
-1. Make sure to run the script followed by the command "-movie" and the path to the file or "-serie" followed
-   by the folder containing the series.
-2. Provide a Movie or TV Series title as input.
-3. Run the Python script.
-4. The script will create a torrent, extract screenshots, generate meta-information, search for TMDB ID, and upload to UNIT3D.
+1. python3 start.py -s 'absolute Folder path'
+2. python3 start.py -m 'absolute File path'
+3. python3 start.py -t 'tracker name'
+4. Example 1: python3 start.py -t mytrack -s 'absolute Folder path'
+5. Example 2: python3 start.py -t mytrack -m 'absolute File path'
+6. The script will create a torrent, extract screenshots, generate meta-information, search for TMDB ID, and upload to UNIT3D.
 
 ### Dependencies
 
@@ -46,16 +47,18 @@ Contributions are welcome! Feel free to open an issue or submit a pull request.
 
 This project is licensed under the MIT License
 
-### .env file Example:
-- TRACK_NAME=...
-- BASE_URL=...
-- PASS_KEY=...
+### Service.env file Example:
 - API_TOKEN=...
 - TMDB_APIKEY=...
 - IMGBB_KEY=...
 - QBIT_USER=...
 - QBIT_PASS=...
 - QBIT_PORT=...
+
+### Custom tracker .env file Example (mytrack.env):
+- BASE_URL=https://...
+- PASS_KEY=...
+- API_TOKEN=...
 
 ### TRACK_NAME
 Tracker name for specific tracker data
