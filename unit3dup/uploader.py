@@ -57,7 +57,7 @@ class Bot:
         self.freelech = self.tracker_values.get_freelech(self.video.size)
 
         # // Tracker data
-        self.tracker = pvtTracker.ITT(base_url=BASE_URL, api_token=API_TOKEN, pass_key=PASS_KEY)
+        self.tracker = pvtTracker.Unit3d(base_url=BASE_URL, api_token=API_TOKEN, pass_key=PASS_KEY)
         self.tracker.data['name'] = self.name
         self.tracker.data['tmdb'] = self.result.video_id
         self.tracker.data['keywords'] = self.result.keywords
