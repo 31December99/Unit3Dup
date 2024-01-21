@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 import tmdbv3api.exceptions
 from unidecode import unidecode
-from decouple import config
 from tmdbv3api import TMDb, Movie, TV
 from thefuzz import fuzz
 from unit3dup.results import Results
 from unit3dup.utitlity import Manage_titles
+from decouple import Config, RepositoryEnv
 
-TMDB_APIKEY = config('TMDB_APIKEY')
+config_load = Config(RepositoryEnv('service.env'))
+TMDB_APIKEY = config_load('TMDB_APIKEY')
 
 
 class MyTmdb:
