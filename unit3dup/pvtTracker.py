@@ -156,7 +156,7 @@ class Uploader(Tracker):
             return self._post(file=file_torrent, data=data, params=self.params)
 
 
-class ITT(filterAPI, Torrents, Uploader):
+class Unit3d(filterAPI, Torrents, Uploader):
     def get_tmdb(self, tmdb_id: int, perPage: int = None) -> requests:
         return self.tmdb(tmdb_id=tmdb_id, perPage=perPage)
 
