@@ -4,10 +4,6 @@ import cv2
 import os
 from unit3dup.imageHost import ImgBB
 from pymediainfo import MediaInfo
-from decouple import config
-
-PASS_KEY = config('PASS_KEY')
-API_TOKEN = config('API_TOKEN')
 
 
 class Video:
