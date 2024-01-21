@@ -2,9 +2,10 @@
 import base64
 import os
 import requests
-from decouple import config
+from decouple import Config, RepositoryEnv
 
-IMGBB_KEY = config('IMGBB_KEY')
+config_load = Config(RepositoryEnv('service.env'))
+IMGBB_KEY = config_load('IMGBB_KEY')
 
 
 class ImgHost:
