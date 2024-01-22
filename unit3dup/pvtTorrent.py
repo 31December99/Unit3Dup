@@ -10,7 +10,7 @@ import logging
 from decouple import Config, RepositoryEnv
 from qbittorrent import Client
 from tqdm import tqdm
-from unit3dup import Contents
+from unit3dup.contents import Cli
 
 logging.basicConfig(level=logging.INFO)
 
@@ -29,7 +29,7 @@ class HashProgressBar(tqdm):
 
 class Mytorrent:
 
-    def __init__(self, contents: Contents, meta: str, tracker_announce_list: list):
+    def __init__(self, contents: Cli, meta: str, tracker_announce_list: list):
 
         self.qb = None
         self.file_name = contents.file_name
