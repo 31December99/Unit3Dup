@@ -16,12 +16,10 @@ This Python script generates and uploads torrents based on input provided for mo
 
 ### Usage
 
-1. python3 start.py -s (absolute Folder path)
-2. python3 start.py -m (absolute File path)
-3. python3 start.py -t (tracker name)
-4. Example 1: python3 start.py -t mytrack -s (absolute Folder path)
-5. Example 2: python3 start.py -t mytrack -m (absolute File path)
-6. The script will create a torrent, extract screenshots, generate meta-information, search for TMDB ID, and upload to UNIT3D.
+1. python3 start.py -u (absolute Folder path)
+2. python3 start.py -t (tracker name)
+3. Example: python3 start.py -t mytrack -u (absolute Folder path)
+5. The script will create a torrent, extract screenshots, generate meta-information, search for TMDB ID, and upload to UNIT3D.
 
 ### Dependencies
 
