@@ -33,22 +33,20 @@ class Mytorrent:
 
         self.qb = None
         self.file_name = contents.file_name
-        self.torrent_path = contents.path
-        self.content_type = contents.type
-        self.base_name = contents.base_name
+        self.torrent_path = contents.folder
+        self.content_type = contents.category
         self.metainfo = json.loads(meta)
-        self.paths = self.torrent_path if self.content_type else os.path.join(self.torrent_path, self.file_name)
-        self.mytorr = torf.Torrent(path=self.paths)
+        self.__torrent_name = self.torrent_path if not self.content_type else os.path.join(self.torrent_path,
+                                                                                           self.file_name)
+        self.mytorr = torf.Torrent(path=self.__torrent_name)
         self.mytorr.announce_list = tracker_announce_list
         self.mytorr.comment = "ciao"
-        self.mytorr.name = self.file_name if not self.base_name else self.base_name
+        self.mytorr.name = contents.file_name
         self.mytorr.created_by = "Unit3d-Up"
         self.mytorr.private = True
         self.mytorr.segments = 16 * 1024 * 1024  # 16MB
 
-        self.torrent_name = os.path.join(self.torrent_path, self.file_name) if not self.base_name \
-            else os.path.join(self.torrent_path, self.base_name)
-        print(f"[ HASHING ]")
+        print(f"[ HASHING ] {self.file_name}")
         with HashProgressBar() as progress:
             self.mytorr.generate(threads=0, callback=progress.callback, interval=0)
         print("\n")
@@ -60,9 +58,6 @@ class Mytorrent:
             print(e)
             sys.exit()
         return self.mytorr
-
-    def read(self) -> str:
-        return str(self.torrent_name)
 
     def _download(self, link: requests) -> typing.IO:
         with open(f'{self.torrent_name}.torrent', 'wb') as file:
@@ -96,6 +91,10 @@ class Mytorrent:
                 return True
         logging.info(f"Non ho trovato nessun torrents in list corripondente al tuo {self.mytorr.name}")
         return False
+
+    @property
+    def torrent_name(self) -> str:
+        return self.__torrent_name
 
     @property
     def comment(self):
