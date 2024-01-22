@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from unit3dup.tmdb import MyTmdb
+from unit3dup import tmdb, title
 
 
 class TvShow:
@@ -7,10 +7,12 @@ class TvShow:
     def __init__(self, videotype: str):
         super().__init__()
         self.titles = None
-        self.mytmdb = MyTmdb(videotype)
+        self.mytmdb = tmdb.MyTmdb(videotype)
 
-    def start(self, title: str):
-        result = self.mytmdb.search(title)
+    def start(self, file_name: str):
+        _title = title.Guessit(file_name).guessit_title
+
+        result = self.mytmdb.search(_title)
         if result:
             backdrop_path = result.backdrop_path
             poster_path = result.poster_path
