@@ -17,6 +17,7 @@ logging.basicConfig(level=logging.INFO)
 config_load = Config(RepositoryEnv('service.env'))
 QBIT_USER = config_load('QBIT_USER')
 QBIT_PASS = config_load('QBIT_PASS')
+QBIT_URL = config_load('QBIT_URL')
 QBIT_PORT = config_load('QBIT_PORT')
 
 
@@ -67,7 +68,7 @@ class Mytorrent:
     def qbit(self, link: requests) -> bool:
         torrent_file = self._download(link)
         try:
-            self.qb = Client(f'http://127.0.0.1:{QBIT_PORT}/')
+            self.qb = Client(f'{QBIT_URL}:{QBIT_PORT}/')
         except Exception as e:  # todo
             logging.info("Non è stato possibile collegarsi a qbittorent. Verifica WEBUI")
             logging.info(f"{e}")
