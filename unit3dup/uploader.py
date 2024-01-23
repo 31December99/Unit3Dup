@@ -42,11 +42,6 @@ class UploadBot:
             print(f"\n[TRACKER] Non trovo il tracker '{self.tracker_json}'")
             return
 
-        self.tracker_json = f"{self.tracker_name}.json"
-        if not os.path.exists(self.tracker_json):
-            print(f"\n[TRACKER] Non trovo il tracker '{self.tracker_json}'")
-            return
-
         self.tracker_values = TrackerConfig(self.tracker_json)
         print(f"\n[TRACKER {self.tracker_name.upper()}]..............  {self.BASE_URL}")
 
