@@ -11,10 +11,18 @@ if __name__ == "__main__":
     parser.add_argument('-t', '--tracker', nargs=1, type=str, help='Tracker Name')
     args = parser.parse_args()
 
-    user_input = Cli(path=args.upload[0], tracker=args.tracker[0], is_dir=os.path.isdir(args.upload[0]))
-    bot = UploadBot(user_input.content)
-    if user_input.content.category == user_input.serie:
-        data = bot.serie_data()
+    if args.upload and args.tracker:
+        user_input = Cli(args=args)
+
+        if user_input:
+            bot = UploadBot(user_input.content)
+            if user_input.content.category == user_input.serie:
+                data = bot.serie_data()
+            else:
+                data = bot.movie_data()
+            bot.process_data(data)
+
     else:
-        data = bot.movie_data()
-    bot.process_data(data)
+        print("Sintassi non valida o valore nullo. Controlla..")
+        print(f"[-u] {args.upload}")
+        print(f"[-t] {args.tracker}")
