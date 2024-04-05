@@ -1,35 +1,34 @@
 import json
 import os
 import re
-
+import argparse
 from unit3dup import userinput
 
 
 class Cli:
-
-    def __init__(self, path: str, tracker: str, is_dir: bool):
+    def __init__(self, args: argparse):
 
         self.serie = 2
         self.movie = 1
-        self.path = path
-        self.tracker = tracker
-        self.is_dir = is_dir
+        self.path = args.upload[0]
+        self.tracker = args.tracker[0]
+        self.is_dir = os.path.isdir(args.upload[0])
 
         # Se gli passi un file anche dentro una cartella basta che punti al file , lo considera un movie
-        if not is_dir:
+        if not self.is_dir:
             # Qui non occorre utilizzare regex come nel caso di una folder
-            self.file_name = os.path.basename(path)
-            self.folder = os.path.dirname(path)
+            self.file_name = os.path.basename(self.path)
+            self.folder = os.path.dirname(self.path)
             self.category = 1
             self.name, ext = os.path.splitext(self.file_name)
             self.size = os.path.getsize(os.path.join(self.folder, self.file_name))
             metainfo_str = [{'length': self.size, 'path': [self.file_name]}]
             self.metainfo = json.dumps(metainfo_str, indent=4)
 
-        if is_dir:
+        if self.is_dir:
             list_dir = self.listdir()
             self.file_name = list_dir[0]
-            self.folder = path
+            self.folder = self.path
             self.category = 2
             self.name, ext = os.path.splitext(self.file_name)
             regex_pattern = r'(\sS\d{2}E\d{1,3}|\s\d{1,2}x\d{1,3})'
@@ -43,8 +42,9 @@ class Cli:
                     self.metainfo_list.append({'length': self.size, 'path': [t]})
             self.metainfo = json.dumps(self.metainfo_list, indent=4)
 
-        self.content = userinput.Contents(file_name=self.file_name, folder=self.folder, name=self.name, size=self.size,
-                                          metainfo=self.metainfo, category=self.category, tracker_name=tracker)
+        self.content = userinput.Contents(file_name=self.file_name, folder=self.folder, name=self.name,
+                                          size=self.size,
+                                          metainfo=self.metainfo, category=self.category, tracker_name=self.tracker)
 
     def listdir(self):
 
