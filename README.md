@@ -17,13 +17,15 @@ This Python script generates and uploads torrents based on input provided for mo
 ### Usage
 
 1. python3 start.py -u (absolute Folder path)
-2. python3 start.py -t (tracker name)
+2. python3 start.py -t (tracker name) default : itt
 3. Example: python3 start.py -t mytrack -u (absolute Folder path)
 5. The script will create a torrent, extract screenshots, generate meta-information, search for TMDB ID, and upload to UNIT3D.
 
 ### Dependencies
 
 - requiremensts.txt
+- apt-get update && apt-get install ffmpeg libsm6 libxext6  -y
+- apt-get install -y libmediainfo-dev
 
 ### Installation
 
