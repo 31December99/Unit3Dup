@@ -6,12 +6,12 @@ from unit3dup import userinput
 
 
 class Cli:
-    def __init__(self, args: argparse):
+    def __init__(self, args: argparse, tracker: str):
 
         self.serie = 2
         self.movie = 1
         self.path = args.upload[0]
-        self.tracker = args.tracker[0]
+        self.tracker = 'itt' if not tracker else tracker
         self.is_dir = os.path.isdir(args.upload[0])
 
         # Se gli passi un file anche dentro una cartella basta che punti al file , lo considera un movie
