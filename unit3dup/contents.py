@@ -21,7 +21,8 @@ class Cli:
             self.folder = os.path.dirname(self.path)
             self.category = 1
             self.name, ext = os.path.splitext(self.file_name)
-            print(self.folder, self.file_name)
+            print(self.folder, self.file_name, os.path.join(self.folder, self.file_name))
+            
             self.size = os.path.getsize(os.path.join(self.folder, self.file_name))
             metainfo_str = [{'length': self.size, 'path': [self.file_name]}]
             self.metainfo = json.dumps(metainfo_str, indent=4)
