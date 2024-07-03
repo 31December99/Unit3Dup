@@ -11,8 +11,8 @@ if __name__ == "__main__":
     parser.add_argument('-t', '--tracker', nargs=1, type=str, help='Tracker Name')
     args = parser.parse_args()
 
-    if args.upload and args.tracker:
-        user_input = Cli(args=args)
+    if args.upload:
+        user_input = Cli(args=args, tracker=args.tracker)
 
         if user_input:
             bot = UploadBot(user_input.content)
