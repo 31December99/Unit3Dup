@@ -11,8 +11,7 @@ class Cli:
         self.serie = 2
         self.movie = 1
         self.path = args.upload[0]
-        self.tracker = 'itt' if not tracker else tracker
-        print(self.tracker)
+        self.tracker = ['itt'] if not tracker else tracker
         self.is_dir = os.path.isdir(args.upload[0])
 
         # Se gli passi un file anche dentro una cartella basta che punti al file , lo considera un movie
