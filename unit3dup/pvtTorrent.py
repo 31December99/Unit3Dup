@@ -75,7 +75,7 @@ class Mytorrent:
             return False
 
         self.qb.login(username=QBIT_USER, password=QBIT_PASS)
-        self.qb.download_from_file(torrent_file)
+        self.qb.download_from_file(file_buffer=torrent_file, savepath=self.mytorr.location)
         time.sleep(3)
         # Ottieni la lista dei torrent
         torrents = self.qb.torrents()
@@ -84,13 +84,12 @@ class Mytorrent:
             if torrent['name'] == self.mytorr.name:
                 infohash = torrent['hash']
                 # Location del torrent
-                self.qb.set_torrent_location(infohash, self.mytorr.location)
                 self.qb.recheck(infohash_list=infohash)
                 logging.info(f'[TORRENT INFOHASH]............  {infohash}')
                 logging.info(f'[TORRENT LOCATION]............  {self.mytorr.location}')
                 logging.info(f'[TORRENT NAME]................  {self.torrent_name}.torrent')
                 return True
-        logging.info(f"Non ho trovato nessun torrents in list corripondente al tuo {self.mytorr.name}")
+        logging.info(f"Non ho trovato nessun torrents in list corrispondente al tuo {self.mytorr.name}")
         return False
 
     @property
