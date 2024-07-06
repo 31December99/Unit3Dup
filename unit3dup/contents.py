@@ -21,9 +21,7 @@ class Cli:
             self.folder = os.path.dirname(self.path)
             self.category = 1
             self.name, ext = os.path.splitext(self.file_name)
-            self.size = self.get_folder_size(args.upload[0])
-
-            # self.size = os.path.getsize(os.path.join(self.folder, self.file_name))
+            self.size = os.path.getsize(self.path)
             metainfo_str = [{'length': self.size, 'path': [self.file_name]}]
             self.metainfo = json.dumps(metainfo_str, indent=4)
 
@@ -39,25 +37,19 @@ class Cli:
 
             if list_dir:
                 self.metainfo_list = []
+                size_total = 0
                 for t in list_dir:
                     self.size = os.path.getsize(os.path.join(self.folder, t))
                     self.metainfo_list.append({'length': self.size, 'path': [t]})
+                    size_total = size_total + self.size
+
+                print(f"[SERIE] {self.path}")
+                print(f"[SIZE] {size_total}")
             self.metainfo = json.dumps(self.metainfo_list, indent=4)
 
         self.content = userinput.Contents(file_name=self.file_name, folder=self.folder, name=self.name,
                                           size=self.size,
                                           metainfo=self.metainfo, category=self.category, tracker_name=self.tracker)
-
-    def get_folder_size(self, folder_path):
-        size = 0
-        for dirpath, dirnames, filenames in os.walk(folder_path):
-            for f in filenames:
-                fp = os.path.join(dirpath, f)
-                if not os.path.islink(fp):
-                    size += os.path.getsize(fp)
-        return size
-
-
 
     def listdir(self):
 
