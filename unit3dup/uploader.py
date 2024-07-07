@@ -54,8 +54,8 @@ class UploadBot:
         media_info = video.mediainfo
         description = video.description
         freelech = self.tracker_values.get_freelech(video.size)
-
-        return payload.Data.create_instance(metainfo=self.metainfo, name=self.name, file_name=self.file_name,
+        display_name = os.path.basename(self.folder)
+        return payload.Data.create_instance(metainfo=self.metainfo, name=display_name, file_name=self.file_name,
                                             result=result, category=category, standard=standard, mediainfo=media_info,
                                             description=description, freelech=freelech)
 
@@ -68,7 +68,6 @@ class UploadBot:
         media_info = video.mediainfo
         description = video.description
         freelech = self.tracker_values.get_freelech(video.size)
-
         return payload.Data.create_instance(metainfo=self.metainfo, name=self.name, file_name=self.file_name,
                                             result=result, category=category, standard=standard, mediainfo=media_info,
                                             description=description, freelech=freelech)
