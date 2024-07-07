@@ -88,9 +88,10 @@ class Video:
             if not ret:
                 continue
             screenshot_name = f'screenshot_{frame_number}.jpg'
+            filename = os.path.join("images", screenshot_name)
             frames_list.append(screenshot_name)
             quality = 90
-            cv2.imwrite(screenshot_name, frame, [cv2.IMWRITE_JPEG_QUALITY, quality])
+            cv2.imwrite(filename, frame, [cv2.IMWRITE_JPEG_QUALITY, quality])
 
         self.video_capture.release()
         cv2.destroyAllWindows()
