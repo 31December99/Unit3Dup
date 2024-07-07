@@ -59,7 +59,7 @@ class Mytorrent:
         with HashProgressBar() as progress:
             self.mytorr.generate(threads=4, callback=progress.callback, interval=0)
         end = time.time()
-        print(f"\n Hashed in {end - start} s")
+        print(f"Hashed in {end - start} s\n")
 
     def write(self):
         try:
