@@ -6,15 +6,16 @@ import sys
 import typing
 import torf
 import requests
-import logging
 from decouple import Config, RepositoryEnv
 from qbittorrent import Client
 from tqdm import tqdm
 from unit3dup.contents import Cli
+from rich.console import Console
 
-logging.basicConfig(level=logging.INFO)
 
 config_load = Config(RepositoryEnv('service.env'))
+console = Console(log_path=False)
+
 QBIT_USER = config_load('QBIT_USER')
 QBIT_PASS = config_load('QBIT_PASS')
 QBIT_URL = config_load('QBIT_URL')
@@ -54,12 +55,12 @@ class Mytorrent:
         self.mytorr.created_by = "Unit3d-Up"
         self.mytorr.private = True
         self.mytorr.segments = 16 * 1024 * 1024  # 16MB
-        print(f"[ HASHING ] {self.mytorr.name}")
+        console.log(f"\n[ HASHING ] {self.mytorr.name}")
         start = time.time()
         with HashProgressBar() as progress:
             self.mytorr.generate(threads=4, callback=progress.callback, interval=0)
         end = time.time()
-        print(f"Hashed in {end - start} s\n")
+        console.log(f"Hashed in {end - start} s\n")
 
     def write(self):
         try:
@@ -79,8 +80,8 @@ class Mytorrent:
         try:
             self.qb = Client(f'{QBIT_URL}:{QBIT_PORT}/')
         except Exception as e:  # todo
-            logging.info("Non è stato possibile collegarsi a qbittorent. Verifica WEBUI")
-            logging.info(f"{e}")
+            console.log("Non è stato possibile collegarsi a qbittorent. Verifica WEBUI")
+            console.log(f"{e}")
             return False
 
         self.qb.login(username=QBIT_USER, password=QBIT_PASS)
@@ -94,11 +95,11 @@ class Mytorrent:
                 infohash = torrent['hash']
                 # Location del torrent
                 self.qb.recheck(infohash_list=infohash)
-                logging.info(f'[TORRENT INFOHASH]............  {infohash}')
-                logging.info(f'[TORRENT LOCATION]............  {self.mytorr.location}')
-                logging.info(f'[TORRENT NAME]................  {self.torrent_name}.torrent')
+                console.log(f'\n[TORRENT INFOHASH]............  {infohash}')
+                console.log(f'[TORRENT LOCATION]............  {self.mytorr.location}')
+                console.log(f'[TORRENT NAME]................  {self.torrent_name}.torrent')
                 return True
-        logging.info(f"Non ho trovato nessun torrents in list corrispondente al tuo {self.mytorr.name}")
+        console.log(f"Non ho trovato nessun torrents in list corrispondente al tuo {self.mytorr.name}")
         return False
 
     @property
