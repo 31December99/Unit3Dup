@@ -2,14 +2,12 @@
 import json
 import os.path
 import requests
-import logging
 from decouple import Config, RepositoryEnv
 from database.trackers import TrackerConfig
 from unit3dup import pvtTracker, pvtVideo, pvtTorrent, userinput, search, payload
+from rich.console import Console
 
-logging.basicConfig(level=logging.INFO)
-
-
+console = Console(log_path=False)
 class UploadBot:
     def __init__(self, content: userinput):
 
@@ -25,7 +23,7 @@ class UploadBot:
         # // check tracker file configuration .env e .json
         self.tracker_env = f"{self.tracker_name}.env"
         if not os.path.exists(self.tracker_env):
-            print(f"\n[.ENV] Non trovo il file '{self.tracker_env}' per caricare api_key e token")
+            console.log(f"[.ENV] Non trovo il file '{self.tracker_env}' per caricare api_key e token")
             return
 
         config_load = Config(RepositoryEnv(self.tracker_env))
@@ -34,16 +32,16 @@ class UploadBot:
         self.BASE_URL = config_load('BASE_URL')
 
         if not self.PASS_KEY or not self.API_TOKEN:
-            logging.info("il file .env non è stato configurato oppure i nomi delle variabili sono errate.")
+            console.log("il file .env non è stato configurato oppure i nomi delle variabili sono errate.")
             return
 
         self.tracker_json = f"{self.tracker_name}.json"
         if not os.path.exists(self.tracker_json):
-            print(f"\n[TRACKER] Non trovo il tracker '{self.tracker_json}'")
+            console.log(f"\n[TRACKER] Non trovo il tracker '{self.tracker_json}'")
             return
 
         self.tracker_values = TrackerConfig(self.tracker_json)
-        print(f"\n[TRACKER {self.tracker_name.upper()}]..............  {self.BASE_URL}")
+        console.log(f"\n[TRACKER {self.tracker_name.upper()}]..............  {self.BASE_URL}")
 
     def serie_data(self) -> payload:
         mytmdb = search.TvShow('Serie')
@@ -99,9 +97,9 @@ class UploadBot:
         # // Seeding
         if tracker_response.status_code == 200:
             tracker_response_body = json.loads(tracker_response.text)
-            logging.info(f"[TRACKER RESPONSE]............  {tracker_response_body['message'].upper()}")
+            console.log(f"\n[TRACKER RESPONSE]............  {tracker_response_body['message'].upper()}")
             download_torrent_dal_tracker = requests.get(tracker_response_body['data'])
             if download_torrent_dal_tracker.status_code == 200:
                 mytorrent.qbit(download_torrent_dal_tracker)
         else:
-            logging.info(f"Non è stato possibile fare l'upload => {tracker_response} {tracker_response.text}")
+            console.log(f"Non è stato possibile fare l'upload => {tracker_response} {tracker_response.text}")

@@ -6,9 +6,11 @@ from thefuzz import fuzz
 from unit3dup.results import Results
 from unit3dup.utitlity import Manage_titles
 from decouple import Config, RepositoryEnv
+from rich.console import Console
 
 config_load = Config(RepositoryEnv('service.env'))
 TMDB_APIKEY = config_load('TMDB_APIKEY')
+console = Console(log_path=False)
 
 
 class MyTmdb:
@@ -39,7 +41,7 @@ class MyTmdb:
         self.ext_title = self.ext_title.replace('–', ' ')
         self.ext_title = self.ext_title.replace('’', ' ')
         self.ext_title = self.ext_title.replace('\'', ' ')
-        print(f"\n[TMDB Search]..........  {self.ext_title}")
+        console.log(f"\n[TMDB Search]..........  {self.ext_title}")
 
         self.__requests()
         result = self.__search_titles()
@@ -54,18 +56,18 @@ class MyTmdb:
         return result
 
     def input_tmdb(self) -> Results:
-        print("Non è stato possibile identificare il TMDB ID. Inserisci un numero..")
+        console.log("Non è stato possibile identificare il TMDB ID. Inserisci un numero..")
         results = Results()
         while True:
             tmdb_id = input(f"> ")
             if not tmdb_id.isdigit():
-                print(f"Non riconosco {tmdb_id} come un numero ..Riprova")
+                console.log(f"Non riconosco {tmdb_id} come un numero ..Riprova")
                 continue
-            print(f"Hai digitato {tmdb_id}")
+            console.log(f"Hai digitato {tmdb_id}")
             user_answ = input("Sei sicuro ? (s/n)> ")
             if 's' == user_answ.lower():
                 keywords = self.keywords(int(tmdb_id))
-                print(keywords)
+                console.log(keywords)
                 if 'The resource you requested could not be found.' not in keywords:
                     results.video_id = tmdb_id
                     results.keywords = keywords
@@ -73,8 +75,8 @@ class MyTmdb:
 
     def __requests(self):
         self.__result = self.tmdb.search(self.ext_title)
-        print(f"[TMDB total-results]...  {self.__result['total_results']}")
-        print(f"[TMDB total-pages].....  {self.__result['total_pages']}")
+        console.log(f"[TMDB total-results]...  {self.__result['total_results']}")
+        console.log(f"[TMDB total-pages].....  {self.__result['total_pages']}")
         if self.__result['total_results'] > 0:
             for result in self.__result:
                 results = Results()
