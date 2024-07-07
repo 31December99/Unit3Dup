@@ -26,7 +26,7 @@ class Cli:
             self.metainfo = json.dumps(metainfo_str, indent=4)
 
         if self.is_dir:
-            list_dir = self.listdir()
+            list_dir = sorted(self.listdir())
             self.file_name = list_dir[0]
             self.folder = self.path
             self.category = 2
