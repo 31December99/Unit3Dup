@@ -54,9 +54,11 @@ class Mytorrent:
         self.mytorr.private = True
         self.mytorr.segments = 16 * 1024 * 1024  # 16MB
         print(f"[ HASHING ] {self.mytorr.name}")
+        start = time.time()
         with HashProgressBar() as progress:
-            self.mytorr.generate(threads=0, callback=progress.callback, interval=0)
-        print("\n")
+            self.mytorr.generate(threads=4, callback=progress.callback, interval=0)
+        end = time.time()
+        print(f"\n Hashed in {end - start} s")
 
     def write(self):
         try:
