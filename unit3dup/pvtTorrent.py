@@ -29,6 +29,13 @@ class HashProgressBar(tqdm):
 
 
 class Mytorrent:
+    """
+    Crea un torrent per serie o movie
+
+    movie: occorre fornire il percorso completo fino al file con estensione
+    serie: ogni episodio anche singolo deve essere contenuto in una cartella che ha come nome il titolo della serie o
+            di un episodio della serie
+    """
 
     def __init__(self, contents: Cli, meta: str, tracker_announce_list: list):
 
@@ -37,17 +44,16 @@ class Mytorrent:
         self.torrent_path = contents.folder
         self.content_type = contents.category
         self.metainfo = json.loads(meta)
-        self.__torrent_name = self.torrent_path if not self.content_type else os.path.join(self.torrent_path,
-                                                                                           self.file_name)
+        self.__torrent_name = self.torrent_path if self.content_type == 2 else os.path.join(self.torrent_path,
+                                                                                            self.file_name)
         self.mytorr = torf.Torrent(path=self.__torrent_name)
         self.mytorr.announce_list = tracker_announce_list
         self.mytorr.comment = "ciao"
-        self.mytorr.name = contents.file_name
+        self.mytorr.name = contents.name if self.content_type == 2 else contents.file_name
         self.mytorr.created_by = "Unit3d-Up"
         self.mytorr.private = True
         self.mytorr.segments = 16 * 1024 * 1024  # 16MB
-
-        print(f"[ HASHING ] {self.file_name}")
+        print(f"[ HASHING ] {self.mytorr.name}")
         with HashProgressBar() as progress:
             self.mytorr.generate(threads=0, callback=progress.callback, interval=0)
         print("\n")
