@@ -11,7 +11,7 @@ IMGBB_KEY = config_load('IMGBB_KEY')
 class ImgHost:
 
     def __init__(self, filename: str):
-        self.filename = filename
+        self.filename = os.path.join("images", filename)
         self.params = {}
         self.file = {}
 
