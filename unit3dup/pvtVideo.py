@@ -4,7 +4,9 @@ import cv2
 import os
 from unit3dup.imageHost import ImgBB
 from pymediainfo import MediaInfo
+from rich.console import Console
 
+console = Console()
 
 class Video:
     """
@@ -28,7 +30,7 @@ class Video:
         # Screenshots samples
         self.samples_n = 6
         # Catturo i frames del video
-        print(f"[ CAPTURING SCREEN ]")
+        console.log(f"\n[ CAPTURING SCREEN... ]")
         self.video_capture = cv2.VideoCapture(self.file_name)
 
     @property
@@ -39,10 +41,10 @@ class Video:
     def standard(self) -> int:
         # SD o HD ?
         if self.video_capture.get(cv2.CAP_PROP_FRAME_WIDTH) < 720:
-            print(f"[HD]........... YES")
+            console.log(f"[HD]........... YES")
             return 1
         else:
-            print(f"[HD]........... NO")
+            console.log(f"[HD]........... NO")
             return 0
 
     @property
@@ -100,10 +102,14 @@ class Video:
     @property
     def description(self) -> str:
         descrizione = f"[center]\n"
+        console_url = []
         for f in self.frames:
             img_host = ImgBB(f)
             img_url = img_host.upload['data']['display_url']
+            console_url.append(img_url)
             descrizione += (f"[url={img_url}][img=350]"
                             f"{img_url}[/img][/url]")
         descrizione += "\n[/center]"
+        for url in console_url:
+            console.log(url)
         return descrizione
