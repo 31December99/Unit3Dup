@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 from unit3dup import tmdb, title
+from rich.console import Console
+
+console = Console(log_path=False)
 
 
 class TvShow:
@@ -19,8 +22,8 @@ class TvShow:
             overview = result.overview
             url_backdrop = f"https://www.themoviedb.org/t/p/original{backdrop_path}" if backdrop_path else 'nourl'
             url_poster = f"https://www.themoviedb.org/t/p/original{poster_path}" if poster_path else 'nourl'
-            print(f"[TMDB ID]................  {result.video_id}")
-            print(f"[TMDB POSTER]............  {url_poster}")
-            print(f"[TMDB BACKDROP]..........  {url_backdrop}")
-            print(f"[TMDB KEYWORDS]..........  {result.keywords}\n")
+            console.log(f"\n[TMDB ID]................  {result.video_id}")
+            console.log(f"[TMDB POSTER]............  {url_poster}")
+            console.log(f"[TMDB BACKDROP]..........  {url_backdrop}")
+            console.log(f"[TMDB KEYWORDS]..........  {result.keywords}\n")
             return result
