@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 import argparse
-import os
-
 from unit3dup.uploader import UploadBot
 from unit3dup.contents import Cli
 
