@@ -42,6 +42,7 @@ class Mytorrent:
         self.qb = None
         self.file_name = contents.file_name
         self.torrent_path = contents.folder
+        self.basename = os.path.basename(self.torrent_path)
         self.content_type = contents.category
         self.metainfo = json.loads(meta)
         self.__torrent_name = self.torrent_path if self.content_type == 2 else os.path.join(self.torrent_path,
@@ -49,7 +50,7 @@ class Mytorrent:
         self.mytorr = torf.Torrent(path=self.__torrent_name)
         self.mytorr.announce_list = tracker_announce_list
         self.mytorr.comment = "ciao"
-        self.mytorr.name = contents.name if self.content_type == 2 else contents.file_name
+        self.mytorr.name = self.basename if self.content_type == 2 else contents.file_name
         self.mytorr.created_by = "Unit3d-Up"
         self.mytorr.private = True
         self.mytorr.segments = 16 * 1024 * 1024  # 16MB
