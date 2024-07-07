@@ -42,9 +42,6 @@ class Cli:
                     self.size = os.path.getsize(os.path.join(self.folder, t))
                     self.metainfo_list.append({'length': self.size, 'path': [t]})
                     size_total = size_total + self.size
-
-                print(f"[SERIE] {self.path}")
-                print(f"[SIZE] {size_total}")
             self.metainfo = json.dumps(self.metainfo_list, indent=4)
 
         self.content = userinput.Contents(file_name=self.file_name, folder=self.folder, name=self.name,
