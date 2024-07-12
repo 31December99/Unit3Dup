@@ -8,17 +8,19 @@ from unit3dup import pvtTracker, pvtVideo, pvtTorrent, userinput, search, payloa
 from rich.console import Console
 
 console = Console(log_path=False)
+
+
 class UploadBot:
     def __init__(self, content: userinput):
 
         self.content = content
         self.file_name = content.file_name  # filename con estensione = filename
         self.folder = content.folder  # folder sia per serie che per movie
-        self.name = content.name  # filename senza estensione = name
         self.tracker_name = content.tracker_name
         self.category = content.category  # 1 = movie , 2 = serie
         self.size = content.size
         self.metainfo = content.metainfo
+        self.name = f"{content.name if self.category == 1 else os.path.basename(content.folder)}.torrent"
 
         # // check tracker file configuration .env e .json
         self.tracker_env = f"{self.tracker_name}.env"
