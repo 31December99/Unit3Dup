@@ -45,30 +45,29 @@ class UploadBot:
 
     def serie_data(self) -> payload:
         mytmdb = search.TvShow('Serie')
-        result = mytmdb.start(self.file_name)
-        category = self.tracker_values.category('tvshow')
         video = pvtVideo.Video(fileName=str(os.path.join(self.folder, self.file_name)))
-        standard = video.standard
-        media_info = video.mediainfo
-        description = video.description
-        freelech = self.tracker_values.get_freelech(video.size)
-        display_name = os.path.basename(self.folder)
-        return payload.Data.create_instance(metainfo=self.metainfo, name=display_name, file_name=self.file_name,
-                                            result=result, category=category, standard=standard, mediainfo=media_info,
-                                            description=description, freelech=freelech)
+        return payload.Data.create_instance(metainfo=self.metainfo,
+                                            name=os.path.basename(self.folder),
+                                            file_name=self.file_name,
+                                            result=mytmdb.start(self.file_name),
+                                            category=self.tracker_values.category('tvshow'),
+                                            standard=video.standard,
+                                            mediainfo=video.mediainfo,
+                                            description=video.description,
+                                            freelech=self.tracker_values.get_freelech(video.size))
 
     def movie_data(self) -> payload:
         mytmdb = search.TvShow('Movie')
-        result = mytmdb.start(self.file_name)
-        category = self.tracker_values.category('movie')
         video = pvtVideo.Video(fileName=str(os.path.join(self.folder, self.file_name)))
-        standard = video.standard
-        media_info = video.mediainfo
-        description = video.description
-        freelech = self.tracker_values.get_freelech(video.size)
-        return payload.Data.create_instance(metainfo=self.metainfo, name=self.name, file_name=self.file_name,
-                                            result=result, category=category, standard=standard, mediainfo=media_info,
-                                            description=description, freelech=freelech)
+        return payload.Data.create_instance(metainfo=self.metainfo,
+                                            name=self.name,
+                                            file_name=self.file_name,
+                                            result=mytmdb.start(self.file_name),
+                                            category=self.tracker_values.category('movie'),
+                                            standard=video.standard,
+                                            mediainfo=video.mediainfo,
+                                            description=video.description,
+                                            freelech=self.tracker_values.get_freelech(video.size))
 
     def process_data(self, data: payload):
 
