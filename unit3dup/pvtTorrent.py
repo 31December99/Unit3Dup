@@ -97,7 +97,7 @@ class Mytorrent:
                 self.qb.recheck(infohash_list=infohash)
                 console.log(f'\n[TORRENT INFOHASH]............  {infohash}')
                 console.log(f'[TORRENT LOCATION]............  {self.mytorr.location}')
-                console.log(f'[TORRENT NAME]................  {self.torrent_name}.torrent')
+                console.log(f'[TORRENT NAME]................  {self.mytorr.name}.torrent')
                 return True
         console.log(f"Non ho trovato nessun torrents in list corrispondente al tuo {self.mytorr.name}")
         return False
