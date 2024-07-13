@@ -13,8 +13,9 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     console.rule(f"\n[bold blue] Unit3D uploader", style="#ea00d9")
+    user_input = Cli(args=args, tracker=args.tracker)
+
     if args.upload:
-        user_input = Cli(args=args, tracker=args.tracker)
         if user_input:
             bot = UploadBot(user_input.content)
             console.log(f"\n[TORRENT NAME] {bot.name}")
