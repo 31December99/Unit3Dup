@@ -17,6 +17,7 @@ def user_arguments():
     parser.add_argument("-t", "--tracker", nargs=1, type=str, help="Tracker Name")
     parser.add_argument("-s", "--search", nargs=1, type=str, help="Search")
     parser.add_argument("-i", "--info", nargs=1, type=str, help="Info")
+    parser.add_argument("-d", "--dead", action='store_true', help="Dead")
 
     args = parser.parse_args()
 
@@ -76,9 +77,17 @@ def main():
         torrent_info.search(args.info, info=True)
         return
 
+    if args.dead:
+        torrent_info = Torrent(args.tracker)
+        torrent_info.get_dead()
+        return
+
     console.print("Sintassi non valida o valore nullo. Controlla..")
     console.print(f"[-u] {args.upload}")
     console.print(f"[-t] {args.tracker}")
+    console.print(f"[-s] {args.search}")
+    console.print(f"[-i] {args.info}")
+    console.print(f"[-d] {args.dead}")
 
 
 if __name__ == "__main__":
