@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import requests
+import urllib.parse
 
 
 class Myhttp:
@@ -170,7 +171,8 @@ class Unit3d(filterAPI, Torrents, Uploader):
         return self.mal(mal_id=mal_id, perPage=perPage)
 
     def get_name(self, name: str, perPage: int = None) -> requests:
-        return self.name(name=name, perPage=perPage)
+        encoded = urllib.parse.quote(name)
+        return self.name(name=encoded, perPage=perPage)
 
     def get_description(self, description: str, perPage: int = None) -> requests:
         return self.description(description=description, perPage=perPage)
