@@ -6,15 +6,16 @@ import sys
 from unit3dup.uploader import UploadBot
 from unit3dup.contents import Cli
 from rich.console import Console
+from unit3dup import Torrent
 
 console = Console(log_path=False)
 
 
 def user_arguments():
-    parser = argparse.ArgumentParser(description='Commands', add_help=False)
-    parser.add_argument('-u', '--upload', nargs=1, type=str, help='Upload Path')
-    parser.add_argument('-t', '--tracker', nargs=1, type=str, help='Tracker Name')
-    parser.add_argument('-s', '--search', nargs=1, type=str, help='Search')
+    parser = argparse.ArgumentParser(description="Commands", add_help=False)
+    parser.add_argument("-u", "--upload", nargs=1, type=str, help="Upload Path")
+    parser.add_argument("-t", "--tracker", nargs=1, type=str, help="Tracker Name")
+    parser.add_argument("-s", "--search", nargs=1, type=str, help="Search")
 
     args = parser.parse_args()
 
@@ -23,14 +24,18 @@ def user_arguments():
             console.log(f"Il percorso {args.upload[0]} non esiste.")
             sys.exit()
 
-    tracker = 'itt' if not args.tracker else args.tracker[0]
+    tracker = "itt" if not args.tracker else args.tracker[0]
 
     if not os.path.exists(f"{tracker}.env"):
-        console.log(f"Non trovo il file di configurazione '{tracker}.env' per il tracker '{tracker}'")
+        console.log(
+            f"Non trovo il file di configurazione '{tracker}.env' per il tracker '{tracker}'"
+        )
         sys.exit()
 
     if not os.path.exists(f"{tracker}.json"):
-        console.log(f"Non trovo il file di configurazione '{tracker}.json' per il tracker '{tracker}'")
+        console.log(
+            f"Non trovo il file di configurazione '{tracker}.json' per il tracker '{tracker}'"
+        )
         sys.exit()
     return args
 
@@ -58,10 +63,16 @@ def main():
         user_input = Cli(args=args, tracker=args.tracker)
         if user_input:
             process_upload(user_input)
-    else:
-        console.print("Sintassi non valida o valore nullo. Controlla..")
-        console.print(f"[-u] {args.upload}")
-        console.print(f"[-t] {args.tracker}")
+            return
+
+    if args.search:
+        torrent_info = Torrent(args.tracker)
+        torrent_info.search(args.search)
+        return
+
+    console.print("Sintassi non valida o valore nullo. Controlla..")
+    console.print(f"[-u] {args.upload}")
+    console.print(f"[-t] {args.tracker}")
 
 
 if __name__ == "__main__":
