@@ -14,6 +14,7 @@ This Python script generates and uploads torrents based on input provided for mo
 - Uploads the content to the UNIT3D Next Generation tracker platform.
 - Seeding in qbittorrent
 
+___
 ### Example Usage
 
 #### Series 
@@ -48,10 +49,6 @@ ___
 
 Make sure to configure the necessary API keys and authentication credentials in a separate configuration file (.env).
 
-### Contribution
-
-Contributions are welcome! Feel free to open an issue or submit a pull request.
-
 ### Service.env file Example:
 
 - API_TOKEN=...
@@ -66,3 +63,8 @@ Contributions are welcome! Feel free to open an issue or submit a pull request.
 - BASE_URL=https://...
 - PASS_KEY=...
 - API_TOKEN=...
+
+___
+### Contribution
+
+Contributions are welcome! Feel free to open an issue or submit a pull request.
