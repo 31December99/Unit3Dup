@@ -17,6 +17,8 @@ def user_arguments():
     parser.add_argument("-t", "--tracker", nargs=1, type=str, help="Tracker Name")
     parser.add_argument("-s", "--search", nargs=1, type=str, help="Search")
     parser.add_argument("-i", "--info", nargs=1, type=str, help="Info")
+    parser.add_argument("-up", "--uploader", nargs=1, type=str, help="Uploader user")
+
     parser.add_argument("-d", "--dead", action='store_true', help="Dead torrent")
     parser.add_argument("-dy", "--dying", action='store_true', help="Dying torrent")
 
@@ -76,6 +78,11 @@ def main():
     if args.info:
         torrent_info = Torrent(args.tracker)
         torrent_info.search(args.info, info=True)
+        return
+
+    if args.uploader:
+        torrent_info = Torrent(args.tracker)
+        torrent_info.get_by_uploader(args.uploader)
         return
 
     if args.dead:
