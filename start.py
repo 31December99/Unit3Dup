@@ -26,6 +26,10 @@ def user_arguments():
         console.log(f"Non trovo il file di configurazione '{tracker}.env' per il tracker '{tracker}'")
         sys.exit()
 
+    if not os.path.exists(f"{tracker}.json"):
+        console.log(f"Non trovo il file di configurazione '{tracker}.json' per il tracker '{tracker}'")
+        sys.exit()
+
     return args
 
 
