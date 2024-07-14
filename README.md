@@ -17,7 +17,6 @@ This Python script generates and uploads torrents based on input provided for mo
 ### Example Usage
 
 #### Series 
-
 - python3 start.py -u /home/uploader/myvideos  -> use only folder for series
 
 #### Movies
@@ -27,7 +26,6 @@ This Python script generates and uploads torrents based on input provided for mo
 - python3 start.py -t itt -u /home/uploader/myvideos
 
 ### Dependencies
-
 - requirements.txt
 - apt-get update && apt-get install ffmpeg libsm6 libxext6  -y
 - apt-get install -y libmediainfo-dev
