@@ -34,3 +34,4 @@ class Torrent:
             console.log(
                 f"[{item['attributes']['release_year']}] - {item['attributes']['name']}"
             )
+        print()
