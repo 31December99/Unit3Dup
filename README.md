@@ -30,7 +30,7 @@ ___
 - python3 start.py -s Matrix
 - python3 start.py -i Matrix ( info_hash and Media_info Unique ID)
 - python3 start.py -d (dead torrents)
-
+- python3 start.py -dy (dying torrents)
 ___
 ### Dependencies
 - requirements.txt

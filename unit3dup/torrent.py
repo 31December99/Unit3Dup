@@ -64,5 +64,13 @@ class Torrent:
             base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key=self.PASS_KEY
         )
         tracker_data = tracker.get_dead(dead=True, perPage=50)
-        console.log(f"Searching.. Dead torrents..")
+        console.log(f"Dead torrents.. Filter by if the torrent has 0 seeders")
+        self.print_normal(tracker_data['data'])
+
+    def get_dying(self):
+        tracker = pvtTracker.Unit3d(
+            base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key=self.PASS_KEY
+        )
+        tracker_data = tracker.get_dying(dying=True, perPage=50)
+        console.log(f"Dying torrents.. Filter by if the torrent has 1 seeder and has been downloaded more than 3 times")
         self.print_normal(tracker_data['data'])
