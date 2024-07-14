@@ -58,3 +58,11 @@ class Torrent:
         else:
             self.print_normal(data=data)
         print()
+
+    def get_dead(self):
+        tracker = pvtTracker.Unit3d(
+            base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key=self.PASS_KEY
+        )
+        tracker_data = tracker.get_dead(dead=True, perPage=50)
+        console.log(f"Searching.. Dead torrents..")
+        self.print_normal(tracker_data['data'])
