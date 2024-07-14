@@ -30,7 +30,6 @@ class Video:
         # Screenshots samples
         self.samples_n = 6
         # Catturo i frames del video
-        console.log(f"\n[ CAPTURING SCREEN... ]")
         self.video_capture = cv2.VideoCapture(self.file_name)
 
     @property
@@ -81,7 +80,7 @@ class Video:
     @property
     def frames(self) -> list:
         """
-        :return: una lista di filename frames in formato jpg
+        :return: una lista di tuple contenenti il numero del frame e l'immagine del frame in formato JPEG (come bytes)
         """
         frames_list = []
         for frame_number in self.samples:
@@ -89,27 +88,29 @@ class Video:
             ret, frame = self.video_capture.read()
             if not ret:
                 continue
-            screenshot_name = f'screenshot_{frame_number}.jpg'
-            filename = os.path.join("images", screenshot_name)
-            frames_list.append(screenshot_name)
-            quality = 90
-            cv2.imwrite(filename, frame, [cv2.IMWRITE_JPEG_QUALITY, quality])
+
+            ret, buffer = cv2.imencode('.jpg', frame, [cv2.IMWRITE_JPEG_QUALITY, 90])
+            if ret:
+                image_bytes = buffer.tobytes()
+                frames_list.append(image_bytes)
 
         self.video_capture.release()
         cv2.destroyAllWindows()
         return frames_list
 
+
     @property
     def description(self) -> str:
+        console.log("\n[GENERATING IMAGES FROM VIDEO...]")
         descrizione = f"[center]\n"
         console_url = []
         for f in self.frames:
             img_host = ImgBB(f)
             img_url = img_host.upload['data']['display_url']
+            console.log(img_url)
             console_url.append(img_url)
             descrizione += (f"[url={img_url}][img=350]"
                             f"{img_url}[/img][/url]")
         descrizione += "\n[/center]"
-        for url in console_url:
-            console.log(url)
         return descrizione
+
