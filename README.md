@@ -25,6 +25,10 @@ This Python script generates and uploads torrents based on input provided for mo
 #### Tracker (default itt)
 - python3 start.py -t itt -u /home/uploader/myvideos
 
+#### Search first 50 (default itt)
+- python3 start.py -s Matrix
+- python3 start.py -i Matrix ( info_hash and Media_info Unique ID)
+
 ### Dependencies
 - requirements.txt
 - apt-get update && apt-get install ffmpeg libsm6 libxext6  -y
