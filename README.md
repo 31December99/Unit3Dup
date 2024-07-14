@@ -31,6 +31,7 @@ ___
 - python3 start.py -i Matrix ( info_hash and Media_info Unique ID)
 - python3 start.py -d (dead torrents)
 - python3 start.py -dy (dying torrents)
+- python3 start.py -up (search by uploader's usernmame)
 ___
 ### Dependencies
 - requirements.txt
