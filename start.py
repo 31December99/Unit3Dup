@@ -16,6 +16,7 @@ def user_arguments():
     parser.add_argument("-u", "--upload", nargs=1, type=str, help="Upload Path")
     parser.add_argument("-t", "--tracker", nargs=1, type=str, help="Tracker Name")
     parser.add_argument("-s", "--search", nargs=1, type=str, help="Search")
+    parser.add_argument("-i", "--info", nargs=1, type=str, help="Info")
 
     args = parser.parse_args()
 
@@ -68,6 +69,11 @@ def main():
     if args.search:
         torrent_info = Torrent(args.tracker)
         torrent_info.search(args.search)
+        return
+
+    if args.info:
+        torrent_info = Torrent(args.tracker)
+        torrent_info.search(args.info, info=True)
         return
 
     console.print("Sintassi non valida o valore nullo. Controlla..")
