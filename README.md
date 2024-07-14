@@ -14,14 +14,17 @@ This Python script generates and uploads torrents based on input provided for mo
 - Uploads the content to the UNIT3D Next Generation tracker platform.
 - Seeding in qbittorrent
 
-### Usage
+### Example Usage
 
-1. python3 start.py -u (absolute Folder path) for series
-2. python3 start.py -u (absolute File path) for movie
-3. python3 start.py -t (tracker name) default : itt
-4. Example: python3 start.py -u /home/uploader/myvideos  -> series e default itt tracker
-   Example: python3 start.py -u /home/uploader/myvideos/TheMatrix.1080p.WEB-DL.H.264.mkv -> movie
-5. The script will create a torrent, extract screenshots, generate meta-information, search for TMDB ID, and upload to UNIT3D.
+#### Series 
+
+- python3 start.py -u /home/uploader/myvideos  -> use only folder for series
+
+#### Movies
+- python3 start.py -u /home/uploader/myvideos/TheMatrix.1080p.WEB-DL.H.264.mkv
+
+#### Tracker (default itt)
+- python3 start.py -t (tracker name) default : itt
 
 ### Dependencies
 
@@ -45,44 +48,17 @@ Make sure to configure the necessary API keys and authentication credentials in 
 
 Contributions are welcome! Feel free to open an issue or submit a pull request.
 
-### License
-
-This project is licensed under the MIT License
-
 ### Service.env file Example:
+
 - API_TOKEN=...
 - TMDB_APIKEY=...
 - IMGBB_KEY=...
-- QBIT_USER=...
-- QBIT_PASS=...
-- QBIT_URL=...
-- QBIT_PORT=...
+- QBIT_USER=... (username your qbittorrent client)
+- QBIT_PASS=... (password your qbittorrent client)
+- QBIT_URL=...  (url 127.0.0.1 local or remote ip)
+- QBIT_PORT=... (port number check your qbit config.)
 
-### Custom tracker .env file Example (mytrack.env):
+### Custom tracker .env file Example (itt.env):
 - BASE_URL=https://...
 - PASS_KEY=...
 - API_TOKEN=...
-
-### TRACK_NAME
-Tracker name for specific tracker data
-
-### BASE_URL
-Tracker URL
-
-### PASS_KEY
-Your tracker pass key ( Search for it in your user profile)
-
-### API_TOKEN
-As mentioned above
-
-### TMDB_APIKEY
-Your TMDB Api key ( Search for it in your user profile)
-
-### IMGBB_KEY
-Your IMGBB Api key ( Search for it in your user profile)
-
-### QBIT_USER
-Qbittorrent USER
-
-### QBIT_PASS
-Qbittorrent PASS
