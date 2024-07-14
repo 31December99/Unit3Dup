@@ -24,10 +24,6 @@ class UploadBot:
 
         # // check tracker file configuration .env e .json
         self.tracker_env = f"{self.tracker_name}.env"
-        if not os.path.exists(self.tracker_env):
-            console.log(f"[.ENV] Non trovo il file '{self.tracker_env}' per caricare api_key e token")
-            return
-
         config_load = Config(RepositoryEnv(self.tracker_env))
         self.PASS_KEY = config_load('PASS_KEY')
         self.API_TOKEN = config_load('API_TOKEN')
