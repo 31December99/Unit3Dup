@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 import argparse
+import os
+import sys
+
 from unit3dup.uploader import UploadBot
 from unit3dup.contents import Cli
 from rich.console import Console
@@ -11,7 +14,12 @@ def user_arguments():
     parser = argparse.ArgumentParser(description='Commands', add_help=False)
     parser.add_argument('-u', '--upload', nargs=1, type=str, help='Upload Path')
     parser.add_argument('-t', '--tracker', nargs=1, type=str, help='Tracker Name')
-    return parser.parse_args()
+    args = parser.parse_args()
+
+    if not os.path.exists(args.upload[0]):
+        console.log(f"Il percorso {args.upload[0]} non esiste.")
+        sys.exit()
+    return args
 
 
 def start_info(bot, user_input):
