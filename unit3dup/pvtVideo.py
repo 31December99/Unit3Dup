@@ -80,7 +80,7 @@ class Video:
     @property
     def frames(self) -> list:
         """
-        :return: una lista di tuple contenenti il numero del frame e l'immagine del frame in formato JPEG (come bytes)
+        :return: una lista di tuple contenenti le immagini del frame in bytes
         """
         frames_list = []
         for frame_number in self.samples:
