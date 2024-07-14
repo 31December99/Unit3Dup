@@ -44,7 +44,7 @@ class Torrent:
         tracker = pvtTracker.Unit3d(
             base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key=self.PASS_KEY
         )
-        tracker_data = tracker.get_name(keyword[0])
+        tracker_data = tracker.get_name(keyword[0], 50)
         console.log(f"Searching.. '{keyword[0]}'")
         # float(inf) in caso di None utilizza il suo valore (infinito) come key di ordinamento (ultimo)
         data = sorted(
