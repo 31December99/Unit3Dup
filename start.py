@@ -14,11 +14,14 @@ def user_arguments():
     parser = argparse.ArgumentParser(description='Commands', add_help=False)
     parser.add_argument('-u', '--upload', nargs=1, type=str, help='Upload Path')
     parser.add_argument('-t', '--tracker', nargs=1, type=str, help='Tracker Name')
+    parser.add_argument('-s', '--search', nargs=1, type=str, help='Search')
+
     args = parser.parse_args()
 
-    if not os.path.exists(args.upload[0]):
-        console.log(f"Il percorso {args.upload[0]} non esiste.")
-        sys.exit()
+    if args.upload:
+        if not os.path.exists(args.upload[0]):
+            console.log(f"Il percorso {args.upload[0]} non esiste.")
+            sys.exit()
 
     tracker = 'itt' if not args.tracker else args.tracker[0]
 
@@ -29,7 +32,6 @@ def user_arguments():
     if not os.path.exists(f"{tracker}.json"):
         console.log(f"Non trovo il file di configurazione '{tracker}.json' per il tracker '{tracker}'")
         sys.exit()
-
     return args
 
 
@@ -52,9 +54,8 @@ def main():
     args = user_arguments()
 
     console.rule(f"\n[bold blue] Unit3D uploader", style="#ea00d9")
-    user_input = Cli(args=args, tracker=args.tracker)
-
     if args.upload:
+        user_input = Cli(args=args, tracker=args.tracker)
         if user_input:
             process_upload(user_input)
     else:
