@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import re
 
 from unit3dup import pvtTracker
 from decouple import Config, RepositoryEnv
@@ -16,22 +17,44 @@ class Torrent:
         self.API_TOKEN = config_load("API_TOKEN")
         self.BASE_URL = config_load("BASE_URL")
 
-    def search(self, keyword: str):
+    def get_unique_id(self, media_info: str) -> str:
+        # Divido per campi
+        raw_media = media_info.split('\r')
+        unique_id = '-' * 40
+        if len(raw_media) > 1:
+            match = re.search(r"Unique ID\s+:\s+(\d+)", media_info)
+            if match:
+                unique_id = match.group(1)
+        return unique_id
+
+    def print_info(self, data: list):
+        for item in data:
+            # Ottengo media info
+            media_info = item['attributes']['media_info']
+            unique_id = self.get_unique_id(media_info=media_info) if media_info else '-' * 40
+            # console.print o log non stampa info_hash !
+            print(f"[{str(item['attributes']['release_year'])}] - [{item['attributes']['info_hash']}] [{unique_id}]"
+                  f" -> {item['attributes']['name']}")
+
+    def print_normal(self, data: list):
+        for item in data:
+            console.log(f"[{str(item['attributes']['release_year'])}] - {item['attributes']['name']}")
+
+    def search(self, keyword: str, info=False):
         tracker = pvtTracker.Unit3d(
             base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key=self.PASS_KEY
         )
         tracker_data = tracker.get_name(keyword[0])
         console.log(f"Searching.. '{keyword[0]}'")
-
         # float(inf) in caso di None utilizza il suo valore (infinito) come key di ordinamento (ultimo)
         data = sorted(
             tracker_data["data"],
             key=lambda x: x["attributes"].get("release_year", float("inf"))
-            or float("inf"),
+                          or float("inf"),
         )
 
-        for item in data:
-            console.log(
-                f"[{item['attributes']['release_year']}] - {item['attributes']['name']}"
-            )
+        if info:
+            self.print_info(data=data)
+        else:
+            self.print_normal(data=data)
         print()
