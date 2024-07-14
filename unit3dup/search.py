@@ -20,8 +20,16 @@ class TvShow:
             backdrop_path = result.backdrop_path
             poster_path = result.poster_path
             overview = result.overview
-            url_backdrop = f"https://www.themoviedb.org/t/p/original{backdrop_path}" if backdrop_path else 'nourl'
-            url_poster = f"https://www.themoviedb.org/t/p/original{poster_path}" if poster_path else 'nourl'
+            url_backdrop = (
+                f"https://www.themoviedb.org/t/p/original{backdrop_path}"
+                if backdrop_path
+                else "nourl"
+            )
+            url_poster = (
+                f"https://www.themoviedb.org/t/p/original{poster_path}"
+                if poster_path
+                else "nourl"
+            )
             console.log(f"\n[TMDB ID]................  {result.video_id}")
             console.log(f"[TMDB POSTER]............  {url_poster}")
             console.log(f"[TMDB BACKDROP]..........  {url_backdrop}")
