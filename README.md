@@ -24,11 +24,11 @@ This Python script generates and uploads torrents based on input provided for mo
 - python3 start.py -u /home/uploader/myvideos/TheMatrix.1080p.WEB-DL.H.264.mkv
 
 #### Tracker (default itt)
-- python3 start.py -t (tracker name) default : itt
+- python3 start.py -t itt -u /home/uploader/myvideos
 
 ### Dependencies
 
-- requiremensts.txt
+- requirements.txt
 - apt-get update && apt-get install ffmpeg libsm6 libxext6  -y
 - apt-get install -y libmediainfo-dev
 
