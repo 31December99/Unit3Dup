@@ -19,6 +19,13 @@ def user_arguments():
     if not os.path.exists(args.upload[0]):
         console.log(f"Il percorso {args.upload[0]} non esiste.")
         sys.exit()
+
+    tracker = 'itt' if not args.tracker else args.tracker[0]
+
+    if not os.path.exists(f"{tracker}.env"):
+        console.log(f"Non trovo il file di configurazione '{tracker}.env' per il tracker '{tracker}'")
+        sys.exit()
+
     return args
 
 
