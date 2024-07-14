@@ -57,7 +57,6 @@ class Torrent:
             self.print_info(data=data)
         else:
             self.print_normal(data=data)
-        print()
 
     def get_by_uploader(self, username: str):
         tracker = pvtTracker.Unit3d(
