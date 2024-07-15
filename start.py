@@ -121,14 +121,6 @@ def main():
         return
 
     console.print("Sintassi non valida o valore nullo. Controlla..")
-    console.print(f"[-u] {args.upload}")
-    console.print(f"[-t] {args.tracker}")
-    console.print(f"[-s] {args.search}")
-    console.print(f"[-i] {args.info}")
-    console.print(f"[-a] {args.alive}")
-    console.print(f"[-d] {args.dead}")
-    console.print(f"[-dy] {args.dying}")
-    console.print(f"[-m] {args.mediainfo}")
 
 
 if __name__ == "__main__":
