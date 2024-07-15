@@ -19,6 +19,9 @@ def user_arguments():
     parser.add_argument("-i", "--info", nargs=1, type=str, help="Info")
     parser.add_argument("-up", "--uploader", nargs=1, type=str, help="Uploader user")
     parser.add_argument("-m", "--mediainfo", nargs=1, type=str, help="Mediainfo")
+    parser.add_argument("-st", "--startyear", nargs=1, type=str, help="Start Year")
+    parser.add_argument("-en", "--endyear", nargs=1, type=str, help="End Year")
+
 
     parser.add_argument("-a", "--alive", action='store_true', help="Alive torrent")
     parser.add_argument("-d", "--dead", action='store_true', help="Dead torrent")
@@ -87,11 +90,20 @@ def main():
         torrent_info.get_by_uploader(args.uploader)
         return
 
+    if args.startyear:
+        torrent_info = Torrent(args.tracker)
+        torrent_info.get_by_start_year(args.startyear)
+        return
+
+    if args.endyear:
+        torrent_info = Torrent(args.tracker)
+        torrent_info.get_by_end_year(args.endyear)
+        return
+
     if args.mediainfo:
         torrent_info = Torrent(args.tracker)
         torrent_info.get_by_mediainfo(args.mediainfo)
         return
-
 
     if args.alive:
         torrent_info = Torrent(args.tracker)
