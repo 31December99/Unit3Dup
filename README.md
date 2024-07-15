@@ -18,13 +18,13 @@ ___
 ### Example Usage
 
 #### Series 
-- python3 start.py -u /home/uploader/myvideos  -> use only folder for series
+- `python3 start.py -u /home/uploader/myvideos  -> use only folder for series`
 
 #### Movies
-- python3 start.py -u /home/uploader/myvideos/TheMatrix.1080p.WEB-DL.H.264.mkv
+- `python3 start.py -u /home/uploader/myvideos/TheMatrix.1080p.WEB-DL.H.264.mkv`
 
 #### Tracker (default itt)
-- python3 start.py -t itt -u /home/uploader/myvideos
+- `python3 start.py -t itt -u /home/uploader/myvideos`
 
 #### Searching (default itt)
 
