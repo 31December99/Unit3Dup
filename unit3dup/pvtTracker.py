@@ -104,6 +104,16 @@ class filterAPI(Tracker):
         self.params['perPage'] = perPage
         return self._get(params=self.params)
 
+    def start_year(self, start_year: str, perPage: int = None) -> requests:
+        self.params['start_year'] = start_year
+        self.params['perPage'] = perPage
+        return self._get(params=self.params)
+
+    def end_year(self, end_year: str, perPage: int = None) -> requests:
+        self.params['end_year'] = end_year
+        self.params['perPage'] = perPage
+        return self._get(params=self.params)
+
     def uploader(self, uploader: str, perPage: int = None) -> requests:
         self.params['uploader'] = uploader
         self.params['perPage'] = perPage
@@ -180,6 +190,12 @@ class Unit3d(filterAPI, Torrents, Uploader):
 
     def get_uploader(self, uploader: str, perPage: int = None) -> requests:
         return self.uploader(uploader=uploader, perPage=perPage)
+
+    def after_start_year(self, start_year: str, perPage: int = None) -> requests:
+        return self.start_year(start_year=start_year, perPage=perPage)
+
+    def before_end_year(self, end_year: str, perPage: int = None) -> requests:
+        return self.end_year(end_year=end_year, perPage=perPage)
 
     def get_alive(self, alive: bool, perPage: int = None) -> requests:
         return self.alive(alive=alive, perPage=perPage)
