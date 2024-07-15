@@ -24,7 +24,7 @@ ___
 - `python3 start.py -u /home/uploader/myvideos/TheMatrix.1080p.WEB-DL.H.264.mkv`
 
 #### Tracker (default itt)
-- `python3 start.py -t itt -u /home/uploader/myvideos`
+- `python3 start.py -t mytracker -u /home/uploader/myvideos`
 
 #### Searching (default itt)
 
