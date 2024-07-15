@@ -66,6 +66,14 @@ class Torrent:
         console.log(f"Filter by the torrent uploader's username.. '{username[0].upper()}'")
         self.print_normal(data=tracker_data['data'])
 
+    def get_by_mediainfo(self, mediainfo: str):
+        tracker = pvtTracker.Unit3d(
+            base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key=self.PASS_KEY
+        )
+        tracker_data = tracker.get_mediainfo(mediainfo[0], 50)
+        console.log(f"Filter by the torrent's MediaInfo.. '{mediainfo[0].upper()}'")
+        self.print_normal(data=tracker_data['data'])
+
     def get_dead(self):
         tracker = pvtTracker.Unit3d(
             base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key=self.PASS_KEY
