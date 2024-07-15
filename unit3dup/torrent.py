@@ -66,6 +66,24 @@ class Torrent:
         console.log(f"Filter by the torrent uploader's username.. '{username[0].upper()}'")
         self.print_normal(data=tracker_data['data'])
 
+    def get_by_start_year(self, startyear: str):
+        tracker = pvtTracker.Unit3d(
+            base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key=self.PASS_KEY
+        )
+        tracker_data = tracker.start_year(start_year=startyear[0], perPage=50)
+        console.log(f"StartYear torrents.. Return only torrents whose content was released"
+                    f" after or in the given year '{startyear[0].upper()}'")
+        self.print_normal(data=tracker_data['data'])
+
+    def get_by_end_year(self, end_year: str):
+        tracker = pvtTracker.Unit3d(
+            base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key=self.PASS_KEY
+        )
+        tracker_data = tracker.end_year(end_year=end_year[0], perPage=50)
+        console.log(f"EndYear torrents.. Return only torrents whose content was released before or in the given year"
+                    f"'{end_year[0].upper()}'")
+        self.print_normal(data=tracker_data['data'])
+
     def get_by_mediainfo(self, mediainfo: str):
         tracker = pvtTracker.Unit3d(
             base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key=self.PASS_KEY
