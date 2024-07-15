@@ -105,12 +105,12 @@ class filterAPI(Tracker):
         return self._get(params=self.params)
 
     def start_year(self, start_year: str, perPage: int = None) -> requests:
-        self.params['start_year'] = start_year
+        self.params['startYear'] = start_year
         self.params['perPage'] = perPage
         return self._get(params=self.params)
 
     def end_year(self, end_year: str, perPage: int = None) -> requests:
-        self.params['end_year'] = end_year
+        self.params['endYear'] = end_year
         self.params['perPage'] = perPage
         return self._get(params=self.params)
 
