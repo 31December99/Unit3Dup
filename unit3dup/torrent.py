@@ -44,7 +44,7 @@ class Torrent:
         tracker = pvtTracker.Unit3d(
             base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key=self.PASS_KEY
         )
-        tracker_data = tracker.get_name(keyword[0], 50)
+        tracker_data = tracker.get_name(name=keyword[0], perPage=50)
         console.log(f"Searching.. '{keyword[0]}'")
         # float(inf) in caso di None utilizza il suo valore (infinito) come key di ordinamento (ultimo)
         data = sorted(
@@ -62,7 +62,7 @@ class Torrent:
         tracker = pvtTracker.Unit3d(
             base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key=self.PASS_KEY
         )
-        tracker_data = tracker.get_uploader(username[0], 50)
+        tracker_data = tracker.get_uploader(uploader=username[0], perPage=50)
         console.log(f"Filter by the torrent uploader's username.. '{username[0].upper()}'")
         self.print_normal(data=tracker_data['data'])
 
@@ -70,7 +70,7 @@ class Torrent:
         tracker = pvtTracker.Unit3d(
             base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key=self.PASS_KEY
         )
-        tracker_data = tracker.get_mediainfo(mediainfo[0], 50)
+        tracker_data = tracker.get_mediainfo(mediainfo=mediainfo[0], perPage=50)
         console.log(f"Mediainfo torrents.. Filter by the torrent's mediaInfo.. '{mediainfo[0].upper()}'")
         self.print_normal(data=tracker_data['data'])
 
