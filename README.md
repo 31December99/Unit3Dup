@@ -26,12 +26,17 @@ ___
 #### Tracker (default itt)
 - python3 start.py -t itt -u /home/uploader/myvideos
 
-#### Search first 50 (default itt)
-- python3 start.py -s Matrix
-- python3 start.py -i Matrix ( info_hash and Media_info Unique ID)
-- python3 start.py -d (dead torrents)
-- python3 start.py -dy (dying torrents)
-- python3 start.py -up (search by uploader's usernmame)
+#### Searching (default itt)
+
+    python3 start.py -s [title] (search by title)
+    python3 start.py -i [title] (get info_hash and MediaInfo Unique ID)
+    python3 start.py -up [username] (search by uploader's username)
+    python3 start.py -m [mediainfo_ID] (search by MediaInfo ID)
+    python3 start.py -st [start_date] (search by starting date)
+    python3 start.py -en [end_date] (search by ending date)
+    python3 start.py -d (dead torrents)
+    python3 start.py -dy (dying torrents)
+    python3 start.py -a (alive torrent)
 ___
 ### Dependencies
 - requirements.txt
@@ -46,6 +51,7 @@ ___
 4. Set the configuration .env file
 5. Run the script with python start.py
 
+___
 ### Configuration
 
 Make sure to configure the necessary API keys and authentication credentials in a separate configuration file (.env).
