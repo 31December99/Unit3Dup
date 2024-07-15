@@ -71,8 +71,16 @@ class Torrent:
             base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key=self.PASS_KEY
         )
         tracker_data = tracker.get_mediainfo(mediainfo[0], 50)
-        console.log(f"Filter by the torrent's MediaInfo.. '{mediainfo[0].upper()}'")
+        console.log(f"Mediainfo torrents.. Filter by the torrent's mediaInfo.. '{mediainfo[0].upper()}'")
         self.print_normal(data=tracker_data['data'])
+
+    def get_alive(self):
+        tracker = pvtTracker.Unit3d(
+            base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key=self.PASS_KEY
+        )
+        tracker_data = tracker.get_alive(alive=True, perPage=50)
+        console.log(f"Alive torrents.. Filter by if the torrent has 1 or more seeders")
+        self.print_normal(tracker_data['data'])
 
     def get_dead(self):
         tracker = pvtTracker.Unit3d(

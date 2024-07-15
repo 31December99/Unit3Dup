@@ -20,6 +20,7 @@ def user_arguments():
     parser.add_argument("-up", "--uploader", nargs=1, type=str, help="Uploader user")
     parser.add_argument("-m", "--mediainfo", nargs=1, type=str, help="Mediainfo")
 
+    parser.add_argument("-a", "--alive", action='store_true', help="Alive torrent")
     parser.add_argument("-d", "--dead", action='store_true', help="Dead torrent")
     parser.add_argument("-dy", "--dying", action='store_true', help="Dying torrent")
 
@@ -91,6 +92,12 @@ def main():
         torrent_info.get_by_mediainfo(args.mediainfo)
         return
 
+
+    if args.alive:
+        torrent_info = Torrent(args.tracker)
+        torrent_info.get_alive()
+        return
+
     if args.dead:
         torrent_info = Torrent(args.tracker)
         torrent_info.get_dead()
@@ -106,6 +113,7 @@ def main():
     console.print(f"[-t] {args.tracker}")
     console.print(f"[-s] {args.search}")
     console.print(f"[-i] {args.info}")
+    console.print(f"[-a] {args.alive}")
     console.print(f"[-d] {args.dead}")
     console.print(f"[-dy] {args.dying}")
     console.print(f"[-m] {args.mediainfo}")
