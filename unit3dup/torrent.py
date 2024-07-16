@@ -4,18 +4,22 @@ import re
 from unit3dup import pvtTracker
 from decouple import Config, RepositoryEnv
 from rich.console import Console
+from database.trackers import TrackerConfig
 
 console = Console(log_path=False)
 
 
 class Torrent:
 
-    def __init__(self, tracker_name=None):
-        self.tracker = "itt.env" if not tracker_name else f"{tracker_name[0]}.env"
-        config_load = Config(RepositoryEnv(self.tracker))
+    def __init__(self, args_tracker=None):
+        tracker_name = args_tracker[0]
+        self.tracker_file_env = f"{tracker_name}.env"
+        self.tracker_file_json = f"{tracker_name}.json"
+        config_load = Config(RepositoryEnv(self.tracker_file_env))
         self.PASS_KEY = config_load("PASS_KEY")
         self.API_TOKEN = config_load("API_TOKEN")
         self.BASE_URL = config_load("BASE_URL")
+        self.tracker_values = TrackerConfig(self.tracker_file_json)
 
     def get_unique_id(self, media_info: str) -> str:
         # Divido per campi
@@ -91,6 +95,7 @@ class Torrent:
         tracker_data = tracker.get_mediainfo(mediainfo=mediainfo[0], perPage=50)
         console.log(f"Mediainfo torrents.. Filter by the torrent's mediaInfo.. '{mediainfo[0].upper()}'")
         self.print_normal(data=tracker_data['data'])
+
 
     def get_alive(self):
         tracker = pvtTracker.Unit3d(
