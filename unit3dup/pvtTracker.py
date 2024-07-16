@@ -232,8 +232,8 @@ class Unit3d(filterAPI, Torrents, Uploader):
     def get_season_number(self, se_number: int, perPage: int = None) -> requests:
         return self.seasonNumber(seasonNumber=se_number, perPage=perPage)
 
-    def get_episodeNumber(self, episodeNumber: int, perPage: int = None) -> requests:
-        return self.episodeNumber(episodeNumber=episodeNumber, perPage=perPage)
+    def get_episode_number(self, ep_number: int, perPage: int = None) -> requests:
+        return self.episodeNumber(episodeNumber=ep_number, perPage=perPage)
 
     def get_types(self, type_id: str, perPage: int = None) -> requests:
         if type_id:
