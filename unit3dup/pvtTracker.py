@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
-import requests
+import sys
 
+import requests
+from rich.console import Console
+
+console = Console(log_path=False)
 
 class Myhttp:
 
@@ -56,7 +60,13 @@ class Myhttp:
 class Tracker(Myhttp):
 
     def _get(self, params: dict) -> requests:
-        return requests.get(url=self.filter_url, headers=self.headers, params=params).json()
+        try:
+            response = requests.get(url=self.filter_url, headers=self.headers, params=params)
+            response.raise_for_status()
+            return response.json()
+        except requests.exceptions.HTTPError as http_err:
+            console.print(f"Report {http_err}")
+            sys.exit()
 
     def _post(self, file: dict, data: dict, params: dict):
         return requests.post(url=self.upload_url, files=file, data=data, headers=self.headers, params=params)
