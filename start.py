@@ -25,6 +25,10 @@ def user_arguments():
     parser.add_argument("-res", "--resolution", nargs=1, type=str, help="Resolution ID")
     parser.add_argument("-tmdb", "--tmdb_id", nargs=1, type=str, help="TMDB ID")
 
+    parser.add_argument("-imdb", "--imdb_id", nargs=1, type=str, help="IMDB ID")
+    # parser.add_argument("-tvdb", "--tvdb_id", nargs=1, type=str, help="TVDB ID")
+    # parser.add_argument("-mal", "--mal_id", nargs=1, type=str, help="MAL ID")
+
     parser.add_argument("-a", "--alive", action='store_true', help="Alive torrent")
     parser.add_argument("-d", "--dead", action='store_true', help="Dead torrent")
     parser.add_argument("-dy", "--dying", action='store_true', help="Dying torrent")
@@ -114,6 +118,12 @@ def main():
     if args.tmdb_id:
         torrent_info = Torrent(args.tracker)
         torrent_info.get_by_tmdb_id(args.tmdb_id)
+        return
+
+
+    if args.imdb_id:
+        torrent_info = Torrent(args.tracker)
+        torrent_info.get_by_imdb_id(args.imdb_id)
         return
 
     if args.mediainfo:
