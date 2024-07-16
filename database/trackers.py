@@ -30,10 +30,14 @@ class TrackerConfig(Filter):
         return self.__config['CATEGORY'][name]
 
     def type_id(self, name: str) -> str:
-        return self.__config['TYPE_ID'][name]
+        dict_attribute = self.__config.get('TYPE_ID', {})
+        return dict_attribute.get(name, '')
 
     def res_id(self, name: str) -> str:
-        return self.__config['RESOLUTION'][name]
+        dict_attribute = self.__config.get('RESOLUTION', {})
+        return dict_attribute.get(name, '')
+
+        # return self.__config['RESOLUTION'][name]
 
     def filterType(self, file_name: str) -> int:
         """
