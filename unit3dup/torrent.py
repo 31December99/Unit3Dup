@@ -169,6 +169,14 @@ class Torrent:
         if tracker_data:
             self.print_normal(data=tracker_data['data'])
 
+    def get_by_episode(self, episode: int):
+        tracker = pvtTracker.Unit3d(
+            base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key=self.PASS_KEY
+        )
+        tracker_data = tracker.get_episode_number(ep_number=episode, perPage=25)
+        console.log(f"Episode torrents.. Filter by the torrent's episode.. '{episode}'")
+        if tracker_data:
+            self.print_normal(data=tracker_data['data'])
 
     def get_alive(self):
         tracker = pvtTracker.Unit3d(
