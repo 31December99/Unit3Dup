@@ -23,7 +23,7 @@ def user_arguments():
     parser.add_argument("-en", "--endyear", nargs=1, type=str, help="End Year")
     parser.add_argument("-type", "--type", nargs=1, type=str, help="Type ID")
     parser.add_argument("-res", "--resolution", nargs=1, type=str, help="Resolution ID")
-
+    parser.add_argument("-tmdb", "--tmdb_id", nargs=1, type=str, help="TMDB ID")
 
     parser.add_argument("-a", "--alive", action='store_true', help="Alive torrent")
     parser.add_argument("-d", "--dead", action='store_true', help="Dead torrent")
@@ -109,6 +109,11 @@ def main():
     if args.resolution:
         torrent_info = Torrent(args.tracker)
         torrent_info.get_by_res(args.resolution)
+        return
+
+    if args.tmdb_id:
+        torrent_info = Torrent(args.tracker)
+        torrent_info.get_by_tmdb_id(args.tmdb_id)
         return
 
     if args.mediainfo:
