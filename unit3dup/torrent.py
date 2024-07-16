@@ -115,6 +115,15 @@ class Torrent:
         if tracker_data:
             self.print_normal(data=tracker_data['data'])
 
+    def get_by_filename(self, file_name: str):
+        tracker = pvtTracker.Unit3d(
+            base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key=self.PASS_KEY
+        )
+        tracker_data = tracker.get_filename(file_name=file_name[0], perPage=25)
+        console.log(f"Filename torrents.. Filter by the torrent's filename.. '{file_name[0].upper()}'")
+        if tracker_data:
+            self.print_normal(data=tracker_data['data'])
+
     def get_by_tmdb_id(self, tmdb_id: int):
         tracker = pvtTracker.Unit3d(
             base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key=self.PASS_KEY
