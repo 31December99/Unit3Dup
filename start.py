@@ -29,6 +29,8 @@ def user_arguments():
     parser.add_argument("-res", "--resolution", nargs=1, type=str, help="Resolution ID")
     parser.add_argument("-file", "--filename", nargs=1, type=str, help="File name")
 
+    parser.add_argument("-se", "--season", nargs=1, type=str, help="Season number")
+
     parser.add_argument("-tmdb", "--tmdb_id", nargs=1, type=str, help="TMDB ID")
     parser.add_argument("-imdb", "--imdb_id", nargs=1, type=str, help="IMDB ID")
     parser.add_argument("-tvdb", "--tvdb_id", nargs=1, type=int, help="TVDB ID")
@@ -143,6 +145,11 @@ def main():
     if args.mal_id:
         torrent_info = Torrent(args.tracker)
         torrent_info.get_by_mal_id(args.mal_id[0])
+        return
+
+    if args.season:
+        torrent_info = Torrent(args.tracker)
+        torrent_info.get_by_season(args.season[0])
         return
 
     if args.mediainfo:
