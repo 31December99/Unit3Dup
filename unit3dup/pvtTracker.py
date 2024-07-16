@@ -259,3 +259,6 @@ class Unit3d(filterAPI, Torrents, Uploader):
 
     def fetch_id(self, torrent_id: int) -> requests:
         return self.torrent(torrent_id=torrent_id)
+
+    def get_double_up(self, double_up: bool, perPage: int = None) -> requests:
+        return self.doubleup(double_up=double_up, perPage=perPage)
