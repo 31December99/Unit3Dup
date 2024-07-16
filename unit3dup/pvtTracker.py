@@ -201,6 +201,12 @@ class filterAPI(Tracker):
         self.params['perPage'] = perPage
         return self._get(params=self.params)
 
+    def internal(self, internal: bool, perPage: int = None) -> requests:
+        self.params['internal'] = internal
+        self.params['perPage'] = perPage
+        return self._get(params=self.params)
+
+
 
 class Torrents(Tracker):
     def torrents(self, perPage: int = None) -> requests:
@@ -298,3 +304,6 @@ class Unit3d(filterAPI, Torrents, Uploader):
 
     def get_highspeed(self, highspeed: bool, perPage: int = None) -> Union[requests.Response, None]:
         return self.get_highspeed(highspeed=highspeed, perPage=perPage)
+
+    def get_internal(self, internal: bool, perPage: int = None) -> Union[requests.Response, None]:
+        return self.get_internal(internal=internal, perPage=perPage)
