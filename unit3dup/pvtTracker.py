@@ -149,6 +149,11 @@ class filterAPI(Tracker):
         self.params['perPage'] = perPage
         return self._get(params=self.params)
 
+    def types(self, type_id: str, perPage: int = None) -> requests:
+        self.params['types[]'] = type_id
+        self.params['perPage'] = perPage
+        return self._get(params=self.params)
+
 
 class Torrents(Tracker):
     def torrents(self, perPage: int = None) -> requests:
@@ -214,6 +219,9 @@ class Unit3d(filterAPI, Torrents, Uploader):
 
     def get_episodeNumber(self, episodeNumber: int, perPage: int = None) -> requests:
         return self.episodeNumber(episodeNumber=episodeNumber, perPage=perPage)
+
+    def get_types(self, type_id: str, perPage: int = None) -> requests:
+        return self.types(type_id=type_id, perPage=perPage)
 
     def fetch_all(self, perPage: int = None) -> requests:
         return self.torrents(perPage=perPage)
