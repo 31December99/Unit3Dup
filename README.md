@@ -38,6 +38,7 @@ ___
     python3 start.py -res (search by resolution)
     python3 start.py -tmdb (search by TMDB ID)
     python3 start.py -imdb (search by IMDB ID)
+    python3 start.py -tvdb (search by TVDB ID)
     python3 start.py -d (dead torrents)
     python3 start.py -dy (dying torrents)
     python3 start.py -a (alive torrent)
