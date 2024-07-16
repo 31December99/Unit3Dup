@@ -14,7 +14,7 @@ console = Console(log_path=False)
 def user_arguments():
     parser = argparse.ArgumentParser(description="Commands", add_help=False)
     parser.add_argument("-u", "--upload", nargs=1, type=str, help="Upload Path")
-    parser.add_argument("-t", "--tracker", nargs=1, type=str, help="Tracker Name")
+    parser.add_argument("-t", "--tracker", nargs=1, type=str, default=['itt'], help="Tracker Name")
     parser.add_argument("-s", "--search", nargs=1, type=str, help="Search")
     parser.add_argument("-i", "--info", nargs=1, type=str, help="Info")
     parser.add_argument("-up", "--uploader", nargs=1, type=str, help="Uploader user")
@@ -22,19 +22,17 @@ def user_arguments():
     parser.add_argument("-st", "--startyear", nargs=1, type=str, help="Start Year")
     parser.add_argument("-en", "--endyear", nargs=1, type=str, help="End Year")
 
-
     parser.add_argument("-a", "--alive", action='store_true', help="Alive torrent")
     parser.add_argument("-d", "--dead", action='store_true', help="Dead torrent")
     parser.add_argument("-dy", "--dying", action='store_true', help="Dying torrent")
 
     args = parser.parse_args()
+    tracker = args.tracker[0]
 
     if args.upload:
         if not os.path.exists(args.upload[0]):
             console.log(f"Il percorso {args.upload[0]} non esiste.")
             sys.exit()
-
-    tracker = "itt" if not args.tracker else args.tracker[0]
 
     if not os.path.exists(f"{tracker}.env"):
         console.log(
@@ -126,4 +124,3 @@ def main():
 if __name__ == "__main__":
     main()
     print()
-
