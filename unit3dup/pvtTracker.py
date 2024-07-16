@@ -190,6 +190,11 @@ class filterAPI(Tracker):
         self.params['perPage'] = perPage
         return self._get(params=self.params)
 
+    def sd(self, sd: bool, perPage: int = None) -> requests:
+        self.params['sd'] = sd
+        self.params['perPage'] = perPage
+        return self._get(params=self.params)
+
 
 class Torrents(Tracker):
     def torrents(self, perPage: int = None) -> requests:
@@ -281,3 +286,6 @@ class Unit3d(filterAPI, Torrents, Uploader):
 
     def get_stream(self, stream: bool, perPage: int = None) -> requests:
         return self.stream(stream=stream, perPage=perPage)
+
+    def get_sd(self, sd: bool, perPage: int = None) -> requests:
+        return self.sd(sd=sd, perPage=perPage)
