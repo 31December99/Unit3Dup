@@ -262,3 +262,6 @@ class Unit3d(filterAPI, Torrents, Uploader):
 
     def get_double_up(self, double_up: bool, perPage: int = None) -> requests:
         return self.doubleup(double_up=double_up, perPage=perPage)
+
+    def get_featured(self, featured: bool, perPage: int = None) -> requests:
+        return self.featured(featured=featured, perPage=perPage)
