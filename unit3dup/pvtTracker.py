@@ -180,6 +180,12 @@ class filterAPI(Tracker):
         self.params['perPage'] = perPage
         return self._get(params=self.params)
 
+    def refundable(self, refundable: bool, perPage: int = None) -> requests:
+        self.params['refundable'] = refundable
+        self.params['perPage'] = perPage
+        return self._get(params=self.params)
+
+
 
 class Torrents(Tracker):
     def torrents(self, perPage: int = None) -> requests:
@@ -265,3 +271,6 @@ class Unit3d(filterAPI, Torrents, Uploader):
 
     def get_featured(self, featured: bool, perPage: int = None) -> requests:
         return self.featured(featured=featured, perPage=perPage)
+
+    def get_refundable(self, refundable: bool, perPage: int = None) -> requests:
+        return self.refundable(refundable=refundable, perPage=perPage)
