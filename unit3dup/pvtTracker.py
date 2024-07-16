@@ -79,13 +79,13 @@ class Tracker(Myhttp):
 
 
 class filterAPI(Tracker):
-    def tmdb(self, tmdb_id: str, perPage: int = None) -> requests:
+    def tmdb(self, tmdb_id: int, perPage: int = None) -> requests:
         self.params['tmdbId'] = tmdb_id
         self.params['perPage'] = perPage
         return self._get(params=self.params)
 
-    def imdb(self, imdb_id: str, perPage: int = None) -> requests:
-        self.params['imdbId'] = int(imdb_id)
+    def imdb(self, imdb_id: int, perPage: int = None) -> requests:
+        self.params['imdbId'] = imdb_id
         self.params['perPage'] = perPage
         return self._get(params=self.params)
 
@@ -187,7 +187,7 @@ class Uploader(Tracker):
 
 
 class Unit3d(filterAPI, Torrents, Uploader):
-    def get_tmdb(self, tmdb_id: str, perPage: int = None) -> requests:
+    def get_tmdb(self, tmdb_id: int, perPage: int = None) -> requests:
         return self.tmdb(tmdb_id=tmdb_id, perPage=perPage)
 
     def get_tvdb(self, tvdb_id: int, perPage: int = None) -> requests:
@@ -242,14 +242,6 @@ class Unit3d(filterAPI, Torrents, Uploader):
     def get_res(self, res_id: str, perPage: int = None) -> requests:
         if res_id:
             return self.resolution(res_id=res_id, perPage=perPage)
-
-    def get_tmdb_id(self, tmdb_id: str, perPage: int = None) -> requests:
-        if tmdb_id:
-            return self.tmdb(tmdb_id=tmdb_id, perPage=perPage)
-
-    def get_imdb_id(self, imdb_id: str, perPage: int = None) -> requests:
-        if imdb_id:
-            return self.imdb(imdb_id=imdb_id, perPage=perPage)
 
     def fetch_all(self, perPage: int = None) -> requests:
         return self.torrents(perPage=perPage)
