@@ -6,6 +6,7 @@ from rich.console import Console
 
 console = Console(log_path=False)
 
+
 class Myhttp:
 
     def __init__(self, base_url: str, api_token: str, pass_key: str):
@@ -170,7 +171,12 @@ class filterAPI(Tracker):
         return self._get(params=self.params)
 
     def doubleup(self, double_up: bool, perPage: int = None) -> requests:
-        self.params['doubleup'] =  double_up
+        self.params['doubleup'] = double_up
+        self.params['perPage'] = perPage
+        return self._get(params=self.params)
+
+    def featured(self, featured: bool, perPage: int = None) -> requests:
+        self.params['featured'] = featured
         self.params['perPage'] = perPage
         return self._get(params=self.params)
 
