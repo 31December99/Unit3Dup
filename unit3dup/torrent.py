@@ -210,7 +210,7 @@ class Torrent:
         tracker = pvtTracker.Unit3d(
             base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key=self.PASS_KEY
         )
-        tracker_data = tracker.doubleup(double_up=True, perPage=50)
+        tracker_data = tracker.get_double_up(double_up=True, perPage=50)
         console.log(f"DoubleUp torrents.. Filter by if the torrent offers double upload")
         if tracker_data:
             self.print_normal(data=tracker_data['data'])
