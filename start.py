@@ -40,6 +40,8 @@ def user_arguments():
     parser.add_argument("-d", "--dead", action='store_true', help="Dead torrent")
     parser.add_argument("-dy", "--dying", action='store_true', help="Dying torrent")
 
+    parser.add_argument("-du", "--doubleup", action='store_true', help="DoubleUp torrent")
+
     args = parser.parse_args()
     tracker = args.tracker[0]
 
@@ -174,6 +176,11 @@ def main():
     if args.dying:
         torrent_info = Torrent(args.tracker)
         torrent_info.get_dying()
+        return
+
+    if args.doubleup:
+        torrent_info = Torrent(args.tracker)
+        torrent_info.get_doubleup()
         return
 
     console.print("Sintassi non valida o valore nullo. Controlla..")
