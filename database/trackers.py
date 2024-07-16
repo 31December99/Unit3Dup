@@ -32,6 +32,9 @@ class TrackerConfig(Filter):
     def type_id(self, name: str) -> str:
         return self.__config['TYPE_ID'][name]
 
+    def res_id(self, name: str) -> str:
+        return self.__config['RESOLUTION'][name]
+
     def filterType(self, file_name: str) -> int:
         """
         Divide il titolo in più parole
