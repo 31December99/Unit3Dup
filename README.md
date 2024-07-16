@@ -34,6 +34,7 @@ ___
     python3 start.py -m [mediainfo_ID] (search by MediaInfo ID)
     python3 start.py -st [start_date] (search by starting date)
     python3 start.py -en [end_date] (search by ending date)
+    python3 start.py -type (search by Type ID)
     python3 start.py -d (dead torrents)
     python3 start.py -dy (dying torrents)
     python3 start.py -a (alive torrent)
