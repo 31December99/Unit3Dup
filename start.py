@@ -30,7 +30,7 @@ def user_arguments():
     parser.add_argument("-file", "--filename", nargs=1, type=str, help="File name")
 
     parser.add_argument("-se", "--season", nargs=1, type=str, help="Season number")
-
+    parser.add_argument("-ep", "--episode", nargs=1, type=str, help="Episode number")
     parser.add_argument("-tmdb", "--tmdb_id", nargs=1, type=str, help="TMDB ID")
     parser.add_argument("-imdb", "--imdb_id", nargs=1, type=str, help="IMDB ID")
     parser.add_argument("-tvdb", "--tvdb_id", nargs=1, type=int, help="TVDB ID")
@@ -152,6 +152,10 @@ def main():
         torrent_info.get_by_season(args.season[0])
         return
 
+    if args.episode:
+        torrent_info = Torrent(args.tracker)
+        torrent_info.get_by_episode(args.episode[0])
+        return
     if args.mediainfo:
         torrent_info = Torrent(args.tracker)
         torrent_info.get_by_mediainfo(args.mediainfo)
