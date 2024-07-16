@@ -94,7 +94,8 @@ class Torrent:
         )
         tracker_data = tracker.get_mediainfo(mediainfo=mediainfo[0], perPage=50)
         console.log(f"Mediainfo torrents.. Filter by the torrent's mediaInfo.. '{mediainfo[0].upper()}'")
-        self.print_normal(data=tracker_data['data'])
+        if tracker_data:
+            self.print_normal(data=tracker_data['data'])
 
     def get_by_types(self, type_name: str):
         tracker = pvtTracker.Unit3d(
@@ -102,7 +103,8 @@ class Torrent:
         )
         tracker_data = tracker.get_types(type_id=self.tracker_values.type_id(type_name[0]), perPage=25)
         console.log(f"Types torrents.. Filter by the torrent's type.. '{type_name[0].upper()}'")
-        self.print_normal(data=tracker_data['data'])
+        if tracker_data:
+            self.print_normal(data=tracker_data['data'])
 
     def get_by_res(self, res_name: str):
         tracker = pvtTracker.Unit3d(
@@ -110,7 +112,8 @@ class Torrent:
         )
         tracker_data = tracker.get_res(res_id=self.tracker_values.res_id(res_name[0]), perPage=25)
         console.log(f"Resolutions torrents.. Filter by the torrent's resolution.. '{res_name[0].upper()}'")
-        self.print_normal(data=tracker_data['data'])
+        if tracker_data:
+            self.print_normal(data=tracker_data['data'])
 
     def get_alive(self):
         tracker = pvtTracker.Unit3d(
@@ -118,7 +121,8 @@ class Torrent:
         )
         tracker_data = tracker.get_alive(alive=True, perPage=50)
         console.log(f"Alive torrents.. Filter by if the torrent has 1 or more seeders")
-        self.print_normal(tracker_data['data'])
+        if tracker_data:
+            self.print_normal(data=tracker_data['data'])
 
     def get_dead(self):
         tracker = pvtTracker.Unit3d(
@@ -126,7 +130,8 @@ class Torrent:
         )
         tracker_data = tracker.get_dead(dead=True, perPage=50)
         console.log(f"Dead torrents.. Filter by if the torrent has 0 seeders")
-        self.print_normal(tracker_data['data'])
+        if tracker_data:
+            self.print_normal(data=tracker_data['data'])
 
     def get_dying(self):
         tracker = pvtTracker.Unit3d(
@@ -134,4 +139,5 @@ class Torrent:
         )
         tracker_data = tracker.get_dying(dying=True, perPage=50)
         console.log(f"Dying torrents.. Filter by if the torrent has 1 seeder and has been downloaded more than 3 times")
-        self.print_normal(tracker_data['data'])
+        if tracker_data:
+            self.print_normal(data=tracker_data['data'])
