@@ -20,6 +20,7 @@ class Torrent:
         self.API_TOKEN = config_load("API_TOKEN")
         self.BASE_URL = config_load("BASE_URL")
         self.tracker_values = TrackerConfig(self.tracker_file_json)
+        print()
 
     def get_unique_id(self, media_info: str) -> str:
         # Divido per campi
@@ -165,7 +166,7 @@ class Torrent:
             base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key=self.PASS_KEY
         )
         tracker_data = tracker.get_season_number(se_number=season, perPage=25)
-        console.log(f"Seasons torrents.. Filter by the torrent's sesons.. '{season}'")
+        console.log(f"Seasons torrents.. Filter by the torrent's seasons.. '{season}'")
         if tracker_data:
             self.print_normal(data=tracker_data['data'])
 
@@ -202,5 +203,14 @@ class Torrent:
         )
         tracker_data = tracker.get_dying(dying=True, perPage=50)
         console.log(f"Dying torrents.. Filter by if the torrent has 1 seeder and has been downloaded more than 3 times")
+        if tracker_data:
+            self.print_normal(data=tracker_data['data'])
+
+    def get_doubleup(self):
+        tracker = pvtTracker.Unit3d(
+            base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key=self.PASS_KEY
+        )
+        tracker_data = tracker.doubleup(double_up=True, perPage=50)
+        console.log(f"DoubleUp torrents.. Filter by if the torrent offers double upload")
         if tracker_data:
             self.print_normal(data=tracker_data['data'])
