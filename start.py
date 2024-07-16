@@ -26,7 +26,7 @@ def user_arguments():
     parser.add_argument("-tmdb", "--tmdb_id", nargs=1, type=str, help="TMDB ID")
 
     parser.add_argument("-imdb", "--imdb_id", nargs=1, type=str, help="IMDB ID")
-    # parser.add_argument("-tvdb", "--tvdb_id", nargs=1, type=str, help="TVDB ID")
+    parser.add_argument("-tvdb", "--tvdb_id", nargs=1, type=int, help="TVDB ID")
     # parser.add_argument("-mal", "--mal_id", nargs=1, type=str, help="MAL ID")
 
     parser.add_argument("-a", "--alive", action='store_true', help="Alive torrent")
@@ -35,6 +35,7 @@ def user_arguments():
 
     args = parser.parse_args()
     tracker = args.tracker[0]
+
 
     if args.upload:
         if not os.path.exists(args.upload[0]):
@@ -117,13 +118,17 @@ def main():
 
     if args.tmdb_id:
         torrent_info = Torrent(args.tracker)
-        torrent_info.get_by_tmdb_id(args.tmdb_id)
+        torrent_info.get_by_tmdb_id(args.tmdb_id[0])
         return
-
 
     if args.imdb_id:
         torrent_info = Torrent(args.tracker)
-        torrent_info.get_by_imdb_id(args.imdb_id)
+        torrent_info.get_by_imdb_id(args.imdb_id[0])
+        return
+
+    if args.tvdb_id:
+        torrent_info = Torrent(args.tracker)
+        torrent_info.get_by_tvdb_id(args.tvdb_id[0])
         return
 
     if args.mediainfo:
