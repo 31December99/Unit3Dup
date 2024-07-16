@@ -169,6 +169,11 @@ class filterAPI(Tracker):
         self.params['perPage'] = perPage
         return self._get(params=self.params)
 
+    def doubleup(self, double_up: bool, perPage: int = None) -> requests:
+        self.params['doubleup'] =  double_up
+        self.params['perPage'] = perPage
+        return self._get(params=self.params)
+
 
 class Torrents(Tracker):
     def torrents(self, perPage: int = None) -> requests:
