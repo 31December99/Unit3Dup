@@ -164,6 +164,11 @@ class filterAPI(Tracker):
         self.params['perPage'] = perPage
         return self._get(params=self.params)
 
+    def resolution(self, res_id: str, perPage: int = None) -> requests:
+        self.params['resolutions[]'] = res_id
+        self.params['perPage'] = perPage
+        return self._get(params=self.params)
+
 
 class Torrents(Tracker):
     def torrents(self, perPage: int = None) -> requests:
@@ -232,6 +237,9 @@ class Unit3d(filterAPI, Torrents, Uploader):
 
     def get_types(self, type_id: str, perPage: int = None) -> requests:
         return self.types(type_id=type_id, perPage=perPage)
+
+    def get_res(self, res_id: str, perPage: int = None) -> requests:
+        return self.resolution(res_id=res_id, perPage=perPage)
 
     def fetch_all(self, perPage: int = None) -> requests:
         return self.torrents(perPage=perPage)
