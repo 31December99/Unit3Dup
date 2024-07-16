@@ -46,6 +46,7 @@ ___
     python3 start.py -d (dead torrents)
     python3 start.py -dy (dying torrents)
     python3 start.py -a (alive torrent)
+    python3 start.py -du (Double upload torrent)
 ___
 ### Dependencies
 - requirements.txt
