@@ -13,8 +13,12 @@ console = Console(log_path=False)
 
 def user_arguments():
     parser = argparse.ArgumentParser(description="Commands", add_help=False)
+
+    # // Upload commands
     parser.add_argument("-u", "--upload", nargs=1, type=str, help="Upload Path")
     parser.add_argument("-t", "--tracker", nargs=1, type=str, default=['itt'], help="Tracker Name")
+
+    # // Tracker search commands
     parser.add_argument("-s", "--search", nargs=1, type=str, help="Search")
     parser.add_argument("-i", "--info", nargs=1, type=str, help="Info")
     parser.add_argument("-up", "--uploader", nargs=1, type=str, help="Uploader user")
@@ -23,11 +27,11 @@ def user_arguments():
     parser.add_argument("-en", "--endyear", nargs=1, type=str, help="End Year")
     parser.add_argument("-type", "--type", nargs=1, type=str, help="Type ID")
     parser.add_argument("-res", "--resolution", nargs=1, type=str, help="Resolution ID")
-    parser.add_argument("-tmdb", "--tmdb_id", nargs=1, type=str, help="TMDB ID")
 
+    parser.add_argument("-tmdb", "--tmdb_id", nargs=1, type=str, help="TMDB ID")
     parser.add_argument("-imdb", "--imdb_id", nargs=1, type=str, help="IMDB ID")
     parser.add_argument("-tvdb", "--tvdb_id", nargs=1, type=int, help="TVDB ID")
-    # parser.add_argument("-mal", "--mal_id", nargs=1, type=str, help="MAL ID")
+    parser.add_argument("-mal", "--mal_id", nargs=1, type=str, help="MAL ID")
 
     parser.add_argument("-a", "--alive", action='store_true', help="Alive torrent")
     parser.add_argument("-d", "--dead", action='store_true', help="Dead torrent")
@@ -35,7 +39,6 @@ def user_arguments():
 
     args = parser.parse_args()
     tracker = args.tracker[0]
-
 
     if args.upload:
         if not os.path.exists(args.upload[0]):
@@ -129,6 +132,11 @@ def main():
     if args.tvdb_id:
         torrent_info = Torrent(args.tracker)
         torrent_info.get_by_tvdb_id(args.tvdb_id[0])
+        return
+
+    if args.mal_id:
+        torrent_info = Torrent(args.tracker)
+        torrent_info.get_by_mal_id(args.mal_id[0])
         return
 
     if args.mediainfo:
