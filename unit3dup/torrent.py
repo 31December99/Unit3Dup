@@ -115,21 +115,30 @@ class Torrent:
         if tracker_data:
             self.print_normal(data=tracker_data['data'])
 
-    def get_by_tmdb_id(self, tmdb_id: str):
+    def get_by_tmdb_id(self, tmdb_id: int):
         tracker = pvtTracker.Unit3d(
             base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key=self.PASS_KEY
         )
-        tracker_data = tracker.get_tmdb_id(tmdb_id=tmdb_id[0], perPage=25)
-        console.log(f"TMDB torrents.. Filter by the torrent's tmdb.. '{tmdb_id[0].upper()}'")
+        tracker_data = tracker.get_tmdb(tmdb_id=tmdb_id, perPage=25)
+        console.log(f"TMDB torrents.. Filter by the torrent's tmdb.. '{tmdb_id}'")
         if tracker_data:
             self.print_normal(data=tracker_data['data'])
 
-    def get_by_imdb_id(self, imdb_id: str):
+    def get_by_imdb_id(self, imdb_id: int):
         tracker = pvtTracker.Unit3d(
             base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key=self.PASS_KEY
         )
-        tracker_data = tracker.get_imdb_id(imdb_id=imdb_id[0], perPage=25)
-        console.log(f"IMDB torrents.. Filter by the torrent's imdb.. '{imdb_id[0].upper()}'")
+        tracker_data = tracker.get_imdb(imdb_id=imdb_id, perPage=25)
+        console.log(f"IMDB torrents.. Filter by the torrent's imdb.. '{imdb_id}'")
+        if tracker_data:
+            self.print_normal(data=tracker_data['data'])
+
+    def get_by_tvdb_id(self, tvdb_id: int):
+        tracker = pvtTracker.Unit3d(
+            base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key=self.PASS_KEY
+        )
+        tracker_data = tracker.get_tvdb(tvdb_id=tvdb_id, perPage=25)
+        console.log(f"TVDB torrents.. Filter by the torrent's tvdb.. '{tvdb_id}'")
         if tracker_data:
             self.print_normal(data=tracker_data['data'])
 
