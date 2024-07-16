@@ -149,7 +149,7 @@ class filterAPI(Tracker):
         self.params['perPage'] = perPage
         return self._get(params=self.params)
 
-    def seasonNumber(self, seasonNumber: str, perPage: int = None) -> requests:
+    def seasonNumber(self, seasonNumber: int, perPage: int = None) -> requests:
         self.params['seasonNumber'] = seasonNumber
         self.params['perPage'] = perPage
         return self._get(params=self.params)
@@ -229,8 +229,8 @@ class Unit3d(filterAPI, Torrents, Uploader):
     def get_filename(self, file_name: str, perPage: int = None) -> requests:
         return self.file_name(file_name=file_name, perPage=perPage)
 
-    def get_seasonNumber(self, file_name: str, perPage: int = None) -> requests:
-        return self.file_name(file_name=file_name, perPage=perPage)
+    def get_season_number(self, se_number: int, perPage: int = None) -> requests:
+        return self.seasonNumber(seasonNumber=se_number, perPage=perPage)
 
     def get_episodeNumber(self, episodeNumber: int, perPage: int = None) -> requests:
         return self.episodeNumber(episodeNumber=episodeNumber, perPage=perPage)
