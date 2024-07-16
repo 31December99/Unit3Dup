@@ -37,6 +37,7 @@ ___
     python3 start.py -type (search by type ID)
     python3 start.py -res (search by resolution)
     python3 start.py -file (search by filename)
+    python3 start.py -se (search by season number)
     python3 start.py -tmdb (search by TMDB ID)
     python3 start.py -imdb (search by IMDB ID)
     python3 start.py -tvdb (search by TVDB ID)
