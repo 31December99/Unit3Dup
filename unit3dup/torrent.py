@@ -96,6 +96,13 @@ class Torrent:
         console.log(f"Mediainfo torrents.. Filter by the torrent's mediaInfo.. '{mediainfo[0].upper()}'")
         self.print_normal(data=tracker_data['data'])
 
+    def get_by_types(self, type_name: str):
+        tracker = pvtTracker.Unit3d(
+            base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key=self.PASS_KEY
+        )
+        tracker_data = tracker.get_types(type_id=self.tracker_values.type_id(type_name[0]), perPage=25)
+        console.log(f"Types torrents.. Filter by the torrent's type.. '{type_name[0].upper()}'")
+        self.print_normal(data=tracker_data['data'])
 
     def get_alive(self):
         tracker = pvtTracker.Unit3d(
