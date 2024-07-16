@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import sys
+from typing import Union
 
 import requests
 from rich.console import Console
@@ -195,6 +196,11 @@ class filterAPI(Tracker):
         self.params['perPage'] = perPage
         return self._get(params=self.params)
 
+    def highspeed(self, high_speed: bool, perPage: int = None) -> requests:
+        self.params['highspeed'] = high_speed
+        self.params['perPage'] = perPage
+        return self._get(params=self.params)
+
 
 class Torrents(Tracker):
     def torrents(self, perPage: int = None) -> requests:
@@ -289,3 +295,6 @@ class Unit3d(filterAPI, Torrents, Uploader):
 
     def get_sd(self, sd: bool, perPage: int = None) -> requests:
         return self.sd(sd=sd, perPage=perPage)
+
+    def get_highspeed(self, highspeed: bool, perPage: int = None) -> Union[requests.Response, None]:
+        return self.get_highspeed(highspeed=highspeed, perPage=perPage)
