@@ -27,6 +27,7 @@ def user_arguments():
     parser.add_argument("-en", "--endyear", nargs=1, type=str, help="End Year")
     parser.add_argument("-type", "--type", nargs=1, type=str, help="Type ID")
     parser.add_argument("-res", "--resolution", nargs=1, type=str, help="Resolution ID")
+    parser.add_argument("-file", "--filename", nargs=1, type=str, help="File name")
 
     parser.add_argument("-tmdb", "--tmdb_id", nargs=1, type=str, help="TMDB ID")
     parser.add_argument("-imdb", "--imdb_id", nargs=1, type=str, help="IMDB ID")
@@ -117,6 +118,11 @@ def main():
     if args.resolution:
         torrent_info = Torrent(args.tracker)
         torrent_info.get_by_res(args.resolution)
+        return
+
+    if args.filename:
+        torrent_info = Torrent(args.tracker)
+        torrent_info.get_by_filename(args.filename)
         return
 
     if args.tmdb_id:
