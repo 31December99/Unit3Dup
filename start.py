@@ -54,7 +54,6 @@ def user_arguments():
     parser.add_argument("-int", "--internal", action='store_true', help="Internal torrent")
     parser.add_argument("-pers", "--personal", action='store_true', help="Personal Release torrent")
 
-
     args = parser.parse_args()
     tracker = args.tracker[0]
 
@@ -177,11 +176,10 @@ def main():
         torrent_info.get_by_playlist_id(args.playlist_id[0])
         return
 
-    if args.coll:
+    if args.collection_id:
         torrent_info = Torrent(args.tracker)
         torrent_info.get_by_collection_id(args.coll[0])
         return
-
 
     if args.season:
         torrent_info = Torrent(args.tracker)
