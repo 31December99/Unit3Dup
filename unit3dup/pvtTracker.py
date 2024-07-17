@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 import sys
-from typing import Union
-
 import requests
 from rich.console import Console
 
@@ -323,26 +321,26 @@ class Unit3d(filterAPI, Torrents, Uploader):
     def fetch_id(self, torrent_id: int) -> requests:
         return self.torrent(torrent_id=torrent_id)
 
-    def get_double_up(self, double_up: bool, perPage: int = None) -> Union[requests, None]:
+    def get_double_up(self, double_up: bool, perPage: int = None):
         return self.doubleup(double_up=double_up, perPage=perPage)
 
-    def get_featured(self, featured: bool, perPage: int = None) -> Union[requests, None]:
+    def get_featured(self, featured: bool, perPage: int = None):
         return self.featured(featured=featured, perPage=perPage)
 
-    def get_refundable(self, refundable: bool, perPage: int = None) -> Union[requests, None]:
+    def get_refundable(self, refundable: bool, perPage: int = None):
         return self.refundable(refundable=refundable, perPage=perPage)
 
-    def get_stream(self, stream: bool, perPage: int = None) -> Union[requests, None]:
+    def get_stream(self, stream: bool, perPage: int = None):
         return self.stream(stream=stream, perPage=perPage)
 
-    def get_sd(self, sd: bool, perPage: int = None) -> Union[requests, None]:
+    def get_sd(self, sd: bool, perPage: int = None):
         return self.sd(sd=sd, perPage=perPage)
 
-    def get_highspeed(self, highspeed: bool, perPage: int = None) -> Union[requests, None]:
+    def get_highspeed(self, highspeed: bool, perPage: int = None):
         return self.highspeed(high_speed=highspeed, perPage=perPage)
 
-    def get_internal(self, internal: bool, perPage: int = None) -> Union[requests, None]:
+    def get_internal(self, internal: bool, perPage: int = None):
         return self.internal(internal=internal, perPage=perPage)
 
-    def get_personal_release(self, personalRelease: bool, perPage: int = None) -> Union[requests, None]:
+    def get_personal_release(self, personalRelease: bool, perPage: int = None):
         return self.personal_release(personalRelease=personalRelease, perPage=perPage)
