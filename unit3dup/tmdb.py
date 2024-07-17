@@ -50,7 +50,7 @@ class MyTmdb:
             if not result:
                 result = self.__search_translations()
                 if not result:
-                    result = self.input_tmdb()
+                    return None
         else:
             result.keywords = self.keywords(result.video_id)
         return result
