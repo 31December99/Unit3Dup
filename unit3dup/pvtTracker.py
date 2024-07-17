@@ -111,6 +111,11 @@ class filterAPI(Tracker):
         self.params['perPage'] = perPage
         return self._get(params=self.params)
 
+    def freeleech(self, freeleech: int, perPage: int = None) -> requests:
+        self.params['free'] = freeleech
+        self.params['perPage'] = perPage
+        return self._get(params=self.params)
+
     def name(self, name: str, perPage: int = None) -> requests:
         self.params['name'] = name
         self.params['perPage'] = perPage
@@ -261,6 +266,9 @@ class Unit3d(filterAPI, Torrents, Uploader):
 
     def get_collection_id(self, collection_id: int, perPage: int = None) -> requests:
         return self.collection_id(collectionId=collection_id, perPage=perPage)
+
+    def get_freeleech(self, freeleech: int, perPage: int = None) -> requests:
+        return self.freeleech(freeleech=freeleech, perPage=perPage)
 
     def get_name(self, name: str, perPage: int = None) -> requests:
         return self.name(name=name, perPage=perPage)
