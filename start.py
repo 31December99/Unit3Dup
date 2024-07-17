@@ -38,6 +38,8 @@ def user_arguments():
     parser.add_argument("-tvdb", "--tvdb_id", nargs=1, type=int, help="TVDB ID")
     parser.add_argument("-mal", "--mal_id", nargs=1, type=str, help="MAL ID")
 
+    parser.add_argument("-playid", "--playlist_id", nargs=1, type=str, help="Playlist ID")
+
     parser.add_argument("-a", "--alive", action='store_true', help="Alive torrent")
     parser.add_argument("-d", "--dead", action='store_true', help="Dead torrent")
     parser.add_argument("-dy", "--dying", action='store_true', help="Dying torrent")
@@ -168,6 +170,12 @@ def main():
         torrent_info = Torrent(args.tracker)
         torrent_info.get_by_mal_id(args.mal_id[0])
         return
+
+    if args.playlist_id:
+        torrent_info = Torrent(args.tracker)
+        torrent_info.get_by_playlist_id(args.playlist_id[0])
+        return
+
 
     if args.season:
         torrent_info = Torrent(args.tracker)
