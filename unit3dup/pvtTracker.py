@@ -77,6 +77,16 @@ class Tracker(Myhttp):
     def _fetch_id(self, torrent_id: int) -> requests:
         return requests.get(url=f"{self.fetch_url}{torrent_id}", headers=self.headers, params=self.params)
 
+    def _next_page(self, url: str) -> requests:
+        try:
+            response = requests.get(url=url, headers=self.headers, params=self.params)
+            response.raise_for_status()
+            return response.json()
+        except requests.exceptions.HTTPError as http_err:
+            console.print(f"Report {http_err}")
+            sys.exit()
+
+
 
 class filterAPI(Tracker):
     def tmdb(self, tmdb_id: int, perPage: int = None) -> requests:
@@ -228,6 +238,9 @@ class filterAPI(Tracker):
         self.params['personalRelease'] = personalRelease
         self.params['perPage'] = perPage
         return self._get(params=self.params)
+
+    def next(self, url: str) -> requests:
+        return self._next_page(url=url)
 
 
 class Torrents(Tracker):
