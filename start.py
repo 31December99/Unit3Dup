@@ -43,6 +43,8 @@ def user_arguments():
     parser.add_argument("-du", "--doubleup", action='store_true', help="DoubleUp torrent")
     parser.add_argument("-fe", "--featured", action='store_true', help="Featured torrent")
     parser.add_argument("-re", "--refundable", action='store_true', help="Refundable torrent")
+    parser.add_argument("-str", "--stream", action='store_true', help="Stream torrent")
+
 
     args = parser.parse_args()
     tracker = args.tracker[0]
@@ -193,6 +195,11 @@ def main():
     if args.refundable:
         torrent_info = Torrent(args.tracker)
         torrent_info.get_refundable()
+        return
+
+    if args.stream:
+        torrent_info = Torrent(args.tracker)
+        torrent_info.get_stream()
         return
 
     console.print("Sintassi non valida o valore nullo. Controlla..")
