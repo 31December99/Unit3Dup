@@ -20,7 +20,7 @@ class UploadBot:
         self.category = content.category  # 1 = movie , 2 = serie
         self.size = content.size
         self.metainfo = content.metainfo
-        self.name = f"{content.name if self.category == 1 else os.path.basename(content.folder)}.torrent"
+        self.name = f"{content.name if self.category == 1 else os.path.basename(content.folder)}"
 
         # // check tracker file configuration .env e .json
         self.tracker_env = f"{self.tracker_name}.env"
