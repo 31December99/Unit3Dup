@@ -269,3 +269,12 @@ class Torrent:
         console.log(f"Internal torrents.. Filter by if the torrent is an internal release")
         if tracker_data:
             self.print_normal(data=tracker_data['data'])
+
+    def get_personal(self):
+        tracker = pvtTracker.Unit3d(
+            base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key=self.PASS_KEY
+        )
+        tracker_data = tracker.get_personal_release(personalRelease=True, perPage=50)
+        console.log(f"Personal Release torrents.. Filter by if the torrent's content is created by the uploader")
+        if tracker_data:
+            self.print_normal(data=tracker_data['data'])
