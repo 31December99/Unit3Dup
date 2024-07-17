@@ -292,7 +292,7 @@ class Unit3d(filterAPI, Torrents, Uploader):
     def get_featured(self, featured: bool, perPage: int = None) -> Union[requests, None]:
         return self.featured(featured=featured, perPage=perPage)
 
-    def get_refundable(self, refundable: bool, perPage: int = None) -> Union[requests.Response, None]:
+    def get_refundable(self, refundable: bool, perPage: int = None) -> Union[requests, None]:
         return self.refundable(refundable=refundable, perPage=perPage)
 
     def get_stream(self, stream: bool, perPage: int = None) -> Union[requests, None]:
