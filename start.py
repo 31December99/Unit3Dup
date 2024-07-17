@@ -44,6 +44,7 @@ def user_arguments():
     parser.add_argument("-fe", "--featured", action='store_true', help="Featured torrent")
     parser.add_argument("-re", "--refundable", action='store_true', help="Refundable torrent")
     parser.add_argument("-str", "--stream", action='store_true', help="Stream torrent")
+    parser.add_argument("-sd", "--standard", action='store_true', help="Standard definition")
 
 
     args = parser.parse_args()
@@ -200,6 +201,11 @@ def main():
     if args.stream:
         torrent_info = Torrent(args.tracker)
         torrent_info.get_stream()
+        return
+
+    if args.standard:
+        torrent_info = Torrent(args.tracker)
+        torrent_info.get_sd()
         return
 
     console.print("Sintassi non valida o valore nullo. Controlla..")
