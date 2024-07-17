@@ -206,6 +206,11 @@ class filterAPI(Tracker):
         self.params['perPage'] = perPage
         return self._get(params=self.params)
 
+    def personal_release(self, personalRelease: bool, perPage: int = None) -> requests:
+        self.params['personalRelease'] = personalRelease
+        self.params['perPage'] = perPage
+        return self._get(params=self.params)
+
 
 class Torrents(Tracker):
     def torrents(self, perPage: int = None) -> requests:
@@ -306,3 +311,6 @@ class Unit3d(filterAPI, Torrents, Uploader):
 
     def get_internal(self, internal: bool, perPage: int = None) -> Union[requests, None]:
         return self.internal(internal=internal, perPage=perPage)
+
+    def get_personal_release(self, personalRelease: bool, perPage: int = None) -> Union[requests, None]:
+        return self.personal_release(personalRelease=personalRelease, perPage=perPage)
