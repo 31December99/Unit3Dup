@@ -101,6 +101,11 @@ class filterAPI(Tracker):
         self.params['perPage'] = perPage
         return self._get(params=self.params)
 
+    def playlist_id(self, playlistId: int, perPage: int = None) -> requests:
+        self.params['playlistId'] = playlistId
+        self.params['perPage'] = perPage
+        return self._get(params=self.params)
+
     def name(self, name: str, perPage: int = None) -> requests:
         self.params['name'] = name
         self.params['perPage'] = perPage
@@ -245,6 +250,9 @@ class Unit3d(filterAPI, Torrents, Uploader):
 
     def get_mal(self, mal_id: int, perPage: int = None) -> requests:
         return self.mal(mal_id=mal_id, perPage=perPage)
+
+    def get_playlist_id(self, playlist_id: int, perPage: int = None) -> requests:
+        return self.playlist_id(playlistId= playlist_id, perPage=perPage)
 
     def get_name(self, name: str, perPage: int = None) -> requests:
         return self.name(name=name, perPage=perPage)
