@@ -186,6 +186,15 @@ class Torrent:
         if tracker_data:
             self.print_normal(data=tracker_data['data'])
 
+    def get_by_collection_id(self, collection_id: int):
+        tracker = pvtTracker.Unit3d(
+            base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key=self.PASS_KEY
+        )
+        tracker_data = tracker.get_collection_id(collection_id=collection_id, perPage=25)
+        console.log(f"Collection torrents.. Return only torrents within the collection of the given ID.. '{collection_id}'")
+        if tracker_data:
+            self.print_normal(data=tracker_data['data'])
+
     def get_by_season(self, season: int):
         tracker = pvtTracker.Unit3d(
             base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key=self.PASS_KEY
