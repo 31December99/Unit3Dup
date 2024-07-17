@@ -50,6 +50,7 @@ ___
     python3 start.py -fe (featured torrent)
     python3 start.py -str (stream-optimised torrent)
     python3 start.py -sd (Standard denition torrent)
+    python3 start.py -hs (High speed torrent)
 
 ___
 ### Dependencies
