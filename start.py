@@ -47,6 +47,7 @@ def user_arguments():
     parser.add_argument("-sd", "--standard", action='store_true', help="Standard definition torrent")
     parser.add_argument("-hs", "--highspeed", action='store_true', help="Highspeed torrent")
     parser.add_argument("-int", "--internal", action='store_true', help="Internal torrent")
+    parser.add_argument("-pers", "--personal", action='store_true', help="Personal Release torrent")
 
 
     args = parser.parse_args()
@@ -218,6 +219,11 @@ def main():
     if args.internal:
         torrent_info = Torrent(args.tracker)
         torrent_info.get_internal()
+        return
+
+    if args.personal:
+        torrent_info = Torrent(args.tracker)
+        torrent_info.get_personal()
         return
 
     console.print("Sintassi non valida o valore nullo. Controlla..")
