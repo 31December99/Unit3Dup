@@ -41,6 +41,22 @@ class Torrent:
             print(f"[{str(item['attributes']['release_year'])}] - [{item['attributes']['info_hash']}] [{unique_id}]"
                   f" -> {item['attributes']['name']}")
 
+    def page_view(self, tracker_data: dict, tracker: pvtTracker):
+        page = 0
+        self.print_normal(data=tracker_data['data'])
+
+        while True:
+            if not tracker_data['links']['next']:
+                break
+
+            page += 1
+            console.print(f"\n Prossima Pagina '{page}' - Premi un tasto per continuare, Q(quit) - ", end='')
+            if input().lower() == 'q': break
+            print()
+            console.rule(f"\n[bold blue]'Page -> {page}'", style="#ea00d9")
+            tracker_data = tracker.next(url=tracker_data['links']['next'])
+            self.print_normal(data=tracker_data['data'])
+
     def print_normal(self, data: list):
         for item in data:
             console.log(f"[{str(item['attributes']['release_year'])}] - {item['attributes']['name']}")
@@ -191,7 +207,8 @@ class Torrent:
             base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key=self.PASS_KEY
         )
         tracker_data = tracker.get_collection_id(collection_id=collection_id, perPage=25)
-        console.log(f"Collection torrents.. Return only torrents within the collection of the given ID.. '{collection_id}'")
+        console.log(
+            f"Collection torrents.. Return only torrents within the collection of the given ID.. '{collection_id}'")
         if tracker_data:
             self.print_normal(data=tracker_data['data'])
 
@@ -199,16 +216,16 @@ class Torrent:
         tracker = pvtTracker.Unit3d(
             base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key=self.PASS_KEY
         )
-        tracker_data = tracker.get_freeleech(freeleech=freeleech, perPage=25)
+        tracker_data = tracker.get_freeleech(freeleech=freeleech, perPage=30)
         console.log(f"Freeleech torrents.. Filter by the torrent's freeleech discount (0-100).. '{freeleech}'")
         if tracker_data:
-            self.print_normal(data=tracker_data['data'])
+            self.page_view(tracker_data=tracker_data, tracker=tracker)
 
     def get_by_season(self, season: int):
         tracker = pvtTracker.Unit3d(
             base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key=self.PASS_KEY
         )
-        tracker_data = tracker.get_season_number(se_number=season, perPage=25)
+        tracker_data = tracker.get_season_number(se_number=season, perPage=200)
         console.log(f"Seasons torrents.. Filter by the torrent's seasons.. '{season}'")
         if tracker_data:
             self.print_normal(data=tracker_data['data'])
