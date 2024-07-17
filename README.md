@@ -32,6 +32,7 @@ ___
     python3 start.py -i [title] (get info_hash and MediaInfo Unique ID)
     python3 start.py -up [username] (search by uploader's username)
     python3 start.py -m [mediainfo_ID] (search by MediaInfo ID)
+    python3 start.py -desc [keyword in description] (search by description)    
     python3 start.py -st [start_date] (search by starting date)
     python3 start.py -en [end_date] (search by ending date)
     python3 start.py -type (search by type ID)
