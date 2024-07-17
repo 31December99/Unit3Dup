@@ -41,9 +41,21 @@ class Torrent:
             print(f"[{str(item['attributes']['release_year'])}] - [{item['attributes']['info_hash']}] [{unique_id}]"
                   f" -> {item['attributes']['name']}")
 
-    def page_view(self, tracker_data: dict, tracker: pvtTracker):
+    def print_normal(self, data: list):
+        for item in data:
+            console.log(f"[{str(item['attributes']['release_year'])}] - {item['attributes']['name']}")
+
+    def page_view(self, tracker_data: dict, tracker: pvtTracker, info=False):
         page = 0
-        self.print_normal(data=tracker_data['data'])
+
+        # float(inf) in caso di None utilizza il suo valore (infinito) come key di ordinamento (ultimo)
+        data = sorted(
+            tracker_data["data"],
+            key=lambda x: x["attributes"].get("release_year", float("inf"))
+                          or float("inf"),
+        )
+
+        self.print_normal(data) if not info else self.print_info(data)
 
         while True:
             if not tracker_data['links']['next']:
@@ -55,29 +67,17 @@ class Torrent:
             print()
             console.rule(f"\n[bold blue]'Page -> {page}'", style="#ea00d9")
             tracker_data = tracker.next(url=tracker_data['links']['next'])
-            self.print_normal(data=tracker_data['data'])
-
-    def print_normal(self, data: list):
-        for item in data:
-            console.log(f"[{str(item['attributes']['release_year'])}] - {item['attributes']['name']}")
+            self.print_normal(data) if not info else self.print_info(data)
 
     def search(self, keyword: str, info=False):
         tracker = pvtTracker.Unit3d(
             base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key=self.PASS_KEY
         )
-        tracker_data = tracker.get_name(name=keyword[0], perPage=50)
+        tracker_data = tracker.get_name(name=keyword[0], perPage=30)
         console.log(f"Searching.. '{keyword[0]}'")
-        # float(inf) in caso di None utilizza il suo valore (infinito) come key di ordinamento (ultimo)
-        data = sorted(
-            tracker_data["data"],
-            key=lambda x: x["attributes"].get("release_year", float("inf"))
-                          or float("inf"),
-        )
 
-        if info:
-            self.print_info(data=data)
-        else:
-            self.print_normal(data=data)
+        self.page_view(tracker_data=tracker_data, tracker=tracker) if not info \
+            else self.page_view(tracker_data=tracker_data, tracker=tracker, info=True)
 
     def get_by_description(self, description: str):
         tracker = pvtTracker.Unit3d(
