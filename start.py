@@ -39,6 +39,7 @@ def user_arguments():
     parser.add_argument("-mal", "--mal_id", nargs=1, type=str, help="MAL ID")
 
     parser.add_argument("-playid", "--playlist_id", nargs=1, type=str, help="Playlist ID")
+    parser.add_argument("-coll", "--collection_id", nargs=1, type=str, help="Collection ID")
 
     parser.add_argument("-a", "--alive", action='store_true', help="Alive torrent")
     parser.add_argument("-d", "--dead", action='store_true', help="Dead torrent")
@@ -174,6 +175,11 @@ def main():
     if args.playlist_id:
         torrent_info = Torrent(args.tracker)
         torrent_info.get_by_playlist_id(args.playlist_id[0])
+        return
+
+    if args.coll:
+        torrent_info = Torrent(args.tracker)
+        torrent_info.get_by_collection_id(args.coll[0])
         return
 
 
