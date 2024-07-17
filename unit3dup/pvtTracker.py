@@ -106,8 +106,8 @@ class filterAPI(Tracker):
         self.params['perPage'] = perPage
         return self._get(params=self.params)
 
-    def collection_id(self, playlistId: int, perPage: int = None) -> requests:
-        self.params['collectionId'] = playlistId
+    def collection_id(self, collectionId: int, perPage: int = None) -> requests:
+        self.params['collectionId'] = collectionId
         self.params['perPage'] = perPage
         return self._get(params=self.params)
 
