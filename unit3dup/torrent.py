@@ -223,3 +223,12 @@ class Torrent:
         console.log(f"Featured torrents.. Filter by if the torrent is featured on the front page")
         if tracker_data:
             self.print_normal(data=tracker_data['data'])
+
+    def get_refundable(self):
+        tracker = pvtTracker.Unit3d(
+            base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key=self.PASS_KEY
+        )
+        tracker_data = tracker.get_refundable(refundable=True, perPage=50)
+        console.log(f"Refundable torrents.. Filter by if the torrent is refundable")
+        if tracker_data:
+            self.print_normal(data=tracker_data['data'])
