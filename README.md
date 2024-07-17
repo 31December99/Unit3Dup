@@ -51,6 +51,7 @@ ___
     python3 start.py -str (stream-optimised torrent)
     python3 start.py -sd (Standard denition torrent)
     python3 start.py -hs (High speed torrent)
+    python3 start.py -pers (personalRelease torrent)
 
 ___
 ### Dependencies
