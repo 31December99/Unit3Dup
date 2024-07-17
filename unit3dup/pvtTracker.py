@@ -302,7 +302,7 @@ class Unit3d(filterAPI, Torrents, Uploader):
         return self.sd(sd=sd, perPage=perPage)
 
     def get_highspeed(self, highspeed: bool, perPage: int = None) -> Union[requests, None]:
-        return self.get_highspeed(highspeed=highspeed, perPage=perPage)
+        return self.highspeed(high_speed=highspeed, perPage=perPage)
 
     def get_internal(self, internal: bool, perPage: int = None) -> Union[requests, None]:
         return self.get_internal(internal=internal, perPage=perPage)
