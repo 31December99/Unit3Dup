@@ -20,6 +20,7 @@ class Torrent:
         self.API_TOKEN = config_load("API_TOKEN")
         self.BASE_URL = config_load("BASE_URL")
         self.tracker_values = TrackerConfig(self.tracker_file_json)
+        self.perPage = 30
         print()
 
     def get_unique_id(self, media_info: str) -> str:
@@ -32,7 +33,8 @@ class Torrent:
                 unique_id = match.group(1)
         return unique_id
 
-    def print_info(self, data: list):
+    def print_info(self, tracker_data: dict):
+        data = [item for item in tracker_data["data"]]
         for item in data:
             # Ottengo media info
             media_info = item['attributes']['media_info']
@@ -41,22 +43,15 @@ class Torrent:
             print(f"[{str(item['attributes']['release_year'])}] - [{item['attributes']['info_hash']}] [{unique_id}]"
                   f" -> {item['attributes']['name']}")
 
-    def print_normal(self, data: list):
+    def print_normal(self, tracker_data: dict):
+        data = [item for item in tracker_data["data"]]
         for item in data:
             console.log(f"[{str(item['attributes']['release_year'])}] - {item['attributes']['name']}")
 
     def page_view(self, tracker_data: dict, tracker: pvtTracker, info=False):
+
+        self.print_normal(tracker_data) if not info else self.print_info(tracker_data)
         page = 0
-
-        # float(inf) in caso di None utilizza il suo valore (infinito) come key di ordinamento (ultimo)
-        data = sorted(
-            tracker_data["data"],
-            key=lambda x: x["attributes"].get("release_year", float("inf"))
-                          or float("inf"),
-        )
-
-        self.print_normal(data) if not info else self.print_info(data)
-
         while True:
             if not tracker_data['links']['next']:
                 break
@@ -67,13 +62,13 @@ class Torrent:
             print()
             console.rule(f"\n[bold blue]'Page -> {page}'", style="#ea00d9")
             tracker_data = tracker.next(url=tracker_data['links']['next'])
-            self.print_normal(data) if not info else self.print_info(data)
+            self.print_normal(tracker_data) if not info else self.print_info(tracker_data)
 
     def search(self, keyword: str, info=False):
         tracker = pvtTracker.Unit3d(
             base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key=self.PASS_KEY
         )
-        tracker_data = tracker.get_name(name=keyword[0], perPage=30)
+        tracker_data = tracker.get_name(name=keyword[0], perPage=self.perPage)
         console.log(f"Searching.. '{keyword[0]}'")
 
         self.page_view(tracker_data=tracker_data, tracker=tracker) if not info \
@@ -83,140 +78,140 @@ class Torrent:
         tracker = pvtTracker.Unit3d(
             base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key=self.PASS_KEY
         )
-        tracker_data = tracker.get_description(description=description[0], perPage=50)
+        tracker_data = tracker.get_description(description=description[0], perPage=self.perPage)
         console.log(f"Filter by the torrent's description.. '{description[0].upper()}'")
-        self.print_normal(data=tracker_data['data'])
+        self.page_view(tracker_data=tracker_data, tracker=tracker)
 
     def get_by_bdinfo(self, bdinfo: str):
         tracker = pvtTracker.Unit3d(
             base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key=self.PASS_KEY
         )
-        tracker_data = tracker.get_bdinfo(bdinfo=bdinfo[0], perPage=50)
+        tracker_data = tracker.get_bdinfo(bdinfo=bdinfo[0], perPage=self.perPage)
         console.log(f"Filter by the torrent's BDInfo.. '{bdinfo[0].upper()}'")
-        self.print_normal(data=tracker_data['data'])
+        self.page_view(tracker_data=tracker_data, tracker=tracker)
 
     def get_by_uploader(self, username: str):
         tracker = pvtTracker.Unit3d(
             base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key=self.PASS_KEY
         )
-        tracker_data = tracker.get_uploader(uploader=username[0], perPage=50)
+        tracker_data = tracker.get_uploader(uploader=username[0], perPage=self.perPage)
         console.log(f"Filter by the torrent uploader's username.. '{username[0].upper()}'")
-        self.print_normal(data=tracker_data['data'])
+        self.page_view(tracker_data=tracker_data, tracker=tracker)
 
     def get_by_start_year(self, startyear: str):
         tracker = pvtTracker.Unit3d(
             base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key=self.PASS_KEY
         )
-        tracker_data = tracker.start_year(start_year=startyear[0], perPage=50)
+        tracker_data = tracker.start_year(start_year=startyear[0], perPage=self.perPage)
         console.log(f"StartYear torrents.. Return only torrents whose content was released"
                     f" after or in the given year '{startyear[0].upper()}'")
-        self.print_normal(data=tracker_data['data'])
+        self.page_view(tracker_data=tracker_data, tracker=tracker)
 
     def get_by_end_year(self, end_year: str):
         tracker = pvtTracker.Unit3d(
             base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key=self.PASS_KEY
         )
-        tracker_data = tracker.end_year(end_year=end_year[0], perPage=50)
+        tracker_data = tracker.end_year(end_year=end_year[0], perPage=self.perPage)
         console.log(f"EndYear torrents.. Return only torrents whose content was released before or in the given year"
                     f"'{end_year[0].upper()}'")
-        self.print_normal(data=tracker_data['data'])
+        self.page_view(tracker_data=tracker_data, tracker=tracker)
 
     def get_by_mediainfo(self, mediainfo: str):
         tracker = pvtTracker.Unit3d(
             base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key=self.PASS_KEY
         )
-        tracker_data = tracker.get_mediainfo(mediainfo=mediainfo[0], perPage=50)
+        tracker_data = tracker.get_mediainfo(mediainfo=mediainfo[0], perPage=self.perPage)
         console.log(f"Mediainfo torrents.. Filter by the torrent's mediaInfo.. '{mediainfo[0].upper()}'")
         if tracker_data:
-            self.print_normal(data=tracker_data['data'])
+            self.page_view(tracker_data=tracker_data, tracker=tracker)
 
     def get_by_types(self, type_name: str):
         tracker = pvtTracker.Unit3d(
             base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key=self.PASS_KEY
         )
-        tracker_data = tracker.get_types(type_id=self.tracker_values.type_id(type_name[0]), perPage=25)
+        tracker_data = tracker.get_types(type_id=self.tracker_values.type_id(type_name[0]), perPage=self.perPage)
         console.log(f"Types torrents.. Filter by the torrent's type.. '{type_name[0].upper()}'")
         if tracker_data:
-            self.print_normal(data=tracker_data['data'])
+            self.page_view(tracker_data=tracker_data, tracker=tracker)
 
     def get_by_res(self, res_name: str):
         tracker = pvtTracker.Unit3d(
             base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key=self.PASS_KEY
         )
-        tracker_data = tracker.get_res(res_id=self.tracker_values.res_id(res_name[0]), perPage=25)
+        tracker_data = tracker.get_res(res_id=self.tracker_values.res_id(res_name[0]), perPage=self.perPage)
         console.log(f"Resolutions torrents.. Filter by the torrent's resolution.. '{res_name[0].upper()}'")
         if tracker_data:
-            self.print_normal(data=tracker_data['data'])
+            self.page_view(tracker_data=tracker_data, tracker=tracker)
 
     def get_by_filename(self, file_name: str):
         tracker = pvtTracker.Unit3d(
             base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key=self.PASS_KEY
         )
-        tracker_data = tracker.get_filename(file_name=file_name[0], perPage=25)
+        tracker_data = tracker.get_filename(file_name=file_name[0], perPage=self.perPage)
         console.log(f"Filename torrents.. Filter by the torrent's filename.. '{file_name[0].upper()}'")
         if tracker_data:
-            self.print_normal(data=tracker_data['data'])
+            self.page_view(tracker_data=tracker_data, tracker=tracker)
 
     def get_by_tmdb_id(self, tmdb_id: int):
         tracker = pvtTracker.Unit3d(
             base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key=self.PASS_KEY
         )
-        tracker_data = tracker.get_tmdb(tmdb_id=tmdb_id, perPage=25)
+        tracker_data = tracker.get_tmdb(tmdb_id=tmdb_id, perPage=self.perPage)
         console.log(f"TMDB torrents.. Filter by the torrent's tmdb.. '{tmdb_id}'")
         if tracker_data:
-            self.print_normal(data=tracker_data['data'])
+            self.page_view(tracker_data=tracker_data, tracker=tracker)
 
     def get_by_imdb_id(self, imdb_id: int):
         tracker = pvtTracker.Unit3d(
             base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key=self.PASS_KEY
         )
-        tracker_data = tracker.get_imdb(imdb_id=imdb_id, perPage=25)
+        tracker_data = tracker.get_imdb(imdb_id=imdb_id, perPage=self.perPage)
         console.log(f"IMDB torrents.. Filter by the torrent's imdb.. '{imdb_id}'")
         if tracker_data:
-            self.print_normal(data=tracker_data['data'])
+            self.page_view(tracker_data=tracker_data, tracker=tracker)
 
     def get_by_tvdb_id(self, tvdb_id: int):
         tracker = pvtTracker.Unit3d(
             base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key=self.PASS_KEY
         )
-        tracker_data = tracker.get_tvdb(tvdb_id=tvdb_id, perPage=25)
+        tracker_data = tracker.get_tvdb(tvdb_id=tvdb_id, perPage=self.perPage)
         console.log(f"TVDB torrents.. Filter by the torrent's tvdb.. '{tvdb_id}'")
         if tracker_data:
-            self.print_normal(data=tracker_data['data'])
+            self.page_view(tracker_data=tracker_data, tracker=tracker)
 
     def get_by_mal_id(self, mal_id: int):
         tracker = pvtTracker.Unit3d(
             base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key=self.PASS_KEY
         )
-        tracker_data = tracker.get_mal(mal_id=mal_id, perPage=25)
+        tracker_data = tracker.get_mal(mal_id=mal_id, perPage=self.perPage)
         console.log(f"MAL torrents.. Filter by the torrent's mal.. '{mal_id}'")
         if tracker_data:
-            self.print_normal(data=tracker_data['data'])
+            self.page_view(tracker_data=tracker_data, tracker=tracker)
 
     def get_by_playlist_id(self, playlist_id: int):
         tracker = pvtTracker.Unit3d(
             base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key=self.PASS_KEY
         )
-        tracker_data = tracker.get_playlist_id(playlist_id=playlist_id, perPage=25)
+        tracker_data = tracker.get_playlist_id(playlist_id=playlist_id, perPage=self.perPage)
         console.log(f"Playlist torrents.. Return only torrents within the playlist of the given ID.. '{playlist_id}'")
         if tracker_data:
-            self.print_normal(data=tracker_data['data'])
+            self.page_view(tracker_data=tracker_data, tracker=tracker)
 
     def get_by_collection_id(self, collection_id: int):
         tracker = pvtTracker.Unit3d(
             base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key=self.PASS_KEY
         )
-        tracker_data = tracker.get_collection_id(collection_id=collection_id, perPage=25)
+        tracker_data = tracker.get_collection_id(collection_id=collection_id, perPage=self.perPage)
         console.log(
             f"Collection torrents.. Return only torrents within the collection of the given ID.. '{collection_id}'")
         if tracker_data:
-            self.print_normal(data=tracker_data['data'])
+            self.page_view(tracker_data=tracker_data, tracker=tracker)
 
     def get_by_freeleech(self, freeleech: int):
         tracker = pvtTracker.Unit3d(
             base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key=self.PASS_KEY
         )
-        tracker_data = tracker.get_freeleech(freeleech=freeleech, perPage=30)
+        tracker_data = tracker.get_freeleech(freeleech=freeleech, perPage=self.perPage)
         console.log(f"Freeleech torrents.. Filter by the torrent's freeleech discount (0-100).. '{freeleech}'")
         if tracker_data:
             self.page_view(tracker_data=tracker_data, tracker=tracker)
@@ -225,116 +220,116 @@ class Torrent:
         tracker = pvtTracker.Unit3d(
             base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key=self.PASS_KEY
         )
-        tracker_data = tracker.get_season_number(se_number=season, perPage=200)
+        tracker_data = tracker.get_season_number(se_number=season, perPage=self.perPage)
         console.log(f"Seasons torrents.. Filter by the torrent's seasons.. '{season}'")
         if tracker_data:
-            self.print_normal(data=tracker_data['data'])
+            self.page_view(tracker_data=tracker_data, tracker=tracker)
 
     def get_by_episode(self, episode: int):
         tracker = pvtTracker.Unit3d(
             base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key=self.PASS_KEY
         )
-        tracker_data = tracker.get_episode_number(ep_number=episode, perPage=25)
+        tracker_data = tracker.get_episode_number(ep_number=episode, perPage=self.perPage)
         console.log(f"Episode torrents.. Filter by the torrent's episode.. '{episode}'")
         if tracker_data:
-            self.print_normal(data=tracker_data['data'])
+            self.page_view(tracker_data=tracker_data, tracker=tracker)
 
     def get_alive(self):
         tracker = pvtTracker.Unit3d(
             base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key=self.PASS_KEY
         )
-        tracker_data = tracker.get_alive(alive=True, perPage=50)
+        tracker_data = tracker.get_alive(alive=True, perPage=self.perPage)
         console.log(f"Alive torrents.. Filter by if the torrent has 1 or more seeders")
         if tracker_data:
-            self.print_normal(data=tracker_data['data'])
+            self.page_view(tracker_data=tracker_data, tracker=tracker)
 
     def get_dead(self):
         tracker = pvtTracker.Unit3d(
             base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key=self.PASS_KEY
         )
-        tracker_data = tracker.get_dead(dead=True, perPage=50)
+        tracker_data = tracker.get_dead(dead=True, perPage=self.perPage)
         console.log(f"Dead torrents.. Filter by if the torrent has 0 seeders")
         if tracker_data:
-            self.print_normal(data=tracker_data['data'])
+            self.page_view(tracker_data=tracker_data, tracker=tracker)
 
     def get_dying(self):
         tracker = pvtTracker.Unit3d(
             base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key=self.PASS_KEY
         )
-        tracker_data = tracker.get_dying(dying=True, perPage=50)
+        tracker_data = tracker.get_dying(dying=True, perPage=self.perPage)
         console.log(f"Dying torrents.. Filter by if the torrent has 1 seeder and has been downloaded more than 3 times")
         if tracker_data:
-            self.print_normal(data=tracker_data['data'])
+            self.page_view(tracker_data=tracker_data, tracker=tracker)
 
     def get_doubleup(self):
         tracker = pvtTracker.Unit3d(
             base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key=self.PASS_KEY
         )
-        tracker_data = tracker.get_double_up(double_up=True, perPage=50)
+        tracker_data = tracker.get_double_up(double_up=True, perPage=self.perPage)
         console.log(f"DoubleUp torrents.. Filter by if the torrent offers double upload")
         if tracker_data:
-            self.print_normal(data=tracker_data['data'])
+            self.page_view(tracker_data=tracker_data, tracker=tracker)
 
     def get_featured(self):
         tracker = pvtTracker.Unit3d(
             base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key=self.PASS_KEY
         )
-        tracker_data = tracker.get_featured(featured=True, perPage=50)
+        tracker_data = tracker.get_featured(featured=True, perPage=self.perPage)
         console.log(f"Featured torrents.. Filter by if the torrent is featured on the front page")
         if tracker_data:
-            self.print_normal(data=tracker_data['data'])
+            self.page_view(tracker_data=tracker_data, tracker=tracker)
 
     def get_refundable(self):
         tracker = pvtTracker.Unit3d(
             base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key=self.PASS_KEY
         )
-        tracker_data = tracker.get_refundable(refundable=True, perPage=50)
+        tracker_data = tracker.get_refundable(refundable=True, perPage=self.perPage)
         console.log(f"Refundable torrents.. Filter by if the torrent is refundable")
         if tracker_data:
-            self.print_normal(data=tracker_data['data'])
+            self.page_view(tracker_data=tracker_data, tracker=tracker)
 
     def get_stream(self):
         tracker = pvtTracker.Unit3d(
             base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key=self.PASS_KEY
         )
-        tracker_data = tracker.get_stream(stream=True, perPage=50)
+        tracker_data = tracker.get_stream(stream=True, perPage=self.perPage)
         console.log(f"Stream torrents.. Filter by if the torrent's content is stream-optimised")
         if tracker_data:
-            self.print_normal(data=tracker_data['data'])
+            self.page_view(tracker_data=tracker_data, tracker=tracker)
 
     def get_sd(self):
         tracker = pvtTracker.Unit3d(
             base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key=self.PASS_KEY
         )
-        tracker_data = tracker.get_sd(sd=True, perPage=50)
+        tracker_data = tracker.get_sd(sd=True, perPage=self.perPage)
         console.log(f"Standard torrents.. Filter by if the torrent's content is standard definition")
         if tracker_data:
-            self.print_normal(data=tracker_data['data'])
+            self.page_view(tracker_data=tracker_data, tracker=tracker)
 
     def get_highspeed(self):
         tracker = pvtTracker.Unit3d(
             base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key=self.PASS_KEY
         )
-        tracker_data = tracker.get_highspeed(highspeed=True, perPage=50)
+        tracker_data = tracker.get_highspeed(highspeed=True, perPage=self.perPage)
         console.log(f"Highspeed torrents.. Filter by if the torrent has seeders whose IP address has been registered"
                     f" as a seedbox")
         if tracker_data:
-            self.print_normal(data=tracker_data['data'])
+            self.page_view(tracker_data=tracker_data, tracker=tracker)
 
     def get_internal(self):
         tracker = pvtTracker.Unit3d(
             base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key=self.PASS_KEY
         )
-        tracker_data = tracker.get_internal(internal=True, perPage=50)
+        tracker_data = tracker.get_internal(internal=True, perPage=self.perPage)
         console.log(f"Internal torrents.. Filter by if the torrent is an internal release")
         if tracker_data:
-            self.print_normal(data=tracker_data['data'])
+            self.page_view(tracker_data=tracker_data, tracker=tracker)
 
     def get_personal(self):
         tracker = pvtTracker.Unit3d(
             base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key=self.PASS_KEY
         )
-        tracker_data = tracker.get_personal_release(personalRelease=True, perPage=50)
+        tracker_data = tracker.get_personal_release(personalRelease=True, perPage=self.perPage)
         console.log(f"Personal Release torrents.. Filter by if the torrent's content is created by the uploader")
         if tracker_data:
-            self.print_normal(data=tracker_data['data'])
+            self.page_view(tracker_data=tracker_data, tracker=tracker)
