@@ -116,6 +116,11 @@ class filterAPI(Tracker):
         self.params['perPage'] = perPage
         return self._get(params=self.params)
 
+    def bdinfo(self, bdinfo: str, perPage: int = None) -> requests:
+        self.params['bdinfo'] = bdinfo
+        self.params['perPage'] = perPage
+        return self._get(params=self.params)
+
     def start_year(self, start_year: str, perPage: int = None) -> requests:
         self.params['startYear'] = start_year
         self.params['perPage'] = perPage
@@ -246,6 +251,9 @@ class Unit3d(filterAPI, Torrents, Uploader):
 
     def get_description(self, description: str, perPage: int = None) -> requests:
         return self.description(description=description, perPage=perPage)
+
+    def get_bdinfo(self, bdinfo: str, perPage: int = None) -> requests:
+        return self.bdinfo(bdinfo=bdinfo, perPage=perPage)
 
     def get_mediainfo(self, mediainfo: str, perPage: int = None) -> requests:
         return self.mediainfo(mediainfo=mediainfo, perPage=perPage)
