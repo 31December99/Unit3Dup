@@ -195,6 +195,15 @@ class Torrent:
         if tracker_data:
             self.print_normal(data=tracker_data['data'])
 
+    def get_by_freeleech(self, freeleech: int):
+        tracker = pvtTracker.Unit3d(
+            base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key=self.PASS_KEY
+        )
+        tracker_data = tracker.get_freeleech(freeleech=freeleech, perPage=25)
+        console.log(f"Freeleech torrents.. Filter by the torrent's freeleech discount (0-100).. '{freeleech}'")
+        if tracker_data:
+            self.print_normal(data=tracker_data['data'])
+
     def get_by_season(self, season: int):
         tracker = pvtTracker.Unit3d(
             base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key=self.PASS_KEY
