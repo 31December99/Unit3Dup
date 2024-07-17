@@ -49,6 +49,7 @@ ___
     python3 start.py -du (Double upload torrent)
     python3 start.py -fe (featured torrent)
     python3 start.py -str (stream-optimised torrent)
+    python3 start.py -sd (Standard denition torrent)
 
 ___
 ### Dependencies
