@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import sys
+
 from unit3dup import tmdb, title
 from rich.console import Console
 
@@ -13,9 +15,18 @@ class TvShow:
         self.mytmdb = tmdb.MyTmdb(videotype)
 
     def start(self, file_name: str):
-        _title = title.Guessit(file_name).guessit_title
-
+        guess_filename = title.Guessit(file_name)
+        _title = guess_filename.guessit_title
+        _alternate_title = guess_filename.guessit_alternative
         result = self.mytmdb.search(_title)
+
+        # Se non ci sono risultati prima di richiedere all'utente provo ad unire il  main title con l'alternative title
+        if not result:
+            new_title = ' '.join([_title, _alternate_title])
+            result = self.mytmdb.search(new_title)
+            if not result:
+                result = self.mytmdb.input_tmdb()
+
         if result:
             backdrop_path = result.backdrop_path
             poster_path = result.poster_path
@@ -35,3 +46,6 @@ class TvShow:
             console.log(f"[TMDB BACKDROP]..........  {url_backdrop}")
             console.log(f"[TMDB KEYWORDS]..........  {result.keywords}\n")
             return result
+        else:
+            console.log(f"Non trovo un ID valido per {file_name}")
+            sys.exit()
