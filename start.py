@@ -40,6 +40,7 @@ def user_arguments():
 
     parser.add_argument("-playid", "--playlist_id", nargs=1, type=str, help="Playlist ID")
     parser.add_argument("-coll", "--collection_id", nargs=1, type=str, help="Collection ID")
+    parser.add_argument("-free", "--freelech", nargs=1, type=str, help="Freelech discount")
 
     parser.add_argument("-a", "--alive", action='store_true', help="Alive torrent")
     parser.add_argument("-d", "--dead", action='store_true', help="Dead torrent")
@@ -181,6 +182,11 @@ def main():
         torrent_info.get_by_collection_id(args.collection_id[0])
         return
 
+    if args.freelech:
+        torrent_info = Torrent(args.tracker)
+        torrent_info.get_by_freeleech(args.freelech[0])
+        return
+
     if args.season:
         torrent_info = Torrent(args.tracker)
         torrent_info.get_by_season(args.season[0])
@@ -190,6 +196,7 @@ def main():
         torrent_info = Torrent(args.tracker)
         torrent_info.get_by_episode(args.episode[0])
         return
+
     if args.mediainfo:
         torrent_info = Torrent(args.tracker)
         torrent_info.get_by_mediainfo(args.mediainfo)
