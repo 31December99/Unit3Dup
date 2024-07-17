@@ -250,3 +250,13 @@ class Torrent:
         console.log(f"Standard torrents.. Filter by if the torrent's content is standard definition")
         if tracker_data:
             self.print_normal(data=tracker_data['data'])
+
+    def get_highspeed(self):
+        tracker = pvtTracker.Unit3d(
+            base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key=self.PASS_KEY
+        )
+        tracker_data = tracker.get_highspeed(highspeed=True, perPage=50)
+        console.log(f"Highspeed torrents.. Filter by if the torrent has seeders whose IP address has been registered"
+                    f" as a seedbox")
+        if tracker_data:
+            self.print_normal(data=tracker_data['data'])
