@@ -45,6 +45,7 @@ ___
     python3 start.py -imdb (search by IMDB ID)
     python3 start.py -tvdb (search by TVDB ID)
     python3 start.py -playid (search by playlist ID)    
+    python3 start.py -coll (search by collection ID)
     python3 start.py -mal (search by MAL ID)
     python3 start.py -d (dead torrents)
     python3 start.py -dy (dying torrents)
