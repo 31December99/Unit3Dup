@@ -63,6 +63,14 @@ class Torrent:
         else:
             self.print_normal(data=data)
 
+    def get_by_description(self, description: str):
+        tracker = pvtTracker.Unit3d(
+            base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key=self.PASS_KEY
+        )
+        tracker_data = tracker.get_description(description=description[0], perPage=50)
+        console.log(f"Filter by the torrent's description.. '{description[0].upper()}'")
+        self.print_normal(data=tracker_data['data'])
+
     def get_by_uploader(self, username: str):
         tracker = pvtTracker.Unit3d(
             base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key=self.PASS_KEY
