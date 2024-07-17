@@ -178,7 +178,7 @@ def main():
 
     if args.collection_id:
         torrent_info = Torrent(args.tracker)
-        torrent_info.get_by_collection_id(args.coll[0])
+        torrent_info.get_by_collection_id(args.collection_id[0])
         return
 
     if args.season:
