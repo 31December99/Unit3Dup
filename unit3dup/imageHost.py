@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 import base64
+import sys
+
 import requests
 from decouple import Config, RepositoryEnv
 from rich.console import Console
@@ -23,5 +25,10 @@ class ImgBB:
         files = {
             'image': (None, self.image),
         }
-        response = requests.post('https://api.imgbb.com/1/upload', params=params, files=files)
-        return response.json()
+        try:
+            response = requests.post('https://api.imgbb.com/1/upload', params=params, files=files)
+            response.raise_for_status()
+            return response.json()
+        except requests.exceptions.HTTPError as http_err:
+            console.print(f"Report {http_err}")
+            sys.exit()
