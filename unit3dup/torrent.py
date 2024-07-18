@@ -11,7 +11,7 @@ console = Console(log_path=False)
 class Torrent:
 
     def __init__(self, args_tracker=None):
-        tracker_name = args_tracker[0]
+        tracker_name = args_tracker
         self.tracker_file_env = f"{tracker_name}.env"
         self.tracker_file_json = f"{tracker_name}.json"
         config_load = Config(RepositoryEnv(self.tracker_file_env))
@@ -68,60 +68,60 @@ class Torrent:
             self.print_normal(tracker_data) if not info else self.print_info(tracker_data)
 
     def search(self, keyword: str, info=False):
-        tracker_data = self.tracker.get_name(name=keyword[0], perPage=self.perPage)
-        console.log(f"Searching.. '{keyword[0]}'")
+        tracker_data = self.tracker.get_name(name=keyword, perPage=self.perPage)
+        console.log(f"Searching.. '{keyword}'")
 
         self.page_view(tracker_data=tracker_data, tracker=self.tracker) if not info \
             else self.page_view(tracker_data=tracker_data, tracker=self.tracker, info=True)
 
     def get_by_description(self, description: str):
-        tracker_data = self.tracker.get_description(description=description[0], perPage=self.perPage)
-        console.log(f"Filter by the torrent's description.. '{description[0].upper()}'")
+        tracker_data = self.tracker.get_description(description=description, perPage=self.perPage)
+        console.log(f"Filter by the torrent's description.. '{description.upper()}'")
         self.page_view(tracker_data=tracker_data, tracker=self.tracker)
 
     def get_by_bdinfo(self, bdinfo: str):
-        tracker_data = self.tracker.get_bdinfo(bdinfo=bdinfo[0], perPage=self.perPage)
-        console.log(f"Filter by the torrent's BDInfo.. '{bdinfo[0].upper()}'")
+        tracker_data = self.tracker.get_bdinfo(bdinfo=bdinfo, perPage=self.perPage)
+        console.log(f"Filter by the torrent's BDInfo.. '{bdinfo.upper()}'")
         self.page_view(tracker_data=tracker_data, tracker=self.tracker)
 
     def get_by_uploader(self, username: str):
-        tracker_data = self.tracker.get_uploader(uploader=username[0], perPage=self.perPage)
-        console.log(f"Filter by the torrent uploader's username.. '{username[0].upper()}'")
+        tracker_data = self.tracker.get_uploader(uploader=username, perPage=self.perPage)
+        console.log(f"Filter by the torrent uploader's username.. '{username.upper()}'")
         self.page_view(tracker_data=tracker_data, tracker=self.tracker)
 
     def get_by_start_year(self, startyear: str):
-        tracker_data = self.tracker.start_year(start_year=startyear[0], perPage=self.perPage)
+        tracker_data = self.tracker.start_year(start_year=startyear, perPage=self.perPage)
         console.log(f"StartYear torrents.. Return only torrents whose content was released"
-                    f" after or in the given year '{startyear[0].upper()}'")
+                    f" after or in the given year '{startyear.upper()}'")
         self.page_view(tracker_data=tracker_data, tracker=self.tracker)
 
     def get_by_end_year(self, end_year: str):
-        tracker_data = self.tracker.end_year(end_year=end_year[0], perPage=self.perPage)
+        tracker_data = self.tracker.end_year(end_year=end_year, perPage=self.perPage)
         console.log(f"EndYear torrents.. Return only torrents whose content was released before or in the given year"
-                    f"'{end_year[0].upper()}'")
+                    f"'{end_year.upper()}'")
         self.page_view(tracker_data=tracker_data, tracker=self.tracker)
 
     def get_by_mediainfo(self, mediainfo: str):
-        tracker_data = self.tracker.get_mediainfo(mediainfo=mediainfo[0], perPage=self.perPage)
-        console.log(f"Mediainfo torrents.. Filter by the torrent's mediaInfo.. '{mediainfo[0].upper()}'")
+        tracker_data = self.tracker.get_mediainfo(mediainfo=mediainfo, perPage=self.perPage)
+        console.log(f"Mediainfo torrents.. Filter by the torrent's mediaInfo.. '{mediainfo.upper()}'")
         if tracker_data:
             self.page_view(tracker_data=tracker_data, tracker=self.tracker)
 
     def get_by_types(self, type_name: str):
-        tracker_data = self.tracker.get_types(type_id=self.tracker_values.type_id(type_name[0]), perPage=self.perPage)
-        console.log(f"Types torrents.. Filter by the torrent's type.. '{type_name[0].upper()}'")
+        tracker_data = self.tracker.get_types(type_id=self.tracker_values.type_id(type_name), perPage=self.perPage)
+        console.log(f"Types torrents.. Filter by the torrent's type.. '{type_name.upper()}'")
         if tracker_data:
             self.page_view(tracker_data=tracker_data, tracker=self.tracker)
 
     def get_by_res(self, res_name: str):
-        tracker_data = self.tracker.get_res(res_id=self.tracker_values.res_id(res_name[0]), perPage=self.perPage)
-        console.log(f"Resolutions torrents.. Filter by the torrent's resolution.. '{res_name[0].upper()}'")
+        tracker_data = self.tracker.get_res(res_id=self.tracker_values.res_id(res_name), perPage=self.perPage)
+        console.log(f"Resolutions torrents.. Filter by the torrent's resolution.. '{res_name.upper()}'")
         if tracker_data:
             self.page_view(tracker_data=tracker_data, tracker=self.tracker)
 
     def get_by_filename(self, file_name: str):
-        tracker_data = self.tracker.get_filename(file_name=file_name[0], perPage=self.perPage)
-        console.log(f"Filename torrents.. Filter by the torrent's filename.. '{file_name[0].upper()}'")
+        tracker_data = self.tracker.get_filename(file_name=file_name, perPage=self.perPage)
+        console.log(f"Filename torrents.. Filter by the torrent's filename.. '{file_name.upper()}'")
         if tracker_data:
             self.page_view(tracker_data=tracker_data, tracker=self.tracker)
 
