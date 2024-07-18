@@ -8,16 +8,14 @@ from rich.console import Console
 
 console = Console()
 
+
 class Video:
     """
-     Questa classe deve poter:
-
-     - generare screenshot per ogni video che gli viene passato
-     - ottenere mediainfo per ogni video che gli viene passato e per il primo video di una serie
-     - caricare su imgBB gli screenshot
-     - resituire il size del video ad esempio per determinare il freelech
-     - determinare se è qualità standard (SD) o meno
-
+        - Generate screenshots for each video provided
+        - Obtain media info for each video and for the first video in a series
+        - Upload screenshots to ImgBB
+        - Return the video size, e.g., to determine freeleech
+        - Determine if the video is standard definition (SD) or not
     """
 
     def __init__(self, fileName: str):
@@ -38,49 +36,39 @@ class Video:
 
     @property
     def standard(self) -> int:
-        # SD o HD ?
-        if self.video_capture.get(cv2.CAP_PROP_FRAME_WIDTH) < 720:
-            console.log(f"[HD]........... YES")
-            return 1
-        else:
-            console.log(f"[HD]........... NO")
-            return 0
+        """Determine if the video is standard definition (SD) or HD."""
+        is_hd = self.video_capture.get(cv2.CAP_PROP_FRAME_WIDTH) >= 720
+        console.log(f"[HD]........... {'YES' if is_hd else 'NO'}")
+        return 1 if is_hd else 0
 
     @property
     def size(self) -> int:
-        """
-        :return: size in Gb
-        """
+        """Return the size of the video in GB."""
         return self.file_size
 
     @property
     def mediainfo(self) -> str:
-        """
-        :return: media info in string format
-        """
+        """Return media info as a string."""
         return MediaInfo.parse(self.file_name, output="STRING", full=False)
 
     @property
-    def totalFrames(self) -> cv2:
-        """
-        :return: il numero di frames che compongono il video
-        """
-        # Calcolo il numero di frame del video
+    def total_frames(self) -> cv2:
+        """Return the total number of frames in the video."""
         return int(self.video_capture.get(cv2.CAP_PROP_FRAME_COUNT))
 
     @property
     def samples(self) -> cv2:
         """
-        :return: un lista di sample_n frame con posizione casuale che partono 25% del video
+        Return a list of frame numbers sampled randomly starting from 25% of the video.
         """
-        inizia_da = int(.25 * self.totalFrames)
+        inizia_da = int(.25 * self.total_frames)
         # Genero una lista di frame casuali che partono dal 25% del video
-        return random.sample(range(inizia_da, self.totalFrames), self.samples_n)
+        return random.sample(range(inizia_da, self.total_frames), self.samples_n)
 
     @property
     def frames(self) -> list:
         """
-        :return: una lista di tuple contenenti le immagini del frame in bytes
+        Return a list of frames as byte arrays.
         """
         frames_list = []
         for frame_number in self.samples:
@@ -98,19 +86,17 @@ class Video:
         cv2.destroyAllWindows()
         return frames_list
 
-
     @property
     def description(self) -> str:
+        """Generate a description with image URLs uploaded to ImgBB."""
         console.log("\n[GENERATING IMAGES FROM VIDEO...]")
-        descrizione = f"[center]\n"
+        description = "[center]\n"
         console_url = []
-        for f in self.frames:
-            img_host = ImgBB(f)
+        for img_bytes in self.frames:
+            img_host = ImgBB(img_bytes)
             img_url = img_host.upload['data']['display_url']
             console.log(img_url)
             console_url.append(img_url)
-            descrizione += (f"[url={img_url}][img=350]"
-                            f"{img_url}[/img][/url]")
-        descrizione += "\n[/center]"
-        return descrizione
-
+            description += (f"[url={img_url}][img=350]{img_url}[/img][/url]")
+        description += "\n[/center]"
+        return description
