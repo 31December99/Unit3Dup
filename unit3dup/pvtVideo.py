@@ -26,7 +26,7 @@ class Video:
         # Frame count
         self.numero_di_frame = None
         # Screenshots samples
-        self.samples_n = 6
+        self.samples_n = 4
         # Catturo i frames del video
         self.video_capture = cv2.VideoCapture(self.file_name)
 
