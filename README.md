@@ -23,6 +23,11 @@ ___
 #### Movies
 - `python3 start.py -u /home/uploader/myvideos/TheMatrix.1080p.WEB-DL.H.264.mkv`
 
+#### Scan Movies
+#### Scan the folder for movies. Create a torrent for each movie, upload the movie, and seed the movie.
+- `python3 start.py -scan /home/uploader/myvideos`
+
+
 #### Tracker (default itt)
 - `python3 start.py -t mytracker -u /home/uploader/myvideos`
 
