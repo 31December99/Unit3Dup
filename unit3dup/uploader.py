@@ -97,7 +97,6 @@ class UploadBot:
         )
         mytorrent.write()
 
-        """
         tracker_response = tracker.upload_t(
             data=tracker.data,
             file_name=os.path.join(self.content.folder, mytorrent.torrent_name)
@@ -107,7 +106,6 @@ class UploadBot:
             self._send_to_qbitt(tracker_response)
         else:
             console.log(f"Upload failed => {tracker_response} {tracker_response.text}")
-        """
 
     def _send_to_qbitt(self, response):
         response_body = json.loads(response.text)
