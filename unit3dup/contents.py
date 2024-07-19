@@ -2,9 +2,17 @@ import json
 import os
 from typing import Union
 from unit3dup import userinput, title
+from rich.console import Console
+
+console = Console(log_path=False)
 
 
 class File:
+    """
+    For each File , create an object with attributes:
+    file_name, folder, media_type
+    """
+
     def __init__(self, file_name: str, folder: str, media_type: str):
         self.file_name = os.path.join(folder, file_name)
         self.folder = folder
@@ -13,6 +21,22 @@ class File:
     @classmethod
     def create(cls, file_name: str, folder: str, media_type: str):
         return cls(file_name, folder, media_type)
+
+
+class Folder:
+    """
+    For each Folder, create an object with attributes:
+    folder, subfolder, media_type
+    """
+
+    def __init__(self, folder: str, subfolder: str, media_type: str):
+        self.folder = os.path.join(folder, subfolder)
+        self.subfolder = subfolder
+        self.media_type = media_type
+
+    @classmethod
+    def create(cls, folder: str, subfolder: str, media_type: str):
+        return cls(folder, subfolder, media_type)
 
 
 class Cli:
@@ -43,36 +67,15 @@ class Cli:
         self.folder = None
         self.file_name = None
 
-    def what_media_type(self, file: str) -> Union[File, None]:
+    def get_data(self) -> [userinput.Contents, bool]:
         """
-        Determines if it is a movie or a series. Excludes any episode files.
-        """
-        file_name, ext = os.path.splitext(file)
-        guess_filename = title.Guessit(file_name)
-
-        if not guess_filename.guessit_season:
-            return File.create(file_name=file, folder=self.path, media_type='1')
-        return None
-
-    def start(self) -> list:
-        """
-        If the provided path does not represent a directory, return an empty list.
-        Create a list of File objects for each movie present.
+        Create an userinput object with movie or series attributes for the torrent.
         """
         if not self.is_dir:
-            return []
-
-        files = self.list_video_files()
-        return [self.what_media_type(file) for file in files if self.what_media_type(file) is not None]
-
-    def get_data(self) -> userinput.Contents:
-        """
-        Create a userinput object with movie or series attributes for the torrent.
-        """
-        if not self.is_dir:
-            self.process_file()
+            # Check for valid extension
+            process = self.process_file() if self.filter_ext(self.path) else False
         else:
-            self.process_folder()
+            process = self.process_folder()
 
         return userinput.Contents(
             file_name=self.file_name,
@@ -82,20 +85,22 @@ class Cli:
             metainfo=self.meta_info,
             category=self.category,
             tracker_name=self.tracker
-        )
+        ) if process else False
 
-    def process_file(self):
+    def process_file(self) -> bool:
         self.file_name = os.path.basename(self.path)
         self.folder = os.path.dirname(self.path)
         self.category = 1
         self.name, ext = os.path.splitext(self.file_name)
         self.size = os.path.getsize(self.path)
         self.meta_info = json.dumps([{'length': self.size, 'path': [self.file_name]}], indent=4)
+        return True
 
-    def process_folder(self):
+    def process_folder(self) -> bool:
         files = self.list_video_files()
         if not files:
-            raise ValueError("No video files found in the directory.")
+            console.log(f"\n*** '{self.path}' No video files found in the directory - skip ***\n")
+            return False
 
         self.file_name = files[0]
         self.folder = self.path
@@ -110,14 +115,78 @@ class Cli:
             total_size += size
         self.size = total_size
         self.meta_info = json.dumps(self.meta_info_list, indent=4)
+        return True
 
-    def list_video_files(self) -> list:
+    def search_files(self, file: str) -> Union[File, None]:
         """
-        Add to the list every file if its extension is in the video_ext.
+        Determines if it is a movie or a series. Excludes any episode files.
         """
+        file_name, ext = os.path.splitext(file)
+        guess_filename = title.Guessit(file_name)
+        if not guess_filename.guessit_season:
+            return File.create(file_name=file, folder=self.path, media_type='1')
+        else:
+            return None
+
+    def search_folder(self, subdir: str) -> Union[Folder, None]:
+        return Folder.create(folder=self.path, subfolder=subdir, media_type='2')
+
+    def start(self) -> [list, list]:
+        """
+        If the provided path does not represent a directory, return an empty list.
+        Create a list of File objects for each movie present.
+        """
+        if not self.is_dir:
+            console.log("Wrong Path!")
+            return []
+
+        return self.walker()
+
+    def filter_ext(self, file: str) -> bool:
+
         video_ext = [
             ".mp4", ".mkv", ".avi", ".mov", ".wmv", ".flv", ".webm", ".3gp", ".ogg",
             ".mpg", ".mpeg", ".m4v", ".rm", ".rmvb", ".vob", ".ts", ".m2ts", ".divx",
             ".asf", ".swf", ".ogv", ".drc", ".m3u8"
         ]
-        return [file for file in os.listdir(self.path) if os.path.splitext(file)[1].lower() in video_ext]
+
+        return os.path.splitext(file)[1].lower() in video_ext
+
+    def walker(self) -> [list, list]:
+        """
+         Analyze the path and create a list for movies and a list for series.
+         All files without the SxEx tag inside the path are considered movies.
+         Each folder inside the path is considered a series.
+        """
+
+        movies_path = []
+        series_path = []
+        for path, subdirs, files in os.walk(self.path):
+            if path == self.path:
+                movies_path = [os.path.join(self.path, file) for file in files if self.filter_ext(file)]
+            if subdirs:
+                if self.depth_walker(path) < 1:
+                    series_path = [os.path.join(self.path, subdir) for subdir in subdirs]
+
+        movies = [self.search_files(file) for file in movies_path if self.search_files(file) is not None]
+        series = [self.search_folder(subdir) for subdir in series_path]
+
+        if not movies and not series:
+            console.log(f"[Walker says there's nothing here..] '{self.path}'")
+            console.log("Remember, within the folder of your path, there must be files (movies) or folders (series)."
+                        " Files representing episodes without folders will not be considered")
+        return movies, series
+
+    def depth_walker(self, path) -> int:
+        """
+            It stops at one subfolder and ignores any subfolders within that subfolder
+            depth < 1
+        """
+        return path[len(self.path):].count(os.sep)
+
+    def list_video_files(self) -> list:
+        """
+        Add to the list every file if its extension is in the video_ext.
+        """
+
+        return [file for file in os.listdir(self.path) if self.filter_ext(file)]
