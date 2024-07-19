@@ -30,5 +30,6 @@ class ImgBB:
             response.raise_for_status()
             return response.json()
         except requests.exceptions.HTTPError as http_err:
-            console.print(f"Report {http_err}")
+            error = response.json()
+            console.log(f"[Report IMGBB] Screenshot {error['error']['message']} - Renew your API KEY")
             sys.exit()
