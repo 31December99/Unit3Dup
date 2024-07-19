@@ -264,7 +264,7 @@ def main():
         torrent_info.get_personal()
         return
 
-    console.print("Syntax Error!")
+    console.print("Syntax error! Please check your commands")
 
 
 if __name__ == "__main__":
