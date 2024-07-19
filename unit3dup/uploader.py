@@ -77,7 +77,7 @@ class UploadBot:
         tracker.data['description'] = data.description
         tracker.data['type_id'] = self.tracker_values.filterType(data.file_name)
         tracker.data['season_number'] = data.myguess.guessit_season
-        tracker.data['episode_number'] = data.myguess.guessit_season
+        tracker.data['episode_number'] = data.myguess.guessit_episode
 
         # // Torrent
         mytorrent = pvtTorrent.Mytorrent(contents=self.content, meta=self.content.metainfo,
