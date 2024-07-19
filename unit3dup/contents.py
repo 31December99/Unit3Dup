@@ -1,5 +1,6 @@
 import json
 import os
+import re
 from typing import Union
 from unit3dup import userinput, title
 from rich.console import Console
@@ -70,12 +71,15 @@ class Cli:
     def get_data(self) -> [userinput.Contents, bool]:
         """
         Create an userinput object with movie or series attributes for the torrent.
+        Verify if name is part of torrent pack folder. If there is no episode it's a pack
         """
         if not self.is_dir:
             # Check for valid extension
             process = self.process_file() if self.filter_ext(self.path) else False
         else:
             process = self.process_folder()
+
+        torrent_pack = bool(re.search(r'S\d+(?!.*E\d+)', self.path))
 
         return userinput.Contents(
             file_name=self.file_name,
@@ -84,7 +88,8 @@ class Cli:
             size=self.size,
             metainfo=self.meta_info,
             category=self.category,
-            tracker_name=self.tracker
+            tracker_name=self.tracker,
+            torrent_pack=torrent_pack
         ) if process else False
 
     def process_file(self) -> bool:
