@@ -18,15 +18,32 @@ ___
 ### Example Usage
 
 #### Series 
-- `python3 start.py -u /home/uploader/myvideos  -> use only folder for series`
+- `python3 start.py -u "/home/uploader/myvideos/series1"  -> use only folder for series`
 
 #### Movies
-- `python3 start.py -u /home/uploader/myvideos/TheMatrix.1080p.WEB-DL.H.264.mkv`
+- `python3 start.py -u "/home/uploader/myvideos/TheMatrix.1080p.WEB-DL.H.264.mkv"`
 
-#### Scan Movies
-#### Scan the folder for movies. Create a torrent for each movie, upload the movie, and seed the movie.
-- `python3 start.py -scan /home/uploader/myvideos`
+#### Auto mode - Scan the folder
+Within your download folder, each movie should not have any subfolder,
+whereas series should have a subfolder.
+Any video file without a subfolder and using the SxEx notation
+will not be considered.
 
+- `python3 start.py -scan /home/uploader/download`
+
+```
+download/
+├── movie1.mkv
+├── movie2.mkv
+├── S04E12.mkv - *excluded*
+├── series1/
+│   ├── S01E01.mkv
+│   ├── S01E02.mkv
+├── series2/
+│   ├── S01E01.mkv
+│   ├── S01E02.mkv
+```
+In this example Unit3d-up will create two torrent (movie1,movie2) and two series torrents (series1,series2)
 
 #### Tracker (default itt)
 - `python3 start.py -t mytracker -u /home/uploader/myvideos`
