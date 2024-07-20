@@ -38,12 +38,11 @@ download/
 ├── movie1.mkv
 ├── movie2.mkv
 ├── S04E12.mkv - *excluded*
-├── series1/
-│   ├── S01E01.mkv
-│   ├── S01E02.mkv
-├── series2/
-│   ├── S01E01.mkv
-│   ├── S01E02.mkv
+├── series1 S01/
+│ ├── S01E01.mkv
+│ ├── S01E02.mkv
+├── series2 S01E02/
+│ ├── S01E02.mkv 
 ```
 In this example Unit3d-up will create two torrent (movie1,movie2) and two series torrents (series1,series2)
 
