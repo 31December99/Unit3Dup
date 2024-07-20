@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import json
-import os
+import os.path
 import requests
 from decouple import Config, RepositoryEnv
 from database.trackers import TrackerConfig
@@ -12,23 +12,17 @@ console = Console(log_path=False)
 
 class UploadBot:
     def __init__(self, content: userinput):
+
         self.content = content
-        self.file_name = content.file_name
-        self.folder = content.folder
+        self.file_name = content.file_name  # filename con estensione = filename
+        self.folder = content.folder  # folder sia per serie che per movie
         self.tracker_name = content.tracker_name
-        self.category = content.category
+        self.category = content.category  # 1 = movie , 2 = serie
         self.size = content.size
         self.metainfo = content.metainfo
-        self.name = self._get_name()
+        self.name = f"{content.name if self.category == 1 else os.path.basename(content.folder)}"
 
-        self._load_tracker_config()
-
-    def _get_name(self):
-        if self.category == 1:
-            return self.content.name
-        return os.path.basename(self.folder)
-
-    def _load_tracker_config(self):
+        # // check tracker file configuration .env e .json
         self.tracker_env = f"{self.tracker_name}.env"
         config_load = Config(RepositoryEnv(self.tracker_env))
         self.PASS_KEY = config_load('PASS_KEY')
@@ -36,87 +30,69 @@ class UploadBot:
         self.BASE_URL = config_load('BASE_URL')
 
         if not self.PASS_KEY or not self.API_TOKEN:
-            console.log("Configuration file '.env' is missing or variables are incorrect.")
-            raise ValueError("Invalid configuration in .env file.")
+            console.log("il file .env non è stato configurato oppure i nomi delle variabili sono errate.")
+            return
 
         self.tracker_json = f"{self.tracker_name}.json"
         self.tracker_values = TrackerConfig(self.tracker_json)
         console.log(f"\n[TRACKER {self.tracker_name.upper()}]..............  {self.BASE_URL}")
 
-    def _create_payload(self, name: str) -> payload:
-        mytmdb = search.TvShow('Serie' if self.category == 2 else 'Movie')
-        video = pvtVideo.Video(fileName=str(os.path.join(self.folder, self.file_name)))
-        return payload.Data.create_instance(
-            metainfo=self.metainfo,
-            name=name,
-            file_name=self.file_name,
-            result=mytmdb.start(self.file_name),
-            category=self.tracker_values.category('tvshow' if self.category == 2 else 'movie'),
-            standard=video.standard,
-            mediainfo=video.mediainfo,
-            description=video.description,
-            freelech=self.tracker_values.get_freelech(video.size)
-        )
-
     def serie_data(self) -> payload:
-        return self._create_payload(os.path.basename(self.folder))
+        mytmdb = search.TvShow('Serie')
+        video = pvtVideo.Video(fileName=str(os.path.join(self.folder, self.file_name)))
+        return payload.Data.create_instance(metainfo=self.metainfo,
+                                            name=os.path.basename(self.folder),
+                                            file_name=self.file_name,
+                                            result=mytmdb.start(self.file_name),
+                                            category=self.tracker_values.category('tvshow'),
+                                            standard=video.standard,
+                                            mediainfo=video.mediainfo,
+                                            description=video.description,
+                                            freelech=self.tracker_values.get_freelech(video.size))
 
     def movie_data(self) -> payload:
-        return self._create_payload(self.name)
+        mytmdb = search.TvShow('Movie')
+        video = pvtVideo.Video(fileName=str(os.path.join(self.folder, self.file_name)))
+        return payload.Data.create_instance(metainfo=self.metainfo,
+                                            name=self.name,
+                                            file_name=self.file_name,
+                                            result=mytmdb.start(self.file_name),
+                                            category=self.tracker_values.category('movie'),
+                                            standard=video.standard,
+                                            mediainfo=video.mediainfo,
+                                            description=video.description,
+                                            freelech=self.tracker_values.get_freelech(video.size))
 
     def process_data(self, data: payload):
-        tracker = pvtTracker.Unit3d(
-            base_url=self.BASE_URL,
-            api_token=self.API_TOKEN,
-            pass_key=self.PASS_KEY
-        )
-        self._set_tracker_data(tracker, data)
-        self._send(tracker, data)
 
-    def _set_tracker_data(self, tracker, data: payload):
-        tracker.data.update({
-            'name': data.name,
-            'tmdb': data.result.video_id,
-            'keywords': data.result.keywords,
-            'category_id': data.category,
-            'resolution_id': self.tracker_values.filterResolution(data.file_name),
-            'free': data.freelech,
-            'sd': data.standard,
-            'mediainfo': data.media_info,
-            'description': data.description,
-            'type_id': self.tracker_values.filterType(data.file_name),
-            'season_number': data.myguess.guessit_season,
-            'episode_number': data.myguess.guessit_season
-        })
+        tracker = pvtTracker.Unit3d(base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key=self.PASS_KEY)
+        tracker.data['name'] = data.name
+        tracker.data['tmdb'] = data.result.video_id
+        tracker.data['keywords'] = data.result.keywords
+        tracker.data['category_id'] = data.category
+        tracker.data['resolution_id'] = self.tracker_values.filterResolution(data.file_name)
+        tracker.data['free'] = data.freelech
+        tracker.data['sd'] = data.standard
+        tracker.data['mediainfo'] = data.media_info
+        tracker.data['description'] = data.description
+        tracker.data['type_id'] = self.tracker_values.filterType(data.file_name)
+        tracker.data['season_number'] = data.myguess.guessit_season
+        tracker.data['episode_number'] = data.myguess.guessit_episode if not self.content.torrent_pack else 0
 
-    def _send(self, tracker, data: payload):
-        mytorrent = pvtTorrent.Mytorrent(
-            contents=self.content,
-            meta=self.content.metainfo,
-            tracker_announce_list=[f"{self.BASE_URL}/announce/{self.PASS_KEY}/"]
-        )
+        # // Torrent
+        mytorrent = pvtTorrent.Mytorrent(contents=self.content, meta=self.content.metainfo,
+                                         tracker_announce_list=[f"{self.BASE_URL}/announce/{self.PASS_KEY}/"])
         mytorrent.write()
 
-        tracker_response = tracker.upload_t(
-            data=tracker.data,
-            file_name=os.path.join(self.content.folder, mytorrent.torrent_name)
-        )
-
+        # // Send data
+        tracker_response = tracker.upload_t(data=tracker.data, file_name=os.path.join(self.content.folder,
+                                                                                      mytorrent.torrent_name))
+        # // Seeding
         if tracker_response.status_code == 200:
-            self._send_to_qbitt(tracker_response)
+            tracker_response_body = json.loads(tracker_response.text)
+            console.log(f"\n[TRACKER RESPONSE]............  {tracker_response_body['message'].upper()}")
+            download_torrent_dal_tracker = requests.get(tracker_response_body['data'])
+            if download_torrent_dal_tracker.status_code == 200:
+                mytorrent.qbit(download_torrent_dal_tracker)
         else:
-            console.log(f"Upload failed => {tracker_response} {tracker_response.text}")
-
-    def _send_to_qbitt(self, response):
-        response_body = json.loads(response.text)
-        console.log(f"\n[TRACKER RESPONSE]............  {response_body['message'].upper()}")
-        torrent_url = response_body.get('data')
-
-        if torrent_url:
-            download_response = requests.get(torrent_url)
-            if download_response.status_code == 200:
-                pvtTorrent.Mytorrent.qbit(self.content, download_response)
-            else:
-                console.log(f"Failed to download torrent => {download_response}")
-        else:
-            console.log("No torrent URL provided in response.")
+            console.log(f"Non è stato possibile fare l'upload => {tracker_response} {tracker_response.text}")

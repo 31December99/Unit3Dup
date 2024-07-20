@@ -12,7 +12,8 @@ console = Console(log_path=False)
 
 
 def welcome_message(message: str):
-    console.rule(f"\n\n[bold blue] Unit3D Uploader - {message.upper()}", style="#ea00d9")
+    if message:
+        console.rule(f"\n\n[bold blue] Unit3D Uploader - {message.upper()}", style="#ea00d9")
 
 
 def user_arguments():
@@ -102,8 +103,8 @@ def main():
         user_input = Cli(path=args.upload, tracker=args.tracker)
         if user_input:
             user_content = user_input.get_data()
-            welcome_message(user_input.file_name)
-            process_upload(user_content)
+            welcome_message(args.upload)
+            process_upload(user_content) if user_content else None
             return
 
     """
@@ -114,14 +115,23 @@ def main():
 
     if args.scan:
         user_input = Cli(path=args.scan, tracker=args.tracker)
-        scan_list = user_input.start()
-        for movie in scan_list:
+        movies, series = user_input.start()
+
+        for movie in movies:
             welcome_message(movie.file_name)
             if movie:
                 user_input = Cli(path=movie.file_name, tracker=args.tracker)
                 if user_input:
                     user_content = user_input.get_data()
-                    process_upload(user_content)
+                    process_upload(user_content) if user_content else None
+
+        for serie in series:
+            welcome_message(serie.folder)
+            if serie:
+                user_input = Cli(path=serie.folder, tracker=args.tracker)
+                if user_input:
+                    user_content = user_input.get_data()
+                    process_upload(user_content) if user_content else None
         return
 
     """
@@ -254,7 +264,7 @@ def main():
         torrent_info.get_personal()
         return
 
-    console.print("Syntax Error!")
+    console.print("Syntax error! Please check your commands")
 
 
 if __name__ == "__main__":

@@ -22,7 +22,7 @@ class MyTmdb:
         self.videoid = videoid
         self.tmdb = None
         self._tmdb = TMDb()
-        self._tmdb.language = 'it-EN'  # todo: problema con titoli per metà ita o en or it-en ? commuta da solo ?
+        self._tmdb.language = 'it-EN'
         self._tmdb.api_key = TMDB_APIKEY
         self.__mv_tmdb = Movie()
         self.__tv_tmdb = TV()
@@ -56,18 +56,21 @@ class MyTmdb:
         return result
 
     def input_tmdb(self) -> Results:
-        console.log("Non è stato possibile identificare il TMDB ID. Inserisci un numero..")
+        console.log("Unable to identify the TMDB ID. Please enter an ID number..")
         results = Results()
         while True:
             tmdb_id = input(f"> ")
             if not tmdb_id.isdigit():
-                console.log(f"Non riconosco {tmdb_id} come un numero ..Riprova")
+                console.log(f"I do not recognize {tmdb_id} as a number. Please try again..")
                 continue
-            console.log(f"Hai digitato {tmdb_id}")
-            user_answ = input("Sei sicuro ? (s/n)> ")
-            if 's' == user_answ.lower():
-                keywords = self.keywords(int(tmdb_id))
-                console.log(keywords)
+            console.log(f"You have entered {tmdb_id}")
+            user_answ = input("Are you sure ? (y/n)> ")
+            keywords = ''
+            if 'y' == user_answ.lower():
+                # Zero = No TMDB ID
+                if tmdb_id != '0':
+                    keywords = self.keywords(int(tmdb_id))
+                    console.log(keywords)
                 if 'The resource you requested could not be found.' not in keywords:
                     results.video_id = tmdb_id
                     results.keywords = keywords
@@ -149,8 +152,7 @@ class MyTmdb:
 
     def __search_titles(self):
         """
-         Confronto il titolo di ogni risultato nella pagina con il titolo in input
-        :return:
+         compare the title of each result on the page with the input title
         """
         # print(f".:: SEARCH_TITLES RESULT n°{len(self.__page)} ::.")
         for index, page in enumerate(self.__page):
@@ -178,7 +180,7 @@ class MyTmdb:
 
     def __search_translations(self):
         """
-         Confronto le traduzioni di ogni risultato nella pagina con il titolo in input
+         compare the translations of each result on the page with the input title
         :return:
         """
         # print(f".:: TRANSLATION n°{len(self.__page)} ::.")
