@@ -23,8 +23,9 @@ ___
 #### Movies
 - `python3 start.py -u "/home/uploader/myvideos/TheMatrix.1080p.WEB-DL.H.264.mkv"`
 
-#### Auto mode - Scan the folder
-This command allows you to scan for movies and series, and automatically upload and seed them
+#### Auto mode
+This command allows you to scan for movies and series, and automatically upload and seed them.
+
 Within your download folder, each movie should not have any subfolder,
 whereas series should have a subfolder.
 Any video file without a subfolder and using the SxEx notation
