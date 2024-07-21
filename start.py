@@ -29,6 +29,9 @@ def welcome_message(message: str):
 def user_arguments():
     parser = argparse.ArgumentParser(description="Commands", add_help=False)
 
+    # Config files
+    parser.add_argument("-check", "--check",  action='store_true', help="Config check")
+
     # Upload commands
     parser.add_argument("-u", "--upload", type=str, help="Upload Path")
     parser.add_argument("-t", "--tracker", type=str, default='itt', help="Tracker Name")
@@ -102,12 +105,16 @@ def process_upload(user_content):
 
 def main():
     """
+    Command line
+    """
+    args = user_arguments()
+
+
+    """
     Load the configuration and perform a few checks
     """
-    config_load()
-
-    # Command line
-    args = user_arguments()
+    if args.check:
+        config_load()
 
     """
     UPLOAD: manual upload for series and movies
@@ -280,7 +287,8 @@ def main():
         torrent_info.get_personal()
         return
 
-    console.print("Syntax error! Please check your commands")
+    if not args.check:
+        console.print("Syntax error! Please check your commands")
 
 
 if __name__ == "__main__":
