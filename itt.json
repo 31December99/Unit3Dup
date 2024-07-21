@@ -30,7 +30,12 @@
     "epub": 19,
     "mp4": 20,
     "pack": 22,
-    "avi": 23
+    "avi": 23,
+    "dvdrip": 24,
+    "bdrip": 25,
+    "webmux": 26,
+    "dlmux": 27,
+    "bdmux": 29
   },
   "RESOLUTION": {
     "4320p": 1,
