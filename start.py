@@ -7,8 +7,18 @@ from rich.console import Console
 from unit3dup.uploader import UploadBot
 from unit3dup.contents import Cli
 from unit3dup import Torrent
+from unit3dup.config import ConfigUnit3D
 
 console = Console(log_path=False)
+
+
+def config_load():
+    try:
+        config_unit3d = ConfigUnit3D.validate(
+            tracker_env_name="itt.env", service_env_name="service.env"
+        )
+    except FileNotFoundError as message:
+        console.log(message)
 
 
 def welcome_message(message: str):
@@ -91,6 +101,12 @@ def process_upload(user_content):
 
 
 def main():
+    """
+    Load the configuration and perform a few checks
+    """
+    config_load()
+
+    # Command line
     args = user_arguments()
 
     """
