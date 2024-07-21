@@ -15,13 +15,13 @@ class Torrent:
         self.tracker_file_env = f"{tracker_name}.env"
         self.tracker_file_json = f"{tracker_name}.json"
         config_load = Config(RepositoryEnv(self.tracker_file_env))
-        self.PASS_KEY = config_load("PASS_KEY")
+        # self.PASS_KEY = config_load("PASS_KEY") # todo: removed passkey
         self.API_TOKEN = config_load("API_TOKEN")
         self.BASE_URL = config_load("BASE_URL")
         self.tracker_values = TrackerConfig(self.tracker_file_json)
         self.perPage = 30
         self.tracker = pvtTracker.Unit3d(
-            base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key=self.PASS_KEY
+            base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key=''
         )
 
         print()
