@@ -64,8 +64,17 @@ class Tracker(Myhttp):
             response = requests.get(url=self.filter_url, headers=self.headers, params=params)
             response.raise_for_status()
             return response.json()
-        except requests.exceptions.HTTPError as http_err:
-            console.print(f"Report {http_err}")
+        except requests.exceptions.HTTPError:
+            console.log(
+                f"[Report _get] ' HTTP Error. Check your service.env data",
+                style="bold red",
+            )
+            sys.exit()
+        except requests.exceptions.ConnectionError:
+            console.log(
+                f"[Report _get] ' Connection Error. Check your service.env data or tracker offline",
+                style="bold red",
+            )
             sys.exit()
 
     def _post(self, file: dict, data: dict, params: dict):
