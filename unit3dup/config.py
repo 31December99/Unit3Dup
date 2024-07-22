@@ -113,6 +113,7 @@ class ConfigUnit3D:
 
         # Qbittorent Test run process
         # Return if the url is invalid
+        print(f"[url_check] {ConfigUnit3D.url_check(f"{qbit_url}:{qbit_port}")}")
         if not ConfigUnit3D.url_check(f"{qbit_url}:{qbit_port}"):
             console.log(
                 f"[QBIT ERR] 'Url:{qbit_url}' 'port:{qbit_port}'. Check your 'Qbit config'",
