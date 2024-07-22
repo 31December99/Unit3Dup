@@ -55,19 +55,15 @@ class ConfigUnit3D:
         Search for scheme (https) and netloc (domain)
         """
         valid = {"http", "https"}
-
         try:
             check = urlparse(url)
-            print(check)
             if check.port:
-                check.port.is_integer()
-            print(all([check.scheme, check.netloc != '', check.scheme in valid]))
-
+                str(check.port).isdigit()
             return all([check.scheme, check.netloc != '', check.scheme in valid])
-        except AttributeError:
+        except AttributeError as e:
             # Return False if input is not a string or valid URI
             return False
-        except ValueError:
+        except ValueError as e:
             # Return False if Port is not an integer
             return False
 
@@ -113,7 +109,8 @@ class ConfigUnit3D:
 
         # Qbittorent Test run process
         # Return if the url is invalid
-        print(f"[url_check] {ConfigUnit3D.url_check(f"{qbit_url}:{qbit_port}")}")
+        complete_url = f"{qbit_url}:{qbit_port}"
+        result = ConfigUnit3D.url_check(complete_url)
         if not ConfigUnit3D.url_check(f"{qbit_url}:{qbit_port}"):
             console.log(
                 f"[QBIT ERR] 'Url:{qbit_url}' 'port:{qbit_port}'. Check your 'Qbit config'",
