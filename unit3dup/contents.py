@@ -142,8 +142,8 @@ class Cli:
         Create a list of File objects for each movie present.
         """
         if not self.is_dir:
-            console.log("Wrong Path!")
-            return []
+            console.log("Incorrect path! Please provide the path to the folder")
+            return [],[]
 
         return self.walker()
 
