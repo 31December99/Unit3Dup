@@ -123,11 +123,14 @@ def main():
     """
 
     if args.upload:
-        user_input = Cli(path=args.upload, tracker=args.tracker)
-        if user_input:
-            user_content = user_input.get_data()
+        # Get file path
+        path = Cli(path=args.upload, tracker=args.tracker)
+        if path:
+            # Preparing a movie/serie for upload
+            data = path.get_data()
             welcome_message(args.upload)
-            process_upload(user_content) if user_content else None
+            # Upload to tracker
+            process_upload(data) if data else None
             return
 
     """
@@ -137,24 +140,34 @@ def main():
     """
 
     if args.scan:
-        user_input = Cli(path=args.scan, tracker=args.tracker)
-        movies, series = user_input.start()
+        # Set Main path
+        path = Cli(path=args.scan, tracker=args.tracker)
+        # Return File object movies and series
+        movies, series = path.scan()
+        # Each file gets metadata, uploaded, and seeded
 
         for movie in movies:
             welcome_message(movie.file_name)
             if movie:
-                user_input = Cli(path=movie.file_name, tracker=args.tracker)
-                if user_input:
-                    user_content = user_input.get_data()
-                    process_upload(user_content) if user_content else None
+                # Get file path
+                path = Cli(path=movie.file_name, tracker=args.tracker)
+                if path:
+                    # Preparing a movie for upload
+                    data = path.get_data()
+                    # Upload to tracker
+                    process_upload(data) if data else None
 
+        # Same as with movies
         for serie in series:
             welcome_message(serie.folder)
             if serie:
-                user_input = Cli(path=serie.folder, tracker=args.tracker)
-                if user_input:
-                    user_content = user_input.get_data()
-                    process_upload(user_content) if user_content else None
+                # Get file path
+                path = Cli(path=serie.folder, tracker=args.tracker)
+                if path:
+                    # Preparing a movie for upload
+                    data = path.get_data()
+                    # Upload to tracker
+                    process_upload(data) if data else None
         return
 
     """
