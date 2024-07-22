@@ -122,7 +122,7 @@ class Cli:
         self.meta_info = json.dumps(self.meta_info_list, indent=4)
         return True
 
-    def create_movies(self, file: str) -> Union[File, None]:
+    def create_movies_path(self, file: str) -> Union[File, None]:
         """
         Determines if it is a movie or a series. Excludes any episode files.
         """
@@ -133,7 +133,7 @@ class Cli:
         else:
             return None
 
-    def create_series(self, subdir: str) -> [Folder | None]:
+    def create_series_path(self, subdir: str) -> [Folder | None]:
 
         """
         Determines whether the folder contains an Sx tag
@@ -184,9 +184,9 @@ class Cli:
                 if self.depth_walker(path) < 1:
                     series_path = [os.path.join(self.path, subdir) for subdir in subdirs]
 
-        movies = [self.create_movies(file) for file in movies_path if self.create_movies(file) is not None]
+        movies = [self.create_movies_path(file) for file in movies_path if self.create_movies_path(file) is not None]
         # None in the series means a folder without an Sx tag
-        series = [self.create_series(subdir) for subdir in series_path]
+        series = [self.create_series_path(subdir) for subdir in series_path]
 
         if None in series:
             console.log(f"[The subfolder of '{self.path}' does not contains a Season Tag")
