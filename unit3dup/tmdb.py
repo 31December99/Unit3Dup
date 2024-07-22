@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import sys
+
 import tmdbv3api.exceptions
 from unidecode import unidecode
 from tmdbv3api import TMDb, Movie, TV
@@ -43,7 +45,12 @@ class MyTmdb:
         self.ext_title = self.ext_title.replace('\'', ' ')
         console.log(f"\n[TMDB Search]..........  {self.ext_title}")
 
-        self.__requests()
+        try:
+            self.__requests()
+        except tmdbv3api.exceptions.TMDbException as e:
+            console.log(f"[TMDB] '{e}'")
+            sys.exit()
+
         result = self.__search_titles()
         if not result:
             result = self.__search_alternative()

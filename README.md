@@ -17,6 +17,9 @@ This Python script generates and uploads torrents based on input provided for mo
 ___
 ### Example Usage
 
+#### Config File Checking
+- `python3 start.py -check  -> to verify configuration files`
+
 #### Series 
 - `python3 start.py -u "/home/uploader/myvideos/series1"  -> use only folder for series`
 
