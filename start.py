@@ -7,8 +7,18 @@ from rich.console import Console
 from unit3dup.uploader import UploadBot
 from unit3dup.contents import Cli
 from unit3dup import Torrent
+from unit3dup.config import ConfigUnit3D
 
 console = Console(log_path=False)
+
+
+def config_load():
+    try:
+        config_unit3d = ConfigUnit3D.validate(
+            tracker_env_name="itt.env", service_env_name="service.env"
+        )
+    except FileNotFoundError as message:
+        console.log(message)
 
 
 def welcome_message(message: str):
@@ -18,6 +28,9 @@ def welcome_message(message: str):
 
 def user_arguments():
     parser = argparse.ArgumentParser(description="Commands", add_help=False)
+
+    # Config files
+    parser.add_argument("-check", "--check",  action='store_true', help="Config check")
 
     # Upload commands
     parser.add_argument("-u", "--upload", type=str, help="Upload Path")
@@ -91,7 +104,17 @@ def process_upload(user_content):
 
 
 def main():
+    """
+    Command line
+    """
     args = user_arguments()
+
+
+    """
+    Load the configuration and perform a few checks
+    """
+    if args.check:
+        config_load()
 
     """
     UPLOAD: manual upload for series and movies
@@ -264,7 +287,8 @@ def main():
         torrent_info.get_personal()
         return
 
-    console.print("Syntax error! Please check your commands")
+    if not args.check:
+        console.print("Syntax error! Please check your commands")
 
 
 if __name__ == "__main__":

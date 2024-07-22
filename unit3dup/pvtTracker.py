@@ -2,6 +2,7 @@
 import sys
 import requests
 from rich.console import Console
+from urllib.parse import urljoin
 
 console = Console(log_path=False)
 
@@ -13,10 +14,10 @@ class Myhttp:
         self.api_token = api_token
         self.pass_key = pass_key
 
-        self.upload_url = f"{self.base_url}api/torrents/upload"
-        self.filter_url = f"{self.base_url}api/torrents/filter?"
-        self.fetch_url = f"{self.base_url}api/torrents/"
-        self.tracker_announce_url = f"{self.base_url}announce/{pass_key}"
+        self.upload_url = urljoin(self.base_url,"api/torrents/upload")
+        self.filter_url = urljoin(self.base_url, "api/torrents/filter?")
+        self.fetch_url = urljoin(self.base_url, "api/torrents/")
+        self.tracker_announce_url = urljoin(self.base_url, f"announce/{pass_key}")
 
         self.headers = {
             "User-Agent": "Test/0.0 (Linux 5.10.0-23-amd64)",
@@ -64,8 +65,18 @@ class Tracker(Myhttp):
             response = requests.get(url=self.filter_url, headers=self.headers, params=params)
             response.raise_for_status()
             return response.json()
-        except requests.exceptions.HTTPError as http_err:
-            console.print(f"Report {http_err}")
+        except requests.exceptions.HTTPError:
+            console.log(
+                f"[Report _get] ' HTTP Error. Check your service.env data",
+                style="bold red",
+            )
+            sys.exit()
+        except requests.exceptions.ConnectionError:
+            console.log(
+                f"[Report _get] ' Connection error. Please check your service.env data"
+                f" or verify if the tracker is online",
+                style="bold red",
+            )
             sys.exit()
 
     def _post(self, file: dict, data: dict, params: dict):
@@ -85,7 +96,6 @@ class Tracker(Myhttp):
         except requests.exceptions.HTTPError as http_err:
             console.print(f"Report {http_err}")
             sys.exit()
-
 
 
 class filterAPI(Tracker):
