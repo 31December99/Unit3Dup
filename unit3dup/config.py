@@ -3,6 +3,12 @@ import sys
 import cv2
 import qbittorrent
 import requests
+import logging
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
 
 from decouple import Config, RepositoryEnv
 from rich.console import Console
@@ -64,10 +70,11 @@ class ConfigUnit3D:
             return all([check.scheme, check.netloc != '', check.scheme in valid])
         except AttributeError:
             # Return False if input is not a string or valid URI
+            logging.info(f"A {check}")
             return False
         except ValueError:
             # Return False if Port is not an integer
-
+            logging.info(f"V {check}")
             return False
 
     @classmethod
