@@ -122,7 +122,7 @@ class Cli:
         self.meta_info = json.dumps(self.meta_info_list, indent=4)
         return True
 
-    def search_files(self, file: str) -> Union[File, None]:
+    def create_movies_path(self, file: str) -> Union[File, None]:
         """
         Determines if it is a movie or a series. Excludes any episode files.
         """
@@ -133,8 +133,17 @@ class Cli:
         else:
             return None
 
-    def search_folder(self, subdir: str) -> Union[Folder, None]:
-        return Folder.create(folder=self.path, subfolder=subdir, media_type='2')
+    def create_series_path(self, subdir: str) -> [Folder | None]:
+
+        """
+        Determines whether the folder contains an Sx tag
+        """
+        file_name, ext = os.path.splitext(subdir)
+        guess_filename = title.Guessit(file_name)
+        if guess_filename.guessit_season:
+            return Folder.create(folder=self.path, subfolder=subdir, media_type='2')
+        else:
+            return None
 
     def scan(self) -> [list, list]:
         """
@@ -142,8 +151,8 @@ class Cli:
         Create a list of File objects for each movie present.
         """
         if not self.is_dir:
-            console.log("Wrong Path!")
-            return []
+            console.log("Incorrect path! Please provide the path to the folder")
+            return [], []
 
         return self.walker()
 
@@ -164,17 +173,23 @@ class Cli:
          Each folder inside the path is considered a series.
         """
 
-        movies_path = []
-        series_path = []
+        movies_path: list = []
+        series_path: list = []
+        sub_dirs_found: bool = False
         for path, subdirs, files in os.walk(self.path):
             if path == self.path:
                 movies_path = [os.path.join(self.path, file) for file in files if self.filter_ext(file)]
             if subdirs:
+                sub_dirs_found = True
                 if self.depth_walker(path) < 1:
                     series_path = [os.path.join(self.path, subdir) for subdir in subdirs]
 
-        movies = [self.search_files(file) for file in movies_path if self.search_files(file) is not None]
-        series = [self.search_folder(subdir) for subdir in series_path]
+        movies = [self.create_movies_path(file) for file in movies_path if self.create_movies_path(file) is not None]
+        # None in the series means a folder without an Sx tag
+        series = [self.create_series_path(subdir) for subdir in series_path]
+
+        if None in series:
+            console.log(f"[The subfolder of '{self.path}' does not contains a Season Tag")
 
         if not movies and not series:
             console.log(f"[Walker says there's nothing here..] '{self.path}'")
