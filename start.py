@@ -147,8 +147,8 @@ def main():
         # Each file gets metadata, uploaded, and seeded
 
         for movie in movies:
-            welcome_message(movie.file_name)
             if movie:
+                welcome_message(movie.file_name)
                 # Get file path
                 path = Cli(path=movie.file_name, tracker=args.tracker)
                 if path:
@@ -159,8 +159,8 @@ def main():
 
         # Same as with movies
         for serie in series:
-            welcome_message(serie.folder)
             if serie:
+                welcome_message(serie.folder)
                 # Get file path
                 path = Cli(path=serie.folder, tracker=args.tracker)
                 if path:
