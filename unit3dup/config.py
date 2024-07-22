@@ -60,12 +60,14 @@ class ConfigUnit3D:
             check = urlparse(url)
             if check.port:
                 check.port.is_integer()
+                print(check)
             return all([check.scheme, check.netloc != '', check.scheme in valid])
         except AttributeError:
             # Return False if input is not a string or valid URI
             return False
         except ValueError:
             # Return False if Port is not an integer
+
             return False
 
     @classmethod
