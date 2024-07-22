@@ -10,6 +10,8 @@ from rich.text import Text
 from unit3dup.imageHost import ImgBB
 from qbittorrent import Client
 from unit3dup import pvtTracker
+from urllib.parse import urlparse
+
 
 console = Console(log_path=False)
 
@@ -35,6 +37,36 @@ class ConfigUnit3D:
         # Load configs
         self.config_tracker = Config(RepositoryEnv(self.tracker_path))
         self.config_service = Config(RepositoryEnv(self.service_path))
+
+    @staticmethod
+    def is_ip(ip_address) -> bool:
+        """
+        false if it's not an ip address
+
+        """
+        parts = ip_address.split('.')
+        # Each part must be(and) a digit and between 0 and 255
+        return (len(parts) == 4 and
+                all(part.isdigit() and 0 <= int(part) <= 255 for part in parts))
+
+    @staticmethod
+    def url_check(url: str):
+        """
+        Search for scheme (https) and netloc (domain)
+        """
+        valid = {"http", "https"}
+
+        try:
+            check = urlparse(url)
+            if check.port:
+                check.port.is_integer()
+            return all([check.scheme, check.netloc != '', check.scheme in valid])
+        except AttributeError:
+            # Return False if input is not a string or valid URI
+            return False
+        except ValueError:
+            # Return False if Port is not an integer
+            return False
 
     @classmethod
     def process_tmdb(cls, service_path: str) -> bool:
@@ -77,6 +109,15 @@ class ConfigUnit3D:
         qbit_port = service_config("QBIT_PORT")
 
         # Qbittorent Test run process
+        # Return if the url is invalid
+        if not ConfigUnit3D.url_check(f"{qbit_url}:{qbit_port}"):
+            console.log(
+                f"[QBIT ERR] 'Url:{qbit_url}' 'port:{qbit_port}'. Check your 'Qbit config'",
+                style="bold red",
+            )
+            return False
+
+
         try:
             qb = Client(f"{qbit_url}:{qbit_port}/")
             qb.login(username=qbit_user, password=qbit_pass)
@@ -105,6 +146,14 @@ class ConfigUnit3D:
         # pass_key = tracker_config("PASS_KEY")
         api_token = tracker_config("API_TOKEN")
         base_url = tracker_config("BASE_URL")
+
+        # Return if the url is invalid
+        if not ConfigUnit3D.url_check(base_url):
+            console.log(
+                f"[TRACKER ERR] '{base_url}' Check your url",
+                style="bold red",
+            )
+            return False
 
         tracker = pvtTracker.Unit3d(base_url=base_url, api_token=api_token, pass_key="")
         test = tracker.get_alive(alive=True, perPage=1)
