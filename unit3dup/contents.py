@@ -1,7 +1,6 @@
 import json
 import os
 import re
-from typing import Union
 from unit3dup import userinput, title
 from rich.console import Console
 
@@ -80,6 +79,7 @@ class Cli:
             process = self.process_folder()
 
         torrent_pack = bool(re.search(r'S\d+(?!.*E\d+)', self.path))
+        console.log(f"\n[TORRENT PACK] {torrent_pack}...  '{self.path}'")
 
         return userinput.Contents(
             file_name=self.file_name,
