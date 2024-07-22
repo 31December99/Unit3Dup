@@ -136,7 +136,7 @@ class Cli:
     def search_folder(self, subdir: str) -> Union[Folder, None]:
         return Folder.create(folder=self.path, subfolder=subdir, media_type='2')
 
-    def start(self) -> [list, list]:
+    def scan(self) -> [list, list]:
         """
         If the provided path does not represent a directory, return an empty list.
         Create a list of File objects for each movie present.
