@@ -39,12 +39,8 @@ class ImgBB:
                 response = requests.post('https://api.imgbb.com/1/upload', params=params, files=files)
                 response.raise_for_status()
                 return response.json()
-            except requests.exceptions.HTTPError:
-                error = response.json()
-                console.log(f"[Report IMGBB try n° {upload_n}] Screenshot {error['error']['message']}")
-                time.sleep(2)
-            except Exception as e:
-                console.log(f"[Report IMGBB try n° {upload_n}] Screenshot {response} {e}")
+            except requests.exceptions.HTTPError as e:
+                console.log(f"[Report IMGBB try n° {upload_n}] Screenshot {e}")
                 time.sleep(2)
 
         console.log("Unable to upload image, try Renew your API KEY")
