@@ -145,6 +145,16 @@ class Cli:
         else:
             return None
 
+    def filter_ext(self, file: str) -> bool:
+
+        video_ext = [
+            ".mp4", ".mkv", ".avi", ".mov", ".wmv", ".flv", ".webm", ".3gp", ".ogg",
+            ".mpg", ".mpeg", ".m4v", ".rm", ".rmvb", ".vob", ".ts", ".m2ts", ".divx",
+            ".asf", ".swf", ".ogv", ".drc", ".m3u8"
+        ]
+
+        return os.path.splitext(file)[1].lower() in video_ext
+
     def scan(self) -> [list, list]:
         """
         If the provided path does not represent a directory, return an empty list.
@@ -155,16 +165,6 @@ class Cli:
             return [], []
 
         return self.walker()
-
-    def filter_ext(self, file: str) -> bool:
-
-        video_ext = [
-            ".mp4", ".mkv", ".avi", ".mov", ".wmv", ".flv", ".webm", ".3gp", ".ogg",
-            ".mpg", ".mpeg", ".m4v", ".rm", ".rmvb", ".vob", ".ts", ".m2ts", ".divx",
-            ".asf", ".swf", ".ogv", ".drc", ".m3u8"
-        ]
-
-        return os.path.splitext(file)[1].lower() in video_ext
 
     def walker(self) -> [list, list]:
         """
@@ -196,6 +196,7 @@ class Cli:
             console.log(f"[Walker says there's nothing here..] '{self.path}'")
             console.log("Remember, within the folder of your path, there must be files (movies) or folders (series)."
                         " Files representing episodes without folders will not be considered")
+
         return movies, series
 
     def depth_walker(self, path) -> int:
