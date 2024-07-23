@@ -17,5 +17,5 @@ class Contents:
 
     @classmethod
     def create_instance(cls, file_name: str, folder: str, name: str, size: int, metainfo: json, category: int,
-                        tracker_name: str):
-        return cls(file_name, folder, name, size, metainfo, category, tracker_name)
+                        tracker_name: str, torrent_pack: bool):
+        return cls(file_name, folder, name, size, metainfo, category, tracker_name, torrent_pack)
