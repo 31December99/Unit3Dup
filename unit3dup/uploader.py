@@ -4,14 +4,14 @@ import os.path
 import requests
 from decouple import Config, RepositoryEnv
 from database.trackers import TrackerConfig
-from unit3dup import pvtTracker, pvtVideo, pvtTorrent, userinput, search, payload
+from unit3dup import pvtTracker, pvtVideo, pvtTorrent, search, payload, contents
 from rich.console import Console
 
 console = Console(log_path=False)
 
 
 class UploadBot:
-    def __init__(self, content: userinput):
+    def __init__(self, content: contents):
 
         self.content = content
         self.file_name = content.file_name  # filename con estensione = filename
