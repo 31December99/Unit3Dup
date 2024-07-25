@@ -9,7 +9,7 @@ import requests
 from decouple import Config, RepositoryEnv
 from qbittorrent import Client
 from tqdm import tqdm
-from unit3dup.contents import Cli
+from unit3dup.contents import Contents
 from rich.console import Console
 
 
@@ -38,7 +38,7 @@ class Mytorrent:
             di un episodio della serie
     """
 
-    def __init__(self, contents: Cli, meta: str):
+    def __init__(self, contents: Contents, meta: str):
 
         self.qb = None
         self.file_name = contents.file_name
