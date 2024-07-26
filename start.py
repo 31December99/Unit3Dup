@@ -15,12 +15,6 @@ console = Console(log_path=False)
 
 def main():
 
-    """ Read Command line arguments """
-    #cli = CommandLine()
-
-    """ Test and load configuration files """
-    # config_tracker = cli.config_load(tracker_env_name=cli.args.tracker)
-
     """ Auto Mode """
     if cli.args.scan:
         # New instance with cli.path
@@ -28,7 +22,6 @@ def main():
 
         # Walk through the path
         series, movies = auto.scan()
-        # Map the tv database
 
         # For each item
         for item in series:
@@ -61,7 +54,7 @@ def main():
             payload = unit3d_up.payload(tv_show=tv_show_result, video=video)
 
             """ Send """
-            # unit3d_up.send(data=payload, torrent=my_torrent)
+            unit3d_up.send(data=payload, torrent=my_torrent)
 
     """ COMMANDS LIST: commands not necessary for the upload but may be useful """
 
