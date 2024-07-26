@@ -65,7 +65,7 @@ class Files:
     def process_file(self) -> bool:
         self.file_name = os.path.basename(self.path)
         self.folder = os.path.dirname(self.path)
-        self.category = config_tracker.tracker_values.category('movie'),
+        self.category = config_tracker.tracker_values.category('movie')
         self.name, ext = os.path.splitext(self.file_name)
         self.size = os.path.getsize(self.path)
         self.meta_info = json.dumps(
