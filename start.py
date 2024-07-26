@@ -24,7 +24,7 @@ def main():
         series, movies = auto.scan()
 
         # For each item
-        for item in series:
+        for item in movies: # todo : wrong title ( 'torrent') with movies upload
             """
             Getting ready for tracker upload
             Return
@@ -184,7 +184,7 @@ def main():
         torrent_info.get_personal()
         return
 
-    if not cli.args.check:
+    if not cli.args:
         console.print("Syntax error! Please check your commands")
         return
 
