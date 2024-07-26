@@ -115,6 +115,8 @@
     "vp1",
     "amv",
     "daala",
-    "gecko"
+    "gecko",
+    "nvenc",
+    "bluray"
   ]
 }
