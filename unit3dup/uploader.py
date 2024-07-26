@@ -21,8 +21,8 @@ class UploadBot:
         self.metainfo = content.metainfo
         self.name = f"{content.name if self.category == 1 else os.path.basename(content.folder)}"
 
-        self.API_TOKEN = config_tracker.API_TOKEN
-        self.BASE_URL = config_tracker.BASE_URL
+        self.API_TOKEN = config_tracker.instance.api_token
+        self.BASE_URL = config_tracker.instance.base_url
 
     def payload(self, tv_show: search, video: pvtVideo) -> payload:
         return payload.Data.create_instance(metainfo=self.metainfo,
@@ -36,7 +36,6 @@ class UploadBot:
                                             freelech=config_tracker.tracker_values.get_freelech(self.content.size))
 
     def send(self, data: payload, torrent: pvtTorrent):
-
         tracker = pvtTracker.Unit3d(base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key='')
         tracker.data['name'] = data.name
         tracker.data['tmdb'] = data.result.video_id
