@@ -34,13 +34,26 @@ class Auto:
                         os.path.join(self.path, subdir) for subdir in sub_dirs
                     ]
 
+        """
         self.movies = [
             self.create_movies_path(file)
             for file in movies_path
             if self.create_movies_path(file) is not None
         ]
+        """
+        self.movies = [
+            result
+            for file in movies_path
+            if (result := self.create_movies_path(file)) is not None
+        ]
+
         # None in the series means a folder without an Sx tag
-        self.series = [self.create_series_path(subdir) for subdir in series_path]
+        # Walrus Operator
+        self.series = [
+            result
+            for subdir in series_path
+            if (result := self.create_series_path(subdir)) is not None
+        ]
         return self.series, self.movies
 
     def create_movies_path(self, file: str) -> File | None:
@@ -52,7 +65,7 @@ class Auto:
         if not guess_filename.guessit_season:
             return File.create(file_name=file, folder=self.path, media_type="1")
         else:
-            return None
+            return None  # Serie
 
     def create_series_path(self, subdir: str) -> Folder | None:
         """
@@ -63,11 +76,11 @@ class Auto:
         if guess_filename.guessit_season:
             return Folder.create(folder=self.path, subfolder=subdir, media_type="2")
         else:
-            return None
+            return None  # Movie or generic file
 
     def depth_walker(self, path) -> int:
         """
         It stops at one subfolder and ignores any subfolders within that subfolder
         depth < 1
         """
-        return path[len(self.path):].count(os.sep)
+        return path[len(self.path) :].count(os.sep)
