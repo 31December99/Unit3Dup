@@ -7,19 +7,23 @@ import requests
 from decouple import Config, RepositoryEnv
 from rich.console import Console
 from rich.text import Text
-from unit3dup.imageHost import ImgBB
 from qbittorrent import Client
-from unit3dup import pvtTracker
 from urllib.parse import urlparse
 
+from unit3dup import pvtTracker
+from unit3dup.imageHost import ImgBB
+from database.trackers import TrackerConfig
 
 console = Console(log_path=False)
 
 
 class ConfigUnit3D:
     # Little image for testing upload
+    BASE_URL = None
+    API_TOKEN = None
+    tracker_values = None
     test_image = "unit3dup/test_image.png"
-
+    instance = None
     def __init__(self, tracker_env_name: str, service_env_name: str):
 
         # Get the current folder
@@ -118,7 +122,6 @@ class ConfigUnit3D:
             )
             return False
 
-
         try:
             qb = Client(f"{qbit_url}:{qbit_port}/")
             qb.login(username=qbit_user, password=qbit_pass)
@@ -195,49 +198,76 @@ class ConfigUnit3D:
         return False
 
     @classmethod
-    def validate(cls, tracker_env_name: str, service_env_name: str):
+    def validate(cls, tracker_name: str, service_env_name: str):
 
-        # Flags for os file
-        tracker_not_found: bool = False
-        service_not_found: bool = False
+        # Return the same instance if it has already been validated
+        if not cls.instance:
+            tracker_env_name = f"{tracker_name}.env"
+            tracker_json_name = f"{tracker_name}.json"
 
-        # Build an error message string
-        message = Text("Configuration file ")
+            # Flags for os file
+            tracker_not_found: bool = False
+            service_not_found: bool = False
+            tracker_json_not_found: bool = False
 
-        # Get the current folder
-        current_folder = os.path.dirname(__file__)
-        root_folder = os.path.abspath(os.path.join(current_folder, ".."))
+            # Build an error message string
+            message = Text("Configuration file ")
 
-        # Build complete paths
-        tracker_path = os.path.join(root_folder, tracker_env_name)
-        service_path = os.path.join(root_folder, service_env_name)
+            # Get the current folder
+            current_folder = os.path.dirname(__file__)
+            root_folder = os.path.abspath(os.path.join(current_folder, ".."))
 
-        # Does it Exist ?
-        if not os.path.isfile(tracker_path):
-            tracker_not_found = True
+            # Build complete paths
+            tracker_path = os.path.join(root_folder, tracker_env_name)
+            service_path = os.path.join(root_folder, service_env_name)
+            tracker_json_path = os.path.join(root_folder, tracker_json_name)
 
-        # Does it Exist ?
-        if not os.path.isfile(service_path):
-            service_not_found = True
+            # Does it Exist ?
+            if not os.path.isfile(tracker_path):
+                tracker_not_found = True
 
-        if tracker_not_found:
-            message.append(
-                f"\nEnv file '{tracker_env_name.upper()}' not found in {tracker_path.upper()}",
-                style="bold red",
-            )
+            # Does it Exist ?
+            if not os.path.isfile(service_path):
+                service_not_found = True
 
-        if service_not_found:
-            message.append(
-                f"\nEnv file '{service_env_name.upper()}' not found in {service_path.upper()}",
-                style="bold red",
-            )
+            # Does it Exist ?
+            if not os.path.isfile(tracker_json_path):
+                tracker_json_not_found = True
 
-        if tracker_not_found or service_not_found:
-            raise FileNotFoundError(message)
-        else:
-            if not cls.process(service_path=service_path, tracker_path=tracker_path):
-                console.log("Error found. Please check your config file..Exit", style="bold red")
-                sys.exit()
+            if tracker_not_found:
+                message.append(
+                    f"\n'Env' file '{tracker_env_name.upper()}' not found in {tracker_path.upper()}",
+                    style="bold red",
+                )
 
-        print()
-        return cls(tracker_env_name, service_env_name)
+            if service_not_found:
+                message.append(
+                    f"\n'Env' file '{service_env_name.upper()}' not found in {service_path.upper()}",
+                    style="bold red",
+                )
+
+            if tracker_json_not_found:
+                message.append(
+                    f"\n'Json' file '{tracker_json_name.upper()}' not found in {tracker_json_path.upper()}",
+                    style="bold red",
+                )
+
+            if tracker_not_found or service_not_found:
+                raise FileNotFoundError(message)
+            else:
+                if not cls.process(service_path=service_path, tracker_path=tracker_path):
+                    console.log("Error found. Please check your config file..Exit", style="bold red")
+                    sys.exit()
+
+            # // check tracker file configuration .env e .json
+            config_load = Config(RepositoryEnv(tracker_path))
+            API_TOKEN = config_load('API_TOKEN')
+            BASE_URL = config_load('BASE_URL')
+            tracker_values = TrackerConfig(tracker_json_path)
+
+            cls.instance = cls.__new__(cls)
+            cls.instance.api_token = API_TOKEN
+            cls.instance.base_url = BASE_URL
+            cls.instance.tracker_values = tracker_values
+            print()
+        return cls.instance
