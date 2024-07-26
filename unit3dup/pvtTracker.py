@@ -14,7 +14,7 @@ class Myhttp:
         self.api_token = api_token
         self.pass_key = pass_key
 
-        self.upload_url = urljoin(self.base_url,"api/torrents/upload")
+        self.upload_url = urljoin(self.base_url, "api/torrents/upload")
         self.filter_url = urljoin(self.base_url, "api/torrents/filter?")
         self.fetch_url = urljoin(self.base_url, "api/torrents/")
         self.tracker_announce_url = urljoin(self.base_url, f"announce/{pass_key}")
