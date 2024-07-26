@@ -22,6 +22,8 @@ class Video:
 
         self.file_name = fileName
         # video file size
+        # TODO: in realtà occorre calcolare anche tutta la folder in caso di series.Per il momento utilizzo size di
+        # Files class
         self.file_size = round(os.path.getsize(self.file_name) / (1024 * 1024 * 1024))
         # Frame count
         self.numero_di_frame = None
@@ -41,7 +43,7 @@ class Video:
         console.log(f"[HD]........... {'YES' if is_hd else 'NO'}")
         return 0 if is_hd else 1
 
-    @property
+    @property #  non utilizzare vedi nota sopra
     def size(self) -> int:
         """Return the size of the video in GB."""
         return self.file_size
