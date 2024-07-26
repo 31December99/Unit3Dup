@@ -83,7 +83,6 @@ class Files:
 
         self.file_name = files[0]
         self.folder = self.path
-        print(config_tracker.tracker_values.category('tvshow'))
         self.category = config_tracker.tracker_values.category('tvshow')
         self.name, ext = os.path.splitext(self.file_name)
 
