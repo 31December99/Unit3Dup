@@ -9,7 +9,7 @@
     "size10": 50,
     "size5": 25
   },
- "TYPE_ID": {
+  "TYPE_ID": {
     "full-disc": 1,
     "remux": 2,
     "vh" : 2,
@@ -25,7 +25,9 @@
     "alac": 8,
     "mac": 12,
     "windows": 13,
+    "cinema-md": 14,
     "cinema": 14,
+    "md": 14,
     "altro": 15,
     "pdf": 16,
     "nintendo": 17,
