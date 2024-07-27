@@ -6,7 +6,7 @@ from unidecode import unidecode
 from tmdbv3api import TMDb, Movie, TV
 from thefuzz import fuzz
 from unit3dup.results import Results
-from unit3dup.utitlity import Manage_titles
+from unit3dup.utility import Manage_titles
 from decouple import Config, RepositoryEnv
 from rich.console import Console
 

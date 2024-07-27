@@ -9,7 +9,7 @@ import requests
 from decouple import Config, RepositoryEnv
 from qbittorrent import Client
 from tqdm import tqdm
-from unit3dup.contents import Cli
+from unit3dup.contents import Contents
 from rich.console import Console
 
 
@@ -38,7 +38,7 @@ class Mytorrent:
             di un episodio della serie
     """
 
-    def __init__(self, contents: Cli, meta: str):
+    def __init__(self, contents: Contents, meta: str):
 
         self.qb = None
         self.file_name = contents.file_name
@@ -49,7 +49,6 @@ class Mytorrent:
         self.__torrent_name = self.torrent_path if self.content_type == 2 else os.path.join(self.torrent_path,
                                                                                             self.file_name)
         self.mytorr = torf.Torrent(path=self.__torrent_name)
-        # self.mytorr.announce_list = tracker_announce_list # todo: No need to announce with a pass key
         self.mytorr.comment = "ciao"
         self.mytorr.name = self.basename if self.content_type == 2 else contents.file_name
         self.mytorr.created_by = "Unit3d-Up"
