@@ -3,6 +3,7 @@ import os
 import sys
 
 from unit3dup.config import ConfigUnit3D
+from unit3dup.ping import Ping
 from rich.console import Console
 
 import argparse
@@ -120,5 +121,9 @@ class CommandLine:
 """ Read Command line arguments """
 cli = CommandLine()
 
-""" Test and load configuration files """
+""" Load configuration files """
 config_tracker = cli.config_load(tracker_env_name=cli.args.tracker)
+
+""" Test configuration"""
+ping = Ping(config=vars(config_tracker))
+ping.process()
