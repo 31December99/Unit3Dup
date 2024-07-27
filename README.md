@@ -94,9 +94,8 @@ ___
 
 1. Clone this repository.
 2. Install the required dependencies using PIP.
-3. Config address and port for qbittorrent webui
-4. Set the configuration .env file
-5. Run the script with python start.py
+3. Set up the configuration .env file(s) and remove the string '[Template]' from the file name
+4. Run the script with python start.py
 
 ___
 ### Configuration
