@@ -7,8 +7,9 @@ from unit3dup.files import Files
 from unit3dup.automode import Auto
 from unit3dup.uploader import UploadBot
 from unit3dup.search import TvShow
-from unit3dup import Torrent
-from unit3dup import pvtVideo, pvtTorrent
+from unit3dup.torrent import Torrent
+from unit3dup.pvtVideo import Video
+from unit3dup.pvtTorrent import Mytorrent
 
 console = Console(log_path=False)
 
@@ -41,20 +42,19 @@ def main():
             tv_show_result = my_tmdb.start(content.file_name)
 
             """ Return info about HD or Standard , MediaInfo, Description (screenshots), Size value for free_lech """
-            video = pvtVideo.Video(
+            video_info = Video(
                 fileName=str(os.path.join(content.folder, content.file_name))
             )
 
             """ Hashing """
-            my_torrent = pvtTorrent.Mytorrent(contents=content, meta=content.metainfo)
+            my_torrent = Mytorrent(contents=content, meta=content.metainfo)
             my_torrent.write()
 
             """ the bot is getting ready to send the payload """
             unit3d_up = UploadBot(content)
-            payload = unit3d_up.payload(tv_show=tv_show_result, video=video)
 
             """ Send """
-            unit3d_up.send(data=payload, torrent=my_torrent)
+            unit3d_up.send(tv_show=tv_show_result, video=video_info, torrent=my_torrent)
 
     """ COMMANDS LIST: commands not necessary for the upload but may be useful """
 
