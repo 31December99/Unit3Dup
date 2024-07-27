@@ -34,13 +34,6 @@ class Auto:
                         os.path.join(self.path, subdir) for subdir in sub_dirs
                     ]
 
-        """
-        self.movies = [
-            self.create_movies_path(file)
-            for file in movies_path
-            if self.create_movies_path(file) is not None
-        ]
-        """
         self.movies = [
             result
             for file in movies_path
