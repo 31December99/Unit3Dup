@@ -2,6 +2,7 @@
 from unit3dup import results, utility, title
 
 
+
 class Data:
 
     def __init__(self, metainfo: str, name: str, file_name: str, result: results, category: int, standard: int,
