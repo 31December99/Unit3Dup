@@ -9,10 +9,14 @@ console = Console(log_path=False)
 
 class TvShow:
 
-    def __init__(self, videotype: str):
+    def __init__(self, category: int):
         super().__init__()
         self.titles = None
-        self.mytmdb = tmdb.MyTmdb(videotype)
+        show = {
+            1: 'Movie',
+            2: 'Serie',
+        }
+        self.mytmdb = tmdb.MyTmdb(show[category])
 
     def start(self, file_name: str):
         guess_filename = title.Guessit(file_name)

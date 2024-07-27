@@ -3,6 +3,7 @@ import random
 import cv2
 import os
 from unit3dup.imageHost import ImgBB
+from unit3dup.command import config_tracker
 from pymediainfo import MediaInfo
 from rich.console import Console
 
@@ -14,14 +15,18 @@ class Video:
         - Generate screenshots for each video provided
         - Obtain media info for each video and for the first video in a series
         - Upload screenshots to ImgBB
-        - Return the video size, e.g., to determine freeleech
+        - Return the video size
         - Determine if the video is standard definition (SD) or not
     """
 
     def __init__(self, fileName: str):
 
+        self.IMGBB_KEY = config_tracker.instance.imgbb_key
+
         self.file_name = fileName
         # video file size
+        # TODO: in realtà occorre calcolare anche tutta la folder in caso di series.Per il momento utilizzo size di
+        # TODO: Files class
         self.file_size = round(os.path.getsize(self.file_name) / (1024 * 1024 * 1024))
         # Frame count
         self.numero_di_frame = None
@@ -41,7 +46,7 @@ class Video:
         console.log(f"[HD]........... {'YES' if is_hd else 'NO'}")
         return 0 if is_hd else 1
 
-    @property
+    @property  # non utilizzare vedi nota sopra
     def size(self) -> int:
         """Return the size of the video in GB."""
         return self.file_size
@@ -93,7 +98,7 @@ class Video:
         description = "[center]\n"
         console_url = []
         for img_bytes in self.frames:
-            img_host = ImgBB(img_bytes)
+            img_host = ImgBB(image=img_bytes, imgbb_key=self.IMGBB_KEY)
             img_url = img_host.upload['data']['display_url']
             console.log(img_url)
             console_url.append(img_url)
