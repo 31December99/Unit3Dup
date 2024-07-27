@@ -16,11 +16,9 @@ class UploadBot:
         self.file_name = content.file_name  # filename con estensione = filename
         self.folder = content.folder  # folder sia per serie che per movie
         self.tracker_name = content.tracker_name
-        self.category = content.category  # 1 = movie , 2 = serie
+        self.category = content.category
         self.size = content.size
         self.metainfo = content.metainfo
-        self.name = f"{content.name if self.category == 1 else os.path.basename(content.folder)}"
-
         self.API_TOKEN = config_tracker.instance.api_token
         self.BASE_URL = config_tracker.instance.base_url
 
