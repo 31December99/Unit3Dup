@@ -37,7 +37,7 @@ class Video:
     @property
     def standard(self) -> int:
         """Determine if the video is standard definition (SD) or HD."""
-        is_hd = self.video_capture.get(cv2.CAP_PROP_FRAME_WIDTH) >= 720
+        is_hd = self.video_capture.get(cv2.CAP_PROP_FRAME_HEIGHT) >= 720
         console.log(f"[HD]........... {'YES' if is_hd else 'NO'}")
         return 0 if is_hd else 1
 
