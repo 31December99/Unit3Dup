@@ -41,8 +41,8 @@ class UploadBot:
                                             category=self.tracker_values.category('tvshow'),
                                             standard=video.standard,
                                             mediainfo=video.mediainfo,
-                                            description=video.description,
-                                            freelech=self.tracker_values.get_freelech(video.size))
+                                            description=video.description
+                                            )
 
     def movie_data(self) -> payload:
         mytmdb = search.TvShow('Movie')
@@ -54,8 +54,8 @@ class UploadBot:
                                             category=self.tracker_values.category('movie'),
                                             standard=video.standard,
                                             mediainfo=video.mediainfo,
-                                            description=video.description,
-                                            freelech=self.tracker_values.get_freelech(video.size))
+                                            description=video.description
+                                            )
 
     def process_data(self, data: payload):
 
@@ -65,7 +65,6 @@ class UploadBot:
         tracker.data['keywords'] = data.result.keywords
         tracker.data['category_id'] = data.category
         tracker.data['resolution_id'] = self.tracker_values.filterResolution(data.file_name)
-        tracker.data['free'] = data.freelech
         tracker.data['sd'] = data.standard
         tracker.data['mediainfo'] = data.media_info
         tracker.data['description'] = data.description
