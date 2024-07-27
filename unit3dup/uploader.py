@@ -25,18 +25,11 @@ class UploadBot:
         # // check tracker file configuration .env e .json
         self.tracker_env = f"{self.tracker_name}.env"
         config_load = Config(RepositoryEnv(self.tracker_env))
-        # self.PASS_KEY = config_load('PASS_KEY')
         self.API_TOKEN = config_load('API_TOKEN')
         self.BASE_URL = config_load('BASE_URL')
 
-        """
-        if not self.PASS_KEY or not self.API_TOKEN:
-            console.log("il file .env non è stato configurato oppure i nomi delle variabili sono errate.")
-            return
-        """
         self.tracker_json = f"{self.tracker_name}.json"
         self.tracker_values = TrackerConfig(self.tracker_json)
-        console.log(f"\n[TRACKER {self.tracker_name.upper()}]..............  {self.BASE_URL}")
 
     def serie_data(self) -> payload:
         mytmdb = search.TvShow('Serie')
@@ -48,8 +41,8 @@ class UploadBot:
                                             category=self.tracker_values.category('tvshow'),
                                             standard=video.standard,
                                             mediainfo=video.mediainfo,
-                                            description=video.description,
-                                            freelech=self.tracker_values.get_freelech(video.size))
+                                            description=video.description
+                                            )
 
     def movie_data(self) -> payload:
         mytmdb = search.TvShow('Movie')
@@ -61,19 +54,17 @@ class UploadBot:
                                             category=self.tracker_values.category('movie'),
                                             standard=video.standard,
                                             mediainfo=video.mediainfo,
-                                            description=video.description,
-                                            freelech=self.tracker_values.get_freelech(video.size))
+                                            description=video.description
+                                            )
 
     def process_data(self, data: payload):
 
-        # tracker = pvtTracker.Unit3d(base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key=self.PASS_KEY)
         tracker = pvtTracker.Unit3d(base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key='')
         tracker.data['name'] = data.name
         tracker.data['tmdb'] = data.result.video_id
         tracker.data['keywords'] = data.result.keywords
         tracker.data['category_id'] = data.category
         tracker.data['resolution_id'] = self.tracker_values.filterResolution(data.file_name)
-        tracker.data['free'] = data.freelech
         tracker.data['sd'] = data.standard
         tracker.data['mediainfo'] = data.media_info
         tracker.data['description'] = data.description
@@ -83,8 +74,6 @@ class UploadBot:
 
         # // Torrent
         mytorrent = pvtTorrent.Mytorrent(contents=self.content, meta=self.content.metainfo)
-        # todo: No need to announce with a pass key
-        # tracker_announce_list=[f"{self.BASE_URL}/announce/{self.PASS_KEY}/"])
         mytorrent.write()
 
         # // Send data
