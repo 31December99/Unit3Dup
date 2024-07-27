@@ -26,7 +26,7 @@ class UploadBot:
 
     def payload(self, tv_show: search, video: pvtVideo) -> payload:
         return payload.Data.create_instance(metainfo=self.metainfo,
-                                            name=os.path.basename(self.folder),
+                                            name=self.content.name,
                                             file_name=self.file_name,
                                             result=tv_show,
                                             category=self.content.category,
