@@ -122,6 +122,7 @@ class Cli:
         self.meta_info = json.dumps(self.meta_info_list, indent=4)
         return True
 
+
     def create_movies_path(self, file: str) -> File | None:
         """
         Determines if it is a movie or a series. Excludes any episode files.
@@ -133,8 +134,8 @@ class Cli:
         else:
             return None
 
-    def create_series_path(self, subdir: str) -> Folder | None:
 
+    def create_series_path(self, subdir: str) -> Folder | None:
         """
         Determines whether the folder contains an Sx tag
         """
@@ -175,13 +176,12 @@ class Cli:
 
         movies_path: list = []
         series_path: list = []
-
         # Start analyzing the path
         for path, subdirs, files in os.walk(self.path):
             if path == self.path:
                 movies_path = [os.path.join(self.path, file) for file in files if self.filter_ext(file)]
             if subdirs:
-                # Maximum level of subfolder depth = 1
+              # Maximum level of subfolder depth = 1
                 if self.depth_walker(path) < 1:
                     series_path = [os.path.join(self.path, subdir) for subdir in subdirs]
 
