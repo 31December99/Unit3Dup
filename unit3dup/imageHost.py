@@ -4,23 +4,21 @@ import sys
 import time
 
 import requests
-from decouple import Config, RepositoryEnv
 from rich.console import Console
 
-config_load = Config(RepositoryEnv('service.env'))
-IMGBB_KEY = config_load('IMGBB_KEY')
 console = Console()
 
 
 class ImgBB:
 
-    def __init__(self, image: bytes):
+    def __init__(self, image: bytes, imgbb_key: str):
         self.image = base64.b64encode(image)
+        self.IMGBB_KEY = imgbb_key
 
     @property
     def upload(self):
         params = {
-            'key': IMGBB_KEY,
+            'key': self.IMGBB_KEY,
         }
 
         files = {
@@ -46,4 +44,3 @@ class ImgBB:
         console.log("Unable to upload image, try Renew your API KEY")
         console.log(f"Error: {error}")
         sys.exit()
-
