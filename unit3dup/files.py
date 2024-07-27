@@ -51,7 +51,7 @@ class Files:
             Contents.create_instance(
                 file_name=self.file_name,
                 folder=self.folder,
-                name=self.name,
+                name=self.name if not self.is_dir else os.path.basename(self.folder),
                 size=self.size,
                 metainfo=self.meta_info,
                 category=self.category,
