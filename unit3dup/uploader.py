@@ -33,7 +33,7 @@ class UploadBot:
                                             description=video.description
                                             )
 
-    def send(self, data: payload, torrent: pvtTorrent):
+      def send(self, data: payload, torrent: pvtTorrent):
         tracker = pvtTracker.Unit3d(base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key='')
         tracker.data['name'] = data.name
         tracker.data['tmdb'] = data.result.video_id
