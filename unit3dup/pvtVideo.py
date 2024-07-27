@@ -14,7 +14,7 @@ class Video:
         - Generate screenshots for each video provided
         - Obtain media info for each video and for the first video in a series
         - Upload screenshots to ImgBB
-        - Return the video size, e.g., to determine freeleech
+        - Return the video size
         - Determine if the video is standard definition (SD) or not
     """
 
@@ -23,7 +23,7 @@ class Video:
         self.file_name = fileName
         # video file size
         # TODO: in realtà occorre calcolare anche tutta la folder in caso di series.Per il momento utilizzo size di
-        # Files class
+        # TODO: Files class
         self.file_size = round(os.path.getsize(self.file_name) / (1024 * 1024 * 1024))
         # Frame count
         self.numero_di_frame = None
@@ -39,11 +39,11 @@ class Video:
     @property
     def standard(self) -> int:
         """Determine if the video is standard definition (SD) or HD."""
-        is_hd = self.video_capture.get(cv2.CAP_PROP_FRAME_WIDTH) >= 720
+        is_hd = self.video_capture.get(cv2.CAP_PROP_FRAME_HEIGHT) >= 720
         console.log(f"[HD]........... {'YES' if is_hd else 'NO'}")
         return 0 if is_hd else 1
 
-    @property #  non utilizzare vedi nota sopra
+    @property  # non utilizzare vedi nota sopra
     def size(self) -> int:
         """Return the size of the video in GB."""
         return self.file_size
