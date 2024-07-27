@@ -32,8 +32,8 @@ class UploadBot:
                                             category=self.content.category,
                                             standard=video.standard,
                                             mediainfo=video.mediainfo,
-                                            description=video.description,
-                                            freelech=config_tracker.tracker_values.get_freelech(self.content.size))
+                                            description=video.description
+                                            )
 
     def send(self, data: payload, torrent: pvtTorrent):
         tracker = pvtTracker.Unit3d(base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key='')
@@ -42,7 +42,6 @@ class UploadBot:
         tracker.data['keywords'] = data.result.keywords
         tracker.data['category_id'] = data.category
         tracker.data['resolution_id'] = config_tracker.tracker_values.filterResolution(data.file_name)
-        tracker.data['free'] = data.freelech
         tracker.data['sd'] = data.standard
         tracker.data['mediainfo'] = data.media_info
         tracker.data['description'] = data.description
