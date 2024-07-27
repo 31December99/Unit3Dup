@@ -3,6 +3,7 @@ import random
 import cv2
 import os
 from unit3dup.imageHost import ImgBB
+from unit3dup.command import config_tracker
 from pymediainfo import MediaInfo
 from rich.console import Console
 
@@ -19,6 +20,8 @@ class Video:
     """
 
     def __init__(self, fileName: str):
+
+        self.IMGBB_KEY = config_tracker.instance.imgbb_key
 
         self.file_name = fileName
         # video file size
@@ -95,7 +98,7 @@ class Video:
         description = "[center]\n"
         console_url = []
         for img_bytes in self.frames:
-            img_host = ImgBB(img_bytes)
+            img_host = ImgBB(image=img_bytes, imgbb_key=self.IMGBB_KEY)
             img_url = img_host.upload['data']['display_url']
             console.log(img_url)
             console_url.append(img_url)
