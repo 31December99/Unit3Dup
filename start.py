@@ -23,14 +23,14 @@ def config_load():
 
 def welcome_message(message: str):
     if message:
-        console.rule(f"\n\n[bold blue] Unit3D Uploader - {message.upper()}", style="#ea00d9")
+        console.rule(f"[bold blue]{message.upper()}", style="#ea00d9")
 
 
 def user_arguments():
     parser = argparse.ArgumentParser(description="Commands", add_help=False)
 
     # Config files
-    parser.add_argument("-check", "--check",  action='store_true', help="Config check")
+    parser.add_argument("-check", "--check", action='store_true', help="Config check")
 
     # Upload commands
     parser.add_argument("-u", "--upload", type=str, help="Upload Path")
@@ -93,7 +93,7 @@ def user_arguments():
 
 
 def start_info(bot):
-    console.log(f"\n[TORRENT NAME] {bot.name}")
+    console.log(f"\n[TORRENT NAME]......... {bot.name}")
 
 
 def process_upload(user_content):
@@ -108,7 +108,6 @@ def main():
     Command line
     """
     args = user_arguments()
-
 
     """
     Load the configuration and perform a few checks
@@ -128,7 +127,7 @@ def main():
         if path:
             # Preparing a movie/serie for upload
             data = path.get_data()
-            welcome_message(args.upload)
+            welcome_message(args.tracker)
             # Upload to tracker
             process_upload(data) if data else None
             return
@@ -148,7 +147,7 @@ def main():
 
         for movie in movies:
             if movie:
-                welcome_message(movie.file_name)
+                welcome_message(args.tracker)
                 # Get file path
                 path = Cli(path=movie.file_name, tracker=args.tracker)
                 if path:
@@ -160,7 +159,7 @@ def main():
         # Same as with movies
         for serie in series:
             if serie:
-                welcome_message(serie.folder)
+                welcome_message(args.tracker)
                 # Get file path
                 path = Cli(path=serie.folder, tracker=args.tracker)
                 if path:
