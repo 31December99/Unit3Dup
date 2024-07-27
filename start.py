@@ -24,7 +24,7 @@ def main():
         series, movies = auto.scan()
 
         # For each item
-        for item in movies: # todo : wrong title ( 'torrent') with movies upload
+        for item in series + movies:
             """
             Getting ready for tracker upload
             Return
