@@ -71,6 +71,7 @@ class Files:
         self.file_name = os.path.basename(self.path)
         self.folder = os.path.dirname(self.path)
         self.display_name, ext = os.path.splitext(self.file_name)
+        self.display_name = Manage_titles.clean(self.display_name)
         self.name = self.file_name
         self.torrent_path = os.path.join(self.folder, self.file_name)
         self.size = os.path.getsize(self.path)
@@ -90,6 +91,7 @@ class Files:
         self.file_name = files[0]
         self.folder = self.path
         self.display_name, ext = os.path.splitext(self.file_name)
+        self.display_name = Manage_titles.clean(self.display_name)
         self.name = self.file_name
         self.torrent_path = os.path.join(self.folder, self.file_name)
         self.meta_info_list = []
