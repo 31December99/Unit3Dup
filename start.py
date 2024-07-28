@@ -41,8 +41,9 @@ def main():
                                 torrent_name=item.torrent_name
                                 )
             content = video_files.get_data()
-
-
+            if content is False:
+                # skip invalid folder or file
+                continue
 
             """ Request results from the TVshow online database """
             my_tmdb = TvShow(content.category)
@@ -197,6 +198,7 @@ def main():
     if not cli.args:
         console.print("Syntax error! Please check your commands")
         return
+
 
 if __name__ == "__main__":
     main()
