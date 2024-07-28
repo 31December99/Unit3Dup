@@ -42,7 +42,7 @@ class UploadBot:
         tracker = pvtTracker.Unit3d(
             base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key=""
         )
-        tracker.data["name"] = self.content.display_name  # data.name
+        tracker.data["name"] = self.content.display_name
         tracker.data["tmdb"] = data.result.video_id
         tracker.data["keywords"] = data.result.keywords
         tracker.data["category_id"] = data.category
