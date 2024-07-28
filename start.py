@@ -41,7 +41,8 @@ def main():
                                 torrent_name=item.torrent_name
                                 )
             content = video_files.get_data()
-            print(f"[CONTENT] {content.torrent_path}")
+
+
 
             """ Request results from the TVshow online database """
             my_tmdb = TvShow(content.category)
