@@ -12,11 +12,11 @@ console = Console()
 
 class Video:
     """
-        - Generate screenshots for each video provided
-        - Obtain media info for each video and for the first video in a series
-        - Upload screenshots to ImgBB
-        - Return the video size
-        - Determine if the video is standard definition (SD) or not
+    - Generate screenshots for each video provided
+    - Obtain media info for each video and for the first video in a series
+    - Upload screenshots to ImgBB
+    - Return the video size
+    - Determine if the video is standard definition (SD) or not
     """
 
     def __init__(self, fileName: str):
@@ -66,7 +66,7 @@ class Video:
         """
         Return a list of frame numbers sampled randomly starting from 25% of the video.
         """
-        inizia_da = int(.25 * self.total_frames)
+        inizia_da = int(0.25 * self.total_frames)
         # Genero una lista di frame casuali che partono dal 25% del video
         return random.sample(range(inizia_da, self.total_frames), self.samples_n)
 
@@ -82,7 +82,7 @@ class Video:
             if not ret:
                 continue
 
-            ret, buffer = cv2.imencode('.jpg', frame, [cv2.IMWRITE_JPEG_QUALITY, 90])
+            ret, buffer = cv2.imencode(".jpg", frame, [cv2.IMWRITE_JPEG_QUALITY, 90])
             if ret:
                 image_bytes = buffer.tobytes()
                 frames_list.append(image_bytes)
@@ -99,9 +99,9 @@ class Video:
         console_url = []
         for img_bytes in self.frames:
             img_host = ImgBB(image=img_bytes, imgbb_key=self.IMGBB_KEY)
-            img_url = img_host.upload['data']['display_url']
+            img_url = img_host.upload["data"]["display_url"]
             console.log(img_url)
             console_url.append(img_url)
-            description += (f"[url={img_url}][img=350]{img_url}[/img][/url]")
+            description += f"[url={img_url}][img=350]{img_url}[/img][/url]"
         description += "\n[/center]"
         return description
