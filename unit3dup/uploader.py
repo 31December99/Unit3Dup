@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 import json
 import os.path
-import requests
-from unit3dup import pvtTracker, pvtVideo, pvtTorrent, search, payload, contents
+from unit3dup import pvtTracker, pvtVideo, search, payload, contents
 from unit3dup.command import config_tracker
 from rich.console import Console
 
@@ -11,14 +10,16 @@ console = Console(log_path=False)
 
 class UploadBot:
     def __init__(self, content: contents):
-
         self.content = content
-        self.file_name = content.file_name  # filename con estensione = filename
-        self.folder = content.folder  # folder sia per serie che per movie
+        self.file_name = content.file_name
+        self.folder = content.folder
         self.tracker_name = content.tracker_name
         self.category = content.category
         self.size = content.size
         self.metainfo = content.metainfo
+        self.torrent_path = content.torrent_path
+        self.torrent_file_path = os.path.join(self.torrent_path, self.file_name)
+
         self.API_TOKEN = config_tracker.instance.api_token
         self.BASE_URL = config_tracker.instance.base_url
 
@@ -33,8 +34,7 @@ class UploadBot:
                                             description=video.description
                                             )
 
-    def send(self, tv_show: search, video: pvtVideo, torrent: pvtTorrent):
-
+    def send(self, tv_show: search, video: pvtVideo):
         # New payload
         data = self.payload(tv_show, video)
 
@@ -52,14 +52,10 @@ class UploadBot:
         tracker.data['episode_number'] = data.myguess.guessit_episode if not self.content.torrent_pack else 0
 
         # // Send data
-        tracker_response = tracker.upload_t(data=tracker.data, file_name=os.path.join(self.content.folder,
-                                                                                      str(torrent.torrent_name)))
-        # // Seeding
+        tracker_response = tracker.upload_t(data=tracker.data, file_name=self.torrent_path)
         if tracker_response.status_code == 200:
             tracker_response_body = json.loads(tracker_response.text)
             console.log(f"\n[TRACKER RESPONSE]............  {tracker_response_body['message'].upper()}")
-            download_torrent_dal_tracker = requests.get(tracker_response_body['data'])
-            if download_torrent_dal_tracker.status_code == 200:
-                torrent.qbit(download_torrent_dal_tracker)
+            return tracker_response_body['data']
         else:
             console.log(f"Non è stato possibile fare l'upload => {tracker_response} {tracker_response.text}")
