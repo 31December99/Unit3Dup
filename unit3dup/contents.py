@@ -4,8 +4,20 @@ import os
 
 class Contents:
 
-    def __init__(self, file_name: str, folder: str, name: str, size: int, metainfo: json, category: int,
-                 tracker_name: str, torrent_pack: bool, torrent_name: str, torrent_path: str):
+    def __init__(
+        self,
+        file_name: str,
+        folder: str,
+        name: str,
+        size: int,
+        metainfo: json,
+        category: int,
+        tracker_name: str,
+        torrent_pack: bool,
+        torrent_name: str,
+        torrent_path: str,
+        display_name: str,
+    ):
         self.file_name = file_name
         self.name = name
         self.folder = folder
@@ -16,11 +28,36 @@ class Contents:
         self.torrent_pack = torrent_pack
         self.torrent_name = torrent_name
         self.torrent_path = torrent_path
+        self.display_name = display_name
 
     @classmethod
-    def create_instance(cls, file_name: str, folder: str, name: str, size: int, metainfo: json, category: int,
-                        tracker_name: str, torrent_pack: bool, torrent_name: str, torrent_path: str):
-        return cls(file_name, folder, name, size, metainfo, category, tracker_name, torrent_pack, torrent_name, torrent_path)
+    def create_instance(
+        cls,
+        file_name: str,
+        folder: str,
+        name: str,
+        size: int,
+        metainfo: json,
+        category: int,
+        tracker_name: str,
+        torrent_pack: bool,
+        torrent_name: str,
+        torrent_path: str,
+        display_name: str,
+    ):
+        return cls(
+            file_name,
+            folder,
+            name,
+            size,
+            metainfo,
+            category,
+            tracker_name,
+            torrent_pack,
+            torrent_name,
+            torrent_path,
+            display_name,
+        )
 
 
 class File:
