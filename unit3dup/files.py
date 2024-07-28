@@ -17,15 +17,18 @@ class Files:
 
     """
 
-    def __init__(self, path: str, tracker: str):
+    def __init__(self, path: str, tracker: str, media_type: int, torrent_name: str):
         self.meta_info_list: list = []
         self.meta_info = None
         self.size = None
         self.name = None
-        self.category = None
         self.folder = None
         self.file_name = None
+        self.torrent_path = None
+
+        self.category: int = media_type
         self.tracker: str = tracker
+        self.torrent_name: str = torrent_name
         self.path: str = path
         self.movies: list = []
         self.series: list = []
@@ -51,12 +54,15 @@ class Files:
             Contents.create_instance(
                 file_name=self.file_name,
                 folder=self.folder,
-                name=self.name if not self.is_dir else os.path.basename(self.folder),
+                # name=self.name if not self.is_dir else os.path.basename(self.folder),
+                name=self.name,  # self.title_from,
                 size=self.size,
                 metainfo=self.meta_info,
                 category=self.category,
                 tracker_name=self.tracker,
                 torrent_pack=torrent_pack,
+                torrent_name=self.torrent_name,
+                torrent_path=self.torrent_path
             )
             if process
             else False
@@ -65,8 +71,12 @@ class Files:
     def process_file(self) -> bool:
         self.file_name = os.path.basename(self.path)
         self.folder = os.path.dirname(self.path)
-        self.category = config_tracker.tracker_values.category('movie')
+        # self.category = config_tracker.tracker_values.category('movie')
         self.name, ext = os.path.splitext(self.file_name)
+
+        self.torrent_path = os.path.join(self.folder, self.file_name)
+        print(f"[folder] torrent path name {self.torrent_path}")
+
         self.size = os.path.getsize(self.path)
         self.meta_info = json.dumps(
             [{"length": self.size, "path": [self.file_name]}], indent=4
@@ -83,8 +93,11 @@ class Files:
 
         self.file_name = files[0]
         self.folder = self.path
-        self.category = config_tracker.tracker_values.category('tvshow')
+        # self.category = config_tracker.tracker_values.category('tvshow')
         self.name, ext = os.path.splitext(self.file_name)
+
+        self.torrent_path = os.path.join(self.folder, self.file_name)
+        print(f"[folder] torrent path name {self.torrent_path}")
 
         self.meta_info_list = []
         total_size = 0
