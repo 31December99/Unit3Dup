@@ -10,13 +10,13 @@ from unit3dup.contents import Contents
 from rich.console import Console
 
 
-config_load = Config(RepositoryEnv('service.env'))
+config_load = Config(RepositoryEnv("service.env"))
 console = Console(log_path=False)
 
-QBIT_USER = config_load('QBIT_USER')
-QBIT_PASS = config_load('QBIT_PASS')
-QBIT_URL = config_load('QBIT_URL')
-QBIT_PORT = config_load('QBIT_PORT')
+QBIT_USER = config_load("QBIT_USER")
+QBIT_PASS = config_load("QBIT_PASS")
+QBIT_URL = config_load("QBIT_URL")
+QBIT_PORT = config_load("QBIT_PORT")
 
 
 class HashProgressBar(tqdm):
@@ -33,8 +33,6 @@ class Mytorrent:
         self.qb = None
         self.file_name = contents.file_name
         self.torrent_path = contents.torrent_path
-        print(f"[Mytorrent] torrent path {self.torrent_path}")
-
         self.basename = os.path.basename(self.torrent_path)
         self.content_type = contents.category
         self.metainfo = json.loads(meta)
@@ -59,7 +57,6 @@ class Mytorrent:
             print(e)
             sys.exit()
         return self.mytorr
-
 
     @property
     def comment(self):
