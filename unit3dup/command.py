@@ -134,7 +134,6 @@ track_err = ping.process_tracker()
 # Ping only if scanning is selected
 if cli.args.scan:
     qbit_err = ping.process_qbit()
-    print(qbit_err)
     tmdb_err = ping.process_tmdb()
     imghost_err = ping.process_imghost()
     if not (tmdb_err and qbit_err and imghost_err and track_err):
