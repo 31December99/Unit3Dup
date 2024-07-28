@@ -13,8 +13,8 @@ class TvShow:
         super().__init__()
         self.titles = None
         show = {
-            1: 'Movie',
-            2: 'Serie',
+            1: "Movie",
+            2: "Serie",
         }
         self.mytmdb = tmdb.MyTmdb(show[category])
 
@@ -26,7 +26,7 @@ class TvShow:
 
         # Se non ci sono risultati prima di richiedere all'utente provo ad unire il  main title con l'alternative title
         if not result:
-            new_title = ' '.join([_title, _alternate_title])
+            new_title = " ".join([_title, _alternate_title])
             result = self.mytmdb.search(new_title)
             if not result:
                 result = self.mytmdb.input_tmdb()
