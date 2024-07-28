@@ -35,7 +35,6 @@ class ConfigUnit3D:
         self.config_tracker = Config(RepositoryEnv(self.tracker_path))
         self.config_service = Config(RepositoryEnv(self.service_path))
 
-
     @classmethod
     def validate(cls, tracker_name: str, service_env_name: str):
 
@@ -96,18 +95,18 @@ class ConfigUnit3D:
 
             # // check tracker file configuration .env e .json
             config_load_tracker = Config(RepositoryEnv(tracker_path))
-            API_TOKEN = config_load_tracker('API_TOKEN')
-            BASE_URL = config_load_tracker('BASE_URL')
+            API_TOKEN = config_load_tracker("API_TOKEN")
+            BASE_URL = config_load_tracker("BASE_URL")
             tracker_values = TrackerConfig(tracker_json_path)
 
             config_load_service = Config(RepositoryEnv(service_path))
-            TMDB_APIKEY = config_load_service('TMDB_APIKEY')
-            IMGBB_KEY = config_load_service('IMGBB_KEY')
+            TMDB_APIKEY = config_load_service("TMDB_APIKEY")
+            IMGBB_KEY = config_load_service("IMGBB_KEY")
 
-            QBIT_USER = config_load_service('QBIT_USER')
-            QBIT_PASS = config_load_service('QBIT_PASS')
-            QBIT_URL = config_load_service('QBIT_URL')
-            QBIT_PORT = config_load_service('QBIT_PORT')
+            QBIT_USER = config_load_service("QBIT_USER")
+            QBIT_PASS = config_load_service("QBIT_PASS")
+            QBIT_URL = config_load_service("QBIT_URL")
+            QBIT_PORT = config_load_service("QBIT_PORT")
 
             cls.instance = cls.__new__(cls)
             cls.instance.api_token = API_TOKEN
