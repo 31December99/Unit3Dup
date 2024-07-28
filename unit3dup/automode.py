@@ -18,24 +18,30 @@ class Auto:
         self.path = path
         self.movie_category = config_tracker.tracker_values.category("movie")
         self.serie_category = config_tracker.tracker_values.category("tvshow")
+        self.is_dir = os.path.isdir(self.path)
 
     def scan(self):
         movies_path = []
         series_path = []
 
-        for path, sub_dirs, files in os.walk(self.path):
-            if path == self.path:
-                movies_path = [
-                    os.path.join(self.path, file)
-                    for file in files
-                    if Manage_titles.filter_ext(file)
-                ]
-            if sub_dirs:
-                # Maximum level of subfolder depth = 1
-                if self.depth_walker(path) < 1:
-                    series_path = [
-                        os.path.join(self.path, subdir) for subdir in sub_dirs
+        # when you use scan with file...
+        # Path includes a filename. Os.walk requires a folder
+        if not self.is_dir:
+            movies_path = [self.path]
+        else:
+            for path, sub_dirs, files in os.walk(self.path):
+                if path == self.path:
+                    movies_path = [
+                        os.path.join(self.path, file)
+                        for file in files
+                        if Manage_titles.filter_ext(file)
                     ]
+                if sub_dirs:
+                    # Maximum level of subfolder depth = 1
+                    if self.depth_walker(path) < 1:
+                        series_path = [
+                            os.path.join(self.path, subdir) for subdir in sub_dirs
+                        ]
 
         self.movies = [
             result
@@ -43,7 +49,7 @@ class Auto:
             if (result := self.create_movies_path(file)) is not None
         ]
 
-        # None in the series means a folder without an Sx tag
+        # None in the series means a folder without a Sx tag
         # Walrus Operator
         self.series = [
             result
@@ -74,12 +80,10 @@ class Auto:
                 media_type=self.serie_category,
                 torrent_name=guess_filename.guessit_title,
             )
-            # return None  # Serie
 
-    # def create_series_path(self, subdir: str) -> Folder | None:
     def create_folder_path(self, subdir: str) -> Folder | None:
         """
-        Determines whether the folder contains an Sx tag or it's a "movie folder"
+        Determines whether the folder contains a Sx tag or it's a "movie folder"
         """
         file_name, ext = os.path.splitext(subdir)
         guess_filename = title.Guessit(file_name)
@@ -106,4 +110,4 @@ class Auto:
         It stops at one subfolder and ignores any subfolders within that subfolder
         depth < 1
         """
-        return path[len(self.path) :].count(os.sep)
+        return path[len(self.path):].count(os.sep)
