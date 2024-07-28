@@ -197,7 +197,6 @@ def main():
         console.print("Syntax error! Please check your commands")
         return
 
-
 if __name__ == "__main__":
     main()
     print()
