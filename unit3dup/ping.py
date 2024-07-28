@@ -156,14 +156,3 @@ class Ping:
         else:
             return False
         return True
-
-    def process(self) -> bool:
-
-        console.rule("\nChecking configuration files")
-        track_err = self.process_tracker()
-        qbit_err = self.process_qbit()
-        tmdb_err = self.process_tmdb()
-        imghost_err = self.process_imghost()
-        if tmdb_err and qbit_err and imghost_err and track_err:
-            return True
-        return False
