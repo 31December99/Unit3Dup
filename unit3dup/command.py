@@ -126,5 +126,17 @@ config_tracker = cli.config_load(tracker_env_name=cli.args.tracker)
 
 """ Test configuration"""
 ping = Ping(config=vars(config_tracker))
-if not ping.process():
-    exit(1)
+console.rule("\nChecking configuration files")
+
+# always ping the tracker
+track_err = ping.process_tracker()
+
+# Ping only if scanning is selected
+if cli.args.scan:
+    qbit_err = ping.process_qbit()
+    print(qbit_err)
+    tmdb_err = ping.process_tmdb()
+    imghost_err = ping.process_imghost()
+    if not (tmdb_err and qbit_err and imghost_err and track_err):
+        exit(1)
+
