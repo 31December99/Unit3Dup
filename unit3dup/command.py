@@ -126,4 +126,5 @@ config_tracker = cli.config_load(tracker_env_name=cli.args.tracker)
 
 """ Test configuration"""
 ping = Ping(config=vars(config_tracker))
-ping.process()
+if not ping.process():
+    exit(1)
