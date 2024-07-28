@@ -1,5 +1,5 @@
 ## Unit3D_uploader
-Unit3D platform uploader
+Unit3D platform uploader (Python 3.10)
 
 ## Torrent Generator and Uploader
 
