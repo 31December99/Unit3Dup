@@ -9,13 +9,13 @@ from unit3dup.uploader import UploadBot
 from unit3dup.search import TvShow
 from unit3dup.torrent import Torrent
 from unit3dup.pvtVideo import Video
+from unit3dup.qbitt import Qbitt
 from unit3dup.pvtTorrent import Mytorrent
 
 console = Console(log_path=False)
 
 
 def main():
-
     """ Auto Mode """
     if cli.args.scan:
         # New instance with cli.path
@@ -34,8 +34,16 @@ def main():
                   - content category ( movie or serie)
                   - torrent meta_info 
             """
-            video_files = Files(path=item.torrent_path, tracker=cli.args.tracker)
+
+            video_files = Files(path=item.torrent_path,
+                                tracker=cli.args.tracker,
+                                media_type=item.media_type,
+                                torrent_name=item.torrent_name
+                                )
             content = video_files.get_data()
+            if content is False:
+                # skip invalid folder or file
+                continue
 
             """ Request results from the TVshow online database """
             my_tmdb = TvShow(content.category)
@@ -54,7 +62,10 @@ def main():
             unit3d_up = UploadBot(content)
 
             """ Send """
-            unit3d_up.send(tv_show=tv_show_result, video=video_info, torrent=my_torrent)
+            tracker_response = unit3d_up.send(tv_show=tv_show_result, video=video_info)
+
+            """ Qbittorrent """
+            Qbitt(tracker_data_response=tracker_response, torrent=my_torrent, contents=content)
 
     """ COMMANDS LIST: commands not necessary for the upload but may be useful """
 

@@ -4,6 +4,7 @@ import os
 from rich.console import Console
 from unit3dup.contents import File, Folder
 from unit3dup.utility import Manage_titles
+from unit3dup.command import config_tracker
 from unit3dup import title
 
 console = Console(log_path=False)
@@ -15,6 +16,8 @@ class Auto:
         self.series = None
         self.movies = None
         self.path = path
+        self.movie_category = config_tracker.tracker_values.category("movie")
+        self.serie_category = config_tracker.tracker_values.category("tvshow")
 
     def scan(self):
         movies_path = []
@@ -45,7 +48,7 @@ class Auto:
         self.series = [
             result
             for subdir in series_path
-            if (result := self.create_series_path(subdir)) is not None
+            if (result := self.create_folder_path(subdir)) is not None
         ]
         return self.series, self.movies
 
@@ -56,20 +59,47 @@ class Auto:
         file_name, ext = os.path.splitext(file)
         guess_filename = title.Guessit(file_name)
         if not guess_filename.guessit_season:
-            return File.create(file_name=file, folder=self.path, media_type="1")
+            # Movie without folder
+            return File.create(
+                file_name=file,
+                folder=self.path,
+                media_type=self.movie_category,
+                torrent_name=guess_filename.guessit_title,
+            )
         else:
-            return None  # Serie
+            # Serie without folder
+            return File.create(
+                file_name=file,
+                folder=self.path,
+                media_type=self.serie_category,
+                torrent_name=guess_filename.guessit_title,
+            )
+            # return None  # Serie
 
-    def create_series_path(self, subdir: str) -> Folder | None:
+    # def create_series_path(self, subdir: str) -> Folder | None:
+    def create_folder_path(self, subdir: str) -> Folder | None:
         """
-        Determines whether the folder contains an Sx tag
+        Determines whether the folder contains an Sx tag or it's a "movie folder"
         """
         file_name, ext = os.path.splitext(subdir)
         guess_filename = title.Guessit(file_name)
         if guess_filename.guessit_season:
-            return Folder.create(folder=self.path, subfolder=subdir, media_type="2")
+            # Serie with folder
+            return Folder.create(
+                folder=self.path,
+                subfolder=subdir,
+                media_type=self.serie_category,
+                torrent_name=guess_filename.guessit_title,
+            )
         else:
-            return None  # Movie or generic file
+            # Movie with folder
+            return Folder.create(
+                folder=self.path,
+                subfolder=subdir,
+                media_type=self.movie_category,
+                torrent_name=guess_filename.guessit_title,
+            )
+            # return None  # Movie or generic file
 
     def depth_walker(self, path) -> int:
         """

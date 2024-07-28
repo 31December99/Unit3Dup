@@ -2,30 +2,32 @@
 import json
 import os
 import re
-from rich.console import Console
 
+from rich.console import Console
 from unit3dup.contents import Contents
 from unit3dup.utility import Manage_titles
-from unit3dup.command import config_tracker
 
 console = Console(log_path=False)
 
 
 class Files:
     """
-    e identificare quelli che sono i files(movies) e i folder(series)
-
+    Identify the files (movies) and folders (series) regardless
     """
 
-    def __init__(self, path: str, tracker: str):
+    def __init__(self, path: str, tracker: str, media_type: int, torrent_name: str):
+        self.display_name = None
         self.meta_info_list: list = []
         self.meta_info = None
         self.size = None
         self.name = None
-        self.category = None
         self.folder = None
         self.file_name = None
+        self.torrent_path = None
+
+        self.category: int = media_type
         self.tracker: str = tracker
+        self.torrent_name: str = torrent_name
         self.path: str = path
         self.movies: list = []
         self.series: list = []
@@ -34,7 +36,7 @@ class Files:
     def get_data(self) -> Contents | bool:
         """
         Create an userinput object with movie or series attributes for the torrent.
-        Verify if name is part of torrent pack folder. If there is no episode it's a pack
+        Verify if name is part of torrent pack folder
         """
         if not self.is_dir:
             # Check for valid extension
@@ -51,12 +53,15 @@ class Files:
             Contents.create_instance(
                 file_name=self.file_name,
                 folder=self.folder,
-                name=self.name if not self.is_dir else os.path.basename(self.folder),
+                name=self.name,
                 size=self.size,
                 metainfo=self.meta_info,
                 category=self.category,
                 tracker_name=self.tracker,
                 torrent_pack=torrent_pack,
+                torrent_name=self.torrent_name,
+                torrent_path=self.torrent_path,
+                display_name=self.display_name,
             )
             if process
             else False
@@ -65,8 +70,10 @@ class Files:
     def process_file(self) -> bool:
         self.file_name = os.path.basename(self.path)
         self.folder = os.path.dirname(self.path)
-        self.category = config_tracker.tracker_values.category('movie')
-        self.name, ext = os.path.splitext(self.file_name)
+        self.display_name, ext = os.path.splitext(self.file_name)
+        self.display_name = Manage_titles.clean(self.display_name)
+        self.name = self.file_name
+        self.torrent_path = os.path.join(self.folder, self.file_name)
         self.size = os.path.getsize(self.path)
         self.meta_info = json.dumps(
             [{"length": self.size, "path": [self.file_name]}], indent=4
@@ -83,10 +90,12 @@ class Files:
 
         self.file_name = files[0]
         self.folder = self.path
-        self.category = config_tracker.tracker_values.category('tvshow')
-        self.name, ext = os.path.splitext(self.file_name)
-
+        self.display_name, ext = os.path.splitext(self.file_name)
+        self.display_name = Manage_titles.clean(self.display_name)
+        self.name = self.file_name
+        self.torrent_path = os.path.join(self.folder, self.file_name)
         self.meta_info_list = []
+
         total_size = 0
         for file in files:
             size = os.path.getsize(os.path.join(self.folder, file))

@@ -48,7 +48,7 @@ class Myhttp:
             "featured": 0,
             "free": 0,
             "doubleup": 0,
-            "sticky": 0
+            "sticky": 0,
         }
 
     def _post(self, files: str, data: dict, params: dict):
@@ -62,7 +62,9 @@ class Tracker(Myhttp):
 
     def _get(self, params: dict) -> requests:
         try:
-            response = requests.get(url=self.filter_url, headers=self.headers, params=params)
+            response = requests.get(
+                url=self.filter_url, headers=self.headers, params=params
+            )
             response.raise_for_status()
             return response.json()
         except requests.exceptions.HTTPError:
@@ -80,13 +82,25 @@ class Tracker(Myhttp):
             sys.exit()
 
     def _post(self, file: dict, data: dict, params: dict):
-        return requests.post(url=self.upload_url, files=file, data=data, headers=self.headers, params=params)
+        return requests.post(
+            url=self.upload_url,
+            files=file,
+            data=data,
+            headers=self.headers,
+            params=params,
+        )
 
     def _fetch_all(self, params: dict) -> requests:
-        return requests.get(url=self.fetch_url, headers=self.headers, params=params).json()
+        return requests.get(
+            url=self.fetch_url, headers=self.headers, params=params
+        ).json()
 
     def _fetch_id(self, torrent_id: int) -> requests:
-        return requests.get(url=f"{self.fetch_url}{torrent_id}", headers=self.headers, params=self.params)
+        return requests.get(
+            url=f"{self.fetch_url}{torrent_id}",
+            headers=self.headers,
+            params=self.params,
+        )
 
     def _next_page(self, url: str) -> requests:
         try:
@@ -100,153 +114,153 @@ class Tracker(Myhttp):
 
 class filterAPI(Tracker):
     def tmdb(self, tmdb_id: int, perPage: int = None) -> requests:
-        self.params['tmdbId'] = tmdb_id
-        self.params['perPage'] = perPage
+        self.params["tmdbId"] = tmdb_id
+        self.params["perPage"] = perPage
         return self._get(params=self.params)
 
     def imdb(self, imdb_id: int, perPage: int = None) -> requests:
-        self.params['imdbId'] = imdb_id
-        self.params['perPage'] = perPage
+        self.params["imdbId"] = imdb_id
+        self.params["perPage"] = perPage
         return self._get(params=self.params)
 
     def tvdb(self, tvdb_id: int, perPage: int = None) -> requests:
-        self.params['tvdbId'] = tvdb_id
-        self.params['perPage'] = perPage
+        self.params["tvdbId"] = tvdb_id
+        self.params["perPage"] = perPage
         return self._get(params=self.params)
 
     def mal(self, mal_id: int, perPage: int = None) -> requests:
-        self.params['malId'] = mal_id
-        self.params['perPage'] = perPage
+        self.params["malId"] = mal_id
+        self.params["perPage"] = perPage
         return self._get(params=self.params)
 
     def playlist_id(self, playlistId: int, perPage: int = None) -> requests:
-        self.params['playlistId'] = playlistId
-        self.params['perPage'] = perPage
+        self.params["playlistId"] = playlistId
+        self.params["perPage"] = perPage
         return self._get(params=self.params)
 
     def collection_id(self, collectionId: int, perPage: int = None) -> requests:
-        self.params['collectionId'] = collectionId
-        self.params['perPage'] = perPage
+        self.params["collectionId"] = collectionId
+        self.params["perPage"] = perPage
         return self._get(params=self.params)
 
     def freeleech(self, freeleech: int, perPage: int = None) -> requests:
-        self.params['free'] = freeleech
-        self.params['perPage'] = perPage
+        self.params["free"] = freeleech
+        self.params["perPage"] = perPage
         return self._get(params=self.params)
 
     def name(self, name: str, perPage: int = None) -> requests:
-        self.params['name'] = name
-        self.params['perPage'] = perPage
+        self.params["name"] = name
+        self.params["perPage"] = perPage
         return self._get(params=self.params)
 
     def description(self, description: str, perPage: int = None) -> requests:
-        self.params['description'] = description
-        self.params['perPage'] = perPage
+        self.params["description"] = description
+        self.params["perPage"] = perPage
         return self._get(params=self.params)
 
     def mediainfo(self, mediainfo: str, perPage: int = None) -> requests:
-        self.params['mediainfo'] = mediainfo
-        self.params['perPage'] = perPage
+        self.params["mediainfo"] = mediainfo
+        self.params["perPage"] = perPage
         return self._get(params=self.params)
 
     def bdinfo(self, bdinfo: str, perPage: int = None) -> requests:
-        self.params['bdinfo'] = bdinfo
-        self.params['perPage'] = perPage
+        self.params["bdinfo"] = bdinfo
+        self.params["perPage"] = perPage
         return self._get(params=self.params)
 
     def start_year(self, start_year: str, perPage: int = None) -> requests:
-        self.params['startYear'] = start_year
-        self.params['perPage'] = perPage
+        self.params["startYear"] = start_year
+        self.params["perPage"] = perPage
         return self._get(params=self.params)
 
     def end_year(self, end_year: str, perPage: int = None) -> requests:
-        self.params['endYear'] = end_year
-        self.params['perPage'] = perPage
+        self.params["endYear"] = end_year
+        self.params["perPage"] = perPage
         return self._get(params=self.params)
 
     def uploader(self, uploader: str, perPage: int = None) -> requests:
-        self.params['uploader'] = uploader
-        self.params['perPage'] = perPage
+        self.params["uploader"] = uploader
+        self.params["perPage"] = perPage
         return self._get(params=self.params)
 
     def alive(self, alive: bool, perPage: int = None) -> requests:
-        self.params['alive'] = alive
-        self.params['perPage'] = perPage
+        self.params["alive"] = alive
+        self.params["perPage"] = perPage
         return self._get(params=self.params)
 
     def dying(self, dying: bool, perPage: int = None) -> requests:
-        self.params['dying'] = dying
-        self.params['perPage'] = perPage
+        self.params["dying"] = dying
+        self.params["perPage"] = perPage
         return self._get(params=self.params)
 
     def dead(self, dead: bool, perPage: int = None) -> requests:
-        self.params['dead'] = dead
-        self.params['perPage'] = perPage
+        self.params["dead"] = dead
+        self.params["perPage"] = perPage
         return self._get(params=self.params)
 
     def file_name(self, file_name: str, perPage: int = None) -> requests:
-        self.params['file_name'] = file_name
-        self.params['perPage'] = perPage
+        self.params["file_name"] = file_name
+        self.params["perPage"] = perPage
         return self._get(params=self.params)
 
     def seasonNumber(self, seasonNumber: int, perPage: int = None) -> requests:
-        self.params['seasonNumber'] = seasonNumber
-        self.params['perPage'] = perPage
+        self.params["seasonNumber"] = seasonNumber
+        self.params["perPage"] = perPage
         return self._get(params=self.params)
 
     def episodeNumber(self, episodeNumber: int, perPage: int = None) -> requests:
-        self.params['episodeNumber'] = episodeNumber
-        self.params['perPage'] = perPage
+        self.params["episodeNumber"] = episodeNumber
+        self.params["perPage"] = perPage
         return self._get(params=self.params)
 
     def types(self, type_id: str, perPage: int = None) -> requests:
-        self.params['types[]'] = type_id
-        self.params['perPage'] = perPage
+        self.params["types[]"] = type_id
+        self.params["perPage"] = perPage
         return self._get(params=self.params)
 
     def resolution(self, res_id: str, perPage: int = None) -> requests:
-        self.params['resolutions[]'] = res_id
-        self.params['perPage'] = perPage
+        self.params["resolutions[]"] = res_id
+        self.params["perPage"] = perPage
         return self._get(params=self.params)
 
     def doubleup(self, double_up: bool, perPage: int = None) -> requests:
-        self.params['doubleup'] = double_up
-        self.params['perPage'] = perPage
+        self.params["doubleup"] = double_up
+        self.params["perPage"] = perPage
         return self._get(params=self.params)
 
     def featured(self, featured: bool, perPage: int = None) -> requests:
-        self.params['featured'] = featured
-        self.params['perPage'] = perPage
+        self.params["featured"] = featured
+        self.params["perPage"] = perPage
         return self._get(params=self.params)
 
     def refundable(self, refundable: bool, perPage: int = None) -> requests:
-        self.params['refundable'] = refundable
-        self.params['perPage'] = perPage
+        self.params["refundable"] = refundable
+        self.params["perPage"] = perPage
         return self._get(params=self.params)
 
     def stream(self, stream: bool, perPage: int = None) -> requests:
-        self.params['stream'] = stream
-        self.params['perPage'] = perPage
+        self.params["stream"] = stream
+        self.params["perPage"] = perPage
         return self._get(params=self.params)
 
     def sd(self, sd: bool, perPage: int = None) -> requests:
-        self.params['sd'] = sd
-        self.params['perPage'] = perPage
+        self.params["sd"] = sd
+        self.params["perPage"] = perPage
         return self._get(params=self.params)
 
     def highspeed(self, high_speed: bool, perPage: int = None) -> requests:
-        self.params['highspeed'] = high_speed
-        self.params['perPage'] = perPage
+        self.params["highspeed"] = high_speed
+        self.params["perPage"] = perPage
         return self._get(params=self.params)
 
     def internal(self, internal: bool, perPage: int = None) -> requests:
-        self.params['internal'] = internal
-        self.params['perPage'] = perPage
+        self.params["internal"] = internal
+        self.params["perPage"] = perPage
         return self._get(params=self.params)
 
     def personal_release(self, personalRelease: bool, perPage: int = None) -> requests:
-        self.params['personalRelease'] = personalRelease
-        self.params['perPage'] = perPage
+        self.params["personalRelease"] = personalRelease
+        self.params["perPage"] = perPage
         return self._get(params=self.params)
 
     def next(self, url: str) -> requests:
@@ -255,7 +269,7 @@ class filterAPI(Tracker):
 
 class Torrents(Tracker):
     def torrents(self, perPage: int = None) -> requests:
-        self.params['perPage'] = perPage
+        self.params["perPage"] = perPage
         return self._fetch_all(params=self.params)
 
     def torrent(self, torrent_id: int) -> requests:
@@ -264,8 +278,8 @@ class Torrents(Tracker):
 
 class Uploader(Tracker):
     def upload_t(self, data: dict, file_name: str) -> requests:
-        with open(f'{file_name}.torrent', 'rb') as torrent:
-            file_torrent = {'torrent': torrent}
+        with open(f"{file_name}.torrent", "rb") as torrent:
+            file_torrent = {"torrent": torrent}
             return self._post(file=file_torrent, data=data, params=self.params)
 
 

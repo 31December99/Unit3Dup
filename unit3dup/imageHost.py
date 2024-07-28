@@ -18,11 +18,11 @@ class ImgBB:
     @property
     def upload(self):
         params = {
-            'key': self.IMGBB_KEY,
+            "key": self.IMGBB_KEY,
         }
 
         files = {
-            'image': (None, self.image),
+            "image": (None, self.image),
         }
 
         upload_n = 0
@@ -30,11 +30,13 @@ class ImgBB:
         response = {}
         while upload_n < 5:
             """
-            Send the image, and if we get 502 error, wait for a while 
+            Send the image, and if we get 502 error, wait for a while
             """
             try:
                 upload_n += 1
-                response = requests.post('https://api.imgbb.com/1/upload', params=params, files=files)
+                response = requests.post(
+                    "https://api.imgbb.com/1/upload", params=params, files=files
+                )
                 response.raise_for_status()
                 return response.json()
             except requests.exceptions.HTTPError as e:
