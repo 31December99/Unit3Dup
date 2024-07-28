@@ -5,7 +5,7 @@ import os
 class Contents:
 
     def __init__(self, file_name: str, folder: str, name: str, size: int, metainfo: json, category: int,
-                 tracker_name: str, torrent_pack: bool):
+                 tracker_name: str, torrent_pack: bool, torrent_name: str, torrent_path: str):
         self.file_name = file_name
         self.name = name
         self.folder = folder
@@ -14,11 +14,13 @@ class Contents:
         self.category = category
         self.tracker_name = tracker_name
         self.torrent_pack = torrent_pack
+        self.torrent_name = torrent_name
+        self.torrent_path = torrent_path
 
     @classmethod
     def create_instance(cls, file_name: str, folder: str, name: str, size: int, metainfo: json, category: int,
-                        tracker_name: str, torrent_pack: bool):
-        return cls(file_name, folder, name, size, metainfo, category, tracker_name, torrent_pack)
+                        tracker_name: str, torrent_pack: bool, torrent_name: str, torrent_path: str):
+        return cls(file_name, folder, name, size, metainfo, category, tracker_name, torrent_pack, torrent_name, torrent_path)
 
 
 class File:
@@ -27,14 +29,15 @@ class File:
     file_name, folder, media_type
     """
 
-    def __init__(self, file_name: str, folder: str, media_type: str):
+    def __init__(self, file_name: str, folder: str, media_type: str, torrent_name: str):
         self.torrent_path = os.path.join(folder, file_name)
         self.folder = folder
         self.media_type = media_type
+        self.torrent_name = torrent_name
 
     @classmethod
-    def create(cls, file_name: str, folder: str, media_type: str):
-        return cls(file_name, folder, media_type)
+    def create(cls, file_name: str, folder: str, media_type: str, torrent_name: str):
+        return cls(file_name, folder, media_type, torrent_name)
 
 
 class Folder:
@@ -43,11 +46,12 @@ class Folder:
     folder, subfolder, media_type
     """
 
-    def __init__(self, folder: str, subfolder: str, media_type: str):
+    def __init__(self, folder: str, subfolder: str, media_type: str, torrent_name: str):
         self.torrent_path = os.path.join(folder, subfolder)
         self.subfolder = subfolder
         self.media_type = media_type
+        self.torrent_name = torrent_name
 
     @classmethod
-    def create(cls, folder: str, subfolder: str, media_type: str):
-        return cls(folder, subfolder, media_type)
+    def create(cls, folder: str, subfolder: str, media_type: str, torrent_name: str):
+        return cls(folder, subfolder, media_type, torrent_name)
