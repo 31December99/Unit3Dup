@@ -65,7 +65,9 @@ def main():
             tracker_response = unit3d_up.send(tv_show=tv_show_result, video=video_info)
 
             """ Qbittorrent """
-            Qbitt(tracker_data_response=tracker_response, torrent=my_torrent, contents=content)
+            if tracker_response:
+                Qbitt(tracker_data_response=tracker_response, torrent=my_torrent, contents=content)
+
 
     """ COMMANDS LIST: commands not necessary for the upload but may be useful """
 
