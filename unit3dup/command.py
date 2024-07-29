@@ -97,9 +97,7 @@ class CommandLine:
             sys.exit()
 
         if not os.path.exists(f"service.env"):
-            console.log(
-                f"Configuration file 'service.env' not found"
-            )
+            console.log(f"Configuration file 'service.env' not found")
             sys.exit()
 
         if not os.path.exists(f"{self.args.tracker}.json"):
@@ -144,4 +142,3 @@ if cli.args.scan:
     imghost_err = ping.process_imghost()
     if not (tmdb_err and qbit_err and imghost_err and track_err):
         exit(1)
-

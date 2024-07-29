@@ -38,12 +38,14 @@ class ImgBB:
                 return response.json()
             except requests.exceptions.HTTPError as e:
                 try:
-                    message = json.loads(e.response.content.decode('utf8'))
-                    if message['status_code'] == 400:
+                    message = json.loads(e.response.content.decode("utf8"))
+                    if message["status_code"] == 400:
                         print(f"[Error IMGBB] '{message['error']['message']}'")
                         break
                     else:
-                        print(f"[Report IMGBB try n° {upload_n}]-> {message['error']['message']}")
+                        print(
+                            f"[Report IMGBB try n° {upload_n}]-> {message['error']['message']}"
+                        )
                 except json.decoder.JSONDecodeError:
                     print(f"HTTPError received: {e}")
             except json.decoder.JSONDecodeError as e:
