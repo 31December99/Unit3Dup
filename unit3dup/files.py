@@ -15,7 +15,7 @@ class Files:
     Identify the files (movies) and folders (series) regardless
     """
 
-    def __init__(self, path: str, tracker: str, media_type: int, torrent_name: str):
+    def __init__(self, path: str, tracker: str, media_type: int):
         self.display_name = None
         self.meta_info_list: list = []
         self.meta_info = None
@@ -27,7 +27,6 @@ class Files:
 
         self.category: int = media_type
         self.tracker: str = tracker
-        self.torrent_name: str = torrent_name
         self.path: str = path
         self.movies: list = []
         self.series: list = []
@@ -59,7 +58,6 @@ class Files:
                 category=self.category,
                 tracker_name=self.tracker,
                 torrent_pack=torrent_pack,
-                torrent_name=self.torrent_name,
                 torrent_path=self.torrent_path,
                 display_name=self.display_name,
             )
@@ -92,8 +90,8 @@ class Files:
         self.folder = self.path
         self.display_name, ext = os.path.splitext(self.file_name)
         self.display_name = Manage_titles.clean(self.display_name)
-        self.name = self.file_name
-        self.torrent_path = os.path.join(self.folder, self.file_name)
+        self.torrent_path = self.folder
+        self.name = os.path.basename(self.folder)
         self.meta_info_list = []
 
         total_size = 0
