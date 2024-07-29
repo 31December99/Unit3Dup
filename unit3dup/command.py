@@ -96,6 +96,12 @@ class CommandLine:
             )
             sys.exit()
 
+        if not os.path.exists(f"service.env"):
+            console.log(
+                f"Configuration file 'service.env' not found"
+            )
+            sys.exit()
+
         if not os.path.exists(f"{self.args.tracker}.json"):
             console.log(
                 f"Configuration file '{self.args.tracker}.json' not found for tracker '{self.args.tracker}'"
