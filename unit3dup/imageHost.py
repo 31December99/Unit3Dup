@@ -45,7 +45,7 @@ class ImgBB:
                     else:
                         print(f"[Report IMGBB try n° {upload_n}]-> {message['error']['message']}")
                 except json.decoder.JSONDecodeError:
-                    print(f"HTTPError received: {e.response.content.decode('utf8')}")
+                    print(f"HTTPError received: {e}")
             except json.decoder.JSONDecodeError as e:
                 print(f"JSONDecodeError: {e}")
                 break
