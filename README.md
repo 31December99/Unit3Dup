@@ -51,7 +51,7 @@ download/
 ├── movie2/             -> create a torrent
 │   └── movie2.mkv
 ├── S04E12.mkv          -> create a torrent
-├── series1 S01/        -> create a torrent
+├── series1 S01/        -> create a torrent (pack)
 │   ├── S01E01.mkv
 │   └── S01E02.mkv
 ├── series2 S01E02/     -> create a torrent
