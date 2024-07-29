@@ -12,7 +12,7 @@ console = Console(log_path=False)
 
 class Auto:
 
-    def __init__(self, path: str, mode='auto'):
+    def __init__(self, path: str, mode="auto"):
         self.series = None
         self.movies = None
         self.path = path
@@ -55,8 +55,7 @@ class Auto:
         return self._lists(movies_path=movies_path, series_path=series_path)
 
     def _lists(self, movies_path: list, series_path: list):
-
-        """ Create a list of media object """
+        """Create a list of media object"""
         movies = [
             result
             for file in movies_path
@@ -124,4 +123,4 @@ class Auto:
         It stops at one subfolder and ignores any subfolders within that subfolder
         depth < 1
         """
-        return path[len(self.path):].count(os.sep)
+        return path[len(self.path) :].count(os.sep)

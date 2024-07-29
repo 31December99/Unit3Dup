@@ -23,7 +23,7 @@ def main():
     if cli.args.upload:
         # New instance with cli.path
         # you can choose single subfolder
-        manual = Auto(path=cli.args.upload, mode='man')
+        manual = Auto(path=cli.args.upload, mode="man")
 
         # Walk through the path
         series, movies = manual.upload()
@@ -45,13 +45,14 @@ def main():
                   - torrent name (filename or folder name)
                   - tracker name ( TODO: load config at start)
                   - content category ( movie or serie)
-                  - torrent meta_info 
+                  - torrent meta_info
             """
 
-            video_files = Files(path=item.torrent_path,
-                                tracker=cli.args.tracker,
-                                media_type=item.media_type,
-                                )
+            video_files = Files(
+                path=item.torrent_path,
+                tracker=cli.args.tracker,
+                media_type=item.media_type,
+            )
             content = video_files.get_data()
             if content is False:
                 # skip invalid folder or file
@@ -80,7 +81,11 @@ def main():
 
             """ Qbittorrent """
             if tracker_response:
-                Qbitt(tracker_data_response=tracker_response, torrent=my_torrent, contents=content)
+                Qbitt(
+                    tracker_data_response=tracker_response,
+                    torrent=my_torrent,
+                    contents=content,
+                )
 
     """ COMMANDS LIST: commands not necessary for the upload but may be useful """
 
