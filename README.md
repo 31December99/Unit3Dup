@@ -5,8 +5,11 @@ Unit3D platform uploader (Python 3.10)
 
 The program is functional but still in an early stage, undergoing constant modifications.
 
-This Python script generates and uploads torrents based on input provided for movies or TV series. It performs the following tasks:
+This Python script generates and uploads torrents based on input provided for movies or TV series.
 
+It performs the following tasks:
+
+- Scan subfolders
 - Compiles various metadata information to create a torrent.
 - Extracts a series of screenshots directly from the video.
 - Generates meta-info derived from the video.
@@ -21,27 +24,28 @@ ___
 - `python3 start.py -check  -> to verify configuration files`
 
 #### Series 
-- `python3 start.py -u "/home/uploader/myvideos/series1"  -> use only folder for series`
+- `python3 start.py -u "/home/uploader/myvideos/series1"
 
 #### Movies
 - `python3 start.py -u "/home/uploader/myvideos/TheMatrix.1080p.WEB-DL.H.264.mkv"`
 
-#### Auto mode
-This command allows you to scan for movies and series and automatically upload and seed them.
 
-In Manual Mode (-u), you can:
+#### In Manual Mode (-u):
+This command allows you to create and upload torrent for movies and series
+and automatically upload and seed them.
 
     Create a torrent for a single subfolder (series or movie).
     Create a torrent for a single movie or episode.
 
-In Auto Mode (-scan), you can:
+#### Auto mode
+This command allows you to scan for movies and series and automatically upload and seed them.
+
+In Auto Mode (-scan):
 
     Create a torrent for each subfolder regardless of whether the subfolder
     contains a series or a movie.
     Create a torrent for a single episode.
     Create a torrent for one or more movies at once.
-
-
 
 - `python3 start.py -scan /home/uploader/download`
 
