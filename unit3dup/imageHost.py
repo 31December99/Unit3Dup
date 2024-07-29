@@ -2,8 +2,6 @@
 import base64
 import json
 import sys
-import time
-
 import requests
 from rich.console import Console
 
@@ -27,8 +25,6 @@ class ImgBB:
         }
 
         upload_n = 0
-        error = {}
-        response = {}
         while upload_n < 5:
             """
             Send the image, and if we get 502 error, wait for a while
@@ -42,7 +38,6 @@ class ImgBB:
                 return response.json()
             except requests.exceptions.HTTPError as e:
                 try:
-                    # Prova a decodificare il contenuto della risposta
                     message = json.loads(e.response.content.decode('utf8'))
                     if message['status_code'] == 400:
                         print(f"[Error IMGBB] '{message['error']['message']}'")
@@ -53,7 +48,6 @@ class ImgBB:
                     print(f"HTTPError received: {e.response.content.decode('utf8')}")
             except json.decoder.JSONDecodeError as e:
                 print(f"JSONDecodeError: {e}")
-                print(f"Response content: {response.content}")
                 break
 
         console.log("Unable to upload image, try Renew your API KEY")
