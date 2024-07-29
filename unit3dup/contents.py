@@ -14,7 +14,6 @@ class Contents:
         category: int,
         tracker_name: str,
         torrent_pack: bool,
-        torrent_name: str,
         torrent_path: str,
         display_name: str,
     ):
@@ -26,7 +25,6 @@ class Contents:
         self.category = category
         self.tracker_name = tracker_name
         self.torrent_pack = torrent_pack
-        self.torrent_name = torrent_name
         self.torrent_path = torrent_path
         self.display_name = display_name
 
@@ -41,7 +39,6 @@ class Contents:
         category: int,
         tracker_name: str,
         torrent_pack: bool,
-        torrent_name: str,
         torrent_path: str,
         display_name: str,
     ):
@@ -54,7 +51,6 @@ class Contents:
             category,
             tracker_name,
             torrent_pack,
-            torrent_name,
             torrent_path,
             display_name,
         )
