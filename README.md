@@ -27,27 +27,36 @@ ___
 - `python3 start.py -u "/home/uploader/myvideos/TheMatrix.1080p.WEB-DL.H.264.mkv"`
 
 #### Auto mode
-This command allows you to scan for movies and series, and automatically upload and seed them.
+This command allows you to scan for movies and series and automatically upload and seed them.
 
-Within your download folder, each movie should not have any subfolder,
-whereas series should have a subfolder.
-Any video file without a subfolder and using the SxEx notation
-will not be considered.
+In Manual Mode (-u), you can:
+
+    Create a torrent for a single subfolder (series or movie).
+    Create a torrent for a single movie or episode.
+
+In Auto Mode (-scan), you can:
+
+    Create a torrent for each subfolder regardless of whether the subfolder
+    contains a series or a movie.
+    Create a torrent for a single episode.
+    Create a torrent for one or more movies at once.
+
+
 
 - `python3 start.py -scan /home/uploader/download`
 
 ```
 download/
-├── movie1.mkv
-├── movie2.mkv
-├── S04E12.mkv - *excluded*
-├── series1 S01/
-│ ├── S01E01.mkv
-│ ├── S01E02.mkv
-├── series2 S01E02/
-│ ├── S01E02.mkv 
+├── movie1.mkv          -> create a torrent
+├── movie2/             -> create a torrent
+│   └── movie2.mkv
+├── S04E12.mkv          -> create a torrent
+├── series1 S01/        -> create a torrent
+│   ├── S01E01.mkv
+│   └── S01E02.mkv
+├── series2 S01E02/     -> create a torrent
+│   └── S01E02.mkv 
 ```
-In this example Unit3d-up will create two torrent (movie1,movie2) and two series torrents (series1,series2)
 
 #### Tracker (default itt)
 - `python3 start.py -t mytracker -u /home/uploader/myvideos`
@@ -55,8 +64,8 @@ In this example Unit3d-up will create two torrent (movie1,movie2) and two series
 #### Searching (default itt)
 
     python3 start.py -s [title] (search by title)
-    python3 start.py -i [title] (get info_hash and MediaInfo Unique ID)
     python3 start.py -up [username] (search by uploader's username)
+    python3 start.py -i [title] (get info_hash and MediaInfo Unique ID)    
     python3 start.py -m [mediainfo_ID] (search by MediaInfo ID)
     python3 start.py -bdinfo [keyword] (search by bdinfo)
     python3 start.py -desc [keyword in description] (search by description)    
