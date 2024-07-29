@@ -16,14 +16,27 @@ console = Console(log_path=False)
 
 
 def main():
+    series = []
+    movies = []
+
+    """ Manual  """
+    if cli.args.upload:
+        # New instance with cli.path
+        # you can choose single subfolder
+        manual = Auto(path=cli.args.upload, mode='man')
+
+        # Walk through the path
+        series, movies = manual.upload()
+
     """ Auto Mode """
     if cli.args.scan:
         # New instance with cli.path
-        auto = Auto(cli.args.scan)
+        auto = Auto(path=cli.args.scan)
 
         # Walk through the path
         series, movies = auto.scan()
 
+    if series or movies:
         # For each item
         for item in series + movies:
             """
