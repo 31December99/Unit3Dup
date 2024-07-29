@@ -2,7 +2,6 @@
 import json
 import os
 import time
-import sys
 import torf
 from decouple import Config, RepositoryEnv
 from tqdm import tqdm
@@ -50,13 +49,13 @@ class Mytorrent:
         end = time.time()
         console.log(f"Hashed in {end - start} s\n")
 
-    def write(self):
+    def write(self) -> bool:
         try:
             self.mytorr.write(f"{self.torrent_path}.torrent")
+            return True
         except torf.TorfError as e:
-            print(e)
-            sys.exit()
-        return self.mytorr
+            console.log(e)
+            return False
 
     @property
     def comment(self):
