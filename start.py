@@ -38,7 +38,6 @@ def main():
             video_files = Files(path=item.torrent_path,
                                 tracker=cli.args.tracker,
                                 media_type=item.media_type,
-                                torrent_name=item.torrent_name
                                 )
             content = video_files.get_data()
             if content is False:
@@ -56,7 +55,9 @@ def main():
 
             """ Hashing """
             my_torrent = Mytorrent(contents=content, meta=content.metainfo)
-            my_torrent.write()
+            if not my_torrent.write():
+                # Skip if the file already exist
+                continue
 
             """ the bot is getting ready to send the payload """
             unit3d_up = UploadBot(content)
@@ -67,7 +68,6 @@ def main():
             """ Qbittorrent """
             if tracker_response:
                 Qbitt(tracker_data_response=tracker_response, torrent=my_torrent, contents=content)
-
 
     """ COMMANDS LIST: commands not necessary for the upload but may be useful """
 
