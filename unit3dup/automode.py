@@ -12,13 +12,23 @@ console = Console(log_path=False)
 
 class Auto:
 
-    def __init__(self, path: str):
+    def __init__(self, path: str, mode='auto'):
         self.series = None
         self.movies = None
         self.path = path
         self.movie_category = config_tracker.tracker_values.category("movie")
         self.serie_category = config_tracker.tracker_values.category("tvshow")
         self.is_dir = os.path.isdir(self.path)
+        self.auto = mode
+
+    def upload(self):
+
+        if self.is_dir:
+            series_path = [self.path]
+            return self._lists(movies_path=[], series_path=series_path)
+        else:
+            movies_path = [self.path]
+            return self._lists(movies_path=movies_path, series_path=[])
 
     def scan(self):
         movies_path = []
@@ -27,7 +37,7 @@ class Auto:
         # when you use scan with file...
         # Path includes a filename. Os.walk requires a folder
         if not self.is_dir:
-            movies_path = [self.path]
+            console.log("Scan is only for folders..")
         else:
             for path, sub_dirs, files in os.walk(self.path):
                 if path == self.path:
@@ -42,8 +52,12 @@ class Auto:
                         series_path = [
                             os.path.join(self.path, subdir) for subdir in sub_dirs
                         ]
+        return self._lists(movies_path=movies_path, series_path=series_path)
 
-        self.movies = [
+    def _lists(self, movies_path: list, series_path: list):
+
+        """ Create a list of media object """
+        movies = [
             result
             for file in movies_path
             if (result := self.create_movies_path(file)) is not None
@@ -51,12 +65,12 @@ class Auto:
 
         # None in the series means a folder without a Sx tag
         # Walrus Operator
-        self.series = [
+        series = [
             result
             for subdir in series_path
             if (result := self.create_folder_path(subdir)) is not None
         ]
-        return self.series, self.movies
+        return series, movies
 
     def create_movies_path(self, file: str) -> File | None:
         """
