@@ -68,15 +68,3 @@ class TrackerConfig(Filter):
         for word in word_list:
             if word in self.__config["RESOLUTION"]:
                 return int(self.__config["RESOLUTION"][word])
-
-    def get_freelech(self, size: int) -> int:
-        if size >= 20:
-            return self.__config["FREELECH"]["size20"]
-        elif size >= 15:
-            return self.__config["FREELECH"]["size15"]
-        elif size >= 10:
-            return self.__config["FREELECH"]["size10"]
-        elif size >= 5:
-            return self.__config["FREELECH"]["size5"]
-        else:
-            return 0
