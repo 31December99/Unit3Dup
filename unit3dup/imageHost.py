@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import base64
+import json
 import sys
 import time
 
@@ -40,9 +41,20 @@ class ImgBB:
                 response.raise_for_status()
                 return response.json()
             except requests.exceptions.HTTPError as e:
-                console.log(f"[Report IMGBB try n° {upload_n}] Screenshot {e}")
-                time.sleep(2)
+                try:
+                    # Prova a decodificare il contenuto della risposta
+                    message = json.loads(e.response.content.decode('utf8'))
+                    if message['status_code'] == 400:
+                        print(f"[Error IMGBB] '{message['error']['message']}'")
+                        break
+                    else:
+                        print(f"[Report IMGBB try n° {upload_n}]-> {message['error']['message']}")
+                except json.decoder.JSONDecodeError:
+                    print(f"HTTPError received: {e.response.content.decode('utf8')}")
+            except json.decoder.JSONDecodeError as e:
+                print(f"JSONDecodeError: {e}")
+                print(f"Response content: {response.content}")
+                break
 
         console.log("Unable to upload image, try Renew your API KEY")
-        console.log(f"Error: {error}")
         sys.exit()
