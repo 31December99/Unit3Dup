@@ -114,7 +114,7 @@ class CommandLine:
             if sys.version_info[0] < 3:
                 raise Exception("At lest python 3.10 is required to run")
 
-            if sys.version_info[1] < 11:
+            if sys.version_info[1] < 10:
                 raise Exception("At lest python 3.10 is required to run")
         except Exception as e:
             console.log(e)
