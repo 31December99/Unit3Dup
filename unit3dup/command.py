@@ -7,6 +7,7 @@ from unit3dup.ping import Ping
 from rich.console import Console
 
 import argparse
+import sys
 
 console = Console(log_path=False)
 
@@ -108,6 +109,16 @@ class CommandLine:
 
     @staticmethod
     def config_load(tracker_env_name: str) -> ConfigUnit3D:
+
+        try :
+            if sys.version_info[0] < 3:
+                raise Exception("At lest python 3.10 is required to run")
+
+            if sys.version_info[1] < 11:
+                raise Exception("At lest python 3.10 is required to run")
+        except Exception as e:
+            console.log(e)
+            exit(1)
         try:
             config_unit3d = ConfigUnit3D.validate(
                 tracker_name=tracker_env_name, service_env_name="service.env"
