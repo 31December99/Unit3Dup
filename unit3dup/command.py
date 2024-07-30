@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 import os
-import sys
-
 from unit3dup.config import ConfigUnit3D
 from unit3dup.ping import Ping
 from rich.console import Console
@@ -145,7 +143,6 @@ console.rule("\nChecking configuration files")
 
 # always ping the tracker
 track_err = ping.process_tracker()
-
 # Ping only if scanning is selected
 if cli.args.scan:
     qbit_err = ping.process_qbit()
