@@ -3,19 +3,11 @@ import json
 import os
 import time
 import torf
-from decouple import Config, RepositoryEnv
 from tqdm import tqdm
 from unit3dup.contents import Contents
 from rich.console import Console
 
-
-config_load = Config(RepositoryEnv("service.env"))
 console = Console(log_path=False)
-
-QBIT_USER = config_load("QBIT_USER")
-QBIT_PASS = config_load("QBIT_PASS")
-QBIT_URL = config_load("QBIT_URL")
-QBIT_PORT = config_load("QBIT_PORT")
 
 
 class HashProgressBar(tqdm):
