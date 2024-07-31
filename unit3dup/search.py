@@ -9,10 +9,14 @@ console = Console(log_path=False)
 
 class TvShow:
 
-    def __init__(self, videotype: str):
+    def __init__(self, category: int):
         super().__init__()
         self.titles = None
-        self.mytmdb = tmdb.MyTmdb(videotype)
+        show = {
+            1: "Movie",
+            2: "Serie",
+        }
+        self.mytmdb = tmdb.MyTmdb(show[category])
 
     def start(self, file_name: str):
         guess_filename = title.Guessit(file_name)
@@ -22,7 +26,7 @@ class TvShow:
 
         # Se non ci sono risultati prima di richiedere all'utente provo ad unire il  main title con l'alternative title
         if not result:
-            new_title = ' '.join([_title, _alternate_title])
+            new_title = " ".join([_title, _alternate_title])
             result = self.mytmdb.search(new_title)
             if not result:
                 result = self.mytmdb.input_tmdb()

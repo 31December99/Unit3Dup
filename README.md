@@ -1,12 +1,15 @@
 ## Unit3D_uploader
-Unit3D platform uploader
+Unit3D platform uploader (Python 3.10)
 
 ## Torrent Generator and Uploader
 
 The program is functional but still in an early stage, undergoing constant modifications.
 
-This Python script generates and uploads torrents based on input provided for movies or TV series. It performs the following tasks:
+This Python script generates and uploads torrents based on input provided for movies or TV series.
 
+It performs the following tasks:
+
+- Scan subfolders
 - Compiles various metadata information to create a torrent.
 - Extracts a series of screenshots directly from the video.
 - Generates meta-info derived from the video.
@@ -21,33 +24,42 @@ ___
 - `python3 start.py -check  -> to verify configuration files`
 
 #### Series 
-- `python3 start.py -u "/home/uploader/myvideos/series1"  -> use only folder for series`
+- `python3 start.py -u "/home/uploader/myvideos/series1"
 
 #### Movies
 - `python3 start.py -u "/home/uploader/myvideos/TheMatrix.1080p.WEB-DL.H.264.mkv"`
 
-#### Auto mode
-This command allows you to scan for movies and series, and automatically upload and seed them.
 
-Within your download folder, each movie should not have any subfolder,
-whereas series should have a subfolder.
-Any video file without a subfolder and using the SxEx notation
-will not be considered.
+#### In Manual Mode (-u):
+This command allows you to create and upload torrent for movies and series
+and automatically upload and seed them.
+
+    Create a torrent for a single subfolder (series or movie).
+    Create a torrent for a single movie or episode.
+    Create a torrent file for a collection of files
+
+#### In Auto Mode (-scan):
+This command allows you to scan for movies and series and automatically upload and seed them.
+
+    Create a torrent for each subfolder regardless of whether the subfolder
+    contains a series or a movie.
+    Create a torrent for a single episode.
+    Create a torrent for one or more movies at once.
 
 - `python3 start.py -scan /home/uploader/download`
 
 ```
 download/
-├── movie1.mkv
-├── movie2.mkv
-├── S04E12.mkv - *excluded*
-├── series1 S01/
-│ ├── S01E01.mkv
-│ ├── S01E02.mkv
-├── series2 S01E02/
-│ ├── S01E02.mkv 
+├── movie1.mkv          -> create a torrent
+├── movie2/             -> create a torrent
+│   └── movie2.mkv
+├── S04E12.mkv          -> create a torrent
+├── series1 S01/        -> create a torrent (pack)
+│   ├── S01E01.mkv
+│   └── S01E02.mkv
+├── series2 S01E02/     -> create a torrent
+│   └── S01E02.mkv 
 ```
-In this example Unit3d-up will create two torrent (movie1,movie2) and two series torrents (series1,series2)
 
 #### Tracker (default itt)
 - `python3 start.py -t mytracker -u /home/uploader/myvideos`
@@ -55,8 +67,8 @@ In this example Unit3d-up will create two torrent (movie1,movie2) and two series
 #### Searching (default itt)
 
     python3 start.py -s [title] (search by title)
-    python3 start.py -i [title] (get info_hash and MediaInfo Unique ID)
     python3 start.py -up [username] (search by uploader's username)
+    python3 start.py -i [title] (get info_hash and MediaInfo Unique ID)    
     python3 start.py -m [mediainfo_ID] (search by MediaInfo ID)
     python3 start.py -bdinfo [keyword] (search by bdinfo)
     python3 start.py -desc [keyword in description] (search by description)    
