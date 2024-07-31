@@ -36,6 +36,7 @@ and automatically upload and seed them.
 
     Create a torrent for a single subfolder (series or movie).
     Create a torrent for a single movie or episode.
+    Create a torrent file for a collection of files
 
 #### In Auto Mode (-scan):
 This command allows you to scan for movies and series and automatically upload and seed them.
