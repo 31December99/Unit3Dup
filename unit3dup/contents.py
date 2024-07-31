@@ -1,10 +1,59 @@
 import json
 import os
-import re
-from unit3dup import userinput, title
-from rich.console import Console
 
-console = Console(log_path=False)
+
+class Contents:
+
+    def __init__(
+        self,
+        file_name: str,
+        folder: str,
+        name: str,
+        size: int,
+        metainfo: json,
+        category: int,
+        tracker_name: str,
+        torrent_pack: bool,
+        torrent_path: str,
+        display_name: str,
+    ):
+        self.file_name = file_name
+        self.name = name
+        self.folder = folder
+        self.size = size
+        self.metainfo = metainfo
+        self.category = category
+        self.tracker_name = tracker_name
+        self.torrent_pack = torrent_pack
+        self.torrent_path = torrent_path
+        self.display_name = display_name
+
+    @classmethod
+    def create_instance(
+        cls,
+        file_name: str,
+        folder: str,
+        name: str,
+        size: int,
+        metainfo: json,
+        category: int,
+        tracker_name: str,
+        torrent_pack: bool,
+        torrent_path: str,
+        display_name: str,
+    ):
+        return cls(
+            file_name,
+            folder,
+            name,
+            size,
+            metainfo,
+            category,
+            tracker_name,
+            torrent_pack,
+            torrent_path,
+            display_name,
+        )
 
 
 class File:
@@ -13,14 +62,15 @@ class File:
     file_name, folder, media_type
     """
 
-    def __init__(self, file_name: str, folder: str, media_type: str):
-        self.file_name = os.path.join(folder, file_name)
+    def __init__(self, file_name: str, folder: str, media_type: str, torrent_name: str):
+        self.torrent_path = os.path.join(folder, file_name)
         self.folder = folder
         self.media_type = media_type
+        self.torrent_name = torrent_name
 
     @classmethod
-    def create(cls, file_name: str, folder: str, media_type: str):
-        return cls(file_name, folder, media_type)
+    def create(cls, file_name: str, folder: str, media_type: str, torrent_name: str):
+        return cls(file_name, folder, media_type, torrent_name)
 
 
 class Folder:
@@ -29,185 +79,12 @@ class Folder:
     folder, subfolder, media_type
     """
 
-    def __init__(self, folder: str, subfolder: str, media_type: str):
-        self.folder = os.path.join(folder, subfolder)
+    def __init__(self, folder: str, subfolder: str, media_type: str, torrent_name: str):
+        self.torrent_path = os.path.join(folder, subfolder)
         self.subfolder = subfolder
         self.media_type = media_type
+        self.torrent_name = torrent_name
 
     @classmethod
-    def create(cls, folder: str, subfolder: str, media_type: str):
-        return cls(folder, subfolder, media_type)
-
-
-class Cli:
-    """
-    A class to recognize series from movies and return an object with attributes:
-
-    Attributes:
-        file_name: The name of the torrent file.
-        folder: The name of the folder containing the file.
-        name: The name of the torrent.
-        size: The size of the movie or series.
-        meta_info: A dictionary containing metadata of the files for the torrent.
-        category: A value that reflects the tracker's database, corresponding to movie or series.
-
-    TODO:
-        Remove the hardcoded category value and read it from a JSON configuration file.
-    """
-
-    def __init__(self, path: str, tracker: str = 'itt'):
-        self.path = path
-        self.tracker = tracker
-        self.is_dir = os.path.isdir(self.path)
-        self.meta_info_list = None
-        self.meta_info = None
-        self.size = None
-        self.name = None
-        self.category = None
-        self.folder = None
-        self.file_name = None
-
-    def get_data(self) -> userinput.Contents | bool:
-        """
-        Create an userinput object with movie or series attributes for the torrent.
-        Verify if name is part of torrent pack folder. If there is no episode it's a pack
-        """
-        if not self.is_dir:
-            # Check for valid extension
-            process = self.process_file() if self.filter_ext(self.path) else False
-        else:
-            process = self.process_folder()
-
-        torrent_pack = bool(re.search(r'S\d+(?!.*E\d+)', self.path))
-        console.log(f"\n[TORRENT PACK] {torrent_pack}...  '{self.path}'")
-
-        return userinput.Contents(
-            file_name=self.file_name,
-            folder=self.folder,
-            name=self.name,
-            size=self.size,
-            metainfo=self.meta_info,
-            category=self.category,
-            tracker_name=self.tracker,
-            torrent_pack=torrent_pack
-        ) if process else False
-
-    def process_file(self) -> bool:
-        self.file_name = os.path.basename(self.path)
-        self.folder = os.path.dirname(self.path)
-        self.category = 1
-        self.name, ext = os.path.splitext(self.file_name)
-        self.size = os.path.getsize(self.path)
-        self.meta_info = json.dumps([{'length': self.size, 'path': [self.file_name]}], indent=4)
-        return True
-
-    def process_folder(self) -> bool:
-        files = self.list_video_files()
-        if not files:
-            console.log(f"\n*** '{self.path}' No video files found in the directory - skip ***\n")
-            return False
-
-        self.file_name = files[0]
-        self.folder = self.path
-        self.category = 2
-        self.name, ext = os.path.splitext(self.file_name)
-
-        self.meta_info_list = []
-        total_size = 0
-        for file in files:
-            size = os.path.getsize(os.path.join(self.folder, file))
-            self.meta_info_list.append({'length': size, 'path': [file]})
-            total_size += size
-        self.size = total_size
-        self.meta_info = json.dumps(self.meta_info_list, indent=4)
-        return True
-
-
-    def create_movies_path(self, file: str) -> File | None:
-        """
-        Determines if it is a movie or a series. Excludes any episode files.
-        """
-        file_name, ext = os.path.splitext(file)
-        guess_filename = title.Guessit(file_name)
-        if not guess_filename.guessit_season:
-            return File.create(file_name=file, folder=self.path, media_type='1')
-        else:
-            return None
-
-
-    def create_series_path(self, subdir: str) -> Folder | None:
-        """
-        Determines whether the folder contains an Sx tag
-        """
-        file_name, ext = os.path.splitext(subdir)
-        guess_filename = title.Guessit(file_name)
-        if guess_filename.guessit_season:
-            return Folder.create(folder=self.path, subfolder=subdir, media_type='2')
-        else:
-            return None
-
-    def scan(self) -> [list, list]:
-        """
-        If the provided path does not represent a directory, return an empty list.
-        Create a list of File objects for each movie present.
-        """
-        if not self.is_dir:
-            console.log("Incorrect path! Please provide the path to the folder")
-            return [], []
-
-        return self.walker()
-
-    def filter_ext(self, file: str) -> bool:
-
-        video_ext = [
-            ".mp4", ".mkv", ".avi", ".mov", ".wmv", ".flv", ".webm", ".3gp", ".ogg",
-            ".mpg", ".mpeg", ".m4v", ".rm", ".rmvb", ".vob", ".ts", ".m2ts", ".divx",
-            ".asf", ".swf", ".ogv", ".drc", ".m3u8"
-        ]
-
-        return os.path.splitext(file)[1].lower() in video_ext
-
-    def walker(self) -> [list, list]:
-        """
-         Analyze the path and create a list for movies and a list for series.
-         All files without the SxEx tag inside the path are considered movies.
-         Each folder inside the path is considered a series.
-        """
-
-        movies_path: list = []
-        series_path: list = []
-        # Start analyzing the path
-        for path, subdirs, files in os.walk(self.path):
-            if path == self.path:
-                movies_path = [os.path.join(self.path, file) for file in files if self.filter_ext(file)]
-            if subdirs:
-              # Maximum level of subfolder depth = 1
-                if self.depth_walker(path) < 1:
-                    series_path = [os.path.join(self.path, subdir) for subdir in subdirs]
-
-        movies = [self.create_movies_path(file) for file in movies_path if self.create_movies_path(file) is not None]
-        # None in the series means a folder without an Sx tag
-        series = [self.create_series_path(subdir) for subdir in series_path]
-
-        if None in series:
-            console.log(f"[The subfolder of '{self.path}' does not contains a Season Tag")
-
-        if not movies and not series:
-            console.log(f"[Walker says there's nothing here..] '{self.path}'")
-            console.log("Remember, within the folder of your path, there must be files (movies) or folders (series)."
-                        " Files representing episodes without folders will not be considered")
-        return movies, series
-
-    def depth_walker(self, path) -> int:
-        """
-            It stops at one subfolder and ignores any subfolders within that subfolder
-            depth < 1
-        """
-        return path[len(self.path):].count(os.sep)
-
-    def list_video_files(self) -> list:
-        """
-        Add to the list every file if its extension is in the video_ext.
-        """
-
-        return [file for file in os.listdir(self.path) if self.filter_ext(file)]
+    def create(cls, folder: str, subfolder: str, media_type: str, torrent_name: str):
+        return cls(folder, subfolder, media_type, torrent_name)
