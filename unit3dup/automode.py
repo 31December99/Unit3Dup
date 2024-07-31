@@ -22,12 +22,11 @@ class Auto:
         self.auto = mode
 
     def upload(self):
-
         if self.is_dir:
-            series_path = [self.path]
+            series_path = self.list_video_files(self.path)
             return self._lists(movies_path=[], series_path=series_path)
         else:
-            movies_path = [self.path]
+            movies_path = self.list_video_files(self.path)
             return self._lists(movies_path=movies_path, series_path=[])
 
     def scan(self):
@@ -123,4 +122,13 @@ class Auto:
         It stops at one subfolder and ignores any subfolders within that subfolder
         depth < 1
         """
-        return path[len(self.path) :].count(os.sep)
+        return path[len(self.path):].count(os.sep)
+
+    @staticmethod
+    def list_video_files(manual_path: str) -> list:
+        """
+        Add to the list every file if its extension is in the video_ext.
+        """
+        return [
+            file for file in os.listdir(manual_path) if Manage_titles.filter_ext(file)
+        ]
