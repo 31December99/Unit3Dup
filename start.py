@@ -2,7 +2,6 @@
 
 import os
 from rich.console import Console
-from unit3dup.command import cli
 from unit3dup.files import Files
 from unit3dup.automode import Auto
 from unit3dup.uploader import UploadBot
@@ -11,6 +10,9 @@ from unit3dup.torrent import Torrent
 from unit3dup.pvtVideo import Video
 from unit3dup.qbitt import Qbitt
 from unit3dup.pvtTorrent import Mytorrent
+from unit3dup.command import CommandLine
+from unit3dup import config
+from unit3dup.ping import Ping
 
 console = Console(log_path=False)
 
@@ -23,7 +25,7 @@ def main():
     if cli.args.upload:
         # New instance with cli.path
         # you can choose single subfolder
-        manual = Auto(path=cli.args.upload, mode="man")
+        manual = Auto(path=cli.args.upload, mode="man", tracker_name=cli.args.tracker)
 
         # Walk through the path
         series, movies = manual.upload()
@@ -31,7 +33,7 @@ def main():
     """ Auto Mode """
     if cli.args.scan:
         # New instance with cli.path
-        auto = Auto(path=cli.args.scan)
+        auto = Auto(path=cli.args.scan, tracker_name=cli.args.tracker)
 
         # Walk through the path
         series, movies = auto.scan()
@@ -221,5 +223,22 @@ def main():
 
 
 if __name__ == "__main__":
+
+    cli = CommandLine()
+    config = config.trackers.get_tracker('itt')
+
+    """ Test configuration"""
+    ping = Ping()
+    console.rule("\nChecking configuration files")
+    # always ping the tracker
+    track_err = ping.process_tracker()
+    # Ping only if scanning is selected
+    if cli.args.scan:
+        qbit_err = ping.process_qbit()
+        tmdb_err = ping.process_tmdb()
+        imghost_err = ping.process_imghost()
+        if not (tmdb_err and qbit_err and imghost_err and track_err):
+            exit(1)
+
     main()
     print()
