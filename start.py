@@ -91,7 +91,7 @@ def main():
 
     """ COMMANDS LIST: commands not necessary for the upload but may be useful """
 
-    torrent_info = Torrent(cli.args.tracker)
+    torrent_info = Torrent()
 
     if cli.args.search:
         torrent_info.search(cli.args.search)
