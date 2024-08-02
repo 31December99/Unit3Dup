@@ -4,20 +4,20 @@ import os
 from rich.console import Console
 from unit3dup.contents import File, Folder
 from unit3dup.utility import Manage_titles
-from unit3dup.command import config_tracker
 from unit3dup import title
-
+from unit3dup import config
 console = Console(log_path=False)
 
 
 class Auto:
 
-    def __init__(self, path: str, mode="auto"):
+    def __init__(self, path: str, tracker_name: str, mode="auto"):
         self.series = None
         self.movies = None
         self.path = path
-        self.movie_category = config_tracker.tracker_values.category("movie")
-        self.serie_category = config_tracker.tracker_values.category("tvshow")
+        self.config = config.trackers.get_tracker(tracker_name)
+        self.movie_category = self.config.tracker_values.category('movie')
+        self.serie_category = self.config.tracker_values.category("tvshow")
         self.is_dir = os.path.isdir(self.path)
         self.auto = mode
 
