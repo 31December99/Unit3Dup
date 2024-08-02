@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 import os
-from unit3dup.config import ConfigUnit3D
-from unit3dup.ping import Ping
 from rich.console import Console
 
 import argparse
@@ -104,49 +102,3 @@ class CommandLine:
                 f"Configuration file '{self.args.tracker}.json' not found for tracker '{self.args.tracker}'"
             )
             sys.exit()
-
-    @staticmethod
-    def config_load(tracker_env_name: str) -> ConfigUnit3D:
-
-        try :
-            if sys.version_info[0] < 3:
-                raise Exception("At lest python 3.10 is required to run")
-
-            if sys.version_info[1] < 10:
-                raise Exception("At lest python 3.10 is required to run")
-        except Exception as e:
-            console.log(e)
-            exit(1)
-        try:
-            config_unit3d = ConfigUnit3D.validate(
-                tracker_name=tracker_env_name, service_env_name="service.env"
-            )
-            return config_unit3d
-        except FileNotFoundError as message:
-            console.log(message)
-
-    @staticmethod
-    def welcome_message(message: str):
-        if message:
-            console.rule(f"[bold blue]{message.upper()}", style="#ea00d9")
-
-
-""" Read Command line arguments """
-cli = CommandLine()
-
-""" Load configuration files """
-config_tracker = cli.config_load(tracker_env_name=cli.args.tracker)
-
-""" Test configuration"""
-ping = Ping(config=vars(config_tracker))
-console.rule("\nChecking configuration files")
-
-# always ping the tracker
-track_err = ping.process_tracker()
-# Ping only if scanning is selected
-if cli.args.scan:
-    qbit_err = ping.process_qbit()
-    tmdb_err = ping.process_tmdb()
-    imghost_err = ping.process_imghost()
-    if not (tmdb_err and qbit_err and imghost_err and track_err):
-        exit(1)
