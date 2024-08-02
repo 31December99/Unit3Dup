@@ -7,7 +7,7 @@ from rich.console import Console
 from qbittorrent import Client
 from unit3dup.pvtTorrent import Mytorrent
 from unit3dup.contents import Contents
-from unit3dup.command import config_tracker
+from unit3dup import config
 
 console = Console(log_path=False)
 
@@ -17,22 +17,18 @@ class Qbitt:
     def __init__(
         self, tracker_data_response: str, torrent: Mytorrent, contents: Contents
     ):
-
-        self.qbit_user = config_tracker.instance.qbit_user
-        self.qbit_pass = config_tracker.instance.qbit_pass
-        self.qbit_url = config_tracker.instance.qbit_url
-        self.qbit_port = config_tracker.instance.qbit_port
         self.torrent = torrent
         self.torrent_path = contents.torrent_path
         self.torrent_file = None
         self.torrents = None
 
-        self.qb = Client(f"{self.qbit_url}:{self.qbit_port}/")
+        # c'e ancora da fare service
+        self.qb = Client(f"{config.QBIT_URL}:{config.QBIT_PORT}/")
         download_torrent_dal_tracker = requests.get(tracker_data_response)
 
         if download_torrent_dal_tracker.status_code == 200:
             self.torrent_file = self.download(download_torrent_dal_tracker)
-            self.qb.login(username=self.qbit_user, password=self.qbit_pass)
+            self.qb.login(username=config.QBIT_USER, password=config.QBIT_PASS)
             self.qb.download_from_file(
                 file_buffer=self.torrent_file, savepath=self.torrent.mytorr.location
             )
