@@ -1,19 +1,16 @@
 # -*- coding: utf-8 -*-
 import sys
-
 import tmdbv3api.exceptions
 from unidecode import unidecode
 from tmdbv3api import TMDb, Movie, TV
+from rich.console import Console
 from thefuzz import fuzz
+
 from unit3dup.results import Results
 from unit3dup.utility import Manage_titles
-from decouple import Config, RepositoryEnv
-from rich.console import Console
+from unit3dup import config
 
-config_load = Config(RepositoryEnv("service.env"))
-TMDB_APIKEY = config_load("TMDB_APIKEY")
 console = Console(log_path=False)
-
 
 class MyTmdb:
 
@@ -25,7 +22,7 @@ class MyTmdb:
         self.tmdb = None
         self._tmdb = TMDb()
         self._tmdb.language = "it-EN"
-        self._tmdb.api_key = TMDB_APIKEY
+        self._tmdb.api_key = config.TMDB_APIKEY
         self.__mv_tmdb = Movie()
         self.__tv_tmdb = TV()
         self.__result = None
