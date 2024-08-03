@@ -14,12 +14,12 @@ def main():
     """ Manual Mode """
     if cli.args.upload:
         media_video = MediaVideo(path=cli.args.upload, tracker=cli.args.tracker)
-        media_video.process(mode='man')
+        media_video.process()
 
     """ Auto Mode """
     if cli.args.scan:
         media_video = MediaVideo(path=cli.args.scan, tracker=cli.args.tracker)
-        media_video.process()
+        media_video.process(mode='auto')
 
     """ COMMANDS LIST: commands not necessary for the upload but may be useful """
 
