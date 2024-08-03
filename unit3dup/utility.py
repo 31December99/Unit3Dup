@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
+from pdf2image import convert_from_path
 
 
 class Manage_titles:
@@ -138,7 +139,13 @@ class Manage_titles:
         return os.path.splitext(file)[1].lower() in video_ext
 
     @staticmethod
-    def media_type(file_name: str) -> str:
+    def media_docu_type(file_name: str) -> str:
+        # print(f"****** [media_type] {file_name}  ********")
         ext = os.path.splitext(file_name)[1].lower()
         type_ = {'.pdf': 'e-book'}
         return type_.get(ext, None)
+
+    @staticmethod
+    def get_cover(file_name: str):
+        pages = convert_from_path(file_name, first_page=1, last_page=1)
+        pages[0].save(f'{file_name}.png', 'PNG')
