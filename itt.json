@@ -1,7 +1,8 @@
 {
   "CATEGORY": {
     "movie": 1,
-    "tvshow": 2
+    "tvshow": 2,
+    "e-book": 6
   },
   "FREELECH": {
     "size20": 100,
