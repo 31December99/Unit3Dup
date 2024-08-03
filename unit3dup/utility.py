@@ -132,14 +132,13 @@ class Manage_titles:
             ".ogv",
             ".drc",
             ".m3u8",
+            ".pdf"
         ]
 
         return os.path.splitext(file)[1].lower() in video_ext
 
     @staticmethod
-    def filter_doc(file: str) -> bool:
-        doc_ext = [
-            ".pdf"
-        ]
-
-        return os.path.splitext(file)[1].lower() in doc_ext
+    def media_type(file_name: str) -> str:
+        ext = os.path.splitext(file_name)[1].lower()
+        type_ = {'.pdf': 'e-book'}
+        return type_.get(ext, None)
