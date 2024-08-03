@@ -26,7 +26,7 @@ def main():
         manual = Auto(path=cli.args.upload, mode="man", tracker_name=cli.args.tracker)
 
         # Walk through the path
-        series, movies = manual.upload()
+        files = manual.upload()
 
     """ Auto Mode """
     if cli.args.scan:
