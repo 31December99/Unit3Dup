@@ -16,6 +16,7 @@ class Contents:
         torrent_pack: bool,
         torrent_path: str,
         display_name: str,
+        doc_description: str,
     ):
         self.file_name = file_name
         self.name = name
@@ -27,6 +28,7 @@ class Contents:
         self.torrent_pack = torrent_pack
         self.torrent_path = torrent_path
         self.display_name = display_name
+        self.doc_description = doc_description
 
     @classmethod
     def create_instance(
@@ -41,6 +43,7 @@ class Contents:
         torrent_pack: bool,
         torrent_path: str,
         display_name: str,
+        doc_description: str,
     ):
         return cls(
             file_name,
@@ -53,6 +56,7 @@ class Contents:
             torrent_pack,
             torrent_path,
             display_name,
+            doc_description,
         )
 
 
