@@ -231,7 +231,7 @@ if __name__ == "__main__":
     # always ping the tracker
     track_err = ping.process_tracker()
     # Ping only if scanning is selected
-    if cli.args.scan:
+    if cli.args.scan or cli.args.upload:
         qbit_err = ping.process_qbit()
         tmdb_err = ping.process_tmdb()
         imghost_err = ping.process_imghost()
