@@ -5,7 +5,7 @@ from unit3dup.torrent import Torrent
 from unit3dup.command import CommandLine
 from unit3dup import config
 from unit3dup.ping import Ping
-from unit3dup.mediavideo import MediaVideo
+from unit3dup.media import Media
 
 console = Console(log_path=False)
 
@@ -13,12 +13,14 @@ console = Console(log_path=False)
 def main():
     """ Manual Mode """
     if cli.args.upload:
-        media_video = MediaVideo(path=cli.args.upload, tracker=cli.args.tracker)
+        # media_video = MediaVideo(path=cli.args.upload, tracker_name=cli.args.tracker)
+        media_video = Media(path=cli.args.upload, tracker_name=cli.args.tracker)
         media_video.process()
 
     """ Auto Mode """
     if cli.args.scan:
-        media_video = MediaVideo(path=cli.args.scan, tracker=cli.args.tracker)
+        # media_video = MediaVideo(path=cli.args.scan, tracker_name=cli.args.tracker)
+        media_video = Media(path=cli.args.scan, tracker_name=cli.args.tracker)
         media_video.process(mode='auto')
 
     """ COMMANDS LIST: commands not necessary for the upload but may be useful """
