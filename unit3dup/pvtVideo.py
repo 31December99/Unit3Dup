@@ -3,7 +3,7 @@ import random
 import cv2
 import os
 from unit3dup.imageHost import ImgBB
-from unit3dup.command import config_tracker
+from unit3dup import config
 from pymediainfo import MediaInfo
 from rich.console import Console
 
@@ -21,7 +21,7 @@ class Video:
 
     def __init__(self, fileName: str):
 
-        self.IMGBB_KEY = config_tracker.instance.imgbb_key
+        self.IMGBB_KEY = config.IMGBB_KEY
 
         self.file_name = fileName
         # video file size

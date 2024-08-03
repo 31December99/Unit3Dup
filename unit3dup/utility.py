@@ -135,3 +135,11 @@ class Manage_titles:
         ]
 
         return os.path.splitext(file)[1].lower() in video_ext
+
+    @staticmethod
+    def filter_doc(file: str) -> bool:
+        doc_ext = [
+            ".pdf"
+        ]
+
+        return os.path.splitext(file)[1].lower() in doc_ext

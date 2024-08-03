@@ -34,7 +34,7 @@ class Files:
 
     def get_data(self) -> Contents | bool:
         """
-        Create an userinput object with movie or series attributes for the torrent.
+        Create an object with movie or series attributes for the torrent.
         Verify if name is part of torrent pack folder
         """
         if not self.is_dir:
@@ -104,6 +104,14 @@ class Files:
         return True
 
     def list_video_files(self) -> list:
+        """
+        Add to the list every file if its extension is in the video_ext.
+        """
+        return [
+            file for file in os.listdir(self.path) if Manage_titles.filter_ext(file)
+        ]
+
+    def list_doc_files(self) -> list:
         """
         Add to the list every file if its extension is in the video_ext.
         """
