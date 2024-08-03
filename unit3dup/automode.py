@@ -68,7 +68,7 @@ class Auto:
             for subdir in series_path
             if (result := self.create_folder_path(subdir)) is not None
         ]
-        return series, movies
+        return series + movies
 
     def create_movies_path(self, file: str) -> File | None:
         """
