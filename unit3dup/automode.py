@@ -114,7 +114,6 @@ class Auto:
                 media_type=self.movie_category,
                 torrent_name=guess_filename.guessit_title,
             )
-            # return None  # Movie or generic file
 
     def depth_walker(self, path) -> int:
         """
