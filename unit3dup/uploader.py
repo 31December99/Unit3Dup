@@ -75,3 +75,45 @@ class UploadBot:
             console.log(
                 f"It was not possible to upload => {tracker_response} {tracker_response.text}"
             )
+
+    def payload_doc(self) -> payload:
+        return payload.Data.create_instance(
+            metainfo=self.metainfo,
+            name=self.content.name,
+            file_name=self.file_name,
+            result='',
+            category=self.content.category,
+            standard=0,
+            mediainfo='',
+            description=self.content.doc_description,
+        )
+
+    def send_doc(self):
+        # New payload
+        data = self.payload_doc()
+
+        tracker = pvtTracker.Unit3d(
+            base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key=""
+        )
+        tracker.data["name"] = self.content.display_name
+        tracker.data["tmdb"] = 0
+        tracker.data["category_id"] = data.category
+        tracker.data["description"] = data.description
+        tracker.data["type_id"] = self.config.tracker_values.filterType(
+            data.file_name
+        )
+
+        # // Send data
+        tracker_response = tracker.upload_t(
+            data=tracker.data, file_name=self.torrent_path
+        )
+        if tracker_response.status_code == 200:
+            tracker_response_body = json.loads(tracker_response.text)
+            console.log(
+                f"\n[TRACKER RESPONSE]............  {tracker_response_body['message'].upper()}"
+            )
+            return tracker_response_body["data"]
+        else:
+            console.log(
+                f"It was not possible to upload => {tracker_response} {tracker_response.text}"
+            )
