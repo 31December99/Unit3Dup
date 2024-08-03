@@ -57,7 +57,7 @@ class Auto:
         movies = [
             result
             for file in movies_path
-            if (result := self.create_movies_path(file)) is not None
+            if (result := self.create_file_path(file)) is not None
         ]
 
         # None in the series means a folder without a Sx tag
@@ -69,9 +69,9 @@ class Auto:
         ]
         return series + movies
 
-    def create_movies_path(self, file: str) -> File | None:
+    def create_file_path(self, file: str) -> File | None:
         """
-        Determines if it is a movie or a series. Excludes any episode files.
+        Create an object for each file
         """
         file_name, ext = os.path.splitext(file)
         guess_filename = title.Guessit(file_name)
