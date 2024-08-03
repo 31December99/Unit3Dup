@@ -18,9 +18,7 @@ console = Console(log_path=False)
 
 
 def main():
-    series = []
-    movies = []
-
+    files = []
     """ Manual  """
     if cli.args.upload:
         # New instance with cli.path
@@ -36,11 +34,11 @@ def main():
         auto = Auto(path=cli.args.scan, tracker_name=cli.args.tracker)
 
         # Walk through the path
-        series, movies = auto.scan()
+        files = auto.scan()
 
-    if series or movies:
+    if files:
         # For each item
-        for item in series + movies:
+        for item in files:
             """
             Getting ready for tracker upload
             Return
