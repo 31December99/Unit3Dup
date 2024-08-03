@@ -6,6 +6,7 @@ import re
 from rich.console import Console
 from unit3dup.contents import Contents
 from unit3dup.utility import Manage_titles
+from unit3dup import config
 
 console = Console(log_path=False)
 
@@ -15,7 +16,7 @@ class Files:
     Identify the files (movies) and folders (series) regardless
     """
 
-    def __init__(self, path: str, tracker: str, media_type: int):
+    def __init__(self, path: str, tracker_name: str, media_type: int):
         self.display_name = None
         self.meta_info_list: list = []
         self.meta_info = None
@@ -24,13 +25,15 @@ class Files:
         self.folder = None
         self.file_name = None
         self.torrent_path = None
+        self.doc_description = None
 
         self.category: int = media_type
-        self.tracker: str = tracker
+        self.tracker_name: str = tracker_name
         self.path: str = path
         self.movies: list = []
         self.series: list = []
         self.is_dir = os.path.isdir(self.path)
+        self.config = config.trackers.get_tracker(tracker_name)
 
     def get_data(self) -> Contents | bool:
         """
@@ -56,10 +59,11 @@ class Files:
                 size=self.size,
                 metainfo=self.meta_info,
                 category=self.category,
-                tracker_name=self.tracker,
+                tracker_name=self.tracker_name,
                 torrent_pack=torrent_pack,
                 torrent_path=self.torrent_path,
                 display_name=self.display_name,
+                doc_description=self.doc_description
             )
             if process
             else False
@@ -73,6 +77,13 @@ class Files:
         self.name = self.file_name
         self.torrent_path = os.path.join(self.folder, self.file_name)
         self.size = os.path.getsize(self.path)
+        self.doc_description = self.file_name
+        media_docu_type = Manage_titles.media_docu_type(self.file_name)
+        # If this is a document it becomes a document category
+        if media_docu_type:
+            # overwrite media_type
+            self.category = self.config.tracker_values.category(media_docu_type)
+
         self.meta_info = json.dumps(
             [{"length": self.size, "path": [self.file_name]}], indent=4
         )
@@ -88,11 +99,19 @@ class Files:
 
         self.file_name = files[0]
         self.folder = self.path
-        self.display_name, ext = os.path.splitext(self.file_name)
-        self.display_name = Manage_titles.clean(self.display_name)
+        # self.display_name, ext = os.path.splitext(self.file_name)
+        # self.display_name = Manage_titles.clean(self.display_name)
+        self.display_name = Manage_titles.clean(os.path.basename(self.path))
+
         self.torrent_path = self.folder
         self.name = os.path.basename(self.folder)
         self.meta_info_list = []
+        self.doc_description = '\n'.join(files)
+        media_docu_type = Manage_titles.media_docu_type(self.file_name)
+        # If there is a document in the folder it becomes a document folder
+        if media_docu_type:
+            # overwrite media_type
+            self.category = self.config.tracker_values.category(media_docu_type)
 
         total_size = 0
         for file in files:
