@@ -36,7 +36,7 @@ class MediaVideo:
 
         for item in files:
             content = self.video_files(item)
-            if content is False:
+            if not content:
                 continue
 
             # Search for the title in TMDB db
