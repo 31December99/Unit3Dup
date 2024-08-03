@@ -2,7 +2,7 @@
 import json
 import os.path
 from unit3dup import pvtTracker, pvtVideo, search, payload, contents
-from unit3dup.command import config_tracker
+from unit3dup import config
 from rich.console import Console
 
 console = Console(log_path=False)
@@ -20,8 +20,9 @@ class UploadBot:
         self.torrent_path = content.torrent_path
         self.torrent_file_path = os.path.join(self.torrent_path, self.file_name)
 
-        self.API_TOKEN = config_tracker.instance.api_token
-        self.BASE_URL = config_tracker.instance.base_url
+        self.config = config.trackers.get_tracker(self.tracker_name)
+        self.API_TOKEN = self.config.api_token
+        self.BASE_URL = self.config.base_url
 
     def payload(self, tv_show: search, video: pvtVideo) -> payload:
         return payload.Data.create_instance(
@@ -46,13 +47,13 @@ class UploadBot:
         tracker.data["tmdb"] = data.result.video_id
         tracker.data["keywords"] = data.result.keywords
         tracker.data["category_id"] = data.category
-        tracker.data["resolution_id"] = config_tracker.tracker_values.filterResolution(
+        tracker.data["resolution_id"] = self.config.tracker_values.filterResolution(
             data.file_name
         )
         tracker.data["sd"] = data.standard
         tracker.data["mediainfo"] = data.media_info
         tracker.data["description"] = data.description
-        tracker.data["type_id"] = config_tracker.tracker_values.filterType(
+        tracker.data["type_id"] = self.config.tracker_values.filterType(
             data.file_name
         )
         tracker.data["season_number"] = data.myguess.guessit_season

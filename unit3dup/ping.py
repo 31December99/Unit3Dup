@@ -9,6 +9,7 @@ from qbittorrent import Client
 from urllib.parse import urlparse
 from unit3dup import pvtTracker
 from unit3dup.imageHost import ImgBB
+from unit3dup import config
 
 console = Console(log_path=False)
 
@@ -16,26 +17,26 @@ console = Console(log_path=False)
 class Ping:
     test_image = "unit3dup/test_image.png"
 
-    def __init__(self, config: dict):
+    def __init__(self):
 
         # Config
         self.config = config
 
         # Getting ready for testing Image Host
-        self.imgbb_key = config["imgbb_key"]
+        self.imgbb_key = config.IMGBB_KEY
 
         # Getting ready for testing Tracker
-        self.api_token = config["api_token"]
-        self.base_url = config["base_url"]
+        self.api_token = config.API_TOKEN
+        self.base_url = config.BASE_URL
 
         # Getting ready for testing qbittorrent
-        self.qbit_user = config["qbit_user"]
-        self.qbit_pass = config["qbit_pass"]
-        self.qbit_url = config["qbit_url"]
-        self.qbit_port = config["qbit_port"]
+        self.qbit_user = config.QBIT_USER
+        self.qbit_pass = config.QBIT_PASS
+        self.qbit_url = config.QBIT_URL
+        self.qbit_port = config.QBIT_PORT
 
         # Getting ready for testing TMDB
-        self.tmdb_apikey = config["tmdb_api_key"]
+        self.tmdb_apikey = config.TMDB_APIKEY
 
     def is_ip(self, ip_address) -> bool:
         """

@@ -1,27 +1,18 @@
 # -*- coding: utf-8 -*-
 import re
 from unit3dup import pvtTracker
-from decouple import Config, RepositoryEnv
 from rich.console import Console
-from database.trackers import TrackerConfig
+from unit3dup import config
 
 console = Console(log_path=False)
 
 
 class Torrent:
 
-    def __init__(self, args_tracker=None):
-        tracker_name = args_tracker
-        self.tracker_file_env = f"{tracker_name}.env"
-        self.tracker_file_json = f"{tracker_name}.json"
-        config_load = Config(RepositoryEnv(self.tracker_file_env))
-        # self.PASS_KEY = config_load("PASS_KEY") # todo: removed passkey
-        self.API_TOKEN = config_load("API_TOKEN")
-        self.BASE_URL = config_load("BASE_URL")
-        self.tracker_values = TrackerConfig(self.tracker_file_json)
+    def __init__(self):
         self.perPage = 30
         self.tracker = pvtTracker.Unit3d(
-            base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key=""
+            base_url=config.BASE_URL, api_token=config.API_TOKEN, pass_key=""
         )
 
         print()
@@ -142,7 +133,7 @@ class Torrent:
 
     def get_by_types(self, type_name: str):
         tracker_data = self.tracker.get_types(
-            type_id=self.tracker_values.type_id(type_name), perPage=self.perPage
+            type_id=config.tracker_values.type_id(type_name), perPage=self.perPage
         )
         console.log(
             f"Types torrents.. Filter by the torrent's type.. '{type_name.upper()}'"
@@ -152,7 +143,7 @@ class Torrent:
 
     def get_by_res(self, res_name: str):
         tracker_data = self.tracker.get_res(
-            res_id=self.tracker_values.res_id(res_name), perPage=self.perPage
+            res_id=config.tracker_values.res_id(res_name), perPage=self.perPage
         )
         console.log(
             f"Resolutions torrents.. Filter by the torrent's resolution.. '{res_name.upper()}'"
