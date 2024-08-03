@@ -26,8 +26,7 @@ class Auto:
             series_path = self.list_video_files(self.path)
             return self._lists(movies_path=[], series_path=series_path)
         else:
-            movies_path = self.list_video_files(self.path)
-            return self._lists(movies_path=movies_path, series_path=[])
+            return self._lists(movies_path=[self.path], series_path=[])
 
     def scan(self):
         movies_path = []
