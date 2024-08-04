@@ -52,7 +52,7 @@ class UploadDocument(UploadBot):
     def __init__(self, content: contents):
         super().__init__(content)
 
-    def payload(self, **kwargs):
+    def payload(self):
         return payload.Data.create_instance(
             metainfo=self.metainfo,
             name=self.content.name,
@@ -80,23 +80,20 @@ class UploadVideo(UploadBot):
     def __init__(self, content: contents):
         super().__init__(content)
 
-    def payload(self, **kwargs):
-        tv_show = kwargs.get("tvshow", None)
-        video = kwargs.get("video", None)
-
-        if video:
+    def payload(self, tv_show: list, video_info: pvtTracker):
+        if video_info:
             return payload.Data.create_instance(
                 metainfo=self.metainfo,
                 name=self.content.name,
                 file_name=self.file_name,
                 result=tv_show,
                 category=self.content.category,
-                standard=video.standard,
-                mediainfo=video.mediainfo,
-                description=video.description,
+                standard=video_info.standard,
+                mediainfo=video_info.mediainfo,
+                description=video_info.description,
             )
         else:
-            console.log(f"[Payload] Unable to create a 'video payload' -> {video}")
+            console.log(f"[Payload] Unable to create a 'video payload' -> {video_info}")
             return
 
     def tracker(self, data: payload) -> pvtTracker:
@@ -111,7 +108,7 @@ class UploadVideo(UploadBot):
             data.file_name
         )
         tracker.data["sd"] = data.standard
-        tracker.data["mediainfo"] = data.mediainfo
+        tracker.data["mediainfo"] = data.media_info
         tracker.data["description"] = data.description
         tracker.data["type_id"] = self.config.tracker_values.filterType(data.file_name)
         tracker.data["season_number"] = data.myguess.guessit_season
