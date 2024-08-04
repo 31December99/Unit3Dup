@@ -13,13 +13,11 @@ console = Console(log_path=False)
 def main():
     """ Manual Mode """
     if cli.args.upload:
-        # media_video = MediaVideo(path=cli.args.upload, tracker_name=cli.args.tracker)
         media_video = Media(path=cli.args.upload, tracker_name=cli.args.tracker)
         media_video.process()
 
     """ Auto Mode """
     if cli.args.scan:
-        # media_video = MediaVideo(path=cli.args.scan, tracker_name=cli.args.tracker)
         media_video = Media(path=cli.args.scan, tracker_name=cli.args.tracker)
         media_video.process(mode='auto')
 
