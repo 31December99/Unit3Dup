@@ -105,7 +105,7 @@ class Media:
         unit3d_up = UploadVideo(content)
 
         # Create a new payload
-        data = unit3d_up.payload(tv_show=tv_show_result, video=video_info)
+        data = unit3d_up.payload(tv_show=tv_show_result, video_info=video_info)
 
         # Get a new tracker instance
         tracker = unit3d_up.tracker(data=data)
