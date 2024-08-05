@@ -74,15 +74,8 @@ class UploadDocument(UploadBot):
         tracker.data["category_id"] = data.category
         tracker.data["description"] = data.description
         tracker.data["type_id"] = self.config.tracker_values.filterType(data.file_name)
-
-        """
-        with open("/home/midnight/Downloads/1/sample.jpg", 'rb') as cover_image_file:
-            cover_image_data = cover_image_file.read()
-            cover_image_base64 = base64.b64encode(cover_image_data).decode('utf-8')
-        """
-        # tracker.data["torrent-cover"] = "https://ibb.co/zxRJkDB"
-
-
+        tracker.data["resolution_id"] = ''
+        # tracker.data["torrent-cover"] = "" TODO: not yet implemented
         return tracker
 
 
