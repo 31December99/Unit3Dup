@@ -38,7 +38,7 @@ class Media:
         self.config = config.trackers.get_tracker(tracker_name=tracker_name)
         self.movie_category = self.config.tracker_values.category("movie")
         self.serie_category = self.config.tracker_values.category("tvshow")
-        self.docu_category = self.config.tracker_values.category("e-book")
+        self.docu_category = self.config.tracker_values.category("edicola")
 
     def process_contents(self, mode="man"):
         if mode == "man":
