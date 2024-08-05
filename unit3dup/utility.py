@@ -141,7 +141,8 @@ class Manage_titles:
     @staticmethod
     def media_docu_type(file_name: str) -> str:
         ext = os.path.splitext(file_name)[1].lower()
-        type_ = {'.pdf': 'e-book'}
+        type_ = {'.pdf': 'edicola'}
+
         return type_.get(ext, None)
 
     @staticmethod
