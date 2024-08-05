@@ -35,7 +35,7 @@ class Auto:
         # when you use scan with file...
         # Path includes a filename. Os.walk requires a folder
         if not self.is_dir:
-            console.log("Scan is only for folders..")
+            console.log("We can't scan a file..")
         else:
             for path, sub_dirs, files in os.walk(self.path):
                 if path == self.path:
