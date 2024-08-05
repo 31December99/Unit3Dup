@@ -3,8 +3,6 @@ Unit3D platform uploader (Python 3.10)
 
 ## Torrent Generator and Uploader
 
-The program is functional but still in an early stage, undergoing constant modifications.
-
 This Python script generates and uploads torrents based on input provided for movies or TV series.
 
 It performs the following tasks:
@@ -16,6 +14,14 @@ It performs the following tasks:
 - Searches for the corresponding ID on TMDB (The Movie Database).
 - Uploads the content to the UNIT3D Next Generation tracker platform.
 - Seeding in qbittorrent
+
+## Join Us
+
+The program is functional but still in the early stages, undergoing constant modifications.
+You can help improve this project or just hang out with us on
+[Discord](https://discord.gg/CJ32Vwyu)
+
+Thank you
 
 ___
 ### Example Usage
