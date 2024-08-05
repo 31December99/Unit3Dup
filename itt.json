@@ -1,7 +1,8 @@
 {
   "CATEGORY": {
     "movie": 1,
-    "tvshow": 2
+    "tvshow": 2,
+    "edicola": 7
   },
   "FREELECH": {
     "size20": 100,
@@ -15,6 +16,10 @@
     "vh" : 2,
     "untouched": 2,
     "encode": 3,
+    "bluray": 3,
+    "fullhd": 3,
+    "hvec": 3,
+    "vu": 3,
     "web-dl": 4,
     "webdl": 4,
     "web": 4,

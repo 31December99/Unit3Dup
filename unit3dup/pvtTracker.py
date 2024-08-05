@@ -49,6 +49,7 @@ class Myhttp:
             "free": 0,
             "doubleup": 0,
             "sticky": 0,
+            "torrent-cover": '',
         }
 
     def _post(self, files: str, data: dict, params: dict):
