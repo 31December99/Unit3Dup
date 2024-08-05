@@ -1,91 +1,25 @@
 # -*- coding: utf-8 -*-
 
-import os
 from rich.console import Console
-from unit3dup.files import Files
-from unit3dup.automode import Auto
-from unit3dup.uploader import UploadBot
-from unit3dup.search import TvShow
 from unit3dup.torrent import Torrent
-from unit3dup.pvtVideo import Video
-from unit3dup.qbitt import Qbitt
-from unit3dup.pvtTorrent import Mytorrent
 from unit3dup.command import CommandLine
 from unit3dup import config
 from unit3dup.ping import Ping
+from unit3dup.media import Media
 
 console = Console(log_path=False)
 
 
 def main():
-    files = []
-    """ Manual  """
+    """ Manual Mode """
     if cli.args.upload:
-        # New instance with cli.path
-        # you can choose single subfolder
-        manual = Auto(path=cli.args.upload, mode="man", tracker_name=cli.args.tracker)
-
-        # Walk through the path
-        files = manual.upload()
+        media_video = Media(path=cli.args.upload, tracker_name=cli.args.tracker)
+        media_video.process()
 
     """ Auto Mode """
     if cli.args.scan:
-        # New instance with cli.path
-        auto = Auto(path=cli.args.scan, tracker_name=cli.args.tracker)
-
-        # Walk through the path
-        files = auto.scan()
-
-    if files:
-        # For each item
-        for item in files:
-            """
-            Getting ready for tracker upload
-            Return
-                  - torrent name (filename or folder name)
-                  - tracker name ( TODO: load config at start)
-                  - content category ( movie or serie)
-                  - torrent meta_info
-            """
-
-            video_files = Files(
-                path=item.torrent_path,
-                tracker=cli.args.tracker,
-                media_type=item.media_type,
-            )
-            content = video_files.get_data()
-            if content is False:
-                # skip invalid folder or file
-                continue
-
-            """ Request results from the TVshow online database """
-            my_tmdb = TvShow(content.category)
-            tv_show_result = my_tmdb.start(content.file_name)
-
-            """ Return info about HD or Standard , MediaInfo, Description (screenshots), Size value for free_lech """
-            video_info = Video(
-                fileName=str(os.path.join(content.folder, content.file_name))
-            )
-
-            """ Hashing """
-            my_torrent = Mytorrent(contents=content, meta=content.metainfo)
-            if not my_torrent.write():
-                # Skip if the file already exist
-                continue
-
-            """ the bot is getting ready to send the payload """
-            unit3d_up = UploadBot(content)
-
-            """ Send """
-            tracker_response = unit3d_up.send(tv_show=tv_show_result, video=video_info)
-
-            """ Qbittorrent """
-            if tracker_response:
-                Qbitt(
-                    tracker_data_response=tracker_response,
-                    torrent=my_torrent,
-                    contents=content,
-                )
+        media_video = Media(path=cli.args.scan, tracker_name=cli.args.tracker)
+        media_video.process(mode='auto')
 
     """ COMMANDS LIST: commands not necessary for the upload but may be useful """
 
@@ -231,7 +165,7 @@ if __name__ == "__main__":
     # always ping the tracker
     track_err = ping.process_tracker()
     # Ping only if scanning is selected
-    if cli.args.scan:
+    if cli.args.scan or cli.args.upload:
         qbit_err = ping.process_qbit()
         tmdb_err = ping.process_tmdb()
         imghost_err = ping.process_imghost()

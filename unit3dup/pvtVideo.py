@@ -46,7 +46,7 @@ class Video:
         console.log(f"[HD]........... {'YES' if is_hd else 'NO'}")
         return 0 if is_hd else 1
 
-    @property  # non utilizzare vedi nota sopra
+    @property  # non utilizzare vedi nota sopra (deprecated)
     def size(self) -> int:
         """Return the size of the video in GB."""
         return self.file_size
@@ -66,9 +66,10 @@ class Video:
         """
         Return a list of frame numbers sampled randomly starting from 25% of the video.
         """
-        inizia_da = int(0.25 * self.total_frames)
-        # Genero una lista di frame casuali che partono dal 25% del video
-        return random.sample(range(inizia_da, self.total_frames), self.samples_n)
+        start_frame = int(0.35 * self.total_frames)
+        end_frame = int(0.65 * self.total_frames)
+        # Create a list of random frames starting at 'start_frame'
+        return random.sample(range(start_frame, end_frame), self.samples_n)
 
     @property
     def frames(self) -> list:

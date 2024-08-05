@@ -27,7 +27,8 @@ class TrackerConfig(Filter):
             self.__config = {json_key: value for json_key, value in config.items()}
 
     def category(self, name: str) -> int:
-        return self.__config["CATEGORY"][name]
+        dict_attribute = self.__config.get("CATEGORY", {})
+        return dict_attribute.get(name, -1)
 
     def type_id(self, name: str) -> str:
         dict_attribute = self.__config.get("TYPE_ID", {})

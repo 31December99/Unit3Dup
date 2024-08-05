@@ -35,7 +35,7 @@ class Auto:
         # when you use scan with file...
         # Path includes a filename. Os.walk requires a folder
         if not self.is_dir:
-            console.log("Scan is only for folders..")
+            console.log("We can't scan a file..")
         else:
             for path, sub_dirs, files in os.walk(self.path):
                 if path == self.path:
@@ -57,7 +57,7 @@ class Auto:
         movies = [
             result
             for file in movies_path
-            if (result := self.create_movies_path(file)) is not None
+            if (result := self.create_file_path(file)) is not None
         ]
 
         # None in the series means a folder without a Sx tag
@@ -69,9 +69,9 @@ class Auto:
         ]
         return series + movies
 
-    def create_movies_path(self, file: str) -> File | None:
+    def create_file_path(self, file: str) -> File | None:
         """
-        Determines if it is a movie or a series. Excludes any episode files.
+        Create an object for each file
         """
         file_name, ext = os.path.splitext(file)
         guess_filename = title.Guessit(file_name)
@@ -114,7 +114,6 @@ class Auto:
                 media_type=self.movie_category,
                 torrent_name=guess_filename.guessit_title,
             )
-            # return None  # Movie or generic file
 
     def depth_walker(self, path) -> int:
         """
