@@ -13,6 +13,7 @@ from unit3dup.search import TvShow
 from rich.console import Console
 from unit3dup.files import Files
 from unit3dup.qbitt import Qbitt
+from unit3dup.dupe import Dupe
 from unit3dup import pvtTracker
 from unit3dup import config
 
@@ -46,6 +47,10 @@ class Media:
         else:
             files = self.auto()
 
+        # this method start to analizy the string title and searcha for a duplicate in tracker database
+        self.process_title(files)
+
+        # for each item we have to grab media info
         for item in files:
             content = self.video_files(item)
             if not content:
@@ -53,17 +58,30 @@ class Media:
             self.contents.append(content)
         return self.contents
 
+    def process_title(self, files: list):
+        pass
+
     def process(self, mode="man"):
         contents = self.process_contents(mode=mode)
 
         response = None
         for content in contents:
-
             # Create the torrent
             my_torrent = Mytorrent(contents=content, meta=content.metainfo)
             if not my_torrent.write():
                 # Skip if the file already exist
                 continue
+
+            # Start to verify if it's a dupe
+            print()
+            # ##################################################################################################
+
+            dupe = Dupe(content=content, tracker_name=self.tracker_name, new_info_hash=my_torrent.info_hash)
+            dupe.search()
+            if not dupe:
+                continue
+
+            # ##################################################################################################
 
             if content.category == self.movie_category or content.category == self.serie_category:
                 # Search for the title in TMDB db
