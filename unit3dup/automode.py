@@ -82,6 +82,10 @@ class Auto:
                 folder=self.path,
                 media_type=self.movie_category,
                 torrent_name=guess_filename.guessit_title,
+                source=guess_filename.source,
+                other=guess_filename.other,
+                audio_codec=guess_filename.audio_codec,
+                subtitle=guess_filename.subtitle
             )
         else:
             # Serie without folder
@@ -90,6 +94,10 @@ class Auto:
                 folder=self.path,
                 media_type=self.serie_category,
                 torrent_name=guess_filename.guessit_title,
+                source=guess_filename.source,
+                other=guess_filename.other,
+                audio_codec=guess_filename.audio_codec,
+                subtitle=guess_filename.subtitle
             )
 
     def create_folder_path(self, subdir: str) -> Folder | None:
@@ -98,6 +106,8 @@ class Auto:
         """
         file_name, ext = os.path.splitext(subdir)
         guess_filename = title.Guessit(file_name)
+        print(guess_filename.guessit)
+
         if guess_filename.guessit_season:
             # Serie with folder
             return Folder.create(
@@ -105,6 +115,10 @@ class Auto:
                 subfolder=subdir,
                 media_type=self.serie_category,
                 torrent_name=guess_filename.guessit_title,
+                source=guess_filename.source,
+                other=guess_filename.other,
+                audio_codec=guess_filename.audio_codec,
+                subtitle=guess_filename.subtitle
             )
         else:
             # Movie with folder
@@ -113,6 +127,10 @@ class Auto:
                 subfolder=subdir,
                 media_type=self.movie_category,
                 torrent_name=guess_filename.guessit_title,
+                source=guess_filename.source,
+                other=guess_filename.other,
+                audio_codec=guess_filename.audio_codec,
+                subtitle=guess_filename.subtitle
             )
 
     def depth_walker(self, path) -> int:
