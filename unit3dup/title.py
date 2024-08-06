@@ -87,7 +87,7 @@ class Guessit:
         Grab the 'other' info
         :return:
         """
-        return self.guessit["audio_codec"] if "other" in self.guessit else None
+        return self.guessit["audio_codec"] if "audio_codec" in self.guessit else None
 
     @property
     def subtitle(self):
