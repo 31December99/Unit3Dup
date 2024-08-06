@@ -75,30 +75,21 @@ class Auto:
         """
         file_name, ext = os.path.splitext(file)
         guess_filename = title.Guessit(file_name)
-        if not guess_filename.guessit_season:
-            # Movie without folder
-            return File.create(
-                file_name=file,
-                folder=self.path,
-                media_type=self.movie_category,
-                torrent_name=guess_filename.guessit_title,
-                source=guess_filename.source,
-                other=guess_filename.other,
-                audio_codec=guess_filename.audio_codec,
-                subtitle=guess_filename.subtitle
-            )
+        if guess_filename.guessit_season:
+            media_type = self.serie_category
         else:
-            # Serie without folder
-            return File.create(
-                file_name=file,
-                folder=self.path,
-                media_type=self.serie_category,
-                torrent_name=guess_filename.guessit_title,
-                source=guess_filename.source,
-                other=guess_filename.other,
-                audio_codec=guess_filename.audio_codec,
-                subtitle=guess_filename.subtitle
-            )
+            media_type = self.movie_category
+
+        return File.create(
+            file_name=file,
+            folder=self.path,
+            media_type=media_type,
+            torrent_name=guess_filename.guessit_title,
+            source=guess_filename.source,
+            other=guess_filename.other,
+            audio_codec=guess_filename.audio_codec,
+            subtitle=guess_filename.subtitle
+        )
 
     def create_folder_path(self, subdir: str) -> Folder | None:
         """
@@ -106,32 +97,22 @@ class Auto:
         """
         file_name, ext = os.path.splitext(subdir)
         guess_filename = title.Guessit(file_name)
-        print(guess_filename.guessit)
 
         if guess_filename.guessit_season:
-            # Serie with folder
-            return Folder.create(
-                folder=self.path,
-                subfolder=subdir,
-                media_type=self.serie_category,
-                torrent_name=guess_filename.guessit_title,
-                source=guess_filename.source,
-                other=guess_filename.other,
-                audio_codec=guess_filename.audio_codec,
-                subtitle=guess_filename.subtitle
-            )
+            media_type = self.serie_category
         else:
-            # Movie with folder
-            return Folder.create(
-                folder=self.path,
-                subfolder=subdir,
-                media_type=self.movie_category,
-                torrent_name=guess_filename.guessit_title,
-                source=guess_filename.source,
-                other=guess_filename.other,
-                audio_codec=guess_filename.audio_codec,
-                subtitle=guess_filename.subtitle
-            )
+            media_type = self.movie_category
+
+        return Folder.create(
+            folder=self.path,
+            subfolder=subdir,
+            media_type=media_type,
+            torrent_name=guess_filename.guessit_title,
+            source=guess_filename.source,
+            other=guess_filename.other,
+            audio_codec=guess_filename.audio_codec,
+            subtitle=guess_filename.subtitle
+        )
 
     def depth_walker(self, path) -> int:
         """
