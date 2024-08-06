@@ -64,3 +64,63 @@ class Guessit:
         :return:
         """
         return self.guessit["type"] if "type" in self.guessit else None
+
+    @property
+    def source(self):
+        """
+        Grab the source
+        :return:
+        """
+        return self.guessit["source"] if "source" in self.guessit else None
+
+    @property
+    def other(self):
+        """
+        Grab the 'other' info
+        :return:
+        """
+        return self.guessit["other"] if "other" in self.guessit else None
+
+    @property
+    def audio_codec(self):
+        """
+        Grab the 'other' info
+        :return:
+        """
+        return self.guessit["audio_codec"] if "other" in self.guessit else None
+
+    @property
+    def subtitle(self):
+        """
+        Grab the 'other' subtitle
+        :return:
+        """
+        return self.guessit["subtitle"] if "subtitle" in self.guessit else None
+
+    @property
+    def release_group(self):
+        """
+        Grab the 'release_group'
+        :return:
+        """
+        return self.guessit["release_group"] if "release_group" in self.guessit else None
+
+    @property
+    def screen_size(self):
+        """
+        Grab the 'screen_size'
+        :return:
+        """
+        return self.guessit["screen_size"] if "screen_size" in self.guessit else None
+
+
+
+
+
+
+
+
+
+
+
+
