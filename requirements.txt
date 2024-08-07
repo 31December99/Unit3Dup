@@ -19,6 +19,7 @@ packaging==24.1
 pathspec==0.12.1
 platformdirs==4.2.2
 Pygments==2.18.0
+pdf2image==1.17.0
 pymediainfo==6.1.0
 pyproject_hooks==1.1.0
 python-dateutil==2.9.0.post0
