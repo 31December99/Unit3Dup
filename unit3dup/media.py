@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import os
-
 import requests
-
 from unit3dup.pvtTorrent import Mytorrent
 from unit3dup.uploader import UploadDocument, UploadVideo
 from unit3dup.contents import Contents
@@ -13,7 +11,7 @@ from unit3dup.search import TvShow
 from rich.console import Console
 from unit3dup.files import Files
 from unit3dup.qbitt import Qbitt
-from unit3dup.dupe import Dupe
+from unit3dup.duplicate import Duplicate
 from unit3dup import pvtTracker
 from unit3dup import config
 
@@ -66,27 +64,17 @@ class Media:
 
         response = None
         for content in contents:
-            # Create the torrent
-            my_torrent = Mytorrent(contents=content, meta=content.metainfo)
-            if not my_torrent.write():
-                # Skip if the file already exist
-                continue
-
-            # Start to verify if it's a dupe
-            print()
-            # ##################################################################################################
-
-            dupe = Dupe(content=content, tracker_name=self.tracker_name, new_info_hash=my_torrent.info_hash)
-            dupe.search()
-            if not dupe:
-                continue
-
-            # ##################################################################################################
 
             if content.category == self.movie_category or content.category == self.serie_category:
                 # Search for the title in TMDB db
                 tv_show_results = self.db_search(content=content)
 
+                # Search the tmdb result id in tracker
+                duplicate = Duplicate(content=content)
+                result = duplicate.search_by_tmdb(tmdb_id=tv_show_results.video_id)
+                if result:
+                    console.log(f"The media '{content.file_name}' already exist.")
+                    continue
                 # Get info about the video
                 video_info = self.video_info(content=content)
 
@@ -100,6 +88,12 @@ class Media:
             if content.category == self.docu_category:
                 # Send
                 response = self.unit3d_doc(content=content)
+
+            # Create the torrent
+            my_torrent = Mytorrent(contents=content, meta=content.metainfo)
+            if not my_torrent.write():
+                # Skip if the file already exist
+                continue
 
             # If it's ok enter seeding mode
             if response:
