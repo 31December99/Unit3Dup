@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import pprint
 
 import cv2
 import qbittorrent
@@ -9,6 +10,8 @@ from qbittorrent import Client
 from urllib.parse import urlparse
 from unit3dup import pvtTracker
 from unit3dup.imageHost import ImgBB
+from unit3dup.freeimage import Freeimage
+
 from unit3dup import config
 
 console = Console(log_path=False)
@@ -24,6 +27,7 @@ class Ping:
 
         # Getting ready for testing Image Host
         self.imgbb_key = config.IMGBB_KEY
+        self.free_image_key = config.FREE_IMAGE_KEY
 
         # Getting ready for testing Tracker
         self.api_token = config.API_TOKEN
@@ -148,12 +152,11 @@ class Ping:
         if not success:
             raise Exception("Could not encode image")  # todo
 
-        # ImageBB Test
-        # To test the ImageBB API, uploading an image is the only available method?
-        test_img_host = ImgBB(image=encoded_image.tobytes(), imgbb_key=self.imgbb_key)
-        test = test_img_host.upload["data"]["display_url"]
-        if test:
-            console.log("[Image host]..... [Ok]", style="bold green")
+        if Freeimage(image=encoded_image.tobytes(), key=self.free_image_key).upload:
+            console.log("[Freeimage host]..... [Ok]", style="bold green")
+
+        if ImgBB(image=encoded_image.tobytes(), imgbb_key=self.imgbb_key).upload:
+            console.log("[ImgBB host]..... [Ok]", style="bold green")
         else:
             return False
         return True
