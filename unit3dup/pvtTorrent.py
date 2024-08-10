@@ -34,6 +34,8 @@ class Mytorrent:
         self.mytorr.created_by = "Unit3d-Up"
         self.mytorr.private = True
         self.mytorr.segments = 16 * 1024 * 1024  # 16MB
+
+    def hash(self):
         console.log(f"\n[ HASHING ] {self.mytorr.name}")
         start = time.time()
         with HashProgressBar() as progress:
@@ -46,7 +48,8 @@ class Mytorrent:
             self.mytorr.write(f"{self.torrent_path}.torrent")
             return True
         except torf.TorfError as e:
-            console.log(e)
+            if 'File exists' in str(e):
+                console.log(f"This torrent file already exists: {self.torrent_path}.torrent")
             return False
 
     @property
