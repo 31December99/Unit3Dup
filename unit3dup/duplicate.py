@@ -112,11 +112,13 @@ class Duplicate:
             already_present = self.view_data(t_data)
         if already_present:
             while 1:
-                console.print("\nPress (c) to continue, any other key to Exit.. - ", end='')
+                console.print("\nPress (C) to continue, (S) to SKIP.. (Q) Quit - ", end='')
                 user_answer = input()
                 if 'c' in user_answer.lower():
                     return False
-                else:
+                if 's' in user_answer.lower():
+                    return True
+                if 'q' in user_answer.lower():
                     exit(1)
 
     def view_data(self, data: dict) -> bool:
