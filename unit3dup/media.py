@@ -57,6 +57,12 @@ class Media:
             if content.category == self.movie_category or content.category == self.serie_category:
                 video_manager = VideoManager(content=content)
                 results = video_manager.check_duplicate()
+                if results:
+                    console.log(
+                        f"\n*** User chose to skip '{content.file_name}' ***\n"
+                    )
+                    continue
+
                 my_torrent = video_manager.torrent()
                 if my_torrent:
                     response = video_manager.upload()
