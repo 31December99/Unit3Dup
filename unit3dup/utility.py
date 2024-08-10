@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 from pdf2image import convert_from_path
+from thefuzz import fuzz
 
 
 class Manage_titles:
@@ -149,3 +150,9 @@ class Manage_titles:
     def get_cover(file_name: str):
         pages = convert_from_path(file_name, first_page=1, last_page=1)
         pages[0].save(f'{file_name}.png', 'PNG')
+
+    @staticmethod
+    def fuzzyit(str1: str, str2: str) -> int:
+        return fuzz.ratio(str1, str2)
+
+
