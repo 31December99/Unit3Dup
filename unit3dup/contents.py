@@ -67,7 +67,7 @@ class File:
     """
 
     def __init__(self, file_name: str, folder: str, media_type: str, torrent_name: str, source: str, other: str,
-                 audio_codec: str,  subtitle: str):
+                 audio_codec: str, subtitle: str, resolution: str):
         self.torrent_path = os.path.join(folder, file_name)
         self.folder = folder
         self.media_type = media_type
@@ -76,12 +76,13 @@ class File:
         self.other = other
         self.audio_code = audio_codec
         self.subtitle = subtitle
-
+        self.resolution = resolution
 
     @classmethod
-    def create(cls, file_name: str, folder: str, media_type: str, torrent_name: str, source: str, other: str, audio_codec: str,
-                 subtitle: str):
-        return cls(file_name, folder, media_type, torrent_name, source, other, audio_codec, subtitle)
+    def create(cls, file_name: str, folder: str, media_type: str, torrent_name: str, source: str, other: str,
+               audio_codec: str,
+               subtitle: str, resolution: str):
+        return cls(file_name, folder, media_type, torrent_name, source, other, audio_codec, subtitle, resolution)
 
 
 class Folder:
@@ -90,8 +91,8 @@ class Folder:
     folder, subfolder, media_type
     """
 
-    def __init__(self, folder: str, subfolder: str, media_type: str, torrent_name: str, source: str, other: str, audio_codec: str,
-                 subtitle: str):
+    def __init__(self, folder: str, subfolder: str, media_type: str, torrent_name: str, source: str, other: str,
+                 audio_codec: str, subtitle: str, resolution: str):
         self.torrent_path = os.path.join(folder, subfolder)
         self.subfolder = subfolder
         self.media_type = media_type
@@ -100,8 +101,10 @@ class Folder:
         self.other = other
         self.audio_code = audio_codec
         self.subtitle = subtitle
+        self.resolution = resolution
 
     @classmethod
     def create(cls, folder: str, subfolder: str, media_type: str, torrent_name: str, source: str,
-               other: str, audio_codec: str, subtitle: str):
-        return cls(folder, subfolder, media_type, torrent_name, source, other, audio_codec, subtitle)
+               other: str, audio_codec: str, subtitle: str, resolution: str):
+        return cls(folder, subfolder, media_type, torrent_name, source, other, audio_codec, subtitle,
+                   resolution)
