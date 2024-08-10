@@ -55,6 +55,7 @@ class ConfigUnit3D:
         self.root_folder = os.path.abspath(os.path.join(self.current_folder, ".."))
         self.TMDB_APIKEY: str = ''
         self.IMGBB_KEY: str = ''
+        self.FREE_IMAGE_KEY: str = ''
         self.QBIT_USER: str = ''
         self.QBIT_PASS: str = ''
         self.QBIT_URL: str = ''
@@ -87,6 +88,7 @@ class ConfigUnit3D:
         config_load_service = Config(RepositoryEnv(service_path))
         self.TMDB_APIKEY = config_load_service("TMDB_APIKEY")
         self.IMGBB_KEY = config_load_service("IMGBB_KEY")
+        self.FREE_IMAGE_KEY = config_load_service("FREE_IMAGE_KEY")
         self.QBIT_USER = config_load_service("QBIT_USER")
         self.QBIT_PASS = config_load_service("QBIT_PASS")
         self.QBIT_URL = config_load_service("QBIT_URL")
