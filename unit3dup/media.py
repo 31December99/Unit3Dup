@@ -1,19 +1,12 @@
 # -*- coding: utf-8 -*-
 
-import os
-import requests
-from unit3dup.pvtTorrent import Mytorrent
-from unit3dup.uploader import UploadDocument, UploadVideo
-from unit3dup.contents import Contents
-from unit3dup.pvtVideo import Video
 from unit3dup.automode import Auto
-from unit3dup.search import TvShow
 from rich.console import Console
 from unit3dup.files import Files
 from unit3dup.qbitt import Qbitt
-from unit3dup.duplicate import Duplicate
-from unit3dup import pvtTracker
 from unit3dup import config
+from unit3dup.media_manager.VideoManager import VideoManager
+from unit3dup.media_manager.DocuManager import DocuManager
 
 console = Console(log_path=False)
 
@@ -45,55 +38,33 @@ class Media:
         else:
             files = self.auto()
 
-        # this method start to analizy the string title and searcha for a duplicate in tracker database
-        self.process_title(files)
-
         # for each item we have to grab media info
         for item in files:
-            content = self.video_files(item)
+            content = self.get_media(item)
             if not content:
                 continue
             self.contents.append(content)
         return self.contents
 
-    def process_title(self, files: list):
-        pass
-
     def process(self, mode="man"):
         contents = self.process_contents(mode=mode)
 
         response = None
+        my_torrent = None
         for content in contents:
+            console.rule(content.file_name)
 
             if content.category == self.movie_category or content.category == self.serie_category:
-                # Search for the title in TMDB db
-                tv_show_results = self.db_search(content=content)
-
-                # Search the tmdb result id in tracker
-                duplicate = Duplicate(content=content)
-                result = duplicate.search_by_tmdb(tmdb_id=tv_show_results.video_id)
-                if result:
-                    console.log(f"The media '{content.file_name}' already exist.")
-                    continue
-                # Get info about the video
-                video_info = self.video_info(content=content)
-
-                # Send
-                response = Media.unit3d(
-                    content=content,
-                    tv_show_result=tv_show_results,
-                    video_info=video_info,
-                )
+                video_manager = VideoManager(content=content)
+                results = video_manager.check_duplicate()
+                my_torrent = video_manager.torrent()
+                if my_torrent:
+                    response = video_manager.upload()
 
             if content.category == self.docu_category:
-                # Send
-                response = self.unit3d_doc(content=content)
-
-            # Create the torrent
-            my_torrent = Mytorrent(contents=content, meta=content.metainfo)
-            if not my_torrent.write():
-                # Skip if the file already exist
-                continue
+                docu_manager = DocuManager(content=content)
+                my_torrent = docu_manager.torrent()
+                response = docu_manager.upload()
 
             # If it's ok enter seeding mode
             if response:
@@ -111,36 +82,7 @@ class Media:
         auto = Auto(path=self.path, tracker_name=self.tracker_name)
         return auto.scan()
 
-    @staticmethod
-    def unit3d(content: Contents, tv_show_result: list, video_info: pvtTracker) -> requests:
-        # Prepare for upload
-        unit3d_up = UploadVideo(content)
-
-        # Create a new payload
-        data = unit3d_up.payload(tv_show=tv_show_result, video_info=video_info)
-
-        # Get a new tracker instance
-        tracker = unit3d_up.tracker(data=data)
-
-        # Send the payload
-        return unit3d_up.send(tracker=tracker)
-
-    @staticmethod
-    def unit3d_doc(content: Contents) -> requests:
-
-        # Prepare for upload
-        unit3d_up = UploadDocument(content)
-
-        # Create a new payload
-        data = unit3d_up.payload()
-
-        # Get a new tracker instance
-        tracker = unit3d_up.tracker(data=data)
-
-        # Send the payload
-        return unit3d_up.send(tracker=tracker)
-
-    def video_files(self, item):
+    def get_media(self, item):
         """
         Getting ready for tracker upload
         Return
@@ -148,25 +90,13 @@ class Media:
               - content category ( movie or serie)
               - torrent meta_info
         """
-        video_files = Files(
+        files = Files(
             path=item.torrent_path,
             tracker_name=self.tracker_name,
             media_type=item.media_type,
         )
-        content = video_files.get_data()
+        content = files.get_data()
         if content is False:
             # skip invalid folder or file
             return
         return content
-
-    def db_search(self, content: Contents):
-        # Request results from the video online database
-        my_tmdb = TvShow(content.category)
-        tv_show_result = my_tmdb.start(content.file_name)
-        return tv_show_result
-
-    def video_info(self, content: Contents):
-        video_info = Video(
-            fileName=str(os.path.join(content.folder, content.file_name))
-        )
-        return video_info
