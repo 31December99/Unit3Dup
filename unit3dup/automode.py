@@ -88,7 +88,8 @@ class Auto:
             source=guess_filename.source,
             other=guess_filename.other,
             audio_codec=guess_filename.audio_codec,
-            subtitle=guess_filename.subtitle
+            subtitle=guess_filename.subtitle,
+            resolution=guess_filename.screen_size
         )
 
     def create_folder_path(self, subdir: str) -> Folder | None:
@@ -111,7 +112,8 @@ class Auto:
             source=guess_filename.source,
             other=guess_filename.other,
             audio_codec=guess_filename.audio_codec,
-            subtitle=guess_filename.subtitle
+            subtitle=guess_filename.subtitle,
+            resolution=guess_filename.screen_size
         )
 
     def depth_walker(self, path) -> int:
