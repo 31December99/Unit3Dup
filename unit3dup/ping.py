@@ -148,7 +148,7 @@ class Ping:
             return True
         return False
 
-    def process_imghost(self) -> (bool, list):
+    def process_imghost(self) -> bool:
 
         # Getting ready for testing image host
         img = cv2.imread(self.test_image)
@@ -177,4 +177,4 @@ class Ping:
             else:
                 at_least = True
 
-        return at_least, offline_uploaders
+        return at_least
