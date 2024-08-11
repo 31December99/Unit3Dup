@@ -70,7 +70,8 @@ class Media:
             if content.category == self.docu_category:
                 docu_manager = DocuManager(content=content)
                 my_torrent = docu_manager.torrent()
-                response = docu_manager.upload()
+                if my_torrent:
+                    response = docu_manager.upload()
 
             # If it's ok enter seeding mode
             if response:
