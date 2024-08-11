@@ -49,7 +49,7 @@ class Myhttp:
             "free": 0,
             "doubleup": 0,
             "sticky": 0,
-            "torrent-cover": '',
+            "torrent-cover": "",
         }
 
     def _post(self, files: str, data: dict, params: dict):
@@ -76,7 +76,7 @@ class Tracker(Myhttp):
             sys.exit()
         except requests.exceptions.ConnectionError:
             console.log(
-                f"[Report _get] ' Connection error. Please check your service.env data"
+                f"[Report _get] ' Connection error. Please check your configuration data"
                 f" or verify if the tracker is online",
                 style="bold red",
             )
