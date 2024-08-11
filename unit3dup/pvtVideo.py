@@ -3,6 +3,7 @@ import pprint
 import random
 import cv2
 import os
+import preferences
 from unit3dup.imageHost import ImgBB, Freeimage, ImageUploaderFallback
 from unit3dup import config
 from unit3dup.ping import offline_uploaders
@@ -34,7 +35,7 @@ class Video:
         # Frame count
         self.numero_di_frame = None
         # Screenshots samples
-        self.samples_n = 4
+        self.samples_n = preferences.number_of_screenshots if 2 <= preferences.number_of_screenshots <= 10 else 4
         # Catturo i frames del video
         self.video_capture = cv2.VideoCapture(self.file_name)
 
