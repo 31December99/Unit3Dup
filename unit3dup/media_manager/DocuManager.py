@@ -13,10 +13,10 @@ class DocuManager:
         self._unit3d_up = UploadDocument(content)
 
     def torrent(self):
-        return self._my_torrent.write()
+        self._my_torrent.hash()
+        return self._my_torrent if self._my_torrent.write() else None
 
     def upload(self):
-
         # Create a new payload
         data = self._unit3d_up.payload()
 
@@ -25,4 +25,3 @@ class DocuManager:
 
         # Send the payload
         return self._unit3d_up.send(tracker=tracker)
-
