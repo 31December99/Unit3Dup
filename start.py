@@ -11,7 +11,7 @@ console = Console(log_path=False)
 
 
 def main():
-    """ Manual Mode """
+    """Manual Mode"""
     if cli.args.upload:
         media_video = Media(path=cli.args.upload, tracker_name=cli.args.tracker)
         media_video.process()
@@ -19,7 +19,7 @@ def main():
     """ Auto Mode """
     if cli.args.scan:
         media_video = Media(path=cli.args.scan, tracker_name=cli.args.tracker)
-        media_video.process(mode='auto')
+        media_video.process(mode="auto")
 
     """ COMMANDS LIST: commands not necessary for the upload but may be useful """
 
@@ -157,7 +157,7 @@ def main():
 if __name__ == "__main__":
 
     cli = CommandLine()
-    config = config.trackers.get_tracker('itt')
+    config = config.trackers.get_tracker("itt")
 
     """ Test configuration"""
     ping = Ping()
@@ -170,6 +170,7 @@ if __name__ == "__main__":
         tmdb_err = ping.process_tmdb()
         imghost_err = ping.process_imghost()
         if not (tmdb_err and qbit_err and imghost_err and track_err):
+            console.log("Check your configuration file. Exit..")
             exit(1)
 
     main()
