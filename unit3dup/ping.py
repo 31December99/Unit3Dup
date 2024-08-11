@@ -9,12 +9,13 @@ from rich.console import Console
 from qbittorrent import Client
 from urllib.parse import urlparse
 from unit3dup import pvtTracker
-from unit3dup.imageHost import ImgBB
-from unit3dup.freeimage import Freeimage
+from unit3dup.imageHost import ImgBB, Freeimage, ImageUploaderFallback
 
 from unit3dup import config
 
 console = Console(log_path=False)
+
+offline_uploaders = []
 
 
 class Ping:
@@ -115,7 +116,10 @@ class Ping:
             console.log(http_err)
             return False
         except requests.exceptions.ConnectionError as http_err:
-            console.log(f"[QBIT ERR] {http_err}", style="bold red")
+            console.log(
+                f"[QBIT ERR] Connection Error. Check ip/port or run qbittorrent",
+                style="bold red",
+            )
             return False
         except qbittorrent.client.LoginRequired as http_err:
             console.log(
@@ -144,19 +148,33 @@ class Ping:
             return True
         return False
 
-    def process_imghost(self) -> bool:
+    def process_imghost(self) -> (bool, list):
 
-        # Getting readyfor testing image host
+        # Getting ready for testing image host
         img = cv2.imread(self.test_image)
         success, encoded_image = cv2.imencode(".png", img)
         if not success:
             raise Exception("Could not encode image")  # todo
 
-        if Freeimage(image=encoded_image.tobytes(), key=self.free_image_key).upload:
-            console.log("[Freeimage host]..... [Ok]", style="bold green")
+        # List of host available uploaders
+        uploaders = [
+            ImgBB(encoded_image.tobytes(), self.imgbb_key),
+            Freeimage(encoded_image.tobytes(), self.free_image_key),
+        ]
 
-        if ImgBB(image=encoded_image.tobytes(), imgbb_key=self.imgbb_key).upload:
-            console.log("[ImgBB host]..... [Ok]", style="bold green")
-        else:
-            return False
-        return True
+        # Return true if at least one host is online
+        at_least = False
+
+        # For each host
+        for uploader in uploaders:
+
+            # Upload a small image
+            fallback_uploader = ImageUploaderFallback(uploader)
+
+            # If the host is not online add it to the list of offline uploaders
+            if not fallback_uploader.upload(test=True):
+                offline_uploaders.append(uploader)
+            else:
+                at_least = True
+
+        return at_least, offline_uploaders
