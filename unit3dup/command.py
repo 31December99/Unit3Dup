@@ -97,7 +97,8 @@ class CommandLine:
             console.log(f"Configuration file 'service.env' not found")
             sys.exit()
 
-        if not os.path.exists(f"{self.args.tracker}.json"):
+        database_tracker = os.path.join('database', f'{self.args.tracker}.json')
+        if not os.path.exists(database_tracker):
             console.log(
                 f"Configuration file '{self.args.tracker}.json' not found for tracker '{self.args.tracker}'"
             )
