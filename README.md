@@ -136,6 +136,12 @@ Make sure to configure the necessary API keys and authentication credentials in 
 - API_TOKEN=...
 
 ___
+### preferences.cfg:
+
+duplicate_on is used to activate a check for titles already present in the tracker
+number_of_screenshots determines the number of screenshots generated
+
+
 ### Contribution
 
 Contributions are welcome! Feel free to open an issue or submit a pull request.
