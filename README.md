@@ -139,6 +139,7 @@ ___
 ### preferences.cfg:
 
 duplicate_on is used to activate a check for titles already present in the tracker
+
 number_of_screenshots determines the number of screenshots generated
 
 
