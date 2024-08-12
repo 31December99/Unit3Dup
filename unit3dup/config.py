@@ -116,7 +116,7 @@ class ConfigUnit3D:
 
             # Build complete paths
             tracker_env_path = os.path.join(self.root_folder, tracker_env_name)
-            tracker_json_path = os.path.join(self.root_folder, tracker_json_name)
+            tracker_json_path = os.path.join(self.root_folder, 'database', tracker_json_name)
 
             # // check tracker file configuration .env e .json
             config_load_tracker = Config(RepositoryEnv(tracker_env_path))
