@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import ast
 
 import decouple
 from decouple import Config, RepositoryEnv
@@ -66,10 +67,13 @@ class ConfigUnit3D:
         self.BASE_URL: str = ""
         self.tracker_values: dict = {}
         self.trackers = None
+        self.duplicate_on = None
+        self.number_of_screenshots = None
 
     def service(self):
 
         service_not_found: bool = False
+        preferences_not_found: bool = False
 
         # Get the current folder
         current_folder = os.path.dirname(__file__)
@@ -86,6 +90,27 @@ class ConfigUnit3D:
                 style="bold red",
             )
             console.log(self.message)
+
+        preferences_path = os.path.join(root_folder, "preferences.cfg")
+
+        # Does it Exist ?
+        if not os.path.isfile(preferences_path):
+            preferences_not_found = True
+
+        if preferences_not_found:
+            self.message.append(
+                f"\nfile 'preferences.cfg' not found in {preferences_path.upper()}",
+                style="bold red",
+            )
+            console.log(self.message)
+
+        try:
+            config_load_preferences = Config(RepositoryEnv(preferences_path))
+            self.duplicate_on = ast.literal_eval(config_load_preferences("duplicate_on"))
+            self.number_of_screenshots = int(config_load_preferences("number_of_screenshots"))
+        except decouple.UndefinedValueError as e:
+            console.log(f"* preferences.cfg * {e}", style="red bold")
+            exit(1)
 
         try:
             config_load_service = Config(RepositoryEnv(service_path))
@@ -106,8 +131,8 @@ class ConfigUnit3D:
             os.path.splitext(file_name)[0].lower()
             for file_name in os.listdir()
             if os.path.isfile(file_name)
-            and os.path.splitext(file_name)[1].lower() == ".env"
-            and "service.env" not in file_name.lower()
+               and os.path.splitext(file_name)[1].lower() == ".env"
+               and "service.env" not in file_name.lower()
         ]
 
         for tracker_name in env_files:
