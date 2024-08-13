@@ -67,8 +67,7 @@ class File:
     """
 
     def __init__(self, file_name: str, folder: str, media_type: str, torrent_name: str, source: str, other: str,
-                 audio_codec: str, subtitle: str, resolution: str):
-        self.torrent_path = os.path.join(folder, file_name)
+                 audio_codec: str, subtitle: str, resolution: str ): # , torrent_path: str):
         self.folder = folder
         self.media_type = media_type
         self.torrent_name = torrent_name
@@ -77,6 +76,7 @@ class File:
         self.audio_code = audio_codec
         self.subtitle = subtitle
         self.resolution = resolution
+        # self.torrent_path = torrent_path  # os.path.join(folder, file_name)
 
     @classmethod
     def create(cls, file_name: str, folder: str, media_type: str, torrent_name: str, source: str, other: str,
