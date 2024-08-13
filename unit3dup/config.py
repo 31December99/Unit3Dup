@@ -68,6 +68,7 @@ class ConfigUnit3D:
         self.tracker_values: dict = {}
         self.trackers = None
         self.duplicate_on = None
+        self.torrent_archive = None
         self.number_of_screenshots = None
 
     def service(self):
@@ -108,6 +109,8 @@ class ConfigUnit3D:
             config_load_preferences = Config(RepositoryEnv(preferences_path))
             self.duplicate_on = ast.literal_eval(config_load_preferences("duplicate_on"))
             self.number_of_screenshots = int(config_load_preferences("number_of_screenshots"))
+            self.torrent_archive = config_load_preferences("torrent_archive")
+
         except decouple.UndefinedValueError as e:
             console.log(f"* preferences.cfg * {e}", style="red bold")
             exit(1)
