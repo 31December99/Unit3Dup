@@ -114,11 +114,11 @@ class Duplicate:
             while 1:
                 console.print("\nPress (C) to continue, (S) to SKIP.. (Q) Quit - ", end='')
                 user_answer = input()
-                if 'c' in user_answer.lower():
+                if 'c' == user_answer.lower():
                     return False
-                if 's' in user_answer.lower():
+                if 's' == user_answer.lower():
                     return True
-                if 'q' in user_answer.lower():
+                if 'q' == user_answer.lower():
                     exit(1)
 
     def view_data(self, data: dict) -> bool:
