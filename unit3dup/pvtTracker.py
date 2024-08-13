@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import sys
+import os
 import requests
 from rich.console import Console
 from urllib.parse import urljoin
@@ -73,14 +73,14 @@ class Tracker(Myhttp):
                 f"[Report _get] ' HTTP Error. Check your service.env data",
                 style="bold red",
             )
-            sys.exit()
+            exit(1)
         except requests.exceptions.ConnectionError:
             console.log(
                 f"[Report _get] ' Connection error. Please check your configuration data"
                 f" or verify if the tracker is online",
                 style="bold red",
             )
-            sys.exit()
+            exit(1)
 
     def _post(self, file: dict, data: dict, params: dict):
         return requests.post(
@@ -110,7 +110,7 @@ class Tracker(Myhttp):
             return response.json()
         except requests.exceptions.HTTPError as http_err:
             console.print(f"Report {http_err}")
-            sys.exit()
+            exit(1)
 
 
 class filterAPI(Tracker):
@@ -278,8 +278,8 @@ class Torrents(Tracker):
 
 
 class Uploader(Tracker):
-    def upload_t(self, data: dict, file_name: str) -> requests:
-        with open(f"{file_name}.torrent", "rb") as torrent:
+    def upload_t(self, data: dict, full_path: str) -> requests:
+        with open(f"{full_path}.torrent", "rb") as torrent:
             file_torrent = {"torrent": torrent}
             return self._post(file=file_torrent, data=data, params=self.params)
 
