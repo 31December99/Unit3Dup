@@ -44,12 +44,13 @@ class Mytorrent:
         console.log(f"Hashed in {end - start} s\n")
 
     def write(self) -> bool:
+        full_path = f"{self.torrent_path}.torrent"
         try:
-            self.mytorr.write(f"{self.torrent_path}.torrent")
+            self.mytorr.write(full_path)
             return True
         except torf.TorfError as e:
             if 'File exists' in str(e):
-                console.log(f"This torrent file already exists: {self.torrent_path}.torrent")
+                console.log(f"This torrent file already exists: {full_path}")
             return False
 
     @property
