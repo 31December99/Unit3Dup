@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import base64
 import json
+import time
+
 import requests
 from abc import ABC, abstractmethod
 from rich.console import Console
@@ -34,17 +36,24 @@ class ImageUploader(ABC):
             try:
                 upload_n += 1
                 response = requests.post(
-                    self.get_endpoint(), params=params, files=files
+                    self.get_endpoint(), params=params, files=files, timeout=10
                 )
                 response.raise_for_status()
                 return response.json()
 
             except requests.exceptions.HTTPError as e:
                 self.handle_http_error(e, upload_n)
+                time.sleep(1)
 
             except json.decoder.JSONDecodeError as e:
-                print(f"JSONDecodeError: {e}")
+                console.log(f"[Imagehost] JSONDecodeError: {e}")
                 break
+
+            except requests.exceptions.Timeout:
+                console.log("'[Timeout]' We did not receive a response from the server within the 10 second limit"
+                            , style="red bold")
+                break
+
         return None
 
     def handle_http_error(self, error, attempt):
