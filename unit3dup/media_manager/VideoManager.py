@@ -21,7 +21,7 @@ class VideoManager:
         self._unit3d_up = UploadVideo(content)
 
     def tmdb(self):
-        return self._my_tmdb.start(self.content.file_name)
+        return self._tv_show_result
 
     def info(self):
         return self._info
