@@ -99,8 +99,6 @@ class Files:
 
         self.file_name = files[0]
         self.folder = self.path
-        # self.display_name, ext = os.path.splitext(self.file_name)
-        # self.display_name = Manage_titles.clean(self.display_name)
         self.display_name = Manage_titles.clean(os.path.basename(self.path))
 
         self.torrent_path = self.folder
@@ -123,14 +121,6 @@ class Files:
         return True
 
     def list_video_files(self) -> list:
-        """
-        Add to the list every file if its extension is in the video_ext.
-        """
-        return [
-            file for file in os.listdir(self.path) if Manage_titles.filter_ext(file)
-        ]
-
-    def list_doc_files(self) -> list:
         """
         Add to the list every file if its extension is in the video_ext.
         """

@@ -1,13 +1,15 @@
 # -*- coding: utf-8 -*-
+import pprint
 import random
 import cv2
 import os
-from unit3dup.imageHost import ImgBB
+from unit3dup.imageHost import ImgBB, Freeimage, ImageUploaderFallback
 from unit3dup import config
+from unit3dup.ping import offline_uploaders
 from pymediainfo import MediaInfo
 from rich.console import Console
 
-console = Console()
+console = Console(log_path=False)
 
 
 class Video:
@@ -22,6 +24,7 @@ class Video:
     def __init__(self, fileName: str):
 
         self.IMGBB_KEY = config.IMGBB_KEY
+        self.FREE_IMAGE_KEY = config.FREE_IMAGE_KEY
 
         self.file_name = fileName
         # video file size
@@ -31,7 +34,11 @@ class Video:
         # Frame count
         self.numero_di_frame = None
         # Screenshots samples
-        self.samples_n = 4
+        self.samples_n = (
+            config.number_of_screenshots
+            if 2 <= config.number_of_screenshots <= 10
+            else 4
+        )
         # Catturo i frames del video
         self.video_capture = cv2.VideoCapture(self.file_name)
 
@@ -98,11 +105,35 @@ class Video:
         console.log("\n[GENERATING IMAGES FROM VIDEO...]")
         description = "[center]\n"
         console_url = []
+
         for img_bytes in self.frames:
-            img_host = ImgBB(image=img_bytes, imgbb_key=self.IMGBB_KEY)
-            img_url = img_host.upload["data"]["display_url"]
-            console.log(img_url)
-            console_url.append(img_url)
-            description += f"[url={img_url}][img=350]{img_url}[/img][/url]"
+            master_uploaders = [
+                ImgBB(img_bytes, self.IMGBB_KEY),
+                Freeimage(img_bytes, self.FREE_IMAGE_KEY),
+            ]
+
+            # for each on-line uploader
+            for uploader in master_uploaders:
+                if not uploader.__class__.__name__ in offline_uploaders:
+                    # Upload the screenshot
+                    fallback_uploader = ImageUploaderFallback(uploader)
+                    # Get a new URL
+                    img_url = fallback_uploader.upload()
+
+                    # If it goes offline during upload skip the uploader
+                    if not img_url:
+                        console.log(
+                            "** Upload failed, skip to next host **", style="red bold"
+                        )
+                        offline_uploaders.append(uploader.__class__.__name__)
+                        continue
+                    console.log(img_url)
+                    # Append the URL to new description
+                    console_url.append(img_url)
+                    description += f"[url={img_url}][img=350]{img_url}[/img][/url]"
+                    # Got description for this screenshot
+                    break
+
+        # Append the new URL to the description string
         description += "\n[/center]"
         return description

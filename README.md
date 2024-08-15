@@ -15,6 +15,15 @@ It performs the following tasks:
 - Uploads the content to the UNIT3D Next Generation tracker platform.
 - Seeding in qbittorrent
 
+___
+### User preferences.cfg:
+
+duplicate_on is used to activate a check for titles already present in the tracker
+
+number_of_screenshots determines the number of screenshots generated
+
+torrent_archive set an optional path to move the .torrent file to a desired folder
+
 ## Join Us
 
 The program is functional but still in the early stages, undergoing constant modifications.
@@ -135,7 +144,7 @@ Make sure to configure the necessary API keys and authentication credentials in 
 - PASS_KEY=...
 - API_TOKEN=...
 
-___
+
 ### Contribution
 
 Contributions are welcome! Feel free to open an issue or submit a pull request.

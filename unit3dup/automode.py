@@ -6,6 +6,7 @@ from unit3dup.contents import File, Folder
 from unit3dup.utility import Manage_titles
 from unit3dup import title
 from unit3dup import config
+
 console = Console(log_path=False)
 
 
@@ -16,7 +17,7 @@ class Auto:
         self.movies = None
         self.path = path
         self.config = config.trackers.get_tracker(tracker_name)
-        self.movie_category = self.config.tracker_values.category('movie')
+        self.movie_category = self.config.tracker_values.category("movie")
         self.serie_category = self.config.tracker_values.category("tvshow")
         self.is_dir = os.path.isdir(self.path)
         self.auto = mode
@@ -38,6 +39,11 @@ class Auto:
             console.log("We can't scan a file..")
         else:
             for path, sub_dirs, files in os.walk(self.path):
+                # Sort subdirs
+                sub_dirs.sort(reverse=True)
+                # Sort files
+                files.sort(reverse=True)
+
                 if path == self.path:
                     movies_path = [
                         os.path.join(self.path, file)
@@ -75,22 +81,22 @@ class Auto:
         """
         file_name, ext = os.path.splitext(file)
         guess_filename = title.Guessit(file_name)
-        if not guess_filename.guessit_season:
-            # Movie without folder
-            return File.create(
-                file_name=file,
-                folder=self.path,
-                media_type=self.movie_category,
-                torrent_name=guess_filename.guessit_title,
-            )
+        if guess_filename.guessit_season:
+            media_type = self.serie_category
         else:
-            # Serie without folder
-            return File.create(
-                file_name=file,
-                folder=self.path,
-                media_type=self.serie_category,
-                torrent_name=guess_filename.guessit_title,
-            )
+            media_type = self.movie_category
+
+        return File.create(
+            file_name=file,
+            folder=self.path,
+            media_type=media_type,
+            torrent_name=guess_filename.guessit_title,
+            source=guess_filename.source,
+            other=guess_filename.other,
+            audio_codec=guess_filename.audio_codec,
+            subtitle=guess_filename.subtitle,
+            resolution=guess_filename.screen_size,
+        )
 
     def create_folder_path(self, subdir: str) -> Folder | None:
         """
@@ -98,29 +104,30 @@ class Auto:
         """
         file_name, ext = os.path.splitext(subdir)
         guess_filename = title.Guessit(file_name)
+
         if guess_filename.guessit_season:
-            # Serie with folder
-            return Folder.create(
-                folder=self.path,
-                subfolder=subdir,
-                media_type=self.serie_category,
-                torrent_name=guess_filename.guessit_title,
-            )
+            media_type = self.serie_category
         else:
-            # Movie with folder
-            return Folder.create(
-                folder=self.path,
-                subfolder=subdir,
-                media_type=self.movie_category,
-                torrent_name=guess_filename.guessit_title,
-            )
+            media_type = self.movie_category
+
+        return Folder.create(
+            folder=self.path,
+            subfolder=subdir,
+            media_type=media_type,
+            torrent_name=guess_filename.guessit_title,
+            source=guess_filename.source,
+            other=guess_filename.other,
+            audio_codec=guess_filename.audio_codec,
+            subtitle=guess_filename.subtitle,
+            resolution=guess_filename.screen_size,
+        )
 
     def depth_walker(self, path) -> int:
         """
         It stops at one subfolder and ignores any subfolders within that subfolder
         depth < 1
         """
-        return path[len(self.path):].count(os.sep)
+        return path[len(self.path) :].count(os.sep)
 
     @staticmethod
     def list_video_files(manual_path: str) -> list:

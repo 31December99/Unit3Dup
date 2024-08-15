@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 
 import os
+import ast
+
+import decouple
 from decouple import Config, RepositoryEnv
 from rich.console import Console
 from rich.text import Text
@@ -53,20 +56,25 @@ class ConfigUnit3D:
         # Get the current folder
         self.current_folder = os.path.dirname(__file__)
         self.root_folder = os.path.abspath(os.path.join(self.current_folder, ".."))
-        self.TMDB_APIKEY: str = ''
-        self.IMGBB_KEY: str = ''
-        self.QBIT_USER: str = ''
-        self.QBIT_PASS: str = ''
-        self.QBIT_URL: str = ''
-        self.QBIT_PORT: str = ''
-        self.API_TOKEN: str = ''
-        self.BASE_URL: str = ''
+        self.TMDB_APIKEY: str = ""
+        self.IMGBB_KEY: str = ""
+        self.FREE_IMAGE_KEY: str = ""
+        self.QBIT_USER: str = ""
+        self.QBIT_PASS: str = ""
+        self.QBIT_URL: str = ""
+        self.QBIT_PORT: str = ""
+        self.API_TOKEN: str = ""
+        self.BASE_URL: str = ""
         self.tracker_values: dict = {}
         self.trackers = None
+        self.duplicate_on = None
+        self.torrent_archive = None
+        self.number_of_screenshots = None
 
     def service(self):
 
         service_not_found: bool = False
+        preferences_not_found: bool = False
 
         # Get the current folder
         current_folder = os.path.dirname(__file__)
@@ -84,19 +92,56 @@ class ConfigUnit3D:
             )
             console.log(self.message)
 
-        config_load_service = Config(RepositoryEnv(service_path))
-        self.TMDB_APIKEY = config_load_service("TMDB_APIKEY")
-        self.IMGBB_KEY = config_load_service("IMGBB_KEY")
-        self.QBIT_USER = config_load_service("QBIT_USER")
-        self.QBIT_PASS = config_load_service("QBIT_PASS")
-        self.QBIT_URL = config_load_service("QBIT_URL")
-        self.QBIT_PORT = config_load_service("QBIT_PORT")
+        preferences_path = os.path.join(root_folder, "preferences.cfg")
+
+        # Does it Exist ?
+        if not os.path.isfile(preferences_path):
+            preferences_not_found = True
+
+        if preferences_not_found:
+            self.message.append(
+                f"\nfile 'preferences.cfg' not found in {preferences_path.upper()}",
+                style="bold red",
+            )
+            console.log(self.message)
+
+        try:
+            config_load_preferences = Config(RepositoryEnv(preferences_path))
+            self.duplicate_on = ast.literal_eval(config_load_preferences("duplicate_on"))
+            self.number_of_screenshots = int(config_load_preferences("number_of_screenshots"))
+
+            torrent_archive_path = config_load_preferences("torrent_archive")
+            if torrent_archive_path != '' and not os.path.exists(torrent_archive_path):
+                console.log("The torrent archive path does not exist. Default path has been set", style="bold red")
+            else:
+                self.torrent_archive = torrent_archive_path
+
+        except decouple.UndefinedValueError as e:
+            console.log(f"* preferences.cfg * {e}", style="red bold")
+            exit(1)
+
+        try:
+            config_load_service = Config(RepositoryEnv(service_path))
+            self.TMDB_APIKEY = config_load_service("TMDB_APIKEY")
+            self.IMGBB_KEY = config_load_service("IMGBB_KEY")
+            self.FREE_IMAGE_KEY = config_load_service("FREE_IMAGE_KEY")
+            self.QBIT_USER = config_load_service("QBIT_USER")
+            self.QBIT_PASS = config_load_service("QBIT_PASS")
+            self.QBIT_URL = config_load_service("QBIT_URL")
+            self.QBIT_PORT = config_load_service("QBIT_PORT")
+        except decouple.UndefinedValueError as e:
+            console.log(f"* service.env * {e}", style="red bold")
+            exit(1)
 
     def validate(self):
 
-        env_files = [os.path.splitext(file_name)[0].lower() for file_name in os.listdir() if
-                     os.path.isfile(file_name) and os.path.splitext(file_name)[1].lower() == '.env'
-                     and 'service.env' not in file_name.lower()]
+        env_files = [
+            os.path.splitext(file_name)[0].lower()
+            for file_name in os.listdir()
+            if os.path.isfile(file_name)
+               and os.path.splitext(file_name)[1].lower() == ".env"
+               and "service.env" not in file_name.lower()
+        ]
 
         for tracker_name in env_files:
             tracker_env_name = f"{tracker_name}.env"
@@ -104,18 +149,27 @@ class ConfigUnit3D:
 
             # Build complete paths
             tracker_env_path = os.path.join(self.root_folder, tracker_env_name)
-            tracker_json_path = os.path.join(self.root_folder, tracker_json_name)
+            tracker_json_path = os.path.join(self.root_folder, 'database', tracker_json_name)
 
             # // check tracker file configuration .env e .json
             config_load_tracker = Config(RepositoryEnv(tracker_env_path))
-            self.API_TOKEN = config_load_tracker("API_TOKEN")
-            self.BASE_URL = config_load_tracker("BASE_URL")
+            try:
+                self.API_TOKEN = config_load_tracker("API_TOKEN")
+                self.BASE_URL = config_load_tracker("BASE_URL")
+            except decouple.UndefinedValueError as e:
+                console.log(f"* {tracker_name}.env * {e}", style="red bold")
+                exit(1)
+
             tracker_values = TrackerConfig(tracker_json_path)
 
             self.trackers = TrackerManager(tracker_name)
-            self.trackers.add_tracker(Tracker(api_token=self.API_TOKEN,
-                                              base_url=self.BASE_URL,
-                                              tracker_values=tracker_values))
+            self.trackers.add_tracker(
+                Tracker(
+                    api_token=self.API_TOKEN,
+                    base_url=self.BASE_URL,
+                    tracker_values=tracker_values,
+                )
+            )
 
 
 config = ConfigUnit3D()
