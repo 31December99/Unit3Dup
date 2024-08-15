@@ -173,7 +173,7 @@ class Ping:
 
             # If the host is not online add it to the list of offline uploaders
             if not fallback_uploader.upload(test=True):
-                offline_uploaders.append(uploader)
+                offline_uploaders.append(uploader.__class__.__name__)
             else:
                 at_least = True
 
