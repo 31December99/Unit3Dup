@@ -22,7 +22,7 @@ class Qbitt:
         self.torrent_path = contents.torrent_path
         self.torrent_file = None
         self.torrents = None
-        self.torrent_archive = config.torrent_archive if os.path.exists(config.torrent_archive) else None
+        self.torrent_archive = config.torrent_archive
 
         self.qb = Client(f"{config.QBIT_URL}:{config.QBIT_PORT}/")
         download_torrent_dal_tracker = requests.get(tracker_data_response)
