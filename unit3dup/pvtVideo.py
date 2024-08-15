@@ -34,7 +34,11 @@ class Video:
         # Frame count
         self.numero_di_frame = None
         # Screenshots samples
-        self.samples_n = config.number_of_screenshots if 2 <= config.number_of_screenshots <= 10 else 4
+        self.samples_n = (
+            config.number_of_screenshots
+            if 2 <= config.number_of_screenshots <= 10
+            else 4
+        )
         # Catturo i frames del video
         self.video_capture = cv2.VideoCapture(self.file_name)
 
@@ -108,33 +112,27 @@ class Video:
                 Freeimage(img_bytes, self.FREE_IMAGE_KEY),
             ]
 
-            # remove off-line host
-            on_line_uploaders = [
-                uploader
-                for uploader in master_uploaders
-                if not any(
-                    isinstance(existing_uploader, uploader.__class__)
-                    for existing_uploader in offline_uploaders
-                )
-            ]
-
             # for each on-line uploader
-            for uploader in on_line_uploaders:
-                # Upload the screenshot
-                fallback_uploader = ImageUploaderFallback(uploader)
-                # Get a new URL
-                img_url = fallback_uploader.upload()
+            for uploader in master_uploaders:
+                if not uploader.__class__.__name__ in offline_uploaders:
+                    # Upload the screenshot
+                    fallback_uploader = ImageUploaderFallback(uploader)
+                    # Get a new URL
+                    img_url = fallback_uploader.upload()
 
-                # If it goes offline during upload skip the uploader
-                if not img_url:
-                    console.log("** Upload failed, skip to next host **", style="red bold")
-                    continue
-                console.log(img_url)
-                # Append the URL to new description
-                console_url.append(img_url)
-                description += f"[url={img_url}][img=350]{img_url}[/img][/url]"
-                # Got description for this screenshot
-                break
+                    # If it goes offline during upload skip the uploader
+                    if not img_url:
+                        console.log(
+                            "** Upload failed, skip to next host **", style="red bold"
+                        )
+                        offline_uploaders.append(uploader.__class__.__name__)
+                        continue
+                    console.log(img_url)
+                    # Append the URL to new description
+                    console_url.append(img_url)
+                    description += f"[url={img_url}][img=350]{img_url}[/img][/url]"
+                    # Got description for this screenshot
+                    break
 
         # Append the new URL to the description string
         description += "\n[/center]"
