@@ -29,17 +29,19 @@ class UploadBot(ABC):
 
     def send(self, tracker: pvtTracker) -> requests:
         tracker_response = tracker.upload_t(
-            data=tracker.data, file_name=self.torrent_path
+            data=tracker.data, full_path=self.torrent_path
         )
+        tracker_response_body = json.loads(tracker_response.text)
+
         if tracker_response.status_code == 200:
-            tracker_response_body = json.loads(tracker_response.text)
+
             console.log(
                 f"\n[TRACKER RESPONSE]............  {tracker_response_body['message'].upper()}"
             )
             return tracker_response_body["data"]
         else:
             console.log(
-                f"It was not possible to upload => {tracker_response} {tracker_response.text}"
+                f"It was not possible to upload the media. Message: '{tracker_response_body['data']['name'][0].upper()}'"
             )
         return tracker_response
 

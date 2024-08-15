@@ -1,56 +1,140 @@
 # -*- coding: utf-8 -*-
 import base64
 import json
-import sys
+import time
+
 import requests
+from abc import ABC, abstractmethod
 from rich.console import Console
 
-console = Console()
+console = Console(log_path=False)
 
 
-class ImgBB:
-
-    def __init__(self, image: bytes, imgbb_key: str):
+class ImageUploader(ABC):
+    def __init__(self, image: bytes, key: str):
         self.image = base64.b64encode(image)
-        self.IMGBB_KEY = imgbb_key
+        self.key = key
 
-    @property
-    def upload(self):
-        params = {
-            "key": self.IMGBB_KEY,
+    @abstractmethod
+    def get_endpoint(self):
+        return "https://api.imgbb.com/1/upload"
+
+    @abstractmethod
+    def get_params(self):
+        return {
+            "key": self.key,
         }
 
+    def upload(self):
+        params = self.get_params()
         files = {
             "image": (None, self.image),
         }
 
         upload_n = 0
-        while upload_n < 5:
-            """
-            Send the image, and if we get 502 error, wait for a while
-            """
+        while upload_n < 4:
             try:
                 upload_n += 1
                 response = requests.post(
-                    "https://api.imgbb.com/1/upload", params=params, files=files
+                    self.get_endpoint(), params=params, files=files, timeout=10
                 )
                 response.raise_for_status()
                 return response.json()
+
             except requests.exceptions.HTTPError as e:
-                try:
-                    message = json.loads(e.response.content.decode("utf8"))
-                    if message["status_code"] == 400:
-                        print(f"[Error IMGBB] '{message['error']['message']}'")
-                        break
-                    else:
-                        print(
-                            f"[Report IMGBB try n° {upload_n}]-> {message['error']['message']}"
-                        )
-                except json.decoder.JSONDecodeError:
-                    print(f"HTTPError received: {e}")
+                self.handle_http_error(e, upload_n)
+                time.sleep(1)
+
             except json.decoder.JSONDecodeError as e:
-                print(f"JSONDecodeError: {e}")
+                console.log(f"[Imagehost] JSONDecodeError: {e}")
                 break
 
-        console.log("Unable to upload image, try Renew your API KEY")
-        sys.exit()
+            except requests.exceptions.Timeout:
+                console.log(
+                    "'[Timeout]' We did not receive a response from the server within the 10 second limit",
+                    style="red bold",
+                )
+                break
+
+        return None
+
+    def handle_http_error(self, error, attempt):
+        try:
+            message = json.loads(error.response.content.decode("utf8"))
+            if message.get("status_code") == 400:
+                console.log(
+                    f"[Error {self.__class__.__name__}] '{message['error']['message']}'"
+                )
+            else:
+                console.log(
+                    f"[Report {self.__class__.__name__} try n° {attempt}]-> {message['error']['message']}"
+                )
+
+        except json.decoder.JSONDecodeError:
+            console.log(f"HTTPError received: {error}")
+
+
+class Freeimage(ImageUploader):
+
+    def get_endpoint(self) -> str:
+        return "https://freeimage.host/api/1/upload"
+
+    def get_params(self) -> dict:
+        return {
+            "key": self.key,
+            "format": "json",
+        }
+
+
+class ImgBB(ImageUploader):
+
+    def get_endpoint(self) -> str:
+        return "https://api.imgbb.com/1/upload"
+
+    def get_params(self) -> dict:
+        return {
+            "key": self.key,
+        }
+
+
+class ImageUploaderFallback:
+    def __init__(self, uploader):
+        self.uploader = uploader
+
+    def upload(self, test=False) -> str:
+        result = None
+
+        # Get response from the uploader
+        response = self.uploader.upload()
+
+        # If not None get a new url
+        if response:
+            result = ImageUploaderFallback.result(
+                response=response, uploader_host=self.uploader.__class__.__name__
+            )
+
+        # If there is no error from json response
+        if result:
+            console.log(
+                f"[{self.uploader.__class__.__name__}]..... [ON-LINE]",
+                style="green bold",
+            )
+            if not test:
+                return result
+
+        # send an off-line message
+        if not result:
+            console.log(
+                f"[{self.uploader.__class__.__name__}]..... [OFF-LINE]",
+                style="red bold",
+            )
+        return result
+
+    @staticmethod
+    def result(response: dict, uploader_host: str) -> str:
+
+        if uploader_host == "Freeimage":
+            return response["image"]["display_url"]
+
+        if uploader_host == "ImgBB":
+            return response["data"]["display_url"]
