@@ -50,8 +50,10 @@ class ImageUploader(ABC):
                 break
 
             except requests.exceptions.Timeout:
-                console.log("'[Timeout]' We did not receive a response from the server within the 10 second limit"
-                            , style="red bold")
+                console.log(
+                    "'[Timeout]' We did not receive a response from the server within the 10 second limit",
+                    style="red bold",
+                )
                 break
 
         return None
@@ -63,12 +65,11 @@ class ImageUploader(ABC):
                 console.log(
                     f"[Error {self.__class__.__name__}] '{message['error']['message']}'"
                 )
-                pass
             else:
                 console.log(
                     f"[Report {self.__class__.__name__} try n° {attempt}]-> {message['error']['message']}"
                 )
-                pass
+
         except json.decoder.JSONDecodeError:
             console.log(f"HTTPError received: {error}")
 
