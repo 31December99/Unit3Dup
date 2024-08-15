@@ -109,7 +109,12 @@ class ConfigUnit3D:
             config_load_preferences = Config(RepositoryEnv(preferences_path))
             self.duplicate_on = ast.literal_eval(config_load_preferences("duplicate_on"))
             self.number_of_screenshots = int(config_load_preferences("number_of_screenshots"))
-            self.torrent_archive = config_load_preferences("torrent_archive")
+
+            torrent_archive_path = config_load_preferences("torrent_archive")
+            if torrent_archive_path != '' and not os.path.exists(torrent_archive_path):
+                console.log("The torrent archive path does not exist. Default path has been set", style="bold red")
+            else:
+                self.torrent_archive = torrent_archive_path
 
         except decouple.UndefinedValueError as e:
             console.log(f"* preferences.cfg * {e}", style="red bold")
