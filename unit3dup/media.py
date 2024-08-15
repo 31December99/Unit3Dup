@@ -68,6 +68,9 @@ class Media:
                 my_torrent = video_manager.torrent()
                 if my_torrent:
                     response = video_manager.upload()
+                else:
+                    # If writing the torrent fails, it skips the uploading and seeding
+                    continue
 
             if content.category == self.docu_category:
                 docu_manager = DocuManager(content=content)
