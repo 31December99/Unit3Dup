@@ -109,7 +109,7 @@ class Duplicate:
         tracker_data = self.torrent_info.search(self.guess_filename.guessit_title)
         already_present = False
         for t_data in tracker_data['data']:
-            already_present = self.view_data(t_data)
+            already_present = self._view_data(t_data)
         if already_present:
             while 1:
                 console.print("\nPress (C) to continue, (S) to SKIP.. (Q) Quit - ", end='')
@@ -121,18 +121,18 @@ class Duplicate:
                 if 'q' == user_answer.lower():
                     exit(1)
 
-    def view_data(self, data: dict) -> bool:
-        video_on_tracker = {}
+    def _view_data(self, data: dict) -> bool:
+
         for key, value in data.items():
             if 'attributes' in key:
                 name = value['name']
                 poster = value['meta']['poster']
+                size = value['size']
+                tmdb_id = value['tmdb_id']
                 tracker_file_name = title.Guessit(name)
                 already = self.compare(tracker_file=tracker_file_name, content_file=self.guess_filename)
                 if already:
-                    console.log(f"** Tracker has found this media **  -> '{name}' '{poster}'")
-                    video_on_tracker.update({'name': name})
-                    video_on_tracker.update({'poster': poster})
+                    console.log(f"** Tracker has found this media **  -> [{tmdb_id}] [{size}] '{name}' '{poster}'")
                     self.flag_already = True
         # At least one media needs to match the tracker database
         return self.flag_already
