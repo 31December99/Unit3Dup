@@ -70,13 +70,13 @@ class Tracker(Myhttp):
             return response.json()
         except requests.exceptions.HTTPError:
             console.log(
-                f"[Report _get] ' HTTP Error. Check your service.env data",
+                f"[Tracker] HTTP Error. Check your service.env data or verify if the tracker is online",
                 style="bold red",
             )
             exit(1)
         except requests.exceptions.ConnectionError:
             console.log(
-                f"[Report _get] ' Connection error. Please check your configuration data"
+                f"[Tracker] Connection error. Please check your configuration data "
                 f" or verify if the tracker is online",
                 style="bold red",
             )
