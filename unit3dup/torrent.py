@@ -31,6 +31,8 @@ class Torrent:
         return unique_id
 
     def search(self, keyword: str) -> requests:
+        # The user does not always include the '-' (hyphen) in the title
+        keyword = keyword.replace('-', ' ')
         return self.tracker.get_name(name=keyword, perPage=self.perPage)
 
     def get_by_description(self, description: str) -> requests:
