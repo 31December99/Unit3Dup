@@ -26,7 +26,7 @@ def main():
     torrent_info = View()
 
     if cli.args.search:
-        torrent_info.search(cli.args.search)
+        torrent_info.view_search(cli.args.search)
         return
 
     if cli.args.info:
