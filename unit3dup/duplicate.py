@@ -22,7 +22,6 @@ class Series:
         self.raw_data = raw_data
         self.season = season
         self.episode = episode
-        # self.torrent_info = View()
 
     def video(self) -> bool:
         for data in self.raw_data['data']:
