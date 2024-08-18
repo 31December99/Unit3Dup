@@ -108,6 +108,7 @@ class Duplicate:
     def search(self) -> bool:
         tracker_data = self.torrent_info.search(self.guess_filename.guessit_title)
         already_present = False
+        console.log("checking for duplicate entries....")
         for t_data in tracker_data['data']:
             already_present = self._view_data(t_data)
         if already_present:
@@ -132,7 +133,7 @@ class Duplicate:
                 tracker_file_name = title.Guessit(name)
                 already = self.compare(tracker_file=tracker_file_name, content_file=self.guess_filename)
                 if already:
-                    console.log(f"[Tracker] -> [{tmdb_id}] [{size}] '{name}' '{poster}'")
+                    console.log(f"[{tmdb_id}] [{size}] '{name}' '{poster}'")
                     self.flag_already = True
         # At least one media needs to match the tracker database
         return self.flag_already
