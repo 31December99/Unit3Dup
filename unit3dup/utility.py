@@ -153,6 +153,6 @@ class Manage_titles:
 
     @staticmethod
     def fuzzyit(str1: str, str2: str) -> int:
-        return fuzz.ratio(str1, str2)
+        return fuzz.ratio(str1.lower(), str2.lower())
 
 
