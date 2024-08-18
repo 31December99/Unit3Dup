@@ -22,7 +22,6 @@ class Series:
         self.raw_data = raw_data
         self.season = season
         self.episode = episode
-        self.torrent_info = Torrent()
 
     def video(self) -> bool:
         for data in self.raw_data['data']:
@@ -108,6 +107,7 @@ class Duplicate:
     def search(self) -> bool:
         tracker_data = self.torrent_info.search(self.guess_filename.guessit_title)
         already_present = False
+        console.log("checking for duplicate entries....")
         for t_data in tracker_data['data']:
             already_present = self._view_data(t_data)
         if already_present:
@@ -132,7 +132,7 @@ class Duplicate:
                 tracker_file_name = title.Guessit(name)
                 already = self.compare(tracker_file=tracker_file_name, content_file=self.guess_filename)
                 if already:
-                    console.log(f"** Tracker has found this media **  -> [{tmdb_id}] [{size}] '{name}' '{poster}'")
+                    console.log(f"[{tmdb_id}] [{size}] '{name}' '{poster}'")
                     self.flag_already = True
         # At least one media needs to match the tracker database
         return self.flag_already
