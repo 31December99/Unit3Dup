@@ -31,17 +31,18 @@ class UploadBot(ABC):
         tracker_response = tracker.upload_t(
             data=tracker.data, full_path=self.torrent_path
         )
-        tracker_response_body = json.loads(tracker_response.text)
 
         if tracker_response.status_code == 200:
+            tracker_response_body = json.loads(tracker_response.text)
 
             console.log(
                 f"\n[TRACKER RESPONSE]............  {tracker_response_body['message'].upper()}"
             )
             return tracker_response_body["data"]
         else:
+            message = json.loads(tracker_response.text)['data']
             console.log(
-                f"It was not possible to upload the media. Message: '{tracker_response_body['data']['name'][0].upper()}'"
+                f"It was not possible to upload the media. Tracker message: '{message}'"
             )
         return tracker_response
 
