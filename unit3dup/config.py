@@ -132,6 +132,10 @@ class ConfigUnit3D:
         except decouple.UndefinedValueError as e:
             console.log(f"* service.env * {e}", style="red bold")
             exit(1)
+        except FileNotFoundError as e:
+            pass
+            exit(1)
+
 
     def validate(self):
 
