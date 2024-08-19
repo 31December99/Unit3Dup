@@ -15,6 +15,7 @@
     "remux": 2,
     "vh" : 2,
     "untouched": 2,
+    "bd-untouched": 2,
     "encode": 3,
     "bluray": 3,
     "fullhd": 3,
