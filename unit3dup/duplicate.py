@@ -7,14 +7,14 @@ from rich.console import Console
 from unit3dup import title
 from unit3dup.search import TvShow
 from unit3dup import config
-from unit3dup.utility import Manage_titles
+from unit3dup.utility import Manage_titles, System
 
 console = Console(log_path=False)
 
 
 class Series:
     """
-     compare available episodes with local file
+    compare available episodes with local file
     """
 
     def __init__(self, raw_data: dict, season: int, episode: int):
@@ -24,8 +24,8 @@ class Series:
         self.episode = episode
 
     def video(self) -> bool:
-        for data in self.raw_data['data']:
-            file_name = data['attributes']['files'][0]['name']
+        for data in self.raw_data["data"]:
+            file_name = data["attributes"]["files"][0]["name"]
             guess_filename = title.Guessit(file_name)
             season = guess_filename.guessit_season
             episode = guess_filename.guessit_episode
@@ -36,7 +36,7 @@ class Series:
 
 class Movies:
     """
-     compare available movie title with local file
+    compare available movie title with local file
     """
 
     def __init__(self, raw_data: dict, name: str):
@@ -46,8 +46,8 @@ class Movies:
 
     def video(self) -> bool:
         # Compare title content vs title found on tracker
-        for data in self.raw_data['data']:
-            file_name = data['attributes']['files'][0]['name']
+        for data in self.raw_data["data"]:
+            file_name = data["attributes"]["files"][0]["name"]
             guess_filename_tracker = title.Guessit(file_name).guessit_title
             guess_filename_content = title.Guessit(self.name).guessit_title
             if guess_filename_content.lower() == guess_filename_tracker.lower():
@@ -64,7 +64,9 @@ class CompareTitles:
         self.content_file = content_file
         self.tracker_date = tracker_file.guessit_year
         self.content_date = content_file.guessit_year
-        self.ratio = Manage_titles.fuzzyit(content_file.guessit_title, tracker_file.guessit_title)
+        self.ratio = Manage_titles.fuzzyit(
+            content_file.guessit_title, tracker_file.guessit_title
+        )
 
     def same_date(self):
         return self.content_date == self.tracker_date
@@ -74,9 +76,13 @@ class CompareTitles:
 
     def is_best_resolution(self):
         if self.tracker_file.screen_size:
-            self.tracker_screen_size = int(self.tracker_file.screen_size.lower().replace('p', ''))
+            self.tracker_screen_size = int(
+                self.tracker_file.screen_size.lower().replace("p", "")
+            )
         if self.content_file.screen_size:
-            self.content_screen_size = int(self.content_file.screen_size.lower().replace('p', ''))
+            self.content_screen_size = int(
+                self.content_file.screen_size.lower().replace("p", "")
+            )
         return False
 
     def process(self) -> bool:
@@ -100,6 +106,7 @@ class Duplicate:
         self.serie_category = self.config.tracker_values.category("tvshow")
         self.guess_filename = title.Guessit(self.content.display_name)
         self.flag_already = False
+        self.content_size = System.get_size(content.torrent_path)
 
     def process(self, tmdb_id: str) -> bool:
         return self.search()
@@ -107,32 +114,56 @@ class Duplicate:
     def search(self) -> bool:
         tracker_data = self.torrent_info.search(self.guess_filename.guessit_title)
         already_present = False
-        console.log("checking for duplicate entries....")
-        for t_data in tracker_data['data']:
+        console.rule(
+            f"Searching for duplicate -> Your Files: [{self.content_size} GB]"
+            f" '{self.content.torrent_path}'",
+            style="green bold",
+        )
+        for t_data in tracker_data["data"]:
             already_present = self._view_data(t_data)
         if already_present:
             while 1:
-                console.print("\nPress (C) to continue, (S) to SKIP.. (Q) Quit - ", end='')
+                console.print(
+                    "\nPress (C) to continue, (S) to SKIP.. (Q) Quit - ", end=""
+                )
                 user_answer = input()
-                if 'c' == user_answer.lower():
+                if "c" == user_answer.lower():
                     return False
-                if 's' == user_answer.lower():
+                if "s" == user_answer.lower():
                     return True
-                if 'q' == user_answer.lower():
+                if "q" == user_answer.lower():
                     exit(1)
 
     def _view_data(self, data: dict) -> bool:
 
         for key, value in data.items():
-            if 'attributes' in key:
-                name = value['name']
-                poster = value['meta']['poster']
-                size = value['size']
-                tmdb_id = value['tmdb_id']
+            if "attributes" in key:
+                name = value["name"]
+                poster = value["meta"]["poster"]
+
+                # Size in GB
+                size = round(value["size"] / (1024**3), 2)
+                tmdb_id = value["tmdb_id"]
                 tracker_file_name = title.Guessit(name)
-                already = self.compare(tracker_file=tracker_file_name, content_file=self.guess_filename)
+                already = self.compare(
+                    tracker_file=tracker_file_name, content_file=self.guess_filename
+                )
+
+                # Format field
+                tmdb_id_width = 6
+                size_width = 6
+                name_width = 20
+                poster_width = 20
+                formatted_tmdb_id = f"{tmdb_id:>{tmdb_id_width}}"
+                formatted_size = f"{size:>{size_width}.2f} GB"
+                formatted_name = f"{name:<{name_width}}"
+                formatted_poster = f"{poster:<{poster_width}}"
+
                 if already:
-                    console.log(f"[{tmdb_id}] [{size}] '{name}' '{poster}'")
+                    console.log(
+                        f"[TMDB-ID {formatted_tmdb_id}] [{formatted_size}] '{formatted_name}' '{formatted_poster}'"
+                    )
+
                     self.flag_already = True
         # At least one media needs to match the tracker database
         return self.flag_already
@@ -144,10 +175,9 @@ class Duplicate:
     # not used
     def search_by_tmdb(self, tmdb_id: int) -> bool:
         """
-         Search media by tmdb id on the tracker
-
-
+        Search media by tmdb id on the tracker
         """
+
         # Request results from the video online database
         # Get Season
         season = self.guess_filename.guessit_season
