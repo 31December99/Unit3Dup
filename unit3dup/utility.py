@@ -134,7 +134,7 @@ class Manage_titles:
             ".ogv",
             ".drc",
             ".m3u8",
-            ".pdf"
+            ".pdf",
         ]
 
         return os.path.splitext(file)[1].lower() in video_ext
@@ -142,17 +142,34 @@ class Manage_titles:
     @staticmethod
     def media_docu_type(file_name: str) -> str:
         ext = os.path.splitext(file_name)[1].lower()
-        type_ = {'.pdf': 'edicola'}
+        type_ = {".pdf": "edicola"}
 
         return type_.get(ext, None)
 
     @staticmethod
     def get_cover(file_name: str):
         pages = convert_from_path(file_name, first_page=1, last_page=1)
-        pages[0].save(f'{file_name}.png', 'PNG')
+        pages[0].save(f"{file_name}.png", "PNG")
 
     @staticmethod
     def fuzzyit(str1: str, str2: str) -> int:
         return fuzz.ratio(str1.lower(), str2.lower())
 
 
+class System:
+
+    @staticmethod
+    def get_size(folder_path) -> float:
+
+        # Size of single file
+        if os.path.isfile(folder_path):
+            return round(os.path.getsize(folder_path) / (1024**3), 2)
+        else:
+            # size of folder
+            total_size = 0
+            for dirpath, dirnames, filenames in os.walk(folder_path):
+                for file in filenames:
+                    file_path = os.path.join(dirpath, file)
+                    if not os.path.islink(file_path):
+                        total_size += os.path.getsize(file_path)
+            return round(total_size / (1024**3), 2)
