@@ -8,10 +8,6 @@ def install_git(package):
     subprocess.check_call([sys.executable, "-m", "pip", "install", package])
 
 
-def install_requirements():
-    subprocess.check_call([sys.executable, "-m", "pip", "install", "-r", "requirements.txt"])
-
-
 class MyGit:
     """
     Install gitPython and update the repository
@@ -26,7 +22,6 @@ class MyGit:
         if not self.repo_exist:
             print(f"Cloning repository from {self.repo_url} to {self.repo_local_path}")
             git.Repo.clone_from(self.repo_url, self.repo_local_path)
-            install_requirements()
             return True
         else:
             self._update()
@@ -51,7 +46,7 @@ class MyGit:
         # Reapply stashed local changes, if any
         if repo.git.stash('list'):
             repo.git.stash('pop')
-            print("Local changes reapplied.")
+            print("Local changes reapplied")
 
 
 if __name__ == "__main__":
@@ -60,7 +55,7 @@ if __name__ == "__main__":
         import git
         import rich
     except ImportError:
-        print("GitPython is not installed. Installation in progress...")
+        print("Installation in progress...")
         install_git("gitpython")
         install_git("rich")
 
