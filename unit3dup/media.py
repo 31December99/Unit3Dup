@@ -55,12 +55,12 @@ class Media:
             console.rule(content.file_name)
 
             if (
-                content.category == self.movie_category
-                or content.category == self.serie_category
+                    content.category == self.movie_category
+                    or content.category == self.serie_category
             ):
                 video_manager = VideoManager(content=content)
 
-                if config.DUPLICATE:
+                if config.DUPLICATE == 'True':
                     results = video_manager.check_duplicate()
                     if results:
                         console.log(
