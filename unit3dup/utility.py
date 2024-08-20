@@ -146,11 +146,6 @@ class Manage_titles:
         return type_.get(ext, None)
 
     @staticmethod
-    def get_cover(file_name: str):
-        pages = convert_from_path(file_name, first_page=1, last_page=1)
-        pages[0].save(f"{file_name}.png", "PNG")
-
-    @staticmethod
     def fuzzyit(str1: str, str2: str) -> int:
         return fuzz.ratio(str1.lower(), str2.lower())
 
