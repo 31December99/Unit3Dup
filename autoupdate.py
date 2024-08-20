@@ -20,7 +20,7 @@ class MyGit:
 
     def process(self) -> bool:
         if not self.repo_exist:
-            print(f"Cloning repository from {self.repo_url} to {self.repo_local_path}")
+            console.log(f"Cloning repository from {self.repo_url} to {self.repo_local_path}", style="bold blue")
             git.Repo.clone_from(self.repo_url, self.repo_local_path)
             return True
         else:
@@ -31,7 +31,7 @@ class MyGit:
         try:
             repo = git.Repo(self.repo_local_path)
         except git.exc.InvalidGitRepositoryError:
-            print(f"{self.repo_local_path} is not a valid Git repository")
+            console.log(f"{self.repo_local_path} is not a valid Git repository", style='red bold')
             exit(1)
 
         # If there are uncommitted local changes
@@ -41,12 +41,11 @@ class MyGit:
         # Update the repository
         origin = repo.remotes.origin
         origin.pull()
-        print("Repository updated successfully.")
+        console.log(f"Repository updated successfully", style="bold green")
 
         # Reapply stashed local changes, if any
         if repo.git.stash('list'):
             repo.git.stash('pop')
-            print("Local changes reapplied")
 
 
 if __name__ == "__main__":
