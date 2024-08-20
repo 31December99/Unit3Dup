@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import pprint
 import random
 import cv2
 import os
@@ -34,11 +33,7 @@ class Video:
         # Frame count
         self.numero_di_frame = None
         # Screenshots samples
-        self.samples_n = (
-            config.number_of_screenshots
-            if 2 <= config.number_of_screenshots <= 10
-            else 4
-        )
+        self.samples_n = config.SCREENSHOTS if 2 <= config.SCREENSHOTS <= 10 else 4
         # Catturo i frames del video
         self.video_capture = cv2.VideoCapture(self.file_name)
 
