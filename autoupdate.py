@@ -41,8 +41,8 @@ class MyGit:
         # Update the repository
         origin = repo.remotes.origin
         origin.pull()
-        console.log(f"Repository updated successfully", style="bold green")
-
+        console.log(f"Repository updated successfully to '{repo.tags[-1]}'", style="bold blue")
+        console.rule("", style='violet bold')
         # Reapply stashed local changes, if any
         if repo.git.stash('list'):
             repo.git.stash('pop')
@@ -63,6 +63,6 @@ if __name__ == "__main__":
 
     console = Console(log_path=False)
 
-    console.rule("Welcome - Autoupdate for Unit3D-up - Welcome", style='violet bold')
+    console.rule("- Autoupdate for Unit3D-up -", style='violet bold')
     my_git = MyGit(repo_local_path=os.getcwd())
     my_git.process()
