@@ -16,19 +16,11 @@ It performs the following tasks:
 - Seeding in qbittorrent
 
 ___
-### User preferences.cfg:
-
-duplicate_on is used to activate a check for titles already present in the tracker
-
-number_of_screenshots determines the number of screenshots generated
-
-torrent_archive set an optional path to move the .torrent file to a desired folder
-
 ## Join Us
 
 The program is functional but still in the early stages, undergoing constant modifications.
 You can help improve this project or just hang out with us on
-[Discord](https://discord.gg/CJ32Vwyu)
+[forum](https://itatorrents.xyz/forums/topics/414?page=1#post-1497) 
 
 Thank you
 
