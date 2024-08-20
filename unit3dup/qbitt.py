@@ -16,13 +16,13 @@ console = Console(log_path=False)
 class Qbitt:
 
     def __init__(
-            self, tracker_data_response: str, torrent: Mytorrent, contents: Contents
+        self, tracker_data_response: str, torrent: Mytorrent, contents: Contents
     ):
         self.torrent = torrent
         self.torrent_path = contents.torrent_path
         self.torrent_file = None
         self.torrents = None
-        self.torrent_archive = config.torrent_archive
+        self.torrent_archive = config.TORRENT_ARCHIVE
 
         self.qb = Client(f"{config.QBIT_URL}:{config.QBIT_PORT}/")
         download_torrent_dal_tracker = requests.get(tracker_data_response)
