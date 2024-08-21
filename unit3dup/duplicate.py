@@ -69,7 +69,7 @@ class CompareTitles:
         )
 
     def same_date(self):
-        return self.content_date == self.tracker_date
+        return self.content_date == self.tracker_date or self.content_date is None or self.tracker_date is None
 
     def is_greater95(self) -> bool:
         return True if self.ratio > 95 else False
@@ -139,7 +139,7 @@ class Duplicate:
         for key, value in data.items():
             if "attributes" in key:
                 name = value["name"]
-                poster = value["meta"]["poster"]
+                resolution = value["resolution"]
                 info_hash = value["info_hash"]
 
                 # Size in GB
@@ -153,19 +153,19 @@ class Duplicate:
                 # Format field
                 tmdb_id_width = 6
                 size_width = 6
-                name_width = 20
-                poster_width = 20
+                name_width = 30
+                resolution_width = 5
                 info_hash_width = 20
                 formatted_tmdb_id = f"{tmdb_id:>{tmdb_id_width}}"
                 formatted_size = f"{size:>{size_width}.2f} GB"
                 formatted_name = f"{name:<{name_width}}"
-                formatted_poster = f"{poster:<{poster_width}}"
+                formatted_resolution = f"{resolution:<{resolution_width}}"
                 formatted_info_hash = f"{info_hash:<{info_hash_width}}"
 
                 if already:
                     console.log(
-                        f"[TMDB-ID {formatted_tmdb_id}] [{formatted_size}] '[HASH {formatted_info_hash}]' "
-                        f"{formatted_name}' '{formatted_poster}'"
+                        f"[TMDB-ID {formatted_tmdb_id}] [{formatted_size}] '[HASH {formatted_info_hash}]"
+                        f" [{formatted_resolution}]' {formatted_name}"
                     )
 
                     self.flag_already = True
