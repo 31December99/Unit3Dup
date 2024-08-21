@@ -20,7 +20,7 @@ ___
 
 The program is functional but still in the early stages, undergoing constant modifications.
 You can help improve this project or just hang out with us on
-[forum](https://itatorrents.xyz/forums/topics/414?page=1#post-1497) 
+[discord](https://discord.gg/Pz3w5NNc) or [forum](https://itatorrents.xyz/forums/topics/414?page=1#post-1497) 
 
 Thank you
 
@@ -83,9 +83,8 @@ myvideos/
 ```
 
 ### Install dependencies
-- pip install -r requirements.txt
+ 
 - ffmpeg -version
-
 
 If you have not installed ffmpeg install it:
 - Linux : sudo apt install ffmpeg
@@ -94,8 +93,9 @@ PATH environment user variable
 
 ### Bot Installation
 
-1. Clone this repository or download the last release (zip) -> [Releases](https://github.com/31December99/Unit3Dup/releases)
-2. Install the required dependencies using PIP.
+1. Download the updater (zip) [Download autoupdate.py](https://gist.github.com/31December99/8e51466feb9df1606fd4199141ac54bb)
+2. run python3 autoupdate.py
+3. run pip install -r requirements.txt
 3. Set up the configuration .env file(s) service and itt ( rename .back in .env)
 
 ### Update Bot 
