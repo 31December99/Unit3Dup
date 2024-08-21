@@ -31,10 +31,11 @@ class MyGit:
         try:
             repo = git.Repo(self.repo_local_path)
         except git.exc.InvalidGitRepositoryError:
-            console.log(f"{self.repo_local_path} is not a valid Git repository", style='red bold')
-            exit(1)
+            console.log(f"{self.repo_local_path} is not a valid Git repository.", style='red bold')
+            # this folder has no git metadata, so we are going to clone into a new folder
+            self._clone()
+            return
 
-        # If there are uncommitted local changes
         if repo.is_dirty(untracked_files=True):
             repo.git.stash('save', '--include-untracked')
 
@@ -43,9 +44,24 @@ class MyGit:
         origin.pull()
         console.log(f"Repository updated successfully to '{repo.tags[-1]}'", style="bold blue")
         console.rule("", style='violet bold')
+
         # Reapply stashed local changes, if any
         if repo.git.stash('list'):
             repo.git.stash('pop')
+
+    def _clone(self):
+        # Define a new position
+        current_dir = os.getcwd()
+        new_folder_path = os.path.join(current_dir, "Unit3d-up")
+
+        # Verify the folder
+        if os.path.exists(new_folder_path):
+            console.log(f"Folder {new_folder_path} already exists. Please remove it manually and retry", style='red bold')
+            exit(1)
+
+        # Cloning..
+        git.Repo.clone_from(self.repo_url, new_folder_path)
+        console.log(f"Cloned repository from {self.repo_url} to {new_folder_path}", style="bold blue")
 
 
 if __name__ == "__main__":
