@@ -67,6 +67,8 @@ myvideos/
 ```
 
 ### Upload subfolders and files Movie and Serie
+- `python3 start.py -scan "/home/uploader/myvideos
+
 ```
 myvideos/
 ├── movie1.mkv          
