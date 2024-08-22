@@ -40,9 +40,9 @@ class Auto:
         else:
             for path, sub_dirs, files in os.walk(self.path):
                 # Sort subdirs
-                sub_dirs.sort(reverse=True)
+                sub_dirs.sort(reverse=False)
                 # Sort files
-                files.sort(reverse=True)
+                files.sort(reverse=False)
 
                 if path == self.path:
                     movies_path = [
