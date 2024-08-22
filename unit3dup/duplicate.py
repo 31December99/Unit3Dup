@@ -138,37 +138,39 @@ class Duplicate:
 
         for key, value in data.items():
             if "attributes" in key:
-                name = value["name"]
-                resolution = value["resolution"]
-                info_hash = value["info_hash"]
+                if value["category_id"] == self.movie_category or value["category_id"] == self.serie_category:
 
-                # Size in GB
-                size = round(value["size"] / (1024**3), 2)
-                tmdb_id = value["tmdb_id"]
-                tracker_file_name = title.Guessit(name)
-                already = self.compare(
-                    tracker_file=tracker_file_name, content_file=self.guess_filename
-                )
+                    name = value["name"]
+                    resolution = value["resolution"]
+                    info_hash = value["info_hash"]
 
-                # Format field
-                tmdb_id_width = 6
-                size_width = 6
-                name_width = 30
-                resolution_width = 5
-                info_hash_width = 20
-                formatted_tmdb_id = f"{tmdb_id:>{tmdb_id_width}}"
-                formatted_size = f"{size:>{size_width}.2f} GB"
-                formatted_name = f"{name:<{name_width}}"
-                formatted_resolution = f"{resolution:<{resolution_width}}"
-                formatted_info_hash = f"{info_hash:<{info_hash_width}}"
-
-                if already:
-                    console.log(
-                        f"[TMDB-ID {formatted_tmdb_id}] [{formatted_size}] '[HASH {formatted_info_hash}]"
-                        f" [{formatted_resolution}]' {formatted_name}"
+                    # Size in GB
+                    size = round(value["size"] / (1024 ** 3), 2)
+                    tmdb_id = value["tmdb_id"]
+                    tracker_file_name = title.Guessit(name)
+                    already = self.compare(
+                        tracker_file=tracker_file_name, content_file=self.guess_filename
                     )
 
-                    self.flag_already = True
+                    # Format field
+                    tmdb_id_width = 6
+                    size_width = 6
+                    name_width = 30
+                    resolution_width = 5
+                    info_hash_width = 20
+                    formatted_tmdb_id = f"{tmdb_id:>{tmdb_id_width}}"
+                    formatted_size = f"{size:>{size_width}.2f} GB"
+                    formatted_name = f"{name:<{name_width}}"
+                    formatted_resolution = f"{resolution:<{resolution_width}}"
+                    formatted_info_hash = f"{info_hash:<{info_hash_width}}"
+
+                    if already:
+                        console.log(
+                            f"[TMDB-ID {formatted_tmdb_id}] [{formatted_size}] '[HASH {formatted_info_hash}]"
+                            f" [{formatted_resolution}]' {formatted_name}"
+                        )
+
+                        self.flag_already = True
         # At least one media needs to match the tracker database
         return self.flag_already
 
