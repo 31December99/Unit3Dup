@@ -6,7 +6,7 @@ from unit3dup.contents import Contents
 from rich.console import Console
 from unit3dup import title
 from unit3dup.search import TvShow
-from unit3dup import config
+from unit3dup.config import config
 from unit3dup.utility import Manage_titles, System
 
 console = Console(log_path=False)
