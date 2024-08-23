@@ -6,7 +6,7 @@ import re
 from rich.console import Console
 from unit3dup.contents import Contents
 from unit3dup.utility import Manage_titles
-from unit3dup import config
+from unit3dup.config import config
 
 console = Console(log_path=False)
 
