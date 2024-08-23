@@ -8,9 +8,10 @@ from thefuzz import fuzz
 
 from unit3dup.results import Results
 from unit3dup.utility import Manage_titles
-from unit3dup import config
+from unit3dup.config import config
 
 console = Console(log_path=False)
+
 
 class MyTmdb:
 
