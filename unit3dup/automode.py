@@ -3,8 +3,8 @@
 import os
 from rich.console import Console
 from unit3dup.contents import File, Folder
-from unit3dup.utility import Manage_titles
-from unit3dup import title
+from common.utility import Manage_titles
+from common import title
 from unit3dup.config import config
 
 
