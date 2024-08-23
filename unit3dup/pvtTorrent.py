@@ -49,7 +49,7 @@ class Mytorrent:
             self.mytorr.write(full_path)
             return True
         except torf.TorfError as e:
-            if 'File exists' in str(e):
+            if "File exists" in str(e):
                 console.log(f"This torrent file already exists: {full_path}")
             return False
 

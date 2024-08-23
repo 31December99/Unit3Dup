@@ -2,11 +2,11 @@
 import random
 import cv2
 import os
-from unit3dup.imageHost import ImgBB, Freeimage, ImageUploaderFallback
-from unit3dup import config
-from unit3dup.ping import offline_uploaders
+from common.imageHost import ImgBB, Freeimage, ImageUploaderFallback
 from pymediainfo import MediaInfo
 from rich.console import Console
+from unit3dup.config import config
+from unit3dup.ping import offline_uploaders
 
 console = Console(log_path=False)
 

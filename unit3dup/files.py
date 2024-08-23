@@ -5,8 +5,8 @@ import re
 
 from rich.console import Console
 from unit3dup.contents import Contents
-from unit3dup.utility import Manage_titles
-from unit3dup import config
+from unit3dup.config import config
+from common.utility import Manage_titles
 
 console = Console(log_path=False)
 
@@ -63,7 +63,7 @@ class Files:
                 torrent_pack=torrent_pack,
                 torrent_path=self.torrent_path,
                 display_name=self.display_name,
-                doc_description=self.doc_description
+                doc_description=self.doc_description,
             )
             if process
             else False
@@ -104,7 +104,7 @@ class Files:
         self.torrent_path = self.folder
         self.name = os.path.basename(self.folder)
         self.meta_info_list = []
-        self.doc_description = '\n'.join(files)
+        self.doc_description = "\n".join(files)
         media_docu_type = Manage_titles.media_docu_type(self.file_name)
         # If there is a document in the folder it becomes a document folder
         if media_docu_type:
