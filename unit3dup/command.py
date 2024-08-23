@@ -28,7 +28,6 @@ class CommandLine:
         )
         parser.add_argument("-scan", "--scan", type=str, help="Scan Folder")
 
-
         parser.add_argument(
             "-torrent", "--torrent", action="store_true", help="Create torrent only"
         )
@@ -36,7 +35,6 @@ class CommandLine:
         parser.add_argument(
             "-duplicate", "--duplicate", action="store_true", help="Search for duplicate only"
         )
-
 
         # Tracker search commands
         parser.add_argument("-s", "--search", type=str, help="Search")
@@ -107,7 +105,7 @@ class CommandLine:
             console.log(f"Configuration file 'service.env' not found")
             sys.exit()
 
-        database_tracker = os.path.join('database', f'{self.args.tracker}.json')
+        database_tracker = os.path.join('trackers', f'{self.args.tracker}.json')
         if not os.path.exists(database_tracker):
             console.log(
                 f"Configuration file '{self.args.tracker}.json' not found for tracker '{self.args.tracker}'"
