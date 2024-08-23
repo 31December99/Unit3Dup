@@ -5,8 +5,8 @@ from unit3dup.pvtTorrent import Mytorrent
 from unit3dup.uploader import UploadVideo
 from unit3dup.contents import Contents
 from unit3dup.pvtVideo import Video
-from unit3dup.search import TvShow
 from unit3dup.duplicate import Duplicate
+from media_db.search import TvShow
 
 
 class VideoManager:
