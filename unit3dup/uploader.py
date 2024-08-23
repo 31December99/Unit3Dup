@@ -5,7 +5,7 @@ import requests
 
 from unit3dup import pvtTracker, payload, contents
 from abc import ABC, abstractmethod
-from unit3dup import config
+from unit3dup.config import config
 from rich.console import Console
 
 console = Console(log_path=False)
