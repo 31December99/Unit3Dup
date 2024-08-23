@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 import guessit
 
+from rich.console import Console
+from common import title
+from media_db.search import TvShow
 from unit3dup.torrent import Torrent
 from unit3dup.contents import Contents
-from rich.console import Console
-from unit3dup import title
-from unit3dup.search import TvShow
-from unit3dup import config
-from unit3dup.utility import Manage_titles, System
+from unit3dup.config import config
+from common.utility import Manage_titles, System
 
 console = Console(log_path=False)
 
@@ -69,7 +69,11 @@ class CompareTitles:
         )
 
     def same_date(self):
-        return self.content_date == self.tracker_date or self.content_date is None or self.tracker_date is None
+        return (
+            self.content_date == self.tracker_date
+            or self.content_date is None
+            or self.tracker_date is None
+        )
 
     def is_greater95(self) -> bool:
         return True if self.ratio > 95 else False
@@ -138,14 +142,17 @@ class Duplicate:
 
         for key, value in data.items():
             if "attributes" in key:
-                if value["category_id"] == self.movie_category or value["category_id"] == self.serie_category:
+                if (
+                    value["category_id"] == self.movie_category
+                    or value["category_id"] == self.serie_category
+                ):
 
                     name = value["name"]
                     resolution = value["resolution"]
                     info_hash = value["info_hash"]
 
                     # Size in GB
-                    size = round(value["size"] / (1024 ** 3), 2)
+                    size = round(value["size"] / (1024**3), 2)
                     tmdb_id = value["tmdb_id"]
                     tracker_file_name = title.Guessit(name)
                     already = self.compare(
