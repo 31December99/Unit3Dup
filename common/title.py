@@ -103,7 +103,9 @@ class Guessit:
         Grab the 'release_group'
         :return:
         """
-        return self.guessit["release_group"] if "release_group" in self.guessit else None
+        return (
+            self.guessit["release_group"] if "release_group" in self.guessit else None
+        )
 
     @property
     def screen_size(self):
@@ -112,15 +114,3 @@ class Guessit:
         :return:
         """
         return self.guessit["screen_size"] if "screen_size" in self.guessit else None
-
-
-
-
-
-
-
-
-
-
-
-
