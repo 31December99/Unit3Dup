@@ -11,7 +11,7 @@ from urllib.parse import urlparse
 from unit3dup import pvtTracker
 from unit3dup.imageHost import ImgBB, Freeimage, ImageUploaderFallback
 
-from unit3dup import config
+from unit3dup.config import config
 
 console = Console(log_path=False)
 
@@ -22,9 +22,6 @@ class Ping:
     test_image = "unit3dup/test_image.png"
 
     def __init__(self):
-
-        # Config
-        self.config = config
 
         # Getting ready for testing Image Host
         self.imgbb_key = config.IMGBB_KEY
