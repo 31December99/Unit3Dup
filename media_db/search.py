@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 import sys
 
-from unit3dup import tmdb, title
+from common import title
+from media_db import tmdb
 from rich.console import Console
 
 console = Console(log_path=False)
