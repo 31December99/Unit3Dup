@@ -9,7 +9,7 @@ from rich.console import Console
 from qbittorrent import Client
 from urllib.parse import urlparse
 from unit3dup import pvtTracker
-from unit3dup.imageHost import ImgBB, Freeimage, ImageUploaderFallback
+from common.imageHost import ImgBB, Freeimage, ImageUploaderFallback
 
 from unit3dup.config import config
 
