@@ -3,8 +3,8 @@ from typing import List, Optional
 from rich.console import Console
 from unit3dup.media_manager.VideoManager import VideoManager
 from unit3dup.media_manager.DocuManager import DocuManager
-from unit3dup.qbitt import Qbitt
 from unit3dup.config import config
+from common.qbitt import Qbitt
 
 console = Console(log_path=False)
 
