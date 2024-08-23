@@ -131,6 +131,8 @@ let torrent_archive string empty or set your path if you want save torrent file 
     python3 start.py -s [title] (search by title)
     python3 start.py -i [title] (get info_hash and MediaInfo Unique ID)    
     python3 start.py -tmdb (search by TMDB ID)
+    python3 start.py -torrent (create only the torrent file)
+    python3 start.py -duplicate (force searching for duplicate)
 
     python3 start.py -up [username] (search by uploader's username)
     python3 start.py -m [mediainfo_ID] (search by MediaInfo ID)
