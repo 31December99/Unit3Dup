@@ -13,12 +13,16 @@ console = Console(log_path=False)
 def main():
     """Manual Mode"""
     if cli.args.upload:
-        media_video = Media(path=cli.args.upload, tracker_name=cli.args.tracker, cli=cli.args)
+        media_video = Media(
+            path=cli.args.upload, tracker_name=cli.args.tracker, cli=cli.args
+        )
         media_video.run()
 
     """ Auto Mode """
     if cli.args.scan:
-        media_video = Media(path=cli.args.scan, tracker_name=cli.args.tracker, cli=cli.args, mode="auto")
+        media_video = Media(
+            path=cli.args.scan, tracker_name=cli.args.tracker, cli=cli.args, mode="auto"
+        )
         media_video.run()
 
     """ COMMANDS LIST: commands not necessary for the upload but may be useful """

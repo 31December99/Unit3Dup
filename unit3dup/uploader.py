@@ -40,7 +40,7 @@ class UploadBot(ABC):
             )
             return tracker_response_body["data"]
         else:
-            message = json.loads(tracker_response.text)['data']
+            message = json.loads(tracker_response.text)["data"]
             console.log(
                 f"It was not possible to upload the media. Tracker message: '{message}'"
             )
@@ -76,7 +76,7 @@ class UploadDocument(UploadBot):
         tracker.data["category_id"] = data.category
         tracker.data["description"] = data.description
         tracker.data["type_id"] = self.config.tracker_values.filterType(data.file_name)
-        tracker.data["resolution_id"] = ''
+        tracker.data["resolution_id"] = ""
         # tracker.data["torrent-cover"] = "" TODO: not yet implemented
         return tracker
 

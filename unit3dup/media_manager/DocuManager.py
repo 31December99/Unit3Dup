@@ -4,6 +4,7 @@ from unit3dup.pvtTorrent import Mytorrent
 from unit3dup.uploader import UploadDocument
 from unit3dup.contents import Contents
 
+
 class DocuManager:
 
     def __init__(self, content: Contents):

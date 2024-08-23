@@ -32,7 +32,7 @@ class Torrent:
 
     def search(self, keyword: str) -> requests:
         # The user does not always include the '-' (hyphen) in the title
-        keyword = keyword.replace('-', ' ')
+        keyword = keyword.replace("-", " ")
         return self.tracker.get_name(name=keyword, perPage=self.perPage)
 
     def get_by_description(self, description: str) -> requests:
@@ -44,22 +44,16 @@ class Torrent:
         return self.tracker.get_bdinfo(bdinfo=bdinfo, perPage=self.perPage)
 
     def get_by_uploader(self, username: str) -> requests:
-        return self.tracker.get_uploader(
-            uploader=username, perPage=self.perPage
-        )
+        return self.tracker.get_uploader(uploader=username, perPage=self.perPage)
 
     def get_by_start_year(self, startyear: str) -> requests:
-        return self.tracker.start_year(
-            start_year=startyear, perPage=self.perPage
-        )
+        return self.tracker.start_year(start_year=startyear, perPage=self.perPage)
 
     def get_by_end_year(self, end_year: str) -> requests:
         return self.tracker.end_year(end_year=end_year, perPage=self.perPage)
 
     def get_by_mediainfo(self, mediainfo: str) -> requests:
-        return self.tracker.get_mediainfo(
-            mediainfo=mediainfo, perPage=self.perPage
-        )
+        return self.tracker.get_mediainfo(mediainfo=mediainfo, perPage=self.perPage)
 
     def get_by_types(self, type_name: str) -> requests:
         return self.tracker.get_types(
@@ -72,9 +66,7 @@ class Torrent:
         )
 
     def get_by_filename(self, file_name: str) -> requests:
-        return self.tracker.get_filename(
-            file_name=file_name, perPage=self.perPage
-        )
+        return self.tracker.get_filename(file_name=file_name, perPage=self.perPage)
 
     def get_by_tmdb_id(self, tmdb_id: int) -> requests:
         return self.tracker.get_tmdb(tmdb_id=tmdb_id, perPage=self.perPage)
@@ -99,19 +91,13 @@ class Torrent:
         )
 
     def get_by_freeleech(self, freeleech: int) -> requests:
-        return self.tracker.get_freeleech(
-            freeleech=freeleech, perPage=self.perPage
-        )
+        return self.tracker.get_freeleech(freeleech=freeleech, perPage=self.perPage)
 
     def get_by_season(self, season: int) -> requests:
-        return self.tracker.get_season_number(
-            se_number=season, perPage=self.perPage
-        )
+        return self.tracker.get_season_number(se_number=season, perPage=self.perPage)
 
     def get_by_episode(self, episode: int) -> requests:
-        return self.tracker.get_episode_number(
-            ep_number=episode, perPage=self.perPage
-        )
+        return self.tracker.get_episode_number(ep_number=episode, perPage=self.perPage)
 
     def get_alive(self) -> requests:
         return self.tracker.get_alive(alive=True, perPage=self.perPage)
@@ -129,9 +115,7 @@ class Torrent:
         return self.tracker.get_featured(featured=True, perPage=self.perPage)
 
     def get_refundable(self) -> requests:
-        return self.tracker.get_refundable(
-            refundable=True, perPage=self.perPage
-        )
+        return self.tracker.get_refundable(refundable=True, perPage=self.perPage)
 
     def get_stream(self) -> requests:
         return self.tracker.get_stream(stream=True, perPage=self.perPage)
@@ -269,7 +253,9 @@ class View(Torrent):
             self.page_view(tracker_data=tracker_data, tracker=self.tracker)
 
     def view_by_types(self, type_name: str):
-        tracker_data = self.get_by_types(type_name=config.tracker_values.type_id(type_name))
+        tracker_data = self.get_by_types(
+            type_name=config.tracker_values.type_id(type_name)
+        )
         console.log(
             f"Types torrents.. Filter by the torrent's type.. '{type_name.upper()}'"
         )
