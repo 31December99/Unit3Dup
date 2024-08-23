@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import json
 import os.path
-from unit3dup import utility
+from common import utility
 
 
 class Filter:
