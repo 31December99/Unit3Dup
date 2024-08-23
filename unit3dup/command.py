@@ -28,6 +28,16 @@ class CommandLine:
         )
         parser.add_argument("-scan", "--scan", type=str, help="Scan Folder")
 
+
+        parser.add_argument(
+            "-torrent", "--torrent", action="store_true", help="Create torrent only"
+        )
+
+        parser.add_argument(
+            "-duplicate", "--duplicate", action="store_true", help="Search for duplicate only"
+        )
+
+
         # Tracker search commands
         parser.add_argument("-s", "--search", type=str, help="Search")
         parser.add_argument("-i", "--info", type=str, help="Info")
