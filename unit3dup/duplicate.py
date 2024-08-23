@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 import guessit
 
+from rich.console import Console
+from common import title
+from media_db.search import TvShow
 from unit3dup.torrent import Torrent
 from unit3dup.contents import Contents
-from rich.console import Console
-from unit3dup import title
-from unit3dup.search import TvShow
 from unit3dup.config import config
-from unit3dup.utility import Manage_titles, System
+from common.utility import Manage_titles, System
 
 console = Console(log_path=False)
 
