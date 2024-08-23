@@ -1,6 +1,5 @@
-# -*- coding: utf-8 -*-
 import argparse
-from typing import List
+from typing import List, Optional
 from rich.console import Console
 from unit3dup.media_manager.VideoManager import VideoManager
 from unit3dup.media_manager.DocuManager import DocuManager
@@ -14,8 +13,6 @@ class TorrentManager:
     def __init__(self, cli: argparse.Namespace, tracker_config):
         self.cli = cli
         self.tracker_config = tracker_config
-
-        # Load the json file
         self.movie_category = self.tracker_config.tracker_values.category("movie")
         self.serie_category = self.tracker_config.tracker_values.category("tvshow")
         self.docu_category = self.tracker_config.tracker_values.category("edicola")
@@ -23,33 +20,47 @@ class TorrentManager:
     def process(self, contents: List) -> None:
         for content in contents:
             console.rule(content.file_name)
-            tracker_response = None
-            torrent_response = None
+            tracker_response: Optional[str] = None
+            torrent_response: Optional[str] = None
 
             if content.category in {self.movie_category, self.serie_category}:
-                video_manager = VideoManager(content=content)
-
-                if self.cli.duplicate or config.DUPLICATE == "True":
-                    results = video_manager.check_duplicate()
-                    if results:
-                        console.log(
-                            f"\n*** User chose to skip '{content.file_name}' ***\n"
-                        )
-                        continue
-
-                torrent_response = video_manager.torrent()
-                if not self.cli.torrent and torrent_response:
-                    tracker_response = video_manager.upload()
+                tracker_response, torrent_response = self.process_video_content(content)
 
             elif content.category == self.docu_category:
-                docu_manager = DocuManager(content=content)
-                torrent_response = docu_manager.torrent()
-                if not self.cli.torrent and torrent_response:
-                    tracker_response = docu_manager.upload()
+                tracker_response, torrent_response = self.process_docu_content(content)
 
             if tracker_response:
-                Qbitt(
-                    tracker_data_response=tracker_response,
-                    torrent=torrent_response,
-                    contents=content,
-                )
+                self.qbitt(tracker_response, torrent_response, content)
+
+    def process_video_content(self, content) -> (Optional[str], Optional[str]):
+        video_manager = VideoManager(content=content)
+
+        if self.cli.duplicate or config.DUPLICATE == "True":
+            results = video_manager.check_duplicate()
+            if results:
+                console.log(f"\n*** User chose to skip '{content.file_name}' ***\n")
+                return None, None
+
+        torrent_response = video_manager.torrent()
+        if not self.cli.torrent and torrent_response:
+            tracker_response = video_manager.upload()
+        else:
+            tracker_response = None
+
+        return tracker_response, torrent_response
+
+    def process_docu_content(self, content) -> (Optional[str], Optional[str]):
+        docu_manager = DocuManager(content=content)
+        torrent_response = docu_manager.torrent()
+        tracker_response = None
+        if not self.cli.torrent and torrent_response:
+            tracker_response = docu_manager.upload()
+
+        return tracker_response, torrent_response
+
+    def qbitt(self, tracker_response: str, torrent_response, content) -> None:
+        Qbitt(
+            tracker_data_response=tracker_response,
+            torrent=torrent_response,
+            contents=content,
+        )
