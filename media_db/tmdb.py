@@ -5,9 +5,8 @@ from unidecode import unidecode
 from tmdbv3api import TMDb, Movie, TV
 from rich.console import Console
 from thefuzz import fuzz
-
-from unit3dup.results import Results
-from unit3dup.utility import Manage_titles
+from media_db.results import Results
+from common.utility import Manage_titles
 from unit3dup.config import config
 
 console = Console(log_path=False)
