@@ -2,7 +2,7 @@
 import random
 import cv2
 from common.imageHost import ImgBB, Freeimage, ImageUploaderFallback
-from pymediainfo import MediaInfo
+from common.mediainfo import MediaFile
 from rich.console import Console
 from unit3dup.config import config
 from unit3dup.ping import offline_uploaders
@@ -46,7 +46,9 @@ class Video:
     @property
     def mediainfo(self) -> str:
         """Return media info as a string."""
-        return MediaInfo.parse(self.file_name, output="STRING", full=False)
+        # return MediaInfo.parse(self.file_name, output="STRING", full=False)
+        media_info = MediaFile(self.file_name)
+        return media_info.info
 
     @property
     def total_frames(self) -> cv2:
@@ -86,7 +88,7 @@ class Video:
 
     @property
     def description(self) -> str:
-        """Generate a description with image URLs uploaded to ImgBB."""
+        """Generate a description with image URLs uploaded to ImgBB"""
         console.log("\n[GENERATING IMAGES FROM VIDEO...]")
         description = "[center]\n"
         console_url = []
