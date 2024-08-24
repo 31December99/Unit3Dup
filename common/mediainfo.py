@@ -118,5 +118,34 @@ class MediaFile:
         return 'Unknown'
 
     @property
+    def subtitle_track(self):
+        """Snag subtitle track"""
+        subtitle_info = []
+        for track in self.media_info.tracks:
+            if track.track_type == 'Text':
+                subtitle_info.append(track.to_data())
+        return subtitle_info
+
+    @property
+    def available_languages(self):
+        """Get available languages from audio and subtitle tracks"""
+        languages = set()
+
+        for track in self.audio_track + self.subtitle_track:
+            lang = track.get('language', 'Unknown')
+            if lang != 'Unknown':
+                languages.add(lang)
+
+        return list(languages)
+
+    @property
+    def file_size(self):
+        """Get the file size"""
+        general = self.general_track
+        if general:
+            return general.get('file_size', 'Unknown')
+        return 'Unknown'
+
+    @property
     def info(self):
         return MediaInfo.parse(self.file_path, output="STRING", full=False)
