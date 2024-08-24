@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import random
 import cv2
-import os
 from common.imageHost import ImgBB, Freeimage, ImageUploaderFallback
 from pymediainfo import MediaInfo
 from rich.console import Console
@@ -20,16 +19,12 @@ class Video:
     - Determine if the video is standard definition (SD) or not
     """
 
-    def __init__(self, fileName: str):
+    def __init__(self, file_name: str):
 
         self.IMGBB_KEY = config.IMGBB_KEY
         self.FREE_IMAGE_KEY = config.FREE_IMAGE_KEY
 
-        self.file_name = fileName
-        # video file size
-        # TODO: in realtà occorre calcolare anche tutta la folder in caso di series.Per il momento utilizzo size di
-        # TODO: Files class
-        self.file_size = round(os.path.getsize(self.file_name) / (1024 * 1024 * 1024))
+        self.file_name = file_name
         # Frame count
         self.numero_di_frame = None
         # Screenshots samples
@@ -47,11 +42,6 @@ class Video:
         is_hd = self.video_capture.get(cv2.CAP_PROP_FRAME_HEIGHT) >= 720
         console.log(f"[HD]........... {'YES' if is_hd else 'NO'}")
         return 0 if is_hd else 1
-
-    @property  # non utilizzare vedi nota sopra (deprecated)
-    def size(self) -> int:
-        """Return the size of the video in GB."""
-        return self.file_size
 
     @property
     def mediainfo(self) -> str:
