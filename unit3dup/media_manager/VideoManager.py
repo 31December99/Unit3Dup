@@ -16,7 +16,7 @@ class VideoManager:
         self._my_tmdb = TvShow(content.category)
         self._tv_show_result = self._my_tmdb.start(content.file_name)
         self._info = Video(
-            fileName=str(os.path.join(content.folder, content.file_name))
+            file_name=str(os.path.join(content.folder, content.file_name))
         )
         self._my_torrent = Mytorrent(contents=content, meta=content.metainfo)
         self._duplicate = Duplicate(content=content)
