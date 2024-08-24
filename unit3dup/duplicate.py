@@ -1,13 +1,16 @@
 # -*- coding: utf-8 -*-
+import pprint
+
 import guessit
 
 from rich.console import Console
-from common import title
 from media_db.search import TvShow
+from common.utility import Manage_titles, System
+from common import title
 from unit3dup.torrent import Torrent
 from unit3dup.contents import Contents
 from unit3dup.config import config
-from common.utility import Manage_titles, System
+from unit3dup.media_manager.MediaInfoManager import MediaInfoManager
 
 console = Console(log_path=False)
 
@@ -119,7 +122,7 @@ class Duplicate:
         tracker_data = self.torrent_info.search(self.guess_filename.guessit_title)
         already_present = False
         console.rule(
-            f"Searching for duplicate -> Your Files: [{self.content_size} GB]"
+            f"Searching for duplicate -> Your Files: [{self.content_size} GB] {self.content.audio_languages}"
             f" '{self.content.torrent_path}'",
             style="green bold",
         )
@@ -150,6 +153,12 @@ class Duplicate:
                     name = value["name"]
                     resolution = value["resolution"]
                     info_hash = value["info_hash"]
+                    media_info = value["media_info"]
+                    mediainfo_manager = MediaInfoManager(media_info_output=media_info)
+                    mediainfo_manager.languages()
+                    #lang = mediainfo_manager.search_language(language='italian')
+                    # if not lang:
+                    #    return False
 
                     # Size in GB
                     size = round(value["size"] / (1024**3), 2)
