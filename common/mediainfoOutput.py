@@ -1,9 +1,10 @@
-import pprint
+# -*- coding: utf-8 -*-
+
 import re
 from typing import Optional, Dict, List
 
 
-class AudioFormat:
+class MediainfoAudioFormat:
     """ Create a new object with the audio attributes"""
 
     def __init__(self, id, format, format_info, commercial_name, codec_id, duration, bit_rate_mode, bit_rate,
@@ -32,7 +33,7 @@ class AudioFormat:
         self.delay_relative_to_video = delay_relative_to_video
 
     @classmethod
-    def from_dict(cls, audio_info: Dict[str, str]):
+    def from_mediainfo_string(cls, audio_info: Dict[str, str]):
         return cls(
             id=audio_info.get('ID', ''),
             format=audio_info.get('Format', ''),
@@ -58,7 +59,7 @@ class AudioFormat:
         )
 
 
-class Parser:
+class MediaInfo:
 
     def __init__(self, media_info: str):
 
@@ -98,5 +99,5 @@ class Parser:
         audio_info_list = self.audio_sections()
         if audio_info_list:
             # return a new object AudioFormat for each section
-            return [AudioFormat.from_dict(info) for info in audio_info_list]
+            return [MediainfoAudioFormat.from_mediainfo_string(info) for info in audio_info_list]
         return None
