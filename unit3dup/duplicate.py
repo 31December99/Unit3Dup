@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
-import pprint
-
 import guessit
 
 from rich.console import Console
 from media_db.search import TvShow
 from common.utility import Manage_titles, System
 from common import title
+from common.constants import my_language
 from unit3dup.torrent import Torrent
 from unit3dup.contents import Contents
 from unit3dup.config import config
@@ -73,9 +72,9 @@ class CompareTitles:
 
     def same_date(self):
         return (
-            self.content_date == self.tracker_date
-            or self.content_date is None
-            or self.tracker_date is None
+                self.content_date == self.tracker_date
+                or self.content_date is None
+                or self.tracker_date is None
         )
 
     def is_greater95(self) -> bool:
@@ -114,6 +113,7 @@ class Duplicate:
         self.guess_filename = title.Guessit(self.content.display_name)
         self.flag_already = False
         self.content_size = System.get_size(content.torrent_path)
+        self.preferred_lang = my_language(config.PREFERRED_LANG)
 
     def process(self, tmdb_id: str) -> bool:
         return self.search()
@@ -122,10 +122,12 @@ class Duplicate:
         tracker_data = self.torrent_info.search(self.guess_filename.guessit_title)
         already_present = False
         console.rule(
-            f"Searching for duplicate -> Your Files: [{self.content_size} GB] {self.content.audio_languages}"
+            f"Searching for duplicate -> Your Files: [{self.content_size} GB]"
             f" '{self.content.torrent_path}'",
             style="green bold",
         )
+        console.log(f"Audio Upload language -> {self.content.audio_languages[0].upper()}")
+        console.log(f"Preferred language    -> {self.preferred_lang.upper()}\n")
         for t_data in tracker_data["data"]:
             already_present = self._view_data(t_data)
         if already_present:
@@ -146,22 +148,21 @@ class Duplicate:
         for key, value in data.items():
             if "attributes" in key:
                 if (
-                    value["category_id"] == self.movie_category
-                    or value["category_id"] == self.serie_category
+                        value["category_id"] == self.movie_category
+                        or value["category_id"] == self.serie_category
                 ):
 
                     name = value["name"]
                     resolution = value["resolution"]
                     info_hash = value["info_hash"]
                     media_info = value["media_info"]
+
                     mediainfo_manager = MediaInfoManager(media_info_output=media_info)
                     mediainfo_manager.languages()
-                    #lang = mediainfo_manager.search_language(language='italian')
-                    # if not lang:
-                    #    return False
+                    media_info_audio_lang = mediainfo_manager.search_language(language=my_language(config.PREFERRED_LANG))
 
                     # Size in GB
-                    size = round(value["size"] / (1024**3), 2)
+                    size = round(value["size"] / (1024 ** 3), 2)
                     tmdb_id = value["tmdb_id"]
                     tracker_file_name = title.Guessit(name)
                     already = self.compare(
@@ -174,16 +175,19 @@ class Duplicate:
                     name_width = 30
                     resolution_width = 5
                     info_hash_width = 20
+                    preferred_lang_width = 7
                     formatted_tmdb_id = f"{tmdb_id:>{tmdb_id_width}}"
                     formatted_size = f"{size:>{size_width}.2f} GB"
                     formatted_name = f"{name:<{name_width}}"
                     formatted_resolution = f"{resolution:<{resolution_width}}"
                     formatted_info_hash = f"{info_hash:<{info_hash_width}}"
+                    formatted_audio_language = f"{self.preferred_lang:<{preferred_lang_width}}"
 
                     if already:
                         console.log(
                             f"[TMDB-ID {formatted_tmdb_id}] [{formatted_size}] '[HASH {formatted_info_hash}]"
-                            f" [{formatted_resolution}]' {formatted_name}"
+                            f" [{formatted_resolution}]' [AUDIO {formatted_audio_language} {media_info_audio_lang}] "
+                            f"{formatted_name}"
                         )
 
                         self.flag_already = True
