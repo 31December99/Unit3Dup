@@ -155,9 +155,8 @@ class Duplicate:
                     name = value["name"]
                     resolution = value["resolution"]
                     info_hash = value["info_hash"]
-                    media_info = value["media_info"]
 
-                    mediainfo_manager = MediaInfoManager(media_info_output=media_info)
+                    mediainfo_manager = MediaInfoManager(media_info_output=value)
                     mediainfo_manager.languages()
                     media_info_audio_lang = mediainfo_manager.search_language(language=my_language(config.PREFERRED_LANG))
 
