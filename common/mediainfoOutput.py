@@ -5,6 +5,7 @@ from typing import Optional, Dict, List
 
 class AudioFormat:
     """ Create a new object with the audio attributes"""
+
     def __init__(self, id, format, format_info, commercial_name, codec_id, duration, bit_rate_mode, bit_rate,
                  channels, channel_layout, sampling_rate, frame_rate, compression_mode, stream_size, title, language,
                  service_kind, default, forced, max_bit_rate, delay_relative_to_video):
@@ -63,16 +64,23 @@ class Parser:
 
         # Mediainfo.parsed() output string from the tracker
         self.media_info = media_info
-        # Get each Audio section from the Mediainfo.parsed() output string
-        self.mediainfo_audio_sections_regex = r'Audio #\d+\n([\s\S]*?)(?=\nAudio #\d+|\n\n|$)'
 
     def audio_sections(self) -> Optional[List[Dict[str, str]]]:
-        audio_sections = re.findall(self.mediainfo_audio_sections_regex, self.media_info)
+
+        # Get each Audio section from the Mediainfo.parsed() output string
+        mediainfo_audio_sections_regex = r'Audio #\d+\n([\s\S]*?)(?=\nAudio #\d+|\n\n|$)'
+        audio_sections = re.findall(mediainfo_audio_sections_regex, self.media_info)
+
+        # One audio track only
+        if not audio_sections:
+            mediainfo_audio_sections_regex = r'Audio([\s\S]*?)(?=\nAudio #\d+|\n\n|$)'
+            audio_sections = re.findall(mediainfo_audio_sections_regex, self.media_info)
+
         audio_info_list = []
 
         # For each audio section
-        audio_info = {}
         for i, audio_section in enumerate(audio_sections, 1):
+            audio_info = {}
             # print(f"Audio #{i}")
             audio_lines = audio_section.strip().split('\n')
             for line in audio_lines:
