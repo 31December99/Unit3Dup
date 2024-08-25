@@ -119,7 +119,7 @@ class MediaFile:
 
     @property
     def subtitle_track(self):
-        """Snag subtitle track"""
+        """Get subtitle track"""
         subtitle_info = []
         for track in self.media_info.tracks:
             if track.track_type == 'Text':
@@ -131,12 +131,11 @@ class MediaFile:
         """Get available languages from audio and subtitle tracks"""
         languages = set()
 
-        for track in self.audio_track + self.subtitle_track:
+        for track in self.audio_track: # + self.subtitle_track:
             lang = track.get('language', 'Unknown')
             if lang != 'Unknown':
                 languages.add(lang)
-
-        return list(languages)
+        return list(languages) if len(languages) > 0 else ['audio language not found']
 
     @property
     def file_size(self):
