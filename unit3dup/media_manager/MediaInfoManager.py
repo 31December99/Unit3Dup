@@ -1,11 +1,21 @@
 # -*- coding: utf-8 -*-
 
-from common.mediainfoOutput import Parser
+from common.mediainfoOutput import MediaInfo
+from common.bdinfoOutput import BDInfo
+
+
 class MediaInfoManager:
 
-    def __init__(self, media_info_output: str):
-        self.parser = Parser(media_info=media_info_output)
-        self.audio = self.parser.get_audio_formats()
+    def __init__(self, media_info_output: dict):
+
+        if media_info_output['media_info']:
+            self.parser = MediaInfo(media_info=media_info_output['media_info'])
+            self.audio = self.parser.get_audio_formats()
+
+        if media_info_output['bd_info']:
+            self.parser = BDInfo.from_bdinfo_string(media_info_output['bd_info'])
+            print(self.parser.audio)
+            input("MediaInfoManager . .-> ")
 
     def languages(self):
         """ return every languages present in audioFormat """
