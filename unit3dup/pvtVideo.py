@@ -95,8 +95,8 @@ class Video:
 
         for img_bytes in self.frames:
             master_uploaders = [
-                ImgBB(img_bytes, self.IMGBB_KEY),
                 Freeimage(img_bytes, self.FREE_IMAGE_KEY),
+                ImgBB(img_bytes, self.IMGBB_KEY),
             ]
 
             # for each on-line uploader
