@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import argparse
-from unit3dup.config import config
+from common.config import config
 from unit3dup.media_manager.ContentManager import ContentManager
 from unit3dup.media_manager.TorrentManager import TorrentManager
 

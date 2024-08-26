@@ -7,7 +7,7 @@ from rich.console import Console
 from thefuzz import fuzz
 from media_db.results import Results
 from common.utility import Manage_titles
-from unit3dup.config import config
+from common.config import config
 
 console = Console(log_path=False)
 

@@ -3,7 +3,7 @@ from typing import List, Optional
 from rich.console import Console
 from unit3dup.media_manager.VideoManager import VideoManager
 from unit3dup.media_manager.DocuManager import DocuManager
-from unit3dup.config import config
+from common.config import config
 from common.constants import my_language
 from common.qbitt import Qbitt
 

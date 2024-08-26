@@ -5,7 +5,7 @@ import re
 
 from rich.console import Console
 from unit3dup.contents import Contents
-from unit3dup.config import config
+from common.config import config
 from common.utility import Manage_titles
 from common.mediainfo import MediaFile
 

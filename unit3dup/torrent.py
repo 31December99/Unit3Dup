@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 import re
-
 import requests
 
 from unit3dup import pvtTracker
 from rich.console import Console
-from unit3dup.config import config
+from common.config import config
 
 console = Console(log_path=False)
 

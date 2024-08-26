@@ -6,9 +6,9 @@ from media_db.search import TvShow
 from common.utility import Manage_titles, System
 from common import title
 from common.constants import my_language
+from common.config import config
 from unit3dup.torrent import Torrent
 from unit3dup.contents import Contents
-from unit3dup.config import config
 from unit3dup.media_manager.MediaInfoManager import MediaInfoManager
 
 console = Console(log_path=False)

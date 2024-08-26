@@ -3,9 +3,9 @@
 from rich.console import Console
 from unit3dup.torrent import View
 from unit3dup.command import CommandLine
-from unit3dup.config import config
 from unit3dup.ping import Ping
 from unit3dup.media import Media
+from common.config import config
 
 console = Console(log_path=False)
 
