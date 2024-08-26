@@ -37,8 +37,8 @@ class TorrentManager:
     def process_video_content(self, content) -> (Optional[str], Optional[str]):
         video_manager = VideoManager(content=content)
 
-        console.log(f"Audio Upload language -> {content.audio_languages[0].upper()}")
-        console.log(f"Preferred language    -> {self.preferred_lang.upper()}\n")
+        console.log(f"Audio Upload language -> {(','.join(content.audio_languages)).upper()}", style='blue bold')
+        console.log(f"Preferred language    -> {self.preferred_lang.upper()}\n", style='blue bold')
 
         if self.cli.duplicate or config.DUPLICATE == "True":
             results = video_manager.check_duplicate()
