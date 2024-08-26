@@ -160,7 +160,11 @@ class Duplicate:
                         language=my_language(config.PREFERRED_LANG))
 
                     # Size in GB
+                    # Skip duplicate check if the size is out of the threshold
                     size = round(value["size"] / (1024 ** 3), 2)
+                    delta_size = round(abs(self.content_size - size) / max(self.content_size, size) * 100)
+                    if delta_size > config.SIZE_TH:
+                        return False
 
                     tmdb_id = value["tmdb_id"]
                     tracker_file_name = title.Guessit(name)
@@ -169,14 +173,12 @@ class Duplicate:
                     )
 
                     if already:
-                        delta_size = round(abs(self.content_size - size) / max(self.content_size, size) * 100)
-
                         # Format field
                         tmdb_id_width = 6
                         size_width = 4
                         name_width = 30
                         resolution_width = 5
-                        info_hash_width = 20
+                        info_hash_width = 40
                         delta_size_width = 2
 
                         formatted_tmdb_id = f"{tmdb_id:>{tmdb_id_width}}"
@@ -185,12 +187,12 @@ class Duplicate:
                         formatted_resolution = f"{resolution:<{resolution_width}}"
                         formatted_info_hash = f"{info_hash:<{info_hash_width}}"
                         formatted_size_th = f"{delta_size:<{delta_size_width}}"
+                        languages = mediainfo_manager.languages.upper() if mediainfo_manager.languages else "N/A"
 
                         console.log(
                             f"[TMDB-ID {formatted_tmdb_id}] [{formatted_size} delta={formatted_size_th}%]"
-                            f" '[HASH {formatted_info_hash}] [{formatted_resolution}]'"
-                            f" {list(set(mediainfo_manager.languages))} "
-                            f"{formatted_name}"
+                            f" '[HASH {formatted_info_hash}] [{formatted_resolution}]' "
+                            f"{formatted_name}, '[{languages}]'"
                         )
 
                         self.flag_already = True
