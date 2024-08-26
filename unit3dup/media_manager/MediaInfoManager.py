@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from typing import Optional
 
 from common.mediainfoOutput import MediaInfo
 from common.bdinfoOutput import BDInfo
@@ -19,5 +20,5 @@ class MediaInfoManager:
             self.languages = self.parser.languages
             self.languages = ','.join(set(self.languages))
 
-    def search_language(self, language: str) -> bool:
-        return any(language.lower() in lang for lang in self.languages)
+    def search_language(self, language: str) -> Optional[bool]:
+        return language.lower() in self.languages.lower() if self.languages else None
