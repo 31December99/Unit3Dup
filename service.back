@@ -1,3 +1,7 @@
+##################################################################################
+                                    ## EXTERNAL SERVICE ##
+##################################################################################
+
 ## TMDDB API KEY - https://www.themoviedb.org/
 TMDB_APIKEY=
 
@@ -7,13 +11,21 @@ IMGBB_KEY=
 ## FREEIMAGE API_KEY - https://freeimage.host/
 FREE_IMAGE_KEY=
 
+
+##################################################################################
+                                    ## TORRENT CLIENT ##
+##################################################################################
+
 ## QBITTORRENT REMOTE CONTROL
 QBIT_USER=
 QBIT_PASS=
 QBIT_URL=
 QBIT_PORT=
 
-## USER OPTIONS
+
+##################################################################################
+                                    ## USER OPTIONS ##
+##################################################################################
 
 # True = It Searches for duplicates
 # False = Does not search for duplicates
