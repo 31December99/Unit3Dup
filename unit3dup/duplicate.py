@@ -156,14 +156,19 @@ class Duplicate:
                     info_hash = value["info_hash"]
 
                     mediainfo_manager = MediaInfoManager(media_info_output=value)
-                    media_info_audio_lang = mediainfo_manager.search_language(
+                    found_preferred_lang = mediainfo_manager.search_language(
                         language=my_language(config.PREFERRED_LANG))
 
                     # Size in GB
                     # Skip duplicate check if the size is out of the threshold
                     size = round(value["size"] / (1024 ** 3), 2)
                     delta_size = round(abs(self.content_size - size) / max(self.content_size, size) * 100)
+
                     if delta_size > config.SIZE_TH:
+                        return False
+
+                    # Skip duplicate comparison if no preferred language is found
+                    if found_preferred_lang is False:
                         return False
 
                     tmdb_id = value["tmdb_id"]
