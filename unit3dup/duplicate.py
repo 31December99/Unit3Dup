@@ -126,8 +126,6 @@ class Duplicate:
             f" '{self.content.torrent_path}'",
             style="green bold",
         )
-        console.log(f"Audio Upload language -> {self.content.audio_languages[0].upper()}")
-        console.log(f"Preferred language    -> {self.preferred_lang.upper()}\n")
         for t_data in tracker_data["data"]:
             already_present = self._view_data(t_data)
         if already_present:
