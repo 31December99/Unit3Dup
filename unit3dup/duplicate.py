@@ -114,6 +114,7 @@ class Duplicate:
         self.flag_already = False
         self.content_size = System.get_size(content.torrent_path)
         self.preferred_lang = my_language(config.PREFERRED_LANG)
+        self.size_threshold = config.SIZE_TH
 
     def process(self, tmdb_id: str) -> bool:
         return self.search()
@@ -155,38 +156,45 @@ class Duplicate:
                     info_hash = value["info_hash"]
 
                     mediainfo_manager = MediaInfoManager(media_info_output=value)
-                    media_info_audio_lang = mediainfo_manager.search_language(language=my_language(config.PREFERRED_LANG))
+                    media_info_audio_lang = mediainfo_manager.search_language(
+                        language=my_language(config.PREFERRED_LANG))
 
                     # Size in GB
                     size = round(value["size"] / (1024 ** 3), 2)
+
                     tmdb_id = value["tmdb_id"]
                     tracker_file_name = title.Guessit(name)
                     already = self.compare(
                         tracker_file=tracker_file_name, content_file=self.guess_filename
                     )
 
-                    # Format field
-                    tmdb_id_width = 6
-                    size_width = 6
-                    name_width = 30
-                    resolution_width = 5
-                    info_hash_width = 20
-                    preferred_lang_width = 7
-                    formatted_tmdb_id = f"{tmdb_id:>{tmdb_id_width}}"
-                    formatted_size = f"{size:>{size_width}.2f} GB"
-                    formatted_name = f"{name:<{name_width}}"
-                    formatted_resolution = f"{resolution:<{resolution_width}}"
-                    formatted_info_hash = f"{info_hash:<{info_hash_width}}"
-                    formatted_audio_language = f"{self.preferred_lang:<{preferred_lang_width}}"
-
                     if already:
+                        delta_size = round(abs(self.content_size - size) / max(self.content_size, size) * 100)
+
+                        # Format field
+                        tmdb_id_width = 6
+                        size_width = 4
+                        name_width = 30
+                        resolution_width = 5
+                        info_hash_width = 20
+                        delta_size_width = 2
+
+                        formatted_tmdb_id = f"{tmdb_id:>{tmdb_id_width}}"
+                        formatted_size = f"{size:>{size_width}.2f} GB"
+                        formatted_name = f"{name:<{name_width}}"
+                        formatted_resolution = f"{resolution:<{resolution_width}}"
+                        formatted_info_hash = f"{info_hash:<{info_hash_width}}"
+                        formatted_size_th = f"{delta_size:<{delta_size_width}}"
+
                         console.log(
-                            f"[TMDB-ID {formatted_tmdb_id}] [{formatted_size}] '[HASH {formatted_info_hash}]"
-                            f" [{formatted_resolution}]' [AUDIO {formatted_audio_language} {media_info_audio_lang}] "
+                            f"[TMDB-ID {formatted_tmdb_id}] [{formatted_size} delta={formatted_size_th}%]"
+                            f" '[HASH {formatted_info_hash}] [{formatted_resolution}]'"
+                            f" {list(set(mediainfo_manager.languages))} "
                             f"{formatted_name}"
                         )
 
                         self.flag_already = True
+
         # At least one media needs to match the tracker database
         return self.flag_already
 
