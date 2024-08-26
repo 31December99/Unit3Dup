@@ -2,7 +2,7 @@
 
 
 class BDInfo:
-    def __init__(self, disc_label, disc_size, protection, playlist, size, length, total_bitrate, video, audio,
+    def __init__(self, disc_label, disc_size, protection, playlist, size, length, total_bitrate, video, languages,
                  subtitles):
         self.disc_label = disc_label
         self.disc_size = disc_size
@@ -12,7 +12,7 @@ class BDInfo:
         self.length = length
         self.total_bitrate = total_bitrate
         self.video = video
-        self.audio = audio
+        self.languages = languages
         self.subtitles = subtitles
 
     @classmethod
@@ -30,9 +30,9 @@ class BDInfo:
                 key = key.strip().replace(' ', '_').lower()
 
                 if key == 'audio':
-                    data['audio'].append(value.strip())
+                    data['audio'].append(value.strip().lower())
                 elif key == 'subtitle':
-                    data['subtitles'].append(value.strip())
+                    data['subtitles'].append(value.strip().lower())
                 else:
                     data[key] = value.strip()
 
@@ -45,7 +45,7 @@ class BDInfo:
             length=data.get('length'),
             total_bitrate=data.get('total_bitrate'),
             video=data.get('video'),
-            audio=data['audio'],
+            languages=data['audio'],
             subtitles=data['subtitles']
         )
 
