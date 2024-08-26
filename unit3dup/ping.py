@@ -10,8 +10,7 @@ from qbittorrent import Client
 from urllib.parse import urlparse
 from unit3dup import pvtTracker
 from common.imageHost import ImgBB, Freeimage, ImageUploaderFallback
-
-from unit3dup.config import config
+from common.config import config
 
 console = Console(log_path=False)
 

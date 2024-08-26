@@ -5,7 +5,7 @@ from rich.console import Console
 from unit3dup.contents import File, Folder
 from common.utility import Manage_titles
 from common import title
-from unit3dup.config import config
+from common.config import config
 
 
 console = Console(log_path=False)

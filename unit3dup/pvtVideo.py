@@ -4,7 +4,7 @@ import cv2
 from common.imageHost import ImgBB, Freeimage, ImageUploaderFallback
 from common.mediainfo import MediaFile
 from rich.console import Console
-from unit3dup.config import config
+from common.config import config
 from unit3dup.ping import offline_uploaders
 
 console = Console(log_path=False)
