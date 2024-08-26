@@ -157,7 +157,6 @@ class Duplicate:
                     info_hash = value["info_hash"]
 
                     mediainfo_manager = MediaInfoManager(media_info_output=value)
-                    mediainfo_manager.languages()
                     media_info_audio_lang = mediainfo_manager.search_language(language=my_language(config.PREFERRED_LANG))
 
                     # Size in GB
