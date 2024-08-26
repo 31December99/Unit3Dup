@@ -67,6 +67,7 @@ class ConfigUnit3D:
         self.SCREENSHOTS = 0
         self.TORRENT_ARCHIVE: str = ""
         self.PREFERRED_LANG: str = ""
+        self.SIZE_TH: str = ""
 
         self.tracker_values: dict = {}
         self.trackers = None
@@ -104,6 +105,7 @@ class ConfigUnit3D:
             self.SCREENSHOTS = int(config_load_service("number_of_screenshots"))
             self.TORRENT_ARCHIVE = config_load_service("torrent_archive")
             self.PREFERRED_LANG = config_load_service("preferred_lang")
+            self.SIZE_TH = config_load_service("size_th")
 
         except decouple.UndefinedValueError as e:
             console.log(f"* service.env * {e}", style="red bold")
