@@ -118,6 +118,8 @@ Make sure to configure the necessary API keys and authentication credentials in 
 - duplicate_on=False
 - number_of_screenshots=4
 - torrent_archive =''
+- preferred_lang=en
+- size_th=100
 
 let torrent_archive string empty or set your path if you want save torrent file inside
 
