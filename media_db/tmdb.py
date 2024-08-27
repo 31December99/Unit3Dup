@@ -6,7 +6,7 @@ from tmdbv3api import TMDb, Movie, TV
 from rich.console import Console
 from thefuzz import fuzz
 from media_db.results import Results
-from common.utility import Manage_titles
+from common.utility.utility import Manage_titles
 from common.config import config
 
 console = Console(log_path=False)
