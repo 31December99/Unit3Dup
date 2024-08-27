@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import sys
 
-from common import title
+from common.utility import title
 from media_db import tmdb
 from rich.console import Console
 
