@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from common import title, utility
+from common.utility import title, utility
 from media_db import results
 
 
