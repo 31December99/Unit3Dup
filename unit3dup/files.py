@@ -6,7 +6,7 @@ import re
 from rich.console import Console
 from unit3dup.contents import Contents
 from common.config import config
-from common.utility import Manage_titles
+from common.utility.utility import Manage_titles
 from common.mediainfo import MediaFile
 
 console = Console(log_path=False)
