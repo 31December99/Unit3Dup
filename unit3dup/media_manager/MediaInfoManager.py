@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from typing import Optional
 
-from common.mediainfoOutput import MediaInfo
-from common.bdinfoOutput import BDInfo
+from common.utility.mediainfoOutput import MediaInfo
+from common.utility.bdinfoOutput import BDInfo
 
 
 class MediaInfoManager:
