@@ -3,8 +3,8 @@ import guessit
 
 from rich.console import Console
 from media_db.search import TvShow
-from common.utility import Manage_titles, System
-from common import title
+from common.utility.utility import Manage_titles, System
+from common.utility import title
 from common.constants import my_language
 from common.config import config
 from unit3dup.torrent import Torrent
