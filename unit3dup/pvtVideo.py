@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import random
 import cv2
-from common.imageHost import ImgBB, Freeimage, ImageUploaderFallback
+from common.external_services.imageHost import ImgBB, Freeimage, ImageUploaderFallback
 from common.mediainfo import MediaFile
 from rich.console import Console
 from common.config import config
