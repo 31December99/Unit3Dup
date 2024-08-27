@@ -5,7 +5,7 @@ from unit3dup.media_manager.VideoManager import VideoManager
 from unit3dup.media_manager.DocuManager import DocuManager
 from common.config import config
 from common.constants import my_language
-from common.qbitt import Qbitt
+from common.clients.qbitt import Qbitt
 
 console = Console(log_path=False)
 
