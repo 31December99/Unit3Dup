@@ -1,7 +1,10 @@
 import random
 import subprocess
 import io
+from rich.console import Console
 from PIL import Image
+
+console = Console(log_path=False)
 
 
 class Screenshots:
@@ -72,8 +75,12 @@ class Screenshots:
             '-of', 'default=noprint_wrappers=1:nokey=1',
             self.video_path
         ]
-        process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        out, err = process.communicate()
+        try:
+            process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            out, err = process.communicate()
+        except FileNotFoundError:
+            console.log(f"[FFMPEG-ffprobe not found] - Install ffmpeg or check your system path", style="red bold")
+            exit(1)
 
         if process.returncode != 0:
             raise RuntimeError(f'ffprobe errore: {err.decode()}')
@@ -93,9 +100,12 @@ class Screenshots:
             '-f', 'image2pipe',
             '-'
         ]
-
-        process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        out, err = process.communicate()
+        try:
+            process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            out, err = process.communicate()
+        except FileNotFoundError:
+            console.log(f"[FFMPEG not found] -  Install ffmpeg or check your system path", style="red bold")
+            exit(1)
 
         if process.returncode != 0:
             raise RuntimeError(f'[FFmpeg] Error: {err.decode()}')
