@@ -5,8 +5,9 @@ import re
 
 from rich.console import Console
 from unit3dup.contents import Contents
-from unit3dup.config import config
-from common.utility import Manage_titles
+from common.config import config
+from common.utility.utility import Manage_titles
+from common.mediainfo import MediaFile
 
 console = Console(log_path=False)
 
@@ -17,6 +18,7 @@ class Files:
     """
 
     def __init__(self, path: str, tracker_name: str, media_type: int):
+        self.languages = None
         self.display_name = None
         self.meta_info_list: list = []
         self.meta_info = None
@@ -64,6 +66,7 @@ class Files:
                 torrent_path=self.torrent_path,
                 display_name=self.display_name,
                 doc_description=self.doc_description,
+                audio_languages=self.languages
             )
             if process
             else False
@@ -78,6 +81,9 @@ class Files:
         self.torrent_path = os.path.join(self.folder, self.file_name)
         self.size = os.path.getsize(self.path)
         self.doc_description = self.file_name
+        media_info = MediaFile(file_path=os.path.join(self.folder, self.file_name))
+        self.languages = media_info.available_languages
+
         media_docu_type = Manage_titles.media_docu_type(self.file_name)
         # If this is a document it becomes a document category
         if media_docu_type:
@@ -87,6 +93,7 @@ class Files:
         self.meta_info = json.dumps(
             [{"length": self.size, "path": [self.file_name]}], indent=4
         )
+
         return True
 
     def process_folder(self) -> bool:
@@ -105,6 +112,9 @@ class Files:
         self.name = os.path.basename(self.folder)
         self.meta_info_list = []
         self.doc_description = "\n".join(files)
+        media_info = MediaFile(file_path=os.path.join(self.folder, self.file_name))
+        self.languages = media_info.available_languages
+
         media_docu_type = Manage_titles.media_docu_type(self.file_name)
         # If there is a document in the folder it becomes a document folder
         if media_docu_type:

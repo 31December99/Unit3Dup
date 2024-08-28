@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import json
 import os.path
-from common import utility
+from common.utility.utility import Manage_titles
 
 
 class Filter:
@@ -47,7 +47,7 @@ class TrackerConfig(Filter):
         :param file_name:
         :return:
         """
-        file_name = utility.Manage_titles.clean(file_name)
+        file_name = Manage_titles.clean(file_name)
         word_list = file_name.lower().strip().split(" ")
 
         # // 1 case
@@ -64,7 +64,7 @@ class TrackerConfig(Filter):
 
     def filterResolution(self, file_name: str) -> int:
 
-        file_name = utility.Manage_titles.clean(file_name)
+        file_name = Manage_titles.clean(file_name)
         word_list = file_name.lower().strip().split(" ")
         for word in word_list:
             if word in self.__config["RESOLUTION"]:

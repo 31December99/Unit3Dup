@@ -2,12 +2,14 @@
 import guessit
 
 from rich.console import Console
-from common import title
 from media_db.search import TvShow
+from common.utility.utility import Manage_titles, System
+from common.utility import title
+from common.constants import my_language
+from common.config import config
 from unit3dup.torrent import Torrent
 from unit3dup.contents import Contents
-from unit3dup.config import config
-from common.utility import Manage_titles, System
+from unit3dup.media_manager.MediaInfoManager import MediaInfoManager
 
 console = Console(log_path=False)
 
@@ -70,9 +72,9 @@ class CompareTitles:
 
     def same_date(self):
         return (
-            self.content_date == self.tracker_date
-            or self.content_date is None
-            or self.tracker_date is None
+                self.content_date == self.tracker_date
+                or self.content_date is None
+                or self.tracker_date is None
         )
 
     def is_greater95(self) -> bool:
@@ -111,6 +113,8 @@ class Duplicate:
         self.guess_filename = title.Guessit(self.content.display_name)
         self.flag_already = False
         self.content_size = System.get_size(content.torrent_path)
+        self.preferred_lang = my_language(config.PREFERRED_LANG)
+        self.size_threshold = config.SIZE_TH
 
     def process(self, tmdb_id: str) -> bool:
         return self.search()
@@ -143,41 +147,61 @@ class Duplicate:
         for key, value in data.items():
             if "attributes" in key:
                 if (
-                    value["category_id"] == self.movie_category
-                    or value["category_id"] == self.serie_category
+                        value["category_id"] == self.movie_category
+                        or value["category_id"] == self.serie_category
                 ):
 
                     name = value["name"]
                     resolution = value["resolution"]
                     info_hash = value["info_hash"]
 
+                    mediainfo_manager = MediaInfoManager(media_info_output=value)
+                    found_preferred_lang = mediainfo_manager.search_language(
+                        language=my_language(config.PREFERRED_LANG))
+
                     # Size in GB
-                    size = round(value["size"] / (1024**3), 2)
+                    # Skip duplicate check if the size is out of the threshold
+                    size = round(value["size"] / (1024 ** 3), 2)
+                    delta_size = round(abs(self.content_size - size) / max(self.content_size, size) * 100)
+
+                    if delta_size > config.SIZE_TH:
+                        return False
+
+                    # Skip duplicate comparison if no preferred language is found
+                    if found_preferred_lang is False:
+                        return False
+
                     tmdb_id = value["tmdb_id"]
                     tracker_file_name = title.Guessit(name)
                     already = self.compare(
                         tracker_file=tracker_file_name, content_file=self.guess_filename
                     )
 
-                    # Format field
-                    tmdb_id_width = 6
-                    size_width = 6
-                    name_width = 30
-                    resolution_width = 5
-                    info_hash_width = 20
-                    formatted_tmdb_id = f"{tmdb_id:>{tmdb_id_width}}"
-                    formatted_size = f"{size:>{size_width}.2f} GB"
-                    formatted_name = f"{name:<{name_width}}"
-                    formatted_resolution = f"{resolution:<{resolution_width}}"
-                    formatted_info_hash = f"{info_hash:<{info_hash_width}}"
-
                     if already:
+                        # Format field
+                        tmdb_id_width = 6
+                        size_width = 4
+                        name_width = 30
+                        resolution_width = 5
+                        info_hash_width = 40
+                        delta_size_width = 2
+
+                        formatted_tmdb_id = f"{tmdb_id:>{tmdb_id_width}}"
+                        formatted_size = f"{size:>{size_width}.2f} GB"
+                        formatted_name = f"{name:<{name_width}}"
+                        formatted_resolution = f"{resolution:<{resolution_width}}"
+                        formatted_info_hash = f"{info_hash:<{info_hash_width}}"
+                        formatted_size_th = f"{delta_size:<{delta_size_width}}"
+                        languages = mediainfo_manager.languages.upper() if mediainfo_manager.languages else "N/A"
+
                         console.log(
-                            f"[TMDB-ID {formatted_tmdb_id}] [{formatted_size}] '[HASH {formatted_info_hash}]"
-                            f" [{formatted_resolution}]' {formatted_name}"
+                            f"[TMDB-ID {formatted_tmdb_id}] [{formatted_size} delta={formatted_size_th}%]"
+                            f" '[HASH {formatted_info_hash}] [{formatted_resolution}]' "
+                            f"{formatted_name}, '[{languages}]'"
                         )
 
                         self.flag_already = True
+
         # At least one media needs to match the tracker database
         return self.flag_already
 

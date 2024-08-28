@@ -6,9 +6,10 @@ import requests
 
 from rich.console import Console
 from qbittorrent import Client
+from common.config import config
 from unit3dup.pvtTorrent import Mytorrent
 from unit3dup.contents import Contents
-from unit3dup.config import config
+
 
 console = Console(log_path=False)
 
