@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
-import random
-import cv2
+# import random
+# import cv2
 from common.external_services.imageHost import ImgBB, Freeimage, ImageUploaderFallback
 from common.mediainfo import MediaFile
 from rich.console import Console
 from common.config import config
 from unit3dup.ping import offline_uploaders
+from common.utility.screenshots import Screenshots
 
 console = Console(log_path=False)
 
@@ -30,7 +31,8 @@ class Video:
         # Screenshots samples
         self.samples_n = config.SCREENSHOTS if 2 <= config.SCREENSHOTS <= 10 else 4
         # Catturo i frames del video
-        self.video_capture = cv2.VideoCapture(self.file_name)
+        # self.video_capture = cv2.VideoCapture(self.file_name)
+        self.is_hd = False
 
     @property
     def fileName(self) -> str:
@@ -39,36 +41,38 @@ class Video:
     @property
     def standard(self) -> int:
         """Determine if the video is standard definition (SD) or HD."""
-        is_hd = self.video_capture.get(cv2.CAP_PROP_FRAME_HEIGHT) >= 720
-        console.log(f"[HD]........... {'YES' if is_hd else 'NO'}")
-        return 0 if is_hd else 1
+        # is_hd = self.video_capture.get(cv2.CAP_PROP_FRAME_HEIGHT) >= 720
+        console.log(f"[HD]........... {'YES' if self.is_hd else 'NO'}")
+        return 0 if self.is_hd else 1
 
     @property
     def mediainfo(self) -> str:
         """Return media info as a string."""
-        # return MediaInfo.parse(self.file_name, output="STRING", full=False)
         media_info = MediaFile(self.file_name)
         return media_info.info
 
+    """
     @property
     def total_frames(self) -> cv2:
-        """Return the total number of frames in the video."""
+        # Return the total number of frames in the video
         return int(self.video_capture.get(cv2.CAP_PROP_FRAME_COUNT))
 
     @property
     def samples(self) -> cv2:
-        """
-        Return a list of frame numbers sampled randomly starting from 25% of the video.
-        """
+        # Return a list of frame numbers sampled randomly starting from 25% of the video.
+
         start_frame = int(0.35 * self.total_frames)
         end_frame = int(0.65 * self.total_frames)
         # Create a list of random frames starting at 'start_frame'
         return random.sample(range(start_frame, end_frame), self.samples_n)
+    """
 
     @property
     def frames(self) -> list:
         """
         Return a list of frames as byte arrays.
+        """
+
         """
         frames_list = []
         for frame_number in self.samples:
@@ -84,7 +88,14 @@ class Video:
 
         self.video_capture.release()
         cv2.destroyAllWindows()
-        return frames_list
+        """
+
+        screenshots = Screenshots(self.file_name, num_screenshots=self.samples_n)
+        extract_screenshots = screenshots.create()
+        self.is_hd = screenshots.is_hd
+
+        return extract_screenshots
+        # return frames_list
 
     @property
     def description(self) -> str:
@@ -94,6 +105,7 @@ class Video:
         console_url = []
 
         for img_bytes in self.frames:
+
             master_uploaders = [
                 Freeimage(img_bytes, self.FREE_IMAGE_KEY),
                 ImgBB(img_bytes, self.IMGBB_KEY),
