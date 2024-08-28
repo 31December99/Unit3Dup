@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import pprint
 
-import cv2
+# import cv2
 import qbittorrent
 import requests
 
@@ -144,6 +144,7 @@ class Ping:
             return True
         return False
 
+    """
     def process_imghost(self) -> bool:
 
         # Getting ready for testing image host
@@ -174,3 +175,4 @@ class Ping:
                 at_least = True
 
         return at_least
+    """
