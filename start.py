@@ -172,8 +172,9 @@ if __name__ == "__main__":
     if cli.args.scan or cli.args.upload:
         qbit_err = ping.process_qbit()
         tmdb_err = ping.process_tmdb()
-        imghost_err = ping.process_imghost()
-        if not (tmdb_err and qbit_err and imghost_err and track_err):
+        # imghost_err = ping.process_imghost()
+        # if not (tmdb_err and qbit_err and imghost_err and track_err):
+        if not (tmdb_err and qbit_err and track_err):
             console.log("Check your configuration file. Exit..")
             exit(1)
 
