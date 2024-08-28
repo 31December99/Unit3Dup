@@ -48,3 +48,6 @@ torrent_archive=''
 # Japan - JA (Japanese)
 # Bulgaria - BG (Bulgarian)
 preferred_lang=it
+
+# Size threshold (%)
+size_th=100
