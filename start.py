@@ -3,7 +3,6 @@
 from rich.console import Console
 from unit3dup.torrent import View
 from unit3dup.command import CommandLine
-from unit3dup.config import config
 from unit3dup.ping import Ping
 from unit3dup.media import Media
 
@@ -11,6 +10,24 @@ console = Console(log_path=False)
 
 
 def main():
+    # Read arguments from the command line
+    cli = CommandLine()
+
+    # Test configuration
+    console.rule("\nChecking configuration files")
+    ping = Ping()
+
+    # always ping the tracker
+    track_err = ping.process_tracker()
+
+    # Ping only if scanning is selected
+    if cli.args.scan or cli.args.upload:
+        qbit_err = ping.process_qbit()
+        tmdb_err = ping.process_tmdb()
+        if not (tmdb_err and qbit_err and track_err):
+            console.log("Check your configuration file. Exit..")
+            exit(1)
+
     """Manual Mode"""
     if cli.args.upload:
         media_video = Media(
@@ -159,23 +176,5 @@ def main():
 
 
 if __name__ == "__main__":
-
-    cli = CommandLine()
-    config = config.trackers.get_tracker("itt")
-
-    """ Test configuration"""
-    ping = Ping()
-    console.rule("\nChecking configuration files")
-    # always ping the tracker
-    track_err = ping.process_tracker()
-    # Ping only if scanning is selected
-    if cli.args.scan or cli.args.upload:
-        qbit_err = ping.process_qbit()
-        tmdb_err = ping.process_tmdb()
-        imghost_err = ping.process_imghost()
-        if not (tmdb_err and qbit_err and imghost_err and track_err):
-            console.log("Check your configuration file. Exit..")
-            exit(1)
-
     main()
     print()

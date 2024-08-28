@@ -17,6 +17,7 @@ class Contents:
         torrent_path: str,
         display_name: str,
         doc_description: str,
+        audio_languages: list,
     ):
         self.file_name = file_name
         self.name = name
@@ -29,6 +30,7 @@ class Contents:
         self.torrent_path = torrent_path
         self.display_name = display_name
         self.doc_description = doc_description
+        self.audio_languages = audio_languages
 
     @classmethod
     def create_instance(
@@ -44,6 +46,7 @@ class Contents:
         torrent_path: str,
         display_name: str,
         doc_description: str,
+        audio_languages: list,
     ):
         return cls(
             file_name,
@@ -57,6 +60,7 @@ class Contents:
             torrent_path,
             display_name,
             doc_description,
+            audio_languages,
         )
 
 

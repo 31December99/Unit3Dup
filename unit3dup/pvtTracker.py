@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import os
 import requests
 from rich.console import Console
 from urllib.parse import urljoin

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import pprint
 
-import cv2
+# import cv2
 import qbittorrent
 import requests
 
@@ -9,9 +9,8 @@ from rich.console import Console
 from qbittorrent import Client
 from urllib.parse import urlparse
 from unit3dup import pvtTracker
-from common.imageHost import ImgBB, Freeimage, ImageUploaderFallback
-
-from unit3dup.config import config
+from common.external_services.imageHost import ImgBB, Freeimage, ImageUploaderFallback
+from common.config import config
 
 console = Console(log_path=False)
 
@@ -145,6 +144,7 @@ class Ping:
             return True
         return False
 
+    """
     def process_imghost(self) -> bool:
 
         # Getting ready for testing image host
@@ -175,3 +175,4 @@ class Ping:
                 at_least = True
 
         return at_least
+    """

@@ -1,3 +1,7 @@
+##################################################################################
+                                    ## EXTERNAL SERVICE ##
+##################################################################################
+
 ## TMDDB API KEY - https://www.themoviedb.org/
 TMDB_APIKEY=
 
@@ -7,13 +11,21 @@ IMGBB_KEY=
 ## FREEIMAGE API_KEY - https://freeimage.host/
 FREE_IMAGE_KEY=
 
+
+##################################################################################
+                                    ## TORRENT CLIENT ##
+##################################################################################
+
 ## QBITTORRENT REMOTE CONTROL
 QBIT_USER=
 QBIT_PASS=
 QBIT_URL=
 QBIT_PORT=
 
-## USER OPTIONS
+
+##################################################################################
+                                    ## USER OPTIONS ##
+##################################################################################
 
 # True = It Searches for duplicates
 # False = Does not search for duplicates
@@ -23,4 +35,16 @@ duplicate_on=False
 number_of_screenshots=4
 
 # Path for your local torrent file
-torrent_archive =''
+torrent_archive=''
+
+# Preferred language ISO 639-1
+# Italy - IT (Italian)
+# Spain - ES (Spanish)
+# Germany - DE (German)
+# France - FR (French)
+# England - EN (English)
+# Turkey - TR (Turkish)
+# Brazil - PT (Portuguese)
+# Japan - JA (Japanese)
+# Bulgaria - BG (Bulgarian)
+preferred_lang=it
