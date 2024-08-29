@@ -49,5 +49,5 @@ torrent_archive=''
 # Bulgaria - BG (Bulgarian)
 preferred_lang=it
 
-# Size threshold (%)
+# Size threshold (%). Disabled = 100
 size_th=100
