@@ -129,6 +129,7 @@ class Duplicate:
         )
         for t_data in tracker_data["data"]:
             already_present = self._view_data(t_data)
+
         if already_present:
             while 1:
                 console.print(
@@ -155,21 +156,13 @@ class Duplicate:
                     resolution = value["resolution"]
                     info_hash = value["info_hash"]
 
-                    mediainfo_manager = MediaInfoManager(media_info_output=value)
-                    found_preferred_lang = mediainfo_manager.search_language(
-                        language=my_language(config.PREFERRED_LANG))
-
                     # Size in GB
                     # Skip duplicate check if the size is out of the threshold
                     size = round(value["size"] / (1024 ** 3), 2)
                     delta_size = round(abs(self.content_size - size) / max(self.content_size, size) * 100)
 
                     if delta_size > config.SIZE_TH:
-                        return False
-
-                    # Skip duplicate comparison if no preferred language is found
-                    if found_preferred_lang is False:
-                        return False
+                        continue
 
                     tmdb_id = value["tmdb_id"]
                     tracker_file_name = title.Guessit(name)
@@ -185,6 +178,7 @@ class Duplicate:
                         resolution_width = 5
                         info_hash_width = 40
                         delta_size_width = 2
+                        mediainfo_manager = MediaInfoManager(media_info_output=value)
 
                         formatted_tmdb_id = f"{tmdb_id:>{tmdb_id_width}}"
                         formatted_size = f"{size:>{size_width}.2f} GB"
