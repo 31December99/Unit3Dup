@@ -40,10 +40,11 @@ class TorrentManager:
         console.log(f"Audio Upload language -> {(','.join(content.audio_languages)).upper()}", style='blue bold')
         console.log(f"Preferred language    -> {self.preferred_lang.upper()}\n", style='blue bold')
 
-        if config.PREFERRED_LANG.lower() not in content.audio_languages:
-            console.log("[Languages] ** Your preferred lang is not in your media being uploaded"
-                        ", skipping ! **", style='red bold')
-            return None, None
+        if 'audio language not found' not in content.audio_languages:
+            if config.PREFERRED_LANG.lower() not in content.audio_languages:
+                console.log("[Languages] ** Your preferred lang is not in your media being uploaded"
+                            ", skipping ! **", style='red bold')
+                return None, None
 
         if self.cli.duplicate or config.DUPLICATE == "True":
             results = video_manager.check_duplicate()
