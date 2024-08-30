@@ -107,6 +107,13 @@ class ConfigUnit3D:
             self.PREFERRED_LANG = config_load_service("preferred_lang")
             self.SIZE_TH = int(config_load_service("size_th"))
 
+            if not os.path.exists(self.TORRENT_ARCHIVE):
+                console.log(f"[Service.env] The path {self.TORRENT_ARCHIVE} doesn't exist")
+                exit(1)
+
+
+
+
         except decouple.UndefinedValueError as e:
             console.log(f"* service.env * {e}", style="red bold")
             exit(1)
@@ -120,8 +127,8 @@ class ConfigUnit3D:
             os.path.splitext(file_name)[0].lower()
             for file_name in os.listdir()
             if os.path.isfile(file_name)
-            and os.path.splitext(file_name)[1].lower() == ".env"
-            and "service.env" not in file_name.lower()
+               and os.path.splitext(file_name)[1].lower() == ".env"
+               and "service.env" not in file_name.lower()
         ]
 
         for tracker_name in env_files:
