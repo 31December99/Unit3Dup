@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import random
 import subprocess
 import io
@@ -7,22 +9,22 @@ from PIL import Image
 console = Console(log_path=False)
 
 
-class Screenshots:
+class VideoFrame:
     def __init__(self, video_path, num_screenshots=1):
         # File Path
         self.video_path = video_path
 
-        # nume of screenshot from the config
+        # Number of screenshots from the config
         self.num_screenshots = num_screenshots
 
-        # is HD ?
+        # Is HD?
         self.is_hd = False
 
     def create(self):
-        # Exstract screenshot
+        # Extract screenshots
         frames = self._extract()
 
-        #  will be encoded to base64 before to uploading
+        # Will be encoded to base64 before uploading
         frames_in_bytes = []
         for idx, frame in enumerate(frames):
             img_bytes = self.image_to_bytes(frame)
@@ -30,27 +32,26 @@ class Screenshots:
         return frames_in_bytes
 
     def image_to_bytes(self, image):
-
-        # is HD ?
+        # Check if image is HD
         self.is_hd = image.height >= 720
 
         # Resize image for the tracker
         resized_image = self.resize_image(image)
 
-        # Convert and save to mem
+        # Convert and save to memory
         buffered = io.BytesIO()
         resized_image.save(buffered, format="PNG")
 
-        # Returns in bytes
+        # Return in bytes
         return buffered.getvalue()
 
     def resize_image(self, image, width=350):
-        # Get Ratio
+        # Get aspect ratio
         aspect_ratio = image.width / image.height
         height = int(width / aspect_ratio)
 
         # Resize the image
-        resized_image = image.resize((width, height), Image.ANTIALIAS)
+        resized_image = image.resize((width, height), Image.Resampling.LANCZOS)
         return resized_image
 
     def _extract(self):
@@ -63,7 +64,7 @@ class Screenshots:
         # Random (uniform) numbers
         times = [random.uniform(min_time, max_time) for _ in range(self.num_screenshots)]
 
-        # Extract...
+        # Extract frames
         frames = [self._extract_frame(time) for time in times]
         return frames
 
@@ -79,17 +80,16 @@ class Screenshots:
             process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             out, err = process.communicate()
         except FileNotFoundError:
-            console.log(f"[FFMPEG-ffprobe not found] - Install ffmpeg or check your system path", style="red bold")
+            console.log("[FFMPEG-ffprobe not found] - Install ffmpeg or check your system path", style="red bold")
             exit(1)
 
         if process.returncode != 0:
-            raise RuntimeError(f'ffprobe errore: {err.decode()}')
+            raise RuntimeError(f'ffprobe error: {err.decode()}')
 
         duration = float(out.decode().strip())
         return duration
 
     def _extract_frame(self, time):
-
         # FFmpeg
         command = [
             'ffmpeg',
@@ -104,7 +104,7 @@ class Screenshots:
             process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             out, err = process.communicate()
         except FileNotFoundError:
-            console.log(f"[FFMPEG not found] -  Install ffmpeg or check your system path", style="red bold")
+            console.log("[FFMPEG not found] - Install ffmpeg or check your system path", style="red bold")
             exit(1)
 
         if process.returncode != 0:

@@ -9,4 +9,4 @@ tqdm==4.66.5
 thefuzz==0.22.1
 tmdbv3api==1.9.0
 unidecode==1.3.8
-pillow-simd==9.5.0.post1
+pillow==10.4.0
