@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
-# import random
-# import cv2
+
 from common.external_services.imageHost import ImgBB, Freeimage, ImageUploaderFallback
 from common.mediainfo import MediaFile
 from rich.console import Console
 from common.config import config
 from unit3dup.ping import offline_uploaders
-from common.utility.screenshots import Screenshots
+from common.utility.frames import VideoFrame
 
 console = Console(log_path=False)
 
@@ -51,51 +50,17 @@ class Video:
         media_info = MediaFile(self.file_name)
         return media_info.info
 
-    """
-    @property
-    def total_frames(self) -> cv2:
-        # Return the total number of frames in the video
-        return int(self.video_capture.get(cv2.CAP_PROP_FRAME_COUNT))
-
-    @property
-    def samples(self) -> cv2:
-        # Return a list of frame numbers sampled randomly starting from 25% of the video.
-
-        start_frame = int(0.35 * self.total_frames)
-        end_frame = int(0.65 * self.total_frames)
-        # Create a list of random frames starting at 'start_frame'
-        return random.sample(range(start_frame, end_frame), self.samples_n)
-    """
 
     @property
     def frames(self) -> list:
         """
         Return a list of frames as byte arrays.
         """
-
-        """
-        frames_list = []
-        for frame_number in self.samples:
-            self.video_capture.set(cv2.CAP_PROP_POS_FRAMES, frame_number)
-            ret, frame = self.video_capture.read()
-            if not ret:
-                continue
-
-            ret, buffer = cv2.imencode(".jpg", frame, [cv2.IMWRITE_JPEG_QUALITY, 90])
-            if ret:
-                image_bytes = buffer.tobytes()
-                frames_list.append(image_bytes)
-
-        self.video_capture.release()
-        cv2.destroyAllWindows()
-        """
-
-        screenshots = Screenshots(self.file_name, num_screenshots=self.samples_n)
-        extract_screenshots = screenshots.create()
-        self.is_hd = screenshots.is_hd
+        video_frames = VideoFrame(self.file_name, num_screenshots=self.samples_n)
+        extract_screenshots = video_frames.create()
+        self.is_hd = video_frames.is_hd
 
         return extract_screenshots
-        # return frames_list
 
     @property
     def description(self) -> str:
