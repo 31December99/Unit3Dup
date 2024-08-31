@@ -14,62 +14,72 @@ class Video:
     """
     - Generate screenshots for each video provided
     - Obtain media info for each video and for the first video in a series
-    - Upload screenshots to ImgBB
-    - Return the video size
+    - Upload screenshots and create a new description
     - Determine if the video is standard definition (SD) or not
     """
 
     def __init__(self, file_name: str):
 
+        # Host APi keys
         self.IMGBB_KEY = config.IMGBB_KEY
         self.FREE_IMAGE_KEY = config.FREE_IMAGE_KEY
 
-        self.file_name = file_name
-        # Frame count
-        self.numero_di_frame = None
+        # File name
+        self.file_name: str = file_name
+
         # Screenshots samples
-        self.samples_n = config.SCREENSHOTS if 2 <= config.SCREENSHOTS <= 10 else 4
-        # Catturo i frames del video
-        # self.video_capture = cv2.VideoCapture(self.file_name)
-        self.is_hd = False
+        samples_n: int = config.SCREENSHOTS if 2 <= config.SCREENSHOTS <= 10 else 4
 
-    @property
-    def fileName(self) -> str:
-        return self.file_name
+        # New object frame
+        self.video_frames: VideoFrame = VideoFrame(self.file_name, num_screenshots=samples_n)
 
-    @property
-    def standard(self) -> int:
-        """Determine if the video is standard definition (SD) or HD."""
-        # is_hd = self.video_capture.get(cv2.CAP_PROP_FRAME_HEIGHT) >= 720
-        console.log(f"[HD]........... {'YES' if self.is_hd else 'NO'}")
-        return 0 if self.is_hd else 1
+        # Is_hd
+        self.is_hd: int = 0
 
-    @property
-    def mediainfo(self) -> str:
+        # Description
+        self.description: str = ''
+
+        # Description
+        self.mediainfo: str = ''
+
+    @classmethod
+    def info(cls, file_name: str):
+        """
+        Class method to create a new Video object from a file
+        """
+        # Create a new instance of the class
+        video_instance = cls(file_name)
+
+        # Call build_info
+        video_instance._build_info()
+
+        # Return a new instance
+        return video_instance
+
+    def _build_info(self):
+        """ Build the info to send to the tracker"""
+
+        # Return a list of frames and the hd info
+        extracted_frames, is_hd = self.video_frames.create()
+        self.is_hd = is_hd
+
+        # Create a new description
+        self.description = self._description(extracted_frames=extracted_frames)
+
+        # Create a new mediainfo object
+        self.mediainfo = self._mediainfo()
+
+    def _mediainfo(self) -> str:
         """Return media info as a string."""
         media_info = MediaFile(self.file_name)
         return media_info.info
 
-
-    @property
-    def frames(self) -> list:
-        """
-        Return a list of frames as byte arrays.
-        """
-        video_frames = VideoFrame(self.file_name, num_screenshots=self.samples_n)
-        extract_screenshots = video_frames.create()
-        self.is_hd = video_frames.is_hd
-
-        return extract_screenshots
-
-    @property
-    def description(self) -> str:
+    def _description(self, extracted_frames: list) -> str:
         """Generate a description with image URLs uploaded to ImgBB"""
-        console.log("\n[GENERATING IMAGES FROM VIDEO...]")
+        console.log(f"\n[GENERATING IMAGES..] [HD {'ON' if self.is_hd==0 else 'OFF'}]")
         description = "[center]\n"
         console_url = []
-
-        for img_bytes in self.frames:
+        for img_bytes in extracted_frames:
 
             master_uploaders = [
                 Freeimage(img_bytes, self.FREE_IMAGE_KEY),

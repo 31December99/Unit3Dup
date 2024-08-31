@@ -93,9 +93,10 @@ class UploadVideo(UploadBot):
                 file_name=self.file_name,
                 result=tv_show,
                 category=self.content.category,
-                standard=video_info.standard,
                 mediainfo=video_info.mediainfo,
                 description=video_info.description,
+                standard=video_info.is_hd,
+
             )
         else:
             console.log(f"[Payload] Unable to create a 'video payload' -> {video_info}")
