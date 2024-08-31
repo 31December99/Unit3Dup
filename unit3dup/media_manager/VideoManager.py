@@ -2,7 +2,7 @@
 
 import os
 from unit3dup.pvtTorrent import Mytorrent
-from unit3dup.uploader import UploadVideo
+from unit3dup.upload import UploadVideo
 from unit3dup.contents import Contents
 from unit3dup.pvtVideo import Video
 from unit3dup.duplicate import Duplicate
