@@ -5,19 +5,23 @@ from unit3dup.torrent import View
 from unit3dup.command import CommandLine
 from unit3dup.ping import Ping
 from unit3dup.bot import Bot
+from common.custom_console import custom_console
 
 console = Console(log_path=False)
 
 
 def main():
+
+    # WELCOME MESSAGE
+    custom_console.welcome_message()
+
     # Read arguments from the command line
     cli = CommandLine()
 
-    # Test configuration
-    console.rule("\nChecking configuration files")
+    # Validate env files and test the external services
     ping = Ping()
 
-    # always ping the tracker
+    # Always ping the tracker
     track_err = ping.process_tracker()
 
     # Ping only if scanning is selected

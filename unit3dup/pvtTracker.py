@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 import requests
-from rich.console import Console
-from urllib.parse import urljoin
 
-console = Console(log_path=False)
+from urllib.parse import urljoin
+from common.custom_console import custom_console
 
 
 class Myhttp:
@@ -68,16 +67,14 @@ class Tracker(Myhttp):
             response.raise_for_status()
             return response.json()
         except requests.exceptions.HTTPError:
-            console.log(
-                f"[Tracker] HTTP Error. Check your service.env data or verify if the tracker is online",
-                style="bold red",
-            )
+            custom_console.bot_error_log(
+                f"[Tracker] HTTP Error. Check your service.env data or verify if the tracker is online")
+
             exit(1)
         except requests.exceptions.ConnectionError:
-            console.log(
+            custom_console.bot_error_log(
                 f"[Tracker] Connection error. Please check your configuration data "
                 f" or verify if the tracker is online",
-                style="bold red",
             )
             exit(1)
 
@@ -108,7 +105,7 @@ class Tracker(Myhttp):
             response.raise_for_status()
             return response.json()
         except requests.exceptions.HTTPError as http_err:
-            console.print(f"Report {http_err}")
+            custom_console.bot_error_log(f"Report {http_err}")
             exit(1)
 
 

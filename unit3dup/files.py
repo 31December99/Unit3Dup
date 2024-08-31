@@ -3,13 +3,11 @@ import json
 import os
 import re
 
-from rich.console import Console
 from unit3dup.contents import Contents
 from common.config import config
 from common.utility.utility import Manage_titles
 from common.mediainfo import MediaFile
-
-console = Console(log_path=False)
+from common.custom_console import custom_console
 
 
 class Files:
@@ -51,7 +49,7 @@ class Files:
             process = self.process_folder()
 
         torrent_pack = bool(re.search(r"S\d+(?!.*E\d+)", self.path))
-        console.log(f"\n[TORRENT PACK] {torrent_pack}...  '{self.path}'")
+        custom_console.bot_log(f"\n[TORRENT PACK] {torrent_pack}...  '{self.path}'")
 
         return (
             Contents.create_instance(
@@ -99,7 +97,7 @@ class Files:
     def process_folder(self) -> bool:
         files = self.list_video_files()
         if not files:
-            console.log(
+            custom_console.bot_error_log(
                 f"\n*** '{self.path}' No video files found in the directory - skip ***\n"
             )
             return False

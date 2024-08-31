@@ -3,9 +3,7 @@ import sys
 
 from common.utility import title
 from media_db import tmdb
-from rich.console import Console
-
-console = Console(log_path=False)
+from common.custom_console import custom_console
 
 
 class TvShow:
@@ -46,11 +44,11 @@ class TvShow:
                 if poster_path
                 else "nourl"
             )
-            console.log(f"\n[TMDB ID]................  {result.video_id}")
-            console.log(f"[TMDB POSTER]............  {url_poster}")
-            console.log(f"[TMDB BACKDROP]..........  {url_backdrop}")
-            console.log(f"[TMDB KEYWORDS]..........  {result.keywords}\n")
+            custom_console.bot_log(f"\n[TMDB ID]................  {result.video_id}")
+            custom_console.bot_log(f"[TMDB POSTER]............  {url_poster}")
+            custom_console.bot_log(f"[TMDB BACKDROP]..........  {url_backdrop}")
+            custom_console.bot_log(f"[TMDB KEYWORDS]..........  {result.keywords}\n")
             return result
         else:
-            console.log(f"Non trovo un ID valido per {file_name}")
+            custom_console.bot_log(f"Non trovo un ID valido per {file_name}")
             sys.exit()
