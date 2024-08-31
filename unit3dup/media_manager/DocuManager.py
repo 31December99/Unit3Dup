@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from unit3dup.pvtTorrent import Mytorrent
-from unit3dup.uploader import UploadDocument
+from unit3dup.upload import UploadDocument
 from unit3dup.contents import Contents
 
 
