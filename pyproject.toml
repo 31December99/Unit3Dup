@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "unit3dup"
-version = "0.4.3"
+version = "0.4.4"
 description = "an Unit3D uploader"
 authors = ["Parzival"]
 readme = "README.md"
