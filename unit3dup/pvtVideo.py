@@ -5,7 +5,7 @@ from common.mediainfo import MediaFile
 from rich.console import Console
 from common.config import config
 from unit3dup.ping import offline_uploaders
-from common.utility.frames import VideoFrame
+from common.frames import VideoFrame
 
 console = Console(log_path=False)
 
