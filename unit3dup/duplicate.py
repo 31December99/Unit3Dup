@@ -1,17 +1,17 @@
 # -*- coding: utf-8 -*-
 import guessit
 
-from rich.console import Console
+
 from media_db.search import TvShow
 from common.utility.utility import Manage_titles, System
 from common.utility import title
 from common.constants import my_language
 from common.config import config
+from common.custom_console import custom_console
 from unit3dup.torrent import Torrent
 from unit3dup.contents import Contents
 from unit3dup.media_manager.MediaInfoManager import MediaInfoManager
 
-console = Console(log_path=False)
 
 
 class Series:
@@ -122,18 +122,17 @@ class Duplicate:
     def search(self) -> bool:
         tracker_data = self.torrent_info.search(self.guess_filename.guessit_title)
         already_present = False
-        console.rule(
+        custom_console.panel_message(
             f"Searching for duplicate -> Your Files: [{self.content_size} GB]"
-            f" '{self.content.torrent_path}'",
-            style="green bold",
+            f" '{self.content.torrent_path}'"
         )
         for t_data in tracker_data["data"]:
             already_present = self._view_data(t_data)
 
         if already_present:
             while 1:
-                console.print(
-                    "\nPress (C) to continue, (S) to SKIP.. (Q) Quit - ", end=""
+                custom_console.bot_question_log(
+                    "\nPress (C) to continue, (S) to SKIP.. (Q) Quit - "
                 )
                 user_answer = input()
                 if "c" == user_answer.lower():
@@ -188,7 +187,7 @@ class Duplicate:
                         formatted_size_th = f"{delta_size:<{delta_size_width}}"
                         languages = mediainfo_manager.languages.upper() if mediainfo_manager.languages else "N/A"
 
-                        console.log(
+                        custom_console.bot_log(
                             f"[TMDB-ID {formatted_tmdb_id}] [{formatted_size} delta={formatted_size_th}%]"
                             f" '[HASH {formatted_info_hash}] [{formatted_resolution}]' "
                             f"{formatted_name}, '[{languages}]'"

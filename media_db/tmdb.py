@@ -1,15 +1,14 @@
 # -*- coding: utf-8 -*-
 import sys
 import tmdbv3api.exceptions
+
 from unidecode import unidecode
 from tmdbv3api import TMDb, Movie, TV
-from rich.console import Console
 from thefuzz import fuzz
 from media_db.results import Results
 from common.utility.utility import Manage_titles
 from common.config import config
-
-console = Console(log_path=False)
+from common.custom_console import custom_console
 
 
 class MyTmdb:
@@ -40,12 +39,12 @@ class MyTmdb:
         self.ext_title = self.ext_title.replace("–", " ")
         self.ext_title = self.ext_title.replace("’", " ")
         self.ext_title = self.ext_title.replace("'", " ")
-        console.log(f"\n[TMDB Search]..........  {self.ext_title}")
+        custom_console.bot_log(f"\n[TMDB Search]..........  {self.ext_title}")
 
         try:
             self.__requests()
         except tmdbv3api.exceptions.TMDbException as e:
-            console.log(f"[TMDB] '{e}'")
+            custom_console.bot_error_log(f"[TMDB] '{e}'")
             sys.exit()
 
         result = self.__search_titles()
@@ -60,23 +59,23 @@ class MyTmdb:
         return result
 
     def input_tmdb(self) -> Results:
-        console.log("Unable to identify the TMDB ID. Please enter an ID number..")
+        custom_console.bot_log("Unable to identify the TMDB ID. Please enter an ID number..")
         results = Results()
         while True:
             tmdb_id = input(f"> ")
             if not tmdb_id.isdigit():
-                console.log(
+                custom_console.bot_err.log(
                     f"I do not recognize {tmdb_id} as a number. Please try again.."
                 )
                 continue
-            console.log(f"You have entered {tmdb_id}")
+            custom_console.bot_log(f"You have entered {tmdb_id}")
             user_answ = input("Are you sure ? (y/n)> ")
             keywords = ""
             if "y" == user_answ.lower():
                 # Zero = No TMDB ID
                 if tmdb_id != "0":
                     keywords = self.keywords(int(tmdb_id))
-                    console.log(keywords)
+                    custom_console.bot_log(keywords)
                 if "The resource you requested could not be found." not in keywords:
                     results.video_id = tmdb_id
                     results.keywords = keywords
@@ -84,8 +83,8 @@ class MyTmdb:
 
     def __requests(self):
         self.__result = self.tmdb.search(self.ext_title)
-        console.log(f"[TMDB total-results]...  {self.__result['total_results']}")
-        console.log(f"[TMDB total-pages].....  {self.__result['total_pages']}")
+        custom_console.bot_log(f"[TMDB total-results]...  {self.__result['total_results']}")
+        custom_console.bot_log(f"[TMDB total-pages].....  {self.__result['total_pages']}")
         if self.__result["total_results"] > 0:
             for result in self.__result:
                 results = Results()

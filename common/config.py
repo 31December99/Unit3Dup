@@ -2,12 +2,11 @@
 
 import os
 import decouple
+
 from decouple import Config, RepositoryEnv
-from rich.console import Console
 from rich.text import Text
 from trackers.trackers import TrackerConfig
-
-console = Console(log_path=False)
+from common.custom_console import custom_console
 
 
 class Tracker:
@@ -36,7 +35,7 @@ class TrackerManager:
                 f"\n Unable to load '{tracker_name}' configuration file",
                 style="bold red",
             )
-            console.log(self.message)
+            custom_console.bot_log(self.message)
             exit(1)
         return tracker
 
@@ -90,35 +89,31 @@ class ConfigUnit3D:
                 f"\n'Env' file 'Service.env' not found in {service_path.upper()}",
                 style="bold red",
             )
-            console.log(self.message)
 
         try:
             config_load_service = Config(RepositoryEnv(service_path))
-            self.TMDB_APIKEY = config_load_service("TMDB_APIKEY")
-            self.IMGBB_KEY = config_load_service("IMGBB_KEY")
-            self.FREE_IMAGE_KEY = config_load_service("FREE_IMAGE_KEY")
-            self.QBIT_USER = config_load_service("QBIT_USER")
-            self.QBIT_PASS = config_load_service("QBIT_PASS")
-            self.QBIT_URL = config_load_service("QBIT_URL")
-            self.QBIT_PORT = config_load_service("QBIT_PORT")
-            self.DUPLICATE = config_load_service("duplicate_on")
-            self.SCREENSHOTS = int(config_load_service("number_of_screenshots"))
-            self.TORRENT_ARCHIVE = config_load_service("torrent_archive")
-            self.PREFERRED_LANG = config_load_service("preferred_lang")
-            self.SIZE_TH = int(config_load_service("size_th"))
-
-            if not os.path.exists(self.TORRENT_ARCHIVE):
-                console.log(f"[Service.env] The path {self.TORRENT_ARCHIVE} doesn't exist")
-                exit(1)
-
-
-
-
         except decouple.UndefinedValueError as e:
-            console.log(f"* service.env * {e}", style="red bold")
+            custom_console.bot_error_log(f"* service.env * {e}")
             exit(1)
         except FileNotFoundError as e:
-            pass
+            custom_console.bot_error_log(f"* service.env * {e}")
+            exit(1)
+
+        self.TMDB_APIKEY = config_load_service("TMDB_APIKEY")
+        self.IMGBB_KEY = config_load_service("IMGBB_KEY")
+        self.FREE_IMAGE_KEY = config_load_service("FREE_IMAGE_KEY")
+        self.QBIT_USER = config_load_service("QBIT_USER")
+        self.QBIT_PASS = config_load_service("QBIT_PASS")
+        self.QBIT_URL = config_load_service("QBIT_URL")
+        self.QBIT_PORT = config_load_service("QBIT_PORT")
+        self.DUPLICATE = config_load_service("duplicate_on")
+        self.SCREENSHOTS = int(config_load_service("number_of_screenshots"))
+        self.TORRENT_ARCHIVE = config_load_service("torrent_archive")
+        self.PREFERRED_LANG = config_load_service("preferred_lang")
+        self.SIZE_TH = int(config_load_service("size_th"))
+
+        if not os.path.exists(self.TORRENT_ARCHIVE):
+            custom_console.bot_error_log(f"[Service.env] The path {self.TORRENT_ARCHIVE} doesn't exist")
             exit(1)
 
     def validate(self):
@@ -127,8 +122,9 @@ class ConfigUnit3D:
             os.path.splitext(file_name)[0].lower()
             for file_name in os.listdir()
             if os.path.isfile(file_name)
-               and os.path.splitext(file_name)[1].lower() == ".env"
-               and "service.env" not in file_name.lower()
+            and os.path.splitext(file_name)[1].lower() == ".env"
+            and "service.env" not in file_name.lower()
+            and "console.env" not in file_name.lower()
         ]
 
         for tracker_name in env_files:
@@ -147,7 +143,7 @@ class ConfigUnit3D:
                 self.API_TOKEN = config_load_tracker("API_TOKEN")
                 self.BASE_URL = config_load_tracker("BASE_URL")
             except decouple.UndefinedValueError as e:
-                console.log(f"* {tracker_name}.env * {e}", style="red bold")
+                custom_console.bot_error_log(f"[CONFIG] * {tracker_name}.env * {e}")
                 exit(1)
 
             tracker_values = TrackerConfig(tracker_json_path)

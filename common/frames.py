@@ -3,10 +3,8 @@
 import random
 import subprocess
 import io
-from rich.console import Console
 from PIL import Image
-
-console = Console(log_path=False)
+from common.custom_console import custom_console
 
 
 class VideoFrame:
@@ -64,7 +62,9 @@ class VideoFrame:
         max_time = duration * 0.65
 
         # Random (uniform) numbers
-        times = [random.uniform(min_time, max_time) for _ in range(self.num_screenshots)]
+        times = [
+            random.uniform(min_time, max_time) for _ in range(self.num_screenshots)
+        ]
 
         # Extract frames
         frames = [self._extract_frame(time) for time in times]
@@ -72,21 +72,28 @@ class VideoFrame:
 
     def _get_video_duration(self):
         command = [
-            'ffprobe',
-            '-v', 'error',
-            '-show_entries', 'format=duration',
-            '-of', 'default=noprint_wrappers=1:nokey=1',
-            self.video_path
+            "ffprobe",
+            "-v",
+            "error",
+            "-show_entries",
+            "format=duration",
+            "-of",
+            "default=noprint_wrappers=1:nokey=1",
+            self.video_path,
         ]
         try:
-            process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            process = subprocess.Popen(
+                command, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+            )
             out, err = process.communicate()
         except FileNotFoundError:
-            console.log("[FFMPEG-ffprobe not found] - Install ffmpeg or check your system path", style="red bold")
+            custom_console.bot_error_log(
+                "[FFMPEG-ffprobe not found] - Install ffmpeg or check your system path"
+            )
             exit(1)
 
         if process.returncode != 0:
-            raise RuntimeError(f'ffprobe error: {err.decode()}')
+            raise RuntimeError(f"ffprobe error: {err.decode()}")
 
         duration = float(out.decode().strip())
         return duration
@@ -94,22 +101,32 @@ class VideoFrame:
     def _extract_frame(self, time):
         # FFmpeg
         command = [
-            'ffmpeg',
-            '-ss', str(time),  # Speed up
-            '-i', self.video_path,
-            '-vframes', '1',
-            '-threads', '4',
-            '-f', 'image2pipe',
-            '-'
+            "ffmpeg",
+            "-ss",
+            str(time),  # Speed up
+            "-i",
+            self.video_path,
+            "-vframes",
+            "1",
+            "-threads",
+            "4",
+            "-f",
+            "image2pipe",
+            "-",
         ]
         try:
-            process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            process = subprocess.Popen(
+                command, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+            )
             out, err = process.communicate()
         except FileNotFoundError:
-            console.log("[FFMPEG not found] - Install ffmpeg or check your system path", style="red bold")
+            custom_console.bot_error_log(
+                "[FFMPEG not found] - Install ffmpeg or check your system path",
+                style="red bold",
+            )
             exit(1)
 
         if process.returncode != 0:
-            raise RuntimeError(f'[FFmpeg] Error: {err.decode()}')
+            raise RuntimeError(f"[FFmpeg] Error: {err.decode()}")
 
         return Image.open(io.BytesIO(out))

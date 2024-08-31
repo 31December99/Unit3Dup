@@ -2,12 +2,10 @@
 
 from common.external_services.imageHost import ImgBB, Freeimage, ImageUploaderFallback
 from common.mediainfo import MediaFile
-from rich.console import Console
 from common.config import config
 from unit3dup.ping import offline_uploaders
 from common.frames import VideoFrame
-
-console = Console(log_path=False)
+from common.custom_console import custom_console
 
 
 class Video:
@@ -76,7 +74,7 @@ class Video:
 
     def _description(self, extracted_frames: list) -> str:
         """Generate a description with image URLs uploaded to ImgBB"""
-        console.log(f"\n[GENERATING IMAGES..] [HD {'ON' if self.is_hd==0 else 'OFF'}]")
+        custom_console.bot_log(f"\n[GENERATING IMAGES..] [HD {'ON' if self.is_hd==0 else 'OFF'}]")
         description = "[center]\n"
         console_url = []
         for img_bytes in extracted_frames:
@@ -96,12 +94,12 @@ class Video:
 
                     # If it goes offline during upload skip the uploader
                     if not img_url:
-                        console.log(
-                            "** Upload failed, skip to next host **", style="red bold"
+                        custom_console.bot_error_log(
+                            "** Upload failed, skip to next host **"
                         )
                         offline_uploaders.append(uploader.__class__.__name__)
                         continue
-                    console.log(img_url)
+                    custom_console.bot_log(img_url)
                     # Append the URL to new description
                     console_url.append(img_url)
                     description += f"[url={img_url}][img=350]{img_url}[/img][/url]"
