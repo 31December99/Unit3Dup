@@ -1,13 +1,11 @@
 import argparse
 from typing import List, Optional
-from rich.console import Console
 from unit3dup.media_manager.VideoManager import VideoManager
 from unit3dup.media_manager.DocuManager import DocuManager
 from common.config import config
 from common.constants import my_language
 from common.clients.qbitt import Qbitt
-
-console = Console(log_path=False)
+from common.custom_console import custom_console
 
 
 class TorrentManager:
@@ -21,7 +19,7 @@ class TorrentManager:
 
     def process(self, contents: List) -> None:
         for content in contents:
-            console.rule(content.file_name)
+            custom_console.panel_message(content.file_name)
             tracker_response: Optional[str] = None
             torrent_response: Optional[str] = None
 
@@ -37,19 +35,19 @@ class TorrentManager:
     def process_video_content(self, content) -> (Optional[str], Optional[str]):
         video_manager = VideoManager(content=content)
 
-        console.log(f"Audio Upload language -> {(','.join(content.audio_languages)).upper()}", style='blue bold')
-        console.log(f"Preferred language    -> {self.preferred_lang.upper()}\n", style='blue bold')
+        custom_console.bot_log(f"Audio Upload language -> {(','.join(content.audio_languages)).upper()}")
+        custom_console.bot_log(f"Preferred language    -> {self.preferred_lang.upper()}\n")
 
         if 'audio language not found' not in content.audio_languages:
             if config.PREFERRED_LANG.lower() not in content.audio_languages:
-                console.log("[Languages] ** Your preferred lang is not in your media being uploaded"
-                            ", skipping ! **", style='red bold')
+                custom_console.bot_error_log("[Languages] ** Your preferred lang is not in your media being uploaded"
+                                             ", skipping ! **")
                 return None, None
 
         if self.cli.duplicate or config.DUPLICATE == "True":
             results = video_manager.check_duplicate()
             if results:
-                console.log(f"\n*** User chose to skip '{content.file_name}' ***\n")
+                custom_console.bot_error_log(f"\n*** User chose to skip '{content.file_name}' ***\n")
                 return None, None
 
         torrent_response = video_manager.torrent()
