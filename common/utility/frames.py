@@ -17,26 +17,28 @@ class VideoFrame:
         # Number of screenshots from the config
         self.num_screenshots = num_screenshots
 
-        # Is HD?
-        self.is_hd = False
-
     def create(self):
         # Extract screenshots
         frames = self._extract()
 
         # Will be encoded to base64 before uploading
         frames_in_bytes = []
+        is_hd = 0
         for idx, frame in enumerate(frames):
+            # Convert to bytes
             img_bytes = self.image_to_bytes(frame)
-            frames_in_bytes.append(img_bytes)
-        return frames_in_bytes
 
-    def image_to_bytes(self, image):
-        # Check if image is HD
-        self.is_hd = image.height >= 720
+            # Check if image is HD
+            is_hd = 0 if frame.height >= 720 else 1
+
+            # Add a new frame to list
+            frames_in_bytes.append(img_bytes)
+        return frames_in_bytes, is_hd
+
+    def image_to_bytes(self, frame):
 
         # Resize image for the tracker
-        resized_image = self.resize_image(image)
+        resized_image = self.resize_image(frame)
 
         # Convert and save to memory
         buffered = io.BytesIO()
