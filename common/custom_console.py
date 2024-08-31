@@ -65,20 +65,19 @@ class CustomConsole(Console):
                    )
 
     def welcome_message(self):
-        title_panel = Panel(
+        title_panel = Panel.fit(
             Text(self.welcome_msg, style=self.welcome_msg_color, justify="center"),
-            expand=True,
             border_style=self.welcome_msg_border_color,
             title_align="center",
         )
         self.print(title_panel)
 
     def panel_message(self, message: str):
-        title_panel = Panel(
+        title_panel = Panel.fit(
             Text(message, style=self.panel_msg_color, justify="center"),
-            expand=True,
             border_style=self.panel_msg_border_color,
             title_align="center",
+
         )
         self.print(title_panel)
 
