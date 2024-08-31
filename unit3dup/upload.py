@@ -24,8 +24,8 @@ class UploadBot(ABC):
         self.torrent_file_path = os.path.join(self.torrent_path, self.file_name)
 
         self.config = config.trackers.get_tracker(self.tracker_name)
-        self.API_TOKEN = self.config.api_token
-        self.BASE_URL = self.config.base_url
+        self.API_TOKEN = config.API_TOKEN # self.config.api_token
+        self.BASE_URL = config.BASE_URL #self.config.base_url
 
     def send(self, tracker: pvtTracker) -> requests:
         tracker_response = tracker.upload_t(
