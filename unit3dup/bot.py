@@ -6,7 +6,7 @@ from unit3dup.media_manager.ContentManager import ContentManager
 from unit3dup.media_manager.TorrentManager import TorrentManager
 
 
-class Media:
+class Bot:
     def __init__(
         self, path: str, tracker_name: str, cli: argparse.Namespace, mode="man"
     ):
