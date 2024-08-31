@@ -4,7 +4,7 @@ from rich.console import Console
 from unit3dup.torrent import View
 from unit3dup.command import CommandLine
 from unit3dup.ping import Ping
-from unit3dup.media import Media
+from unit3dup.bot import Bot
 
 console = Console(log_path=False)
 
@@ -30,17 +30,17 @@ def main():
 
     """Manual Mode"""
     if cli.args.upload:
-        media_video = Media(
+        unit3dup = Bot(
             path=cli.args.upload, tracker_name=cli.args.tracker, cli=cli.args
         )
-        media_video.run()
+        unit3dup.run()
 
     """ Auto Mode """
     if cli.args.scan:
-        media_video = Media(
+        unit3dup = Bot(
             path=cli.args.scan, tracker_name=cli.args.tracker, cli=cli.args, mode="auto"
         )
-        media_video.run()
+        unit3dup.run()
 
     """ COMMANDS LIST: commands not necessary for the upload but may be useful """
 
