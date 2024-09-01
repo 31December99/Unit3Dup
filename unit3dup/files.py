@@ -7,7 +7,6 @@ from unit3dup.contents import Contents
 from common.config import config
 from common.utility.utility import Manage_titles
 from common.mediainfo import MediaFile
-from common.custom_console import custom_console
 
 
 class Files:
@@ -95,11 +94,7 @@ class Files:
     def process_folder(self) -> bool:
         files = self.list_video_files()
         if not files:
-            """
-            custom_console.bot_error_log(
-                f"\n*** '{self.path}' No video files found in the directory - skip ***\n"
-            )
-            """
+            # No video files found in the directory - skip
             return False
 
         self.file_name = files[0]
