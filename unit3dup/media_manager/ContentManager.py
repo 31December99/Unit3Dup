@@ -12,10 +12,10 @@ class ContentManager:
         self.mode = mode
 
     def get_files(self) -> List:
-        return self.manual() if self.mode == "man" else self.auto()
+        return self.manual(self.mode) if self.mode in ["man", "folder"] else self.auto()
 
-    def manual(self) -> List:
-        auto = Auto(path=self.path, mode="man", tracker_name=self.tracker_name)
+    def manual(self, mode: str) -> List:
+        auto = Auto(path=self.path, mode=mode, tracker_name=self.tracker_name)
         return auto.upload()
 
     def auto(self) -> List:
