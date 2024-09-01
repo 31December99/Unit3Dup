@@ -19,7 +19,7 @@ class TvShow:
             1: "Movie",
             2: "Serie",
         }
-        self.mytmdb = tmdb.MyTmdb(show[category])
+        self.mytmdb = tmdb.MyTmdb(table=show[category], file_name=content.file_name)
 
     def start(self, file_name: str):
         guess_filename = title.Guessit(file_name)
