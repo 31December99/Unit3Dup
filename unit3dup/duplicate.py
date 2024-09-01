@@ -123,8 +123,8 @@ class Duplicate:
         tracker_data = self.torrent_info.search(self.guess_filename.guessit_title)
         already_present = False
         custom_console.panel_message(
-            f"Searching for duplicate -> Your Files: [{self.content_size} GB]"
-            f" '{self.content.torrent_path}'"
+            f"Searching for duplicate [{self.content_size} GB]"
+            # f" '{self.content.torrent_path}'"
         )
         for t_data in tracker_data["data"]:
             already_present = self._view_data(t_data)
@@ -216,7 +216,7 @@ class Duplicate:
         episode = self.guess_filename.guessit_episode
 
         # Search for local files in tmdb
-        my_tmdb = TvShow(self.content.category)
+        my_tmdb = TvShow(self.content)
 
         # Get Result
         tv_show_result = my_tmdb.start(self.content.file_name)
