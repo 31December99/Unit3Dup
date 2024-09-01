@@ -39,7 +39,7 @@ class MyTmdb:
         self.ext_title = self.ext_title.replace("–", " ")
         self.ext_title = self.ext_title.replace("’", " ")
         self.ext_title = self.ext_title.replace("'", " ")
-        custom_console.bot_log(f"\n[TMDB Search]..........  {self.ext_title}")
+        # custom_console.bot_log(f"\n[TMDB Search]..........  {self.ext_title}")
 
         try:
             self.__requests()
@@ -83,8 +83,8 @@ class MyTmdb:
 
     def __requests(self):
         self.__result = self.tmdb.search(self.ext_title)
-        custom_console.bot_log(f"[TMDB total-results]...  {self.__result['total_results']}")
-        custom_console.bot_log(f"[TMDB total-pages].....  {self.__result['total_pages']}")
+        # custom_console.bot_log(f"[TMDB total-results]...  {self.__result['total_results']}")
+        # custom_console.bot_log(f"[TMDB total-pages].....  {self.__result['total_pages']}")
         if self.__result["total_results"] > 0:
             for result in self.__result:
                 results = Results()
