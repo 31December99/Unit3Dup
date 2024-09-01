@@ -49,8 +49,6 @@ class Files:
             process = self.process_folder()
 
         torrent_pack = bool(re.search(r"S\d+(?!.*E\d+)", self.path))
-        custom_console.bot_log(f"\n[TORRENT PACK] {torrent_pack}...  '{self.path}'")
-
         return (
             Contents.create_instance(
                 file_name=self.file_name,
@@ -97,9 +95,11 @@ class Files:
     def process_folder(self) -> bool:
         files = self.list_video_files()
         if not files:
+            """
             custom_console.bot_error_log(
                 f"\n*** '{self.path}' No video files found in the directory - skip ***\n"
             )
+            """
             return False
 
         self.file_name = files[0]
