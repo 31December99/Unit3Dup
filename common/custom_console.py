@@ -89,7 +89,7 @@ class CustomConsole(Console):
             title_align="center",
             expand=False,
         )
-        self.print(title_panel, justify='center')
+        self.print(title_panel, justify="center")
 
     def bot_log(self, message: str):
         console.log(message, style=self.normal_color)
@@ -102,7 +102,11 @@ class CustomConsole(Console):
 
     def bot_process_table_log(self, content: list):
 
-        table = Table(title="Selected Files List", border_style="bold blue", header_style="red blue")
+        table = Table(
+            title="Selected Files List",
+            border_style="bold blue",
+            header_style="red blue",
+        )
         table.add_column("Torrent Pack", style="dim")
         table.add_column("Path", justify="left", style="bold green")
 
@@ -115,24 +119,21 @@ class CustomConsole(Console):
 
     def bot_tmdb_table_log(self, result, title: str, media_info_language: str):
 
-        console.print('\n')
+        console.print("\n")
         media_info_audio_languages = (",".join(media_info_language)).upper()
-        self.panel_message(
-            f"\nResults for {title.upper()} - AUDIO LANGUAGE {media_info_audio_languages}"
-        )
+        self.panel_message(f"\nResults for {title.upper()}")
 
-        # table = Table(title=f"\nResults for {title.upper()} - {media_info_audio_languages}", border_style="bold blue")
         table = Table(border_style="bold blue")
-
         table.add_column("TMDB ID", style="dim")
+        table.add_column("LANGUAGE", style="dim")
         table.add_column("TMDB POSTER", justify="left", style="bold green")
         table.add_column("TMDB BACKDROP", justify="left", style="bold green")
         # table.add_column("TMDB KEYWORDS", justify="left", style="bold green")
         table.add_row(
             str(result.video_id),
+            media_info_audio_languages,
             result.poster_path,
             result.backdrop_path,
-            # result.keywords,
         )
         console.print(Align.center(table))
 
