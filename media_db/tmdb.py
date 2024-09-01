@@ -13,7 +13,7 @@ from common.custom_console import custom_console
 
 class MyTmdb:
 
-    def __init__(self, table: str, year="", videoid=""):
+    def __init__(self, table: str, file_name: str, year="", videoid=""):
         self.table = table
         self.ext_title = None
         self.year = year
@@ -26,6 +26,7 @@ class MyTmdb:
         self.__tv_tmdb = TV()
         self.__result = None
         self.__page = []
+        self.file_name = file_name
 
         if self.table == "Serie":
             self.tmdb = self.__tv_tmdb
@@ -59,7 +60,8 @@ class MyTmdb:
         return result
 
     def input_tmdb(self) -> Results:
-        custom_console.bot_log("Unable to identify the TMDB ID. Please enter an ID number..")
+        custom_console.bot_log(f"[red reverse]{self.file_name}[/red reverse] Unable to identify the TMDB ID."
+                               f" Please enter the tmdb0 ID number..")
         results = Results()
         while True:
             tmdb_id = input(f"> ")
