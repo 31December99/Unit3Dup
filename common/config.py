@@ -67,6 +67,8 @@ class ConfigUnit3D:
         self.TORRENT_ARCHIVE: str = ""
         self.PREFERRED_LANG: str = ""
         self.SIZE_TH: int = 100
+        self.JACK_API_KEY: str = ""
+        self.JACK_URL: str = ""
 
         self.tracker_values: dict = {}
         self.trackers = None
@@ -111,9 +113,13 @@ class ConfigUnit3D:
         self.TORRENT_ARCHIVE = config_load_service("torrent_archive")
         self.PREFERRED_LANG = config_load_service("preferred_lang")
         self.SIZE_TH = int(config_load_service("size_th"))
+        self.JACK_API_KEY = config_load_service("JACK_API_KEY")
+        self.JACK_URL = config_load_service("JACK_URL")
 
         if not os.path.exists(self.TORRENT_ARCHIVE):
-            custom_console.bot_error_log(f"[Service.env] The path {self.TORRENT_ARCHIVE} doesn't exist")
+            custom_console.bot_error_log(
+                f"[Service.env] The path {self.TORRENT_ARCHIVE} doesn't exist"
+            )
             exit(1)
 
     def validate(self):
