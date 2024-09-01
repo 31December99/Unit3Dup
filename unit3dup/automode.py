@@ -23,6 +23,8 @@ class Auto:
     def upload(self):
         if self.is_dir:
             series_path = self.list_video_files(self.path)
+            # -f command
+            # return self._lists(movies_path=[], series_path=[self.path])
             return self._lists(movies_path=[], series_path=series_path)
         else:
             return self._lists(movies_path=[self.path], series_path=[])
@@ -36,6 +38,7 @@ class Auto:
         if not self.is_dir:
             custom_console.bot_error_log("We can't scan a file..")
         else:
+            # Scan folder and subfolders
             for path, sub_dirs, files in os.walk(self.path):
                 # Sort subdirs
                 sub_dirs.sort(reverse=False)
