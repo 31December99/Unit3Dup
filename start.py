@@ -39,6 +39,13 @@ def main():
         )
         unit3dup.run()
 
+    """Manual Mode and single folder"""
+    if cli.args.folder:
+        unit3dup = Bot(
+            path=cli.args.folder, tracker_name=cli.args.tracker, cli=cli.args, mode='folder'
+        )
+        unit3dup.run()
+
     """ Auto Mode """
     if cli.args.scan:
         unit3dup = Bot(
