@@ -13,7 +13,6 @@ offline_uploaders = []
 
 
 class Ping:
-    test_image = "unit3dup/test_image.png"
 
     def __init__(self):
 
