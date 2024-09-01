@@ -43,7 +43,7 @@ class CustomConsole(Console):
 
         current_directory = os.path.dirname(__file__)
         config_file = os.path.abspath(
-            os.path.join(current_directory, "..", "console.env")
+            os.path.join(current_directory, "..", "console.config")
         )
 
         try:
