@@ -23,9 +23,14 @@ class Auto:
     def upload(self):
         if self.is_dir:
             series_path = self.list_video_files(self.path)
-            # -f command
-            # return self._lists(movies_path=[], series_path=[self.path])
-            return self._lists(movies_path=[], series_path=series_path)
+
+            if self.auto == 'man':
+                # -u command (single file or scan each file in the folder)
+                return self._lists(movies_path=[], series_path=series_path)
+
+            if self.auto == 'folder':
+                # -f command (single folder serie or 'saga' )
+                return self._lists(movies_path=[], series_path=[self.path])
         else:
             return self._lists(movies_path=[self.path], series_path=[])
 
