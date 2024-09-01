@@ -116,7 +116,6 @@ class CustomConsole(Console):
     def bot_tmdb_table_log(self, result, title: str, media_info_language: str):
 
         console.print('\n')
-        console.rule()
         media_info_audio_languages = (",".join(media_info_language)).upper()
         self.panel_message(
             f"\nResults for {title.upper()} - AUDIO LANGUAGE {media_info_audio_languages}"
