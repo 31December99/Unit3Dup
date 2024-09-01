@@ -34,12 +34,12 @@ class Mytorrent:
         self.mytorr.segments = 16 * 1024 * 1024  # 16MB
 
     def hash(self):
-        custom_console.bot_log(f"\n[ HASHING ] {self.mytorr.name}")
+        custom_console.print(f"\n[ HASHING ] {self.mytorr.name}")
         start = time.time()
         with HashProgressBar() as progress:
             self.mytorr.generate(threads=4, callback=progress.callback, interval=0)
         end = time.time()
-        custom_console.bot_log(f"Hashed in {end - start} s\n")
+        # custom_console.print(f"Hashed in {end - start} s\n")
 
     def write(self) -> bool:
         full_path = f"{self.torrent_path}.torrent"
