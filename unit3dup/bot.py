@@ -5,6 +5,7 @@ from common.config import config
 from common.custom_console import custom_console
 from unit3dup.media_manager.ContentManager import ContentManager
 from unit3dup.media_manager.TorrentManager import TorrentManager
+from common.external_services.sources_manager.JackManager import JackManager
 
 
 class Bot:
@@ -29,7 +30,12 @@ class Bot:
             cli=self.cli, tracker_config=self.tracker_config
         )
 
+        # Jack Manager
+        self.jack_manager = JackManager()
+
     def run(self) -> None:
+        custom_console.panel_message("Analyzing... Please wait")
+
         files = self.content_manager.get_files()
         contents = [
             content
@@ -41,3 +47,16 @@ class Bot:
 
         # Process
         self.torrent_manager.process(contents)
+
+    def jack(self):
+        custom_console.panel_message("Analyzing... Please wait")
+
+        # Search for new fresh movie and release date
+        self.jack_manager.now_playing()
+
+
+
+
+
+
+
