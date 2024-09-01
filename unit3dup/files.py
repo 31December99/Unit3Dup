@@ -62,7 +62,7 @@ class Files:
                 torrent_path=self.torrent_path,
                 display_name=self.display_name,
                 doc_description=self.doc_description,
-                audio_languages=self.languages
+                audio_languages=self.languages,
             )
             if process
             else False
