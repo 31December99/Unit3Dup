@@ -21,6 +21,8 @@ class CommandLine:
 
         # Upload commands
         parser.add_argument("-u", "--upload", type=str, help="Upload Path")
+        parser.add_argument("-f", "--folder", type=str, help="Upload single folder")
+
         parser.add_argument(
             "-t", "--tracker", type=str, default="itt", help="Tracker Name"
         )
