@@ -113,7 +113,6 @@ class CustomConsole(Console):
         for item in content:
             pack = "Yes" if item.torrent_pack else "No"
             table.add_row(pack, item.torrent_path)
-            table.add_row("", "")
 
         console.print(Align.center(table))
 
