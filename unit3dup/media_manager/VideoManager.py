@@ -14,7 +14,7 @@ class VideoManager:
     def __init__(self, content: Contents):
         self.content = content
         self.file_name = str(os.path.join(content.folder, content.file_name))
-        self._my_tmdb = TvShow(content.category)
+        self._my_tmdb = TvShow(content)
         self._tv_show_result = self._my_tmdb.start(content.file_name)
         self._my_torrent = Mytorrent(contents=content, meta=content.metainfo)
         self._duplicate = Duplicate(content=content)
