@@ -11,7 +11,6 @@ console = Console(log_path=False)
 
 
 def main():
-
     # WELCOME MESSAGE
     custom_console.welcome_message()
 
@@ -52,6 +51,12 @@ def main():
             path=cli.args.scan, tracker_name=cli.args.tracker, cli=cli.args, mode="auto"
         )
         unit3dup.run()
+
+    if cli.args.jacket:
+        unit3dup = Bot(
+            path=cli.args.folder, tracker_name=cli.args.tracker, cli=cli.args, mode='folder'
+        )
+        unit3dup.jack()
 
     """ COMMANDS LIST: commands not necessary for the upload but may be useful """
 
