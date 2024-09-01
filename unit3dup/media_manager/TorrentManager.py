@@ -33,6 +33,7 @@ class TorrentManager:
                 self.qbitt(tracker_response, torrent_response, content)
 
     def process_video_content(self, content) -> (Optional[str], Optional[str]):
+        custom_console.rule()
         video_manager = VideoManager(content=content)
 
         # custom_console.bot_log(f"Audio Upload language -> {(','.join(content.audio_languages)).upper()}")
