@@ -184,8 +184,7 @@ class View(Torrent):
 
             page += 1
             custom_console.bot_question_log(
-                f"\n Prossima Pagina '{page}' - Premi un tasto per continuare, Q(quit) - ",
-                end="",
+                f"\n Prossima Pagina '{page}' - Premi un tasto per continuare, Q(quit) - "
             )
             if input().lower() == "q":
                 break
