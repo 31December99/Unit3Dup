@@ -38,7 +38,7 @@ class TorrentManager:
         # custom_console.bot_log(f"Audio Upload language -> {(','.join(content.audio_languages)).upper()}")
         # custom_console.bot_log(f"Preferred language    -> {self.preferred_lang.upper()}\n")
 
-        if 'audio language not found' not in content.audio_languages:
+        if 'not found' not in content.audio_languages:
             if config.PREFERRED_LANG.lower() not in content.audio_languages:
                 custom_console.bot_error_log("[Languages] ** Your preferred lang is not in your media being uploaded"
                                              ", skipping ! **")
