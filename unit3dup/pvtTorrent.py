@@ -4,10 +4,8 @@ import os
 import time
 import torf
 from tqdm import tqdm
+from common.custom_console import custom_console
 from unit3dup.contents import Contents
-from rich.console import Console
-
-console = Console(log_path=False)
 
 
 class HashProgressBar(tqdm):
@@ -36,12 +34,12 @@ class Mytorrent:
         self.mytorr.segments = 16 * 1024 * 1024  # 16MB
 
     def hash(self):
-        console.log(f"\n[ HASHING ] {self.mytorr.name}")
+        custom_console.print(f"\n[ HASHING ] {self.mytorr.name}")
         start = time.time()
         with HashProgressBar() as progress:
             self.mytorr.generate(threads=4, callback=progress.callback, interval=0)
         end = time.time()
-        console.log(f"Hashed in {end - start} s\n")
+        # custom_console.print(f"Hashed in {end - start} s\n")
 
     def write(self) -> bool:
         full_path = f"{self.torrent_path}.torrent"
@@ -50,7 +48,7 @@ class Mytorrent:
             return True
         except torf.TorfError as e:
             if "File exists" in str(e):
-                console.log(f"This torrent file already exists: {full_path}")
+                custom_console.bot_error_log(f"This torrent file already exists: {full_path}")
             return False
 
     @property

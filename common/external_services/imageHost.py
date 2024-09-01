@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
+
 import base64
 import json
 import time
-
 import requests
-from abc import ABC, abstractmethod
-from rich.console import Console
 
-console = Console(log_path=False)
+from abc import ABC, abstractmethod
+from common.custom_console import custom_console
 
 
 class ImageUploader(ABC):
@@ -46,13 +45,12 @@ class ImageUploader(ABC):
                 time.sleep(1)
 
             except json.decoder.JSONDecodeError as e:
-                console.log(f"[Imagehost] JSONDecodeError: {e}")
+                custom_console.bot_log(f"[Imagehost] JSONDecodeError: {e}")
                 break
 
             except requests.exceptions.Timeout:
-                console.log(
-                    "'[Timeout]' We did not receive a response from the server within the 10 second limit",
-                    style="red bold",
+                custom_console.bot_log(
+                    "'[Timeout]' We did not receive a response from the server within the 10 second limit"
                 )
                 break
 
@@ -62,16 +60,16 @@ class ImageUploader(ABC):
         try:
             message = json.loads(error.response.content.decode("utf8"))
             if message.get("status_code") == 400:
-                console.log(
+                custom_console.bot_error_log(
                     f"[Error {self.__class__.__name__}] '{message['error']['message']}'"
                 )
             else:
-                console.log(
+                custom_console.bot_error_log(
                     f"[Report {self.__class__.__name__} try n° {attempt}]-> {message['error']['message']}"
                 )
 
         except json.decoder.JSONDecodeError:
-            console.log(f"HTTPError received: {error}")
+            custom_console.bot_error_log(f"HTTPError received: {error}")
 
 
 class Freeimage(ImageUploader):
@@ -115,18 +113,16 @@ class ImageUploaderFallback:
 
         # If there is no error from json response
         if result:
-            console.log(
-                f"[{self.uploader.__class__.__name__}]..... [ON-LINE]",
-                style="green bold",
+            custom_console.bot_log(
+                f"[{self.uploader.__class__.__name__}]..... [ON-LINE]"
             )
             if not test:
                 return result
 
         # send an off-line message
         if not result:
-            console.log(
-                f"[{self.uploader.__class__.__name__}]..... [OFF-LINE]",
-                style="red bold",
+            custom_console.bot_log(
+                f"[{self.uploader.__class__.__name__}]..... [OFF-LINE]"
             )
         return result
 

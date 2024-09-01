@@ -1,24 +1,18 @@
 # -*- coding: utf-8 -*-
-import pprint
 
-# import cv2
 import qbittorrent
 import requests
 
-from rich.console import Console
 from qbittorrent import Client
 from urllib.parse import urlparse
 from unit3dup import pvtTracker
-from common.external_services.imageHost import ImgBB, Freeimage, ImageUploaderFallback
 from common.config import config
-
-console = Console(log_path=False)
+from common.custom_console import custom_console
 
 offline_uploaders = []
 
 
 class Ping:
-    test_image = "unit3dup/test_image.png"
 
     def __init__(self):
 
@@ -80,13 +74,12 @@ class Ping:
             response = requests.get(tmdb_api_url)
             status_code = response.status_code
             response.raise_for_status()
-            console.log(f"[TMDB host]...... [Ok]", style="bold green")
+            custom_console.bot_log("[TMDB host]...... [Ok]")
+
         except requests.exceptions.HTTPError:
             if status_code == 401:
-                console.log(
-                    f"[TMDB ERR] '{status_code}' Check your API_KEY in service configuration file",
-                    style="bold red",
-                )
+                custom_console.bot_error_log(
+                    f"[TMDB ERR] '{status_code}' Check your API_KEY in service configuration file")
             return False
         return True
 
@@ -97,31 +90,26 @@ class Ping:
         complete_url = f"{self.qbit_url}:{self.qbit_port}"
         result = self.url_check(complete_url)
         if not self.url_check(f"{self.qbit_url}:{self.qbit_port}"):
-            console.log(
-                f"[QBIT ERR] 'Url:{self.qbit_url}' 'port:{self.qbit_port}'. Check your 'Qbit config'",
-                style="bold red",
-            )
+            custom_console.bot_error_log(
+                f"[QBIT ERR] 'Url:{self.qbit_url}' 'port:{self.qbit_port}'. Check your 'Qbit config'")
             return False
 
         try:
             qb = Client(f"{self.qbit_url}:{self.qbit_port}/")
             qb.login(username=self.qbit_user, password=self.qbit_pass)
             qb.torrents()
-            console.log(f"[QBIT HOST]...... [Ok]", style="bold green")
-        except requests.exceptions.HTTPError as http_err:
-            console.log(http_err)
+            custom_console.bot_log(f"[QBIT HOST]...... [Ok]")
+        except requests.exceptions.HTTPError:
+            custom_console.bot_error_log(
+                f"[QBIT ERR] Http Error. Check ip/port or run qbittorrent")
             return False
-        except requests.exceptions.ConnectionError as http_err:
-            console.log(
-                f"[QBIT ERR] Connection Error. Check ip/port or run qbittorrent",
-                style="bold red",
-            )
+        except requests.exceptions.ConnectionError:
+            custom_console.bot_error_log(
+                f"[QBIT ERR] Connection Error. Check ip/port or run qbittorrent")
             return False
-        except qbittorrent.client.LoginRequired as http_err:
-            console.log(
-                f"[QBIT ERR] {http_err}. Check your username and password",
-                style="bold red",
-            )
+        except qbittorrent.client.LoginRequired:
+            custom_console.bot_error_log(
+                f"[QBIT ERR] Check your username and password")
             return False
         return True
 
@@ -129,10 +117,8 @@ class Ping:
 
         # Return if the url is invalid
         if not self.url_check(self.base_url):
-            console.log(
-                f"[TRACKER ERR] '{self.base_url}' Check your url",
-                style="bold red",
-            )
+            custom_console.bot_error_log(
+                f"[TRACKER ERR] '{self.base_url}' Check your url")
             return False
 
         tracker = pvtTracker.Unit3d(
@@ -140,39 +126,6 @@ class Ping:
         )
         test = tracker.get_alive(alive=True, perPage=1)
         if test:
-            console.log(f"[TRACKER HOST]... [Ok]", style="bold green")
+            custom_console.bot_log(f"[TRACKER HOST]... [Ok]")
             return True
         return False
-
-    """
-    def process_imghost(self) -> bool:
-
-        # Getting ready for testing image host
-        img = cv2.imread(self.test_image)
-        success, encoded_image = cv2.imencode(".png", img)
-        if not success:
-            raise Exception("Could not encode image")  # todo
-
-        # List of host available uploaders
-        uploaders = [
-            ImgBB(encoded_image.tobytes(), self.imgbb_key),
-            Freeimage(encoded_image.tobytes(), self.free_image_key),
-        ]
-
-        # Return true if at least one host is online
-        at_least = False
-
-        # For each host
-        for uploader in uploaders:
-
-            # Upload a small image
-            fallback_uploader = ImageUploaderFallback(uploader)
-
-            # If the host is not online add it to the list of offline uploaders
-            if not fallback_uploader.upload(test=True):
-                offline_uploaders.append(uploader.__class__.__name__)
-            else:
-                at_least = True
-
-        return at_least
-    """

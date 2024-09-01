@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
 import os
-from rich.console import Console
-
 import argparse
 import sys
 
-console = Console(log_path=False)
+from common.custom_console import custom_console
 
 
 class CommandLine:
@@ -95,22 +93,23 @@ class CommandLine:
         self.is_dir = os.path.isdir(self.args.scan) if self.args.scan else None
 
         if self.args.upload and not os.path.exists(self.args.upload):
-            console.log(f"The path {self.args.upload} does not exist.")
+            custom_console.bot_error_log(f"The path {self.args.upload} does not exist.")
             sys.exit()
 
         if not os.path.exists(f"{self.args.tracker}.env"):
-            console.log(
+            custom_console.bot_error_log(
                 f"Configuration file '{self.args.tracker}.env' not found for tracker '{self.args.tracker}'"
             )
             sys.exit()
 
         if not os.path.exists(f"service.env"):
-            console.log(f"Configuration file 'service.env' not found")
+            custom_console.bot_error_log(
+                f"Configuration file 'service.env' not found")
             sys.exit()
 
         database_tracker = os.path.join("trackers", f"{self.args.tracker}.json")
         if not os.path.exists(database_tracker):
-            console.log(
+            custom_console.bot_error_log(
                 f"Configuration file '{self.args.tracker}.json' not found for tracker '{self.args.tracker}'"
             )
             sys.exit()

@@ -4,20 +4,24 @@ from rich.console import Console
 from unit3dup.torrent import View
 from unit3dup.command import CommandLine
 from unit3dup.ping import Ping
-from unit3dup.media import Media
+from unit3dup.bot import Bot
+from common.custom_console import custom_console
 
 console = Console(log_path=False)
 
 
 def main():
+
+    # WELCOME MESSAGE
+    custom_console.welcome_message()
+
     # Read arguments from the command line
     cli = CommandLine()
 
-    # Test configuration
-    console.rule("\nChecking configuration files")
+    # Validate env files and test the external services
     ping = Ping()
 
-    # always ping the tracker
+    # Always ping the tracker
     track_err = ping.process_tracker()
 
     # Ping only if scanning is selected
@@ -30,17 +34,17 @@ def main():
 
     """Manual Mode"""
     if cli.args.upload:
-        media_video = Media(
+        unit3dup = Bot(
             path=cli.args.upload, tracker_name=cli.args.tracker, cli=cli.args
         )
-        media_video.run()
+        unit3dup.run()
 
     """ Auto Mode """
     if cli.args.scan:
-        media_video = Media(
+        unit3dup = Bot(
             path=cli.args.scan, tracker_name=cli.args.tracker, cli=cli.args, mode="auto"
         )
-        media_video.run()
+        unit3dup.run()
 
     """ COMMANDS LIST: commands not necessary for the upload but may be useful """
 

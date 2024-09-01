@@ -1,14 +1,11 @@
 import json
 import os
-
 import requests
 
 from unit3dup import pvtTracker, payload, contents
 from abc import ABC, abstractmethod
 from common.config import config
-from rich.console import Console
-
-console = Console(log_path=False)
+from common.custom_console import custom_console
 
 
 class UploadBot(ABC):
@@ -24,8 +21,8 @@ class UploadBot(ABC):
         self.torrent_file_path = os.path.join(self.torrent_path, self.file_name)
 
         self.config = config.trackers.get_tracker(self.tracker_name)
-        self.API_TOKEN = self.config.api_token
-        self.BASE_URL = self.config.base_url
+        self.API_TOKEN = config.API_TOKEN
+        self.BASE_URL = config.BASE_URL
 
     def send(self, tracker: pvtTracker) -> requests:
         tracker_response = tracker.upload_t(
@@ -35,13 +32,13 @@ class UploadBot(ABC):
         if tracker_response.status_code == 200:
             tracker_response_body = json.loads(tracker_response.text)
 
-            console.log(
+            custom_console.bot_log(
                 f"\n[TRACKER RESPONSE]............  {tracker_response_body['message'].upper()}"
             )
             return tracker_response_body["data"]
         else:
             message = json.loads(tracker_response.text)["data"]
-            console.log(
+            custom_console.bot_error_log(
                 f"It was not possible to upload the media. Tracker message: '{message}'"
             )
         return tracker_response
@@ -99,7 +96,7 @@ class UploadVideo(UploadBot):
 
             )
         else:
-            console.log(f"[Payload] Unable to create a 'video payload' -> {video_info}")
+            custom_console.bot_error_log(f"[Payload] Unable to create a 'video payload' -> {video_info}")
             return
 
     def tracker(self, data: payload) -> pvtTracker:

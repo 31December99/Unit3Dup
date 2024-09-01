@@ -2,7 +2,7 @@
 
 import os
 from unit3dup.pvtTorrent import Mytorrent
-from unit3dup.uploader import UploadVideo
+from unit3dup.upload import UploadVideo
 from unit3dup.contents import Contents
 from unit3dup.pvtVideo import Video
 from unit3dup.duplicate import Duplicate
@@ -14,7 +14,7 @@ class VideoManager:
     def __init__(self, content: Contents):
         self.content = content
         self.file_name = str(os.path.join(content.folder, content.file_name))
-        self._my_tmdb = TvShow(content.category)
+        self._my_tmdb = TvShow(content)
         self._tv_show_result = self._my_tmdb.start(content.file_name)
         self._my_torrent = Mytorrent(contents=content, meta=content.metainfo)
         self._duplicate = Duplicate(content=content)
