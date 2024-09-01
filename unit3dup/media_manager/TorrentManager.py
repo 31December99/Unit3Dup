@@ -19,7 +19,7 @@ class TorrentManager:
 
     def process(self, contents: List) -> None:
         for content in contents:
-            custom_console.panel_message(content.file_name)
+            # custom_console.bot_log(content.file_name)
             tracker_response: Optional[str] = None
             torrent_response: Optional[str] = None
 
@@ -35,8 +35,8 @@ class TorrentManager:
     def process_video_content(self, content) -> (Optional[str], Optional[str]):
         video_manager = VideoManager(content=content)
 
-        custom_console.bot_log(f"Audio Upload language -> {(','.join(content.audio_languages)).upper()}")
-        custom_console.bot_log(f"Preferred language    -> {self.preferred_lang.upper()}\n")
+        # custom_console.bot_log(f"Audio Upload language -> {(','.join(content.audio_languages)).upper()}")
+        # custom_console.bot_log(f"Preferred language    -> {self.preferred_lang.upper()}\n")
 
         if 'audio language not found' not in content.audio_languages:
             if config.PREFERRED_LANG.lower() not in content.audio_languages:
