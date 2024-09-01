@@ -11,6 +11,7 @@ from common.custom_console import custom_console
 
 offline_uploaders = []
 
+
 class Ping:
     test_image = "unit3dup/test_image.png"
 
@@ -99,17 +100,17 @@ class Ping:
             qb.login(username=self.qbit_user, password=self.qbit_pass)
             qb.torrents()
             custom_console.bot_log(f"[QBIT HOST]...... [Ok]")
-        except requests.exceptions.HTTPError as http_err:
+        except requests.exceptions.HTTPError:
             custom_console.bot_error_log(
-                f"[QBIT ERR] {http_err}. Http Error. Check ip/port or run qbittorrent")
+                f"[QBIT ERR] Http Error. Check ip/port or run qbittorrent")
             return False
-        except requests.exceptions.ConnectionError as http_err:
+        except requests.exceptions.ConnectionError:
             custom_console.bot_error_log(
-                f"[QBIT ERR] {http_err}. Connection Error. Check ip/port or run qbittorrent")
+                f"[QBIT ERR] Connection Error. Check ip/port or run qbittorrent")
             return False
-        except qbittorrent.client.LoginRequired as http_err:
+        except qbittorrent.client.LoginRequired:
             custom_console.bot_error_log(
-                f"[QBIT ERR] {http_err}. Check your username and password")
+                f"[QBIT ERR] Check your username and password")
             return False
         return True
 
