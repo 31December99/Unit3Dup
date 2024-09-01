@@ -1,23 +1,25 @@
 # -*- coding: utf-8 -*-
 import sys
 
-from common.utility import title
 from media_db import tmdb
-from rich.console import Console
-
-console = Console(log_path=False)
+from common.utility import title
+from common.custom_console import custom_console
+from unit3dup.contents import Contents
 
 
 class TvShow:
 
-    def __init__(self, category: int):
+    def __init__(self, content: Contents):
         super().__init__()
         self.titles = None
+        self.content = content
+        category = content.category
+
         show = {
             1: "Movie",
             2: "Serie",
         }
-        self.mytmdb = tmdb.MyTmdb(show[category])
+        self.mytmdb = tmdb.MyTmdb(table=show[category], file_name=content.file_name)
 
     def start(self, file_name: str):
         guess_filename = title.Guessit(file_name)
@@ -41,16 +43,27 @@ class TvShow:
                 if backdrop_path
                 else "nourl"
             )
+            result.backdrop_path = url_backdrop
+
             url_poster = (
                 f"https://www.themoviedb.org/t/p/original{poster_path}"
                 if poster_path
                 else "nourl"
             )
-            console.log(f"\n[TMDB ID]................  {result.video_id}")
-            console.log(f"[TMDB POSTER]............  {url_poster}")
-            console.log(f"[TMDB BACKDROP]..........  {url_backdrop}")
-            console.log(f"[TMDB KEYWORDS]..........  {result.keywords}\n")
+            result.poster_path = url_poster
+            """
+            custom_console.bot_log(f"\n[TMDB ID]................  {result.video_id}")
+            custom_console.bot_log(f"[TMDB POSTER]............  {result.poster_path}")
+            custom_console.bot_log(f"[TMDB BACKDROP]..........  {result.backdrop_path}")
+            custom_console.bot_log(f"[TMDB KEYWORDS]..........  {result.keywords}\n")
+            """
+
+            # Print the list of search results
+            custom_console.bot_tmdb_table_log(
+                result=result, title=_title, media_info_language=self.content.audio_languages
+            )
+
             return result
         else:
-            console.log(f"Non trovo un ID valido per {file_name}")
+            custom_console.bot_log(f"Non trovo un ID valido per {file_name}")
             sys.exit()

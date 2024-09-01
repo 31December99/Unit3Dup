@@ -1,14 +1,11 @@
 # -*- coding: utf-8 -*-
 
 import os
-from rich.console import Console
 from unit3dup.contents import File, Folder
 from common.utility.utility import Manage_titles
 from common.utility import title
 from common.config import config
-
-
-console = Console(log_path=False)
+from common.custom_console import custom_console
 
 
 class Auto:
@@ -26,6 +23,8 @@ class Auto:
     def upload(self):
         if self.is_dir:
             series_path = self.list_video_files(self.path)
+            # -f command
+            # return self._lists(movies_path=[], series_path=[self.path])
             return self._lists(movies_path=[], series_path=series_path)
         else:
             return self._lists(movies_path=[self.path], series_path=[])
@@ -37,8 +36,9 @@ class Auto:
         # when you use scan with file...
         # Path includes a filename. Os.walk requires a folder
         if not self.is_dir:
-            console.log("We can't scan a file..")
+            custom_console.bot_error_log("We can't scan a file..")
         else:
+            # Scan folder and subfolders
             for path, sub_dirs, files in os.walk(self.path):
                 # Sort subdirs
                 sub_dirs.sort(reverse=False)
@@ -128,7 +128,7 @@ class Auto:
         It stops at one subfolder and ignores any subfolders within that subfolder
         depth < 1
         """
-        return path[len(self.path) :].count(os.sep)
+        return path[len(self.path):].count(os.sep)
 
     @staticmethod
     def list_video_files(manual_path: str) -> list:

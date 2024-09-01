@@ -135,7 +135,7 @@ class MediaFile:
             lang = track.get('language', 'Unknown')
             if lang != 'Unknown':
                 languages.add(lang)
-        return list(languages) if len(languages) > 0 else ['audio language not found']
+        return list(languages) if len(languages) > 0 else ['not found']
 
     @property
     def file_size(self):

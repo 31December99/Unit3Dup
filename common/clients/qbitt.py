@@ -4,14 +4,11 @@ import time
 import typing
 import requests
 
-from rich.console import Console
 from qbittorrent import Client
 from common.config import config
 from unit3dup.pvtTorrent import Mytorrent
 from unit3dup.contents import Contents
-
-
-console = Console(log_path=False)
+from common.custom_console import custom_console
 
 
 class Qbitt:
@@ -35,9 +32,9 @@ class Qbitt:
                 file_buffer=self.torrent_file, savepath=self.torrent.mytorr.location
             )
             time.sleep(3)
-            # Ottieni la lista dei torrent
+            # Get a torrent list
             self.torrents = self.qb.torrents()
-            # Trova il torrent desiderato
+            # Search for your torrent
             self.qbit(self.torrents)
 
     def download(self, link: requests) -> typing.IO:
@@ -65,15 +62,15 @@ class Qbitt:
                 infohash = torrent["hash"]
                 # Location del torrent
                 self.qb.recheck(infohash_list=infohash)
-                console.log(f"\n[TORRENT INFOHASH]............  {infohash}")
-                console.log(
+                custom_console.bot_log(f"\n[TORRENT INFOHASH]............  {infohash}")
+                custom_console.bot_log(
                     f"[FILES LOCATION]..............  {self.torrent.mytorr.location}"
                 )
-                console.log(
+                custom_console.bot_log(
                     f"[TORRENT NAME]................  {self.torrent.mytorr.name}.torrent"
                 )
                 return True
-        console.log(
-            f"Non ho trovato nessun torrents in list corrispondente al tuo {self.torrent.mytorr.name}"
+        custom_console.bot_error_log(
+            f"I didn't find any torrents in the list matching yours {self.torrent.mytorr.name}"
         )
         return False
