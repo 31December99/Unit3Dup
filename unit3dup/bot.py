@@ -51,12 +51,12 @@ class Bot:
     def jack(self):
         custom_console.panel_message("Analyzing... Please wait")
 
-        # Search for new fresh movie and release date
-        self.jack_manager.now_playing()
+        # Returns a list of Releases
+        releases_latest = self.jack_manager.latest_movie_by_country(country_code='IT')
 
+        custom_console.log(releases_latest)
 
+        tv_shows = self.jack_manager.latest_show_by_country(country_code='IT')
 
-
-
-
+        custom_console.log(tv_shows)
 
