@@ -17,14 +17,15 @@ def main():
     # Read arguments from the command line
     cli = CommandLine()
 
-    # Validate env files and test the external services
-    ping = Ping()
-
-    # Always ping the tracker
-    track_err = ping.process_tracker()
-
     # Ping only if scanning is selected
     if cli.args.scan or cli.args.upload:
+
+        # Validate env files and test the external services
+        ping = Ping()
+
+        # Always ping the tracker
+        track_err = ping.process_tracker()
+
         qbit_err = ping.process_qbit()
         tmdb_err = ping.process_tmdb()
         if not (tmdb_err and qbit_err and track_err):
@@ -41,7 +42,10 @@ def main():
     """Manual Mode and single folder"""
     if cli.args.folder:
         unit3dup = Bot(
-            path=cli.args.folder, tracker_name=cli.args.tracker, cli=cli.args, mode='folder'
+            path=cli.args.folder,
+            tracker_name=cli.args.tracker,
+            cli=cli.args,
+            mode="folder",
         )
         unit3dup.run()
 
@@ -54,7 +58,10 @@ def main():
 
     if cli.args.jacket:
         unit3dup = Bot(
-            path=cli.args.folder, tracker_name=cli.args.tracker, cli=cli.args, mode='folder'
+            path=cli.args.folder,
+            tracker_name=cli.args.tracker,
+            cli=cli.args,
+            mode="folder",
         )
         unit3dup.jack()
 
