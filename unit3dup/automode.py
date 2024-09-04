@@ -43,11 +43,11 @@ class Auto:
         if self.is_dir:
             series_path = self.list_video_files(self.path)
 
-            if self.auto == 'man':
+            if self.auto == "man":
                 # -u command (single file or scan each file in the folder)
                 return self._lists(movies_path=[], series_path=series_path)
 
-            if self.auto == 'folder':
+            if self.auto == "folder":
                 # -f command (single folder series or 'saga')
                 return self._lists(movies_path=[], series_path=[self.path])
         else:
@@ -181,7 +181,7 @@ class Auto:
         Returns:
             int: The depth level of the path, where depth < 1 indicates a maximum of one level of subfolders
         """
-        return path[len(self.path):].count(os.sep)
+        return path[len(self.path) :].count(os.sep)
 
     @staticmethod
     def list_video_files(manual_path: str) -> list:
