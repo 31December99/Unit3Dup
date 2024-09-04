@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-
 from functools import wraps
+from typing import Callable, Any
 from common.custom_console import custom_console
 
 
@@ -89,7 +89,7 @@ class BotConfigError(Unit3DError):
         return f"BotConfigError: {self.message}"
 
 
-def exception_handler(func):
+def exception_handler(func: Callable[..., Any]) -> Callable[..., Any]:
     @wraps(func)
     def wrapper(*args, **kwargs):
         try:
