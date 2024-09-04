@@ -1,15 +1,8 @@
 # -*- coding: utf-8 -*-
 
-
-def handle_http_error(status_code: int):
-    if status_code == 401:
-        raise TMDBAuthError("Invalid or missing API key.")
-    elif status_code == 404:
-        raise TMDBNotFoundError("The requested resource was not found.")
-    elif status_code == 429:
-        raise TMDBRateLimitError("Rate limit exceeded. Too many requests.")
-    else:
-        raise TMDBRequestError(status_code, "HTTP error occurred.")
+from functools import wraps
+from typing import Callable, Any
+from common.custom_console import custom_console
 
 
 class TMDBError(Exception):
@@ -50,3 +43,22 @@ class TMDBRequestError(TMDBError):
 
     def __str__(self):
         return f"TMDBRequestError: {self.message} (status code: {self.status_code})"
+
+
+def exception_handler(func: Callable[..., Any]) -> Callable[..., Any]:
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except TMDBAuthError as e:
+            custom_console.bot_error_log(f"Authentication Error: {e}")
+        except TMDBNotFoundError as e:
+            custom_console.bot_error_log(f"Not Found Error: {e}")
+        except TMDBRateLimitError as e:
+            custom_console.bot_error_log(f"Rate Limit Error: {e}")
+        except TMDBRequestError as e:
+            custom_console.bot_error_log(f"Request Error: {e}")
+        except Exception as e:
+            custom_console.bot_error_log(f"An unexpected error occurred: '{e}'")
+
+    return wrapper
