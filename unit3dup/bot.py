@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 
 import argparse
+
 from common.config import config
 from common.custom_console import custom_console
+from common.external_services.theMovieDB.service.tmdb_service import TmdbService
 from unit3dup.media_manager.ContentManager import ContentManager
 from unit3dup.media_manager.TorrentManager import TorrentManager
-from common.external_services.sources_manager.JackManager import JackManager
 
 
 class Bot:
@@ -31,7 +32,7 @@ class Bot:
         )
 
         # Jack Manager
-        self.jack_manager = JackManager()
+        self.tmdb_service = TmdbService()
 
     def run(self) -> None:
         custom_console.panel_message("Analyzing... Please wait")
@@ -52,11 +53,11 @@ class Bot:
         custom_console.panel_message("Analyzing... Please wait")
 
         # Returns a list of Releases
-        releases_latest = self.jack_manager.latest_movie_by_country(country_code='IT')
+        releases_latest = self.tmdb_service.latest_movie_by_country(country_code='IT')
 
         custom_console.log(releases_latest)
 
-        tv_shows = self.jack_manager.latest_show_by_country(country_code='IT')
+        tv_shows = self.tmdb_service.latest_show_by_country(country_code='IT')
 
         custom_console.log(tv_shows)
 
