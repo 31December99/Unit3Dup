@@ -6,10 +6,11 @@ import io
 from pathlib import Path
 from PIL import Image
 from common.custom_console import custom_console
+from common.config import config
 
 
 class VideoFrame:
-    def __init__(self, video_path: str, num_screenshots: int = 1):
+    def __init__(self, video_path: str, num_screenshots: int = 3):
         """
         Initialize VideoFrame object
 
@@ -30,7 +31,7 @@ class VideoFrame:
         is_hd = 0
 
         for idx, frame in enumerate(frames):
-            img_bytes = self.image_to_bytes(frame)
+            img_bytes = self.image_to_bytes(frame=frame)
             is_hd = 0 if frame.height >= 720 else 1
             frames_in_bytes.append(img_bytes)
 
@@ -42,10 +43,11 @@ class VideoFrame:
 
         :param frame: The image to convert
         :return: Image in bytes
+        :compress_level: compressione level (0-9); 9=Max;  default=6
         """
         resized_image = self.resize_image(frame)
         buffered = io.BytesIO()
-        resized_image.save(buffered, format="PNG")
+        resized_image.save(buffered, format="PNG", optimize=True, compress_level=config.COMPRESS_SCSHOT)
         return buffered.getvalue()
 
     def resize_image(self, image: Image, width: int = 350) -> Image:
@@ -57,7 +59,7 @@ class VideoFrame:
         :return: Resized image
         """
         aspect_ratio = image.width / image.height
-        height = int(width / aspect_ratio)
+        height = round(width / aspect_ratio)
         resized_image = image.resize((width, height), Image.Resampling.LANCZOS)
         return resized_image
 
@@ -70,7 +72,9 @@ class VideoFrame:
         duration = self._get_video_duration()
         min_time = duration * 0.35
         max_time = duration * 0.65
-        times = [random.uniform(min_time, max_time) for _ in range(self.num_screenshots)]
+        times = [
+            random.uniform(min_time, max_time) for _ in range(self.num_screenshots)
+        ]
         return [self._extract_frame(time) for time in times]
 
     def _get_video_duration(self) -> float:
@@ -82,9 +86,12 @@ class VideoFrame:
         """
         command = [
             "ffprobe",
-            "-v", "error",
-            "-show_entries", "format=duration",
-            "-of", "default=noprint_wrappers=1:nokey=1",
+            "-v",
+            "error",
+            "-show_entries",
+            "format=duration",
+            "-of",
+            "default=noprint_wrappers=1:nokey=1",
             str(self.video_path),
         ]
         try:
@@ -109,11 +116,16 @@ class VideoFrame:
         """
         command = [
             "ffmpeg",
-            "-ss", str(time),
-            "-i", str(self.video_path),
-            "-vframes", "1",
-            "-threads", "4",
-            "-f", "image2pipe",
+            "-ss",
+            str(time),
+            "-i",
+            str(self.video_path),
+            "-vframes",
+            "1",
+            "-threads",
+            "4",
+            "-f",
+            "image2pipe",
             "-",
         ]
         try:
