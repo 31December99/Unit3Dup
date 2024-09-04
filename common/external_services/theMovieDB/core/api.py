@@ -1,13 +1,11 @@
 # -*- coding: utf-8 -*-
 
-from ...config import config
+from common.config import config
 from common.external_services.sessions.session import MyHttp
-from common.external_services.theMovieDB.response import (
-    NowPlaying,
-    MovieReleaseInfo,
-    TvShow,
-)
 from common.external_services.sessions.agents import Agent
+from common.external_services.theMovieDB.core.models.movie_nowplaying import NowPlaying
+from common.external_services.theMovieDB.core.models.movie_release_info import  MovieReleaseInfo
+from common.external_services.theMovieDB.core.models.tvshow_on_the_air import OnTheAir
 
 base_url = "https://api.themoviedb.org/3"
 
@@ -39,9 +37,7 @@ class Tmdb(MyHttp):
         """
 
         # Nowplaying Endpoint
-        response = self.get_url(
-            f"{base_url}/movie/now_playing", params=Tmdb.params
-        )
+        response = self.get_url(f"{base_url}/movie/now_playing", params=Tmdb.params)
 
         if response.status_code == 200:
             movies_list = response.json().get("results", [])
@@ -74,13 +70,24 @@ class Tmdb(MyHttp):
             print(f"Request error: {response.status_code}")
             return []
 
-    def get_tv_show(self):
+    def get_tv_show(self) -> ["OnTheAir"]:
+        """
+        Retrieves the list of TV shows that are currently on the air from the TMDB API.
 
+        This method sends a GET request to the TMDB API endpoint for TV shows that are
+        currently airing. It parses the JSON response and returns a list of `OnTheAir`
+        objects representing the TV shows. If the request fails, an empty list is returned.
+
+        Returns:
+            List[OnTheAir]: A list of `OnTheAir` objects representing the TV shows
+                            currently on the air. If there is an error with the request,
+                            an empty list is returned.
+        """
         response = self.get_url(f"{base_url}/tv/on_the_air", params=Tmdb.params)
 
         if response.status_code == 200:
             tv_latest = response.json().get("results", [])
-            return [TvShow(**tv_data) for tv_data in tv_latest]
+            return [OnTheAir(**tv_data) for tv_data in tv_latest]
 
         else:
             print(f"Request error: {response.status_code}")
