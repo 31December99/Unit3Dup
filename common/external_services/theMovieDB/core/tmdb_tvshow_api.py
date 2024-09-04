@@ -5,6 +5,7 @@ from common.external_services.sessions.session import MyHttp
 from common.external_services.sessions.agents import Agent
 from common.external_services.theMovieDB.core.models.tvshow_on_the_air import OnTheAir
 from common.external_services.theMovieDB.core.models.tvshow import TvShow
+from common.external_services.theMovieDB.core.exceptions import exception_handler
 from common.external_services.theMovieDB.core.models.translations import (
     Translation,
     TranslationsResponse,
@@ -27,6 +28,7 @@ class TmdbTvShowApi(MyHttp):
         super().__init__(headers)
         self.http_client = self.session
 
+    @exception_handler
     def on_the_air(self) -> list[OnTheAir]:
         """
         Retrieves the list of TV shows that are currently on the air
@@ -41,8 +43,7 @@ class TmdbTvShowApi(MyHttp):
             print(f"Request error: {response.status_code}")
             return []
 
-    import requests
-
+    @exception_handler
     def tv_show_translations(self, tv_show_id: int) -> TranslationsResponse:
         """
         Retrieves the translations for a specified TV show and returns them as a TranslationsResponse object
@@ -65,6 +66,7 @@ class TmdbTvShowApi(MyHttp):
         ]
         return TranslationsResponse(translations=translations)
 
+    @exception_handler
     def tv_show_details(self, tv_show_id: int):
         """
         Retrieves the details for a specified TV show
@@ -78,6 +80,7 @@ class TmdbTvShowApi(MyHttp):
             print(f"Request error: {response.status_code}")
             return {}
 
+    @exception_handler
     def tv_watch_providers(self, tv_show_id: int):
         """
         Retrieves the watch providers for a specified TV show
@@ -91,6 +94,7 @@ class TmdbTvShowApi(MyHttp):
             print(f"Request error: {response.status_code}")
             return []
 
+    @exception_handler
     def tv_show_airing_today(self):
         """
         Retrieves a list of TV shows that are airing today
@@ -104,6 +108,7 @@ class TmdbTvShowApi(MyHttp):
             print(f"Request error: {response.status_code}")
             return []
 
+    @exception_handler
     def tv_show_popular(self):
         """
         Retrieves a list of popular TV shows
@@ -115,6 +120,7 @@ class TmdbTvShowApi(MyHttp):
             print(f"Request error: {response.status_code}")
             return []
 
+    @exception_handler
     def tv_show_top_rated(self):
         """
         Retrieves a list of top-rated TV shows
@@ -126,6 +132,7 @@ class TmdbTvShowApi(MyHttp):
             print(f"Request error: {response.status_code}")
             return []
 
+    @exception_handler
     def search_tv_shows(self, query: str) -> list["TvShow"]:
         """
         Searches for TV shows based on a query
@@ -139,6 +146,7 @@ class TmdbTvShowApi(MyHttp):
             print(f"Request error: {response.status_code}")
             return []
 
+    @exception_handler
     def tv_genres(self):
         """
         Retrieves the list of TV show genres
