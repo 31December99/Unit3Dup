@@ -2,6 +2,10 @@
 
 import httpx
 import diskcache as dc
+from common.external_services.theMovieDB.core.exceptions import (
+    TMDBRequestError,
+    handle_http_error,
+)
 
 
 class MyHttp:
@@ -39,18 +43,23 @@ class MyHttp:
             )
             return response
 
-        response = self.session.get(url, params=params)
-        response.raise_for_status()  # Raise an error for bad status codes
+        response = {}
+        try:
+            response = self.session.get(url, params=params)
+            response.raise_for_status()
 
-        if use_cache:
-            # Store response in cache
-            self.cache[url] = {
-                "status_code": response.status_code,
-                "headers": dict(response.headers),
-                "content": response.content,
-            }
+            if use_cache:
+                self.cache[url] = {
+                    "status_code": response.status_code,
+                    "headers": dict(response.headers),
+                    "content": response.content,
+                }
 
-        return response
+            return response
+        except httpx.HTTPStatusError as http_err:
+            handle_http_error(http_err.response.status_code)
+        except httpx.RequestError as req_err:
+            raise TMDBRequestError(0, f"Request error occurred: {req_err}")
 
     def clear_cache(self):
         """Clears the HTTP response cache"""
