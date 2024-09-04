@@ -1,14 +1,18 @@
 # -*- coding: utf-8 -*-
+import pprint
 
-from common.external_services.theMovieDB.country import TvShowByCountry
-from common.external_services.theMovieDB.tmdb import Tmdb
-from common.external_services.theMovieDB.response import NowPlayingByCountry
+from common.external_services.theMovieDB.core.tmdb_tvshow_api import TmdbTvShowApi
+from common.external_services.theMovieDB.core.tmdb_movie_api import TmdbMovieApi
+from common.external_services.theMovieDB.core.models.movie_nowplaying import (
+    NowPlayingByCountry,
+)
 
 
-class JackManager:
+class TmdbService:
 
     def __init__(self):
-        self.tmdb = Tmdb()
+        self.movie_api = TmdbMovieApi()
+        self.tv_show_api = TmdbTvShowApi()
 
     # The latest in country
     def latest_movie_by_country(self, country_code: str) -> list:
@@ -26,11 +30,10 @@ class JackManager:
         """
 
         # Get every the movie now_playing
-        now_playing = self.tmdb.get_now_playing()
+        now_playing = self.movie_api.now_playing()
         for movie in now_playing:
-
             # For each movie get each latest
-            latest_movie_list = self.tmdb.get_latest_movie(now_playing=movie)
+            latest_movie_list = self.movie_api.latest_movie(now_playing=movie)
 
             # For each latest search for the preferred country code
             return [
@@ -50,8 +53,15 @@ class JackManager:
             list: A list of TvShowByCountry instances for TV shows from the specified country
         """
         # Get each tv_show by country
+        """
         return [
             TvShowByCountry.create(tvshow=tv_show)
-            for tv_show in self.tmdb.get_tv_show()
+            for tv_show in self.tv_show_api.  .on_the_air()
             if tv_show.origin_country == country_code
         ]
+        """
+
+    def tv_show(self):
+        results = self.tv_show_api.tv_show_translations(tv_show_id=57532)
+        pprint.pprint(results)
+
