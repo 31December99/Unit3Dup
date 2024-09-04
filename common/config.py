@@ -7,6 +7,7 @@ from decouple import Config, RepositoryEnv
 from rich.text import Text
 from trackers.trackers import TrackerConfig
 from common.custom_console import custom_console
+from unit3dup.exceptions import BotConfigError, exception_handler
 
 
 class Tracker:
@@ -69,10 +70,12 @@ class ConfigUnit3D:
         self.SIZE_TH: int = 100
         self.JACK_API_KEY: str = ""
         self.JACK_URL: str = ""
+        self.COMPRESS_SCSHOT: int = 6
 
         self.tracker_values: dict = {}
         self.trackers = None
 
+    @exception_handler
     def service(self):
 
         service_not_found: bool = False
@@ -108,19 +111,42 @@ class ConfigUnit3D:
         self.QBIT_PASS = config_load_service("QBIT_PASS")
         self.QBIT_URL = config_load_service("QBIT_URL")
         self.QBIT_PORT = config_load_service("QBIT_PORT")
-        self.DUPLICATE = config_load_service("duplicate_on")
-        self.SCREENSHOTS = int(config_load_service("number_of_screenshots"))
-        self.TORRENT_ARCHIVE = config_load_service("torrent_archive")
-        self.PREFERRED_LANG = config_load_service("preferred_lang")
-        self.SIZE_TH = int(config_load_service("size_th"))
         self.JACK_API_KEY = config_load_service("JACK_API_KEY")
-        self.JACK_URL = config_load_service("JACK_URL")
+        self.TORRENT_ARCHIVE = config_load_service("TORRENT_ARCHIVE")
+        self.JACK_URL = config_load_service.get("JACK_URL", default="http://127.0.0.1:9117/")
+        self.PREFERRED_LANG = config_load_service.get("PREFERRED_LANG", default="")
+        self.SIZE_TH = config_load_service.get("SIZE_TH", default=100)
+        self.COMPRESS_SCSHOT = config_load_service.get("COMPRESS_SCSHOT", default=6)
+        self.DUPLICATE = config_load_service.get("DUPLICATE_ON", default="false")
+        self.SCREENSHOTS = config_load_service.get("NUMBER_OF_SCREENSHOTS", default=6)
 
-        if not os.path.exists(self.TORRENT_ARCHIVE):
-            custom_console.bot_error_log(
-                f"[Service.env] The path {self.TORRENT_ARCHIVE} doesn't exist"
+        if self.SCREENSHOTS.isdigit():
+            self.SCREENSHOTS = min(max(int(self.SCREENSHOTS), 3), 10)
+        else:
+            raise BotConfigError(
+                f"Bad value for 'Number of screenshot' {self.SCREENSHOTS} in {service_path}"
             )
-            exit(1)
+
+        if self.COMPRESS_SCSHOT.isdigit():
+            self.COMPRESS_SCSHOT = min(max(int(self.COMPRESS_SCSHOT), 0), 9)
+        else:
+            raise BotConfigError(
+                f"Bad value for 'Compression level' {self.COMPRESS_SCSHOT} in {service_path}"
+            )
+
+        if self.SIZE_TH.isdigit():
+            self.SIZE_TH = min(max(int(self.COMPRESS_SCSHOT), 0), 100)
+        else:
+            raise BotConfigError(
+                f"Bad value for 'Size Threshold' {self.SIZE_TH} in {service_path}"
+            )
+
+        if self.TORRENT_ARCHIVE: #TODO
+            if not os.path.exists(self.TORRENT_ARCHIVE):
+                custom_console.bot_error_log(
+                    f"[Service.env] The path {self.TORRENT_ARCHIVE} doesn't exist"
+                )
+                exit(1)
 
     def validate(self):
 
@@ -128,9 +154,9 @@ class ConfigUnit3D:
             os.path.splitext(file_name)[0].lower()
             for file_name in os.listdir()
             if os.path.isfile(file_name)
-            and os.path.splitext(file_name)[1].lower() == ".env"
-            and "service.env" not in file_name.lower()
-            and "console.env" not in file_name.lower()
+               and os.path.splitext(file_name)[1].lower() == ".env"
+               and "service.env" not in file_name.lower()
+               and "console.env" not in file_name.lower()
         ]
 
         for tracker_name in env_files:
