@@ -10,9 +10,23 @@ from unit3dup.media_manager.TorrentManager import TorrentManager
 
 
 class Bot:
+    """
+    A class to manage and execute media-related tasks including file processing,
+    torrent management, and interaction with the TMDB service.
+    """
+
     def __init__(
-            self, path: str, tracker_name: str, cli: argparse.Namespace, mode="man"
+        self, path: str, tracker_name: str, cli: argparse.Namespace, mode="man"
     ):
+        """
+        Initialize the Bot instance with path, tracker name, command-line interface object, and mode
+
+        Args:
+            path (str): The path to the directory or file to be managed
+            tracker_name (str): The name of the tracker configuration to use
+            cli (argparse.Namespace): The command-line arguments object
+            mode (str): The mode of operation, default is 'man'
+        """
         self.path = path
         self.tracker_name = tracker_name
         self.cli = cli
@@ -31,10 +45,16 @@ class Bot:
             cli=self.cli, tracker_config=self.tracker_config
         )
 
-        # Jack Manager
+        # TMDB service
         self.tmdb_service = TmdbService()
 
     def run(self) -> None:
+        """
+        Executes the main workflow of the bot
+
+        This method analyzes files, retrieves media content, logs the contents being processed,
+        and then processes them using the Torrent Manager
+        """
         custom_console.panel_message("Analyzing... Please wait")
 
         files = self.content_manager.get_files()
@@ -50,14 +70,13 @@ class Bot:
         self.torrent_manager.process(contents)
 
     def jack(self):
+
         custom_console.panel_message("Analyzing... Please wait")
 
         # Returns a list of Releases
-        releases_latest = self.tmdb_service.latest_movie_by_country(country_code='IT')
+        releases_latest = self.tmdb_service.latest_movie_by_country(country_code="IT")
 
         custom_console.log(releases_latest)
 
-        tv_shows = self.tmdb_service.latest_show_by_country(country_code='IT')
-
-        custom_console.log(tv_shows)
-
+        # tv_shows = self.tmdb_service.latest_show_by_country(country_code='IT')
+        self.tmdb_service.tv_show()
