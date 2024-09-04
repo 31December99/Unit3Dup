@@ -11,6 +11,20 @@ from common.external_services.theMovieDB.core.models.translations import (
     TranslationsResponse,
 )
 
+
+from common.external_services.theMovieDB.core.models.tvshow_details import (
+    TVShow,
+    LastEpisodeToAir,
+    Genre,
+    SpokenLanguage,
+    CreatedBy,
+    Network,
+    ProductionCompany,
+    ProductionCountry,
+    Season,
+)
+
+
 base_url = "https://api.themoviedb.org/3"
 
 
@@ -75,7 +89,49 @@ class TmdbTvShowApi(MyHttp):
             f"{base_url}/tv/{tv_show_id}", params=TmdbTvShowApi.params
         )
         if response.status_code == 200:
-            return response.json()
+            tv_show_data = response.json()
+
+
+            # Convert nested dictionaries/lists to respective dataclass instances
+            # Pass the dictionary keys as arguments to the function ( **)
+
+            tv_show_data["last_episode_to_air"] = LastEpisodeToAir(
+                **tv_show_data.get("last_episode_to_air", {})
+            )
+            tv_show_data["next_episode_to_air"] = (
+                LastEpisodeToAir(**tv_show_data.get("next_episode_to_air", {}))
+                if tv_show_data.get("next_episode_to_air")
+                else None
+            )
+
+            tv_show_data["genres"] = [
+                Genre(**genre) for genre in tv_show_data.get("genres", [])
+            ]
+            tv_show_data["created_by"] = [
+                CreatedBy(**creator) for creator in tv_show_data.get("created_by", [])
+            ]
+            tv_show_data["networks"] = [
+                Network(**network) for network in tv_show_data.get("networks", [])
+            ]
+            tv_show_data["production_companies"] = [
+                ProductionCompany(**company)
+                for company in tv_show_data.get("production_companies", [])
+            ]
+            tv_show_data["production_countries"] = [
+                ProductionCountry(**country)
+                for country in tv_show_data.get("production_countries", [])
+            ]
+            tv_show_data["seasons"] = [
+                Season(**season) for season in tv_show_data.get("seasons", [])
+            ]
+            tv_show_data["spoken_languages"] = [
+                SpokenLanguage(**language)
+                for language in tv_show_data.get("spoken_languages", [])
+            ]
+
+            tv_show = TVShow(**tv_show_data)
+
+            return tv_show
         else:
             print(f"Request error: {response.status_code}")
             return {}
@@ -138,7 +194,7 @@ class TmdbTvShowApi(MyHttp):
         Searches for TV shows based on a query
         """
         params = {**TmdbTvShowApi.params, "query": query}
-        response = self.get_url(f"{base_url}/search/tv", params=params)
+        response = self.get_url(f"{base_url}/search/tv", params=params, use_cache=False)
         if response.status_code == 200:
             tv_show_results = response.json().get("results", [])
             return [TvShow(**tv_data) for tv_data in tv_show_results]
