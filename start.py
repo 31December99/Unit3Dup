@@ -11,52 +11,65 @@ console = Console(log_path=False)
 
 
 def main():
-
-    # WELCOME MESSAGE
+    """
+    Main function to handle the command line interface (CLI)
+    """
+    # Display welcome message
     custom_console.welcome_message()
 
-    # Read arguments from the command line
+    # Initialize command line interface
     cli = CommandLine()
 
-    # Validate env files and test the external services
-    ping = Ping()
-
-    # Always ping the tracker
-    track_err = ping.process_tracker()
-
-    # Ping only if scanning is selected
+    # Ping services if scanning or uploading is selected
     if cli.args.scan or cli.args.upload:
+        # Validate environment files and test external services
+        ping = Ping()
+        track_err = ping.process_tracker()
         qbit_err = ping.process_qbit()
         tmdb_err = ping.process_tmdb()
+
         if not (tmdb_err and qbit_err and track_err):
             console.log("Check your configuration file. Exit..")
             exit(1)
 
-    """Manual Mode"""
+    # Manual upload mode
     if cli.args.upload:
         unit3dup = Bot(
             path=cli.args.upload, tracker_name=cli.args.tracker, cli=cli.args
         )
         unit3dup.run()
 
-    """Manual Mode and single folder"""
+    # Manual folder mode
     if cli.args.folder:
         unit3dup = Bot(
-            path=cli.args.folder, tracker_name=cli.args.tracker, cli=cli.args, mode='folder'
+            path=cli.args.folder,
+            tracker_name=cli.args.tracker,
+            cli=cli.args,
+            mode="folder",
         )
         unit3dup.run()
 
-    """ Auto Mode """
+    # Auto mode
     if cli.args.scan:
         unit3dup = Bot(
             path=cli.args.scan, tracker_name=cli.args.tracker, cli=cli.args, mode="auto"
         )
         unit3dup.run()
 
-    """ COMMANDS LIST: commands not necessary for the upload but may be useful """
+    # Jacket mode
+    if cli.args.jacket:
+        unit3dup = Bot(
+            path=cli.args.folder,
+            tracker_name=cli.args.tracker,
+            cli=cli.args,
+            mode="folder",
+        )
+        unit3dup.jack()
 
+    # Commands list: commands not necessary for upload but may be useful
     torrent_info = View()
 
+    # Search by different criteria
     if cli.args.search:
         torrent_info.view_search(cli.args.search)
         return
@@ -181,6 +194,7 @@ def main():
         torrent_info.view_personal()
         return
 
+    # Handle case with no arguments
     if not cli.args:
         console.print("Syntax error! Please check your commands")
         return

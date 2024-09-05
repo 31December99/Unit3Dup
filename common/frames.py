@@ -3,74 +3,87 @@
 import random
 import subprocess
 import io
+from pathlib import Path
 from PIL import Image
 from common.custom_console import custom_console
+from common.config import config
 
 
 class VideoFrame:
-    def __init__(self, video_path, num_screenshots=1):
-        # File Path
-        self.video_path = video_path
+    def __init__(self, video_path: str, num_screenshots: int = 3):
+        """
+        Initialize VideoFrame object
 
-        # Number of screenshots from the config
+        :param video_path: Path to the video file
+        :param num_screenshots: Number of screenshots to take
+        """
+        self.video_path = Path(video_path)
         self.num_screenshots = num_screenshots
 
     def create(self):
-        # Extract screenshots
-        frames = self._extract()
+        """
+        Create screenshots from the video
 
-        # Will be encoded to base64 before uploading
+        :return: A list of screenshots in bytes and a flag indicating if any screenshot is HD
+        """
+        frames = self._extract()
         frames_in_bytes = []
         is_hd = 0
+
         for idx, frame in enumerate(frames):
-            # Convert to bytes
-            img_bytes = self.image_to_bytes(frame)
-
-            # Check if image is HD
+            img_bytes = self.image_to_bytes(frame=frame)
             is_hd = 0 if frame.height >= 720 else 1
-
-            # Add a new frame to list
             frames_in_bytes.append(img_bytes)
+
         return frames_in_bytes, is_hd
 
-    def image_to_bytes(self, frame):
+    def image_to_bytes(self, frame: Image) -> bytes:
+        """
+        Convert an image to bytes
 
-        # Resize image for the tracker
+        :param frame: The image to convert
+        :return: Image in bytes
+        :compress_level: compressione level (0-9); 9=Max;  default=6
+        """
         resized_image = self.resize_image(frame)
-
-        # Convert and save to memory
         buffered = io.BytesIO()
-        resized_image.save(buffered, format="PNG")
-
-        # Return in bytes
+        resized_image.save(buffered, format="PNG", optimize=True, compress_level=config.COMPRESS_SCSHOT)
         return buffered.getvalue()
 
-    def resize_image(self, image, width=350):
-        # Get aspect ratio
-        aspect_ratio = image.width / image.height
-        height = int(width / aspect_ratio)
+    def resize_image(self, image: Image, width: int = 350) -> Image:
+        """
+        Resize the image while maintaining aspect ratio
 
-        # Resize the image
+        :param image: The image to resize
+        :param width: The width to resize to
+        :return: Resized image
+        """
+        aspect_ratio = image.width / image.height
+        height = round(width / aspect_ratio)
         resized_image = image.resize((width, height), Image.Resampling.LANCZOS)
         return resized_image
 
     def _extract(self):
-        duration = self._get_video_duration()
+        """
+        Extract frames from the video at random times
 
-        # Time limit (%)
+        :return: A list of frames
+        """
+        duration = self._get_video_duration()
         min_time = duration * 0.35
         max_time = duration * 0.65
-
-        # Random (uniform) numbers
         times = [
             random.uniform(min_time, max_time) for _ in range(self.num_screenshots)
         ]
+        return [self._extract_frame(time) for time in times]
 
-        # Extract frames
-        frames = [self._extract_frame(time) for time in times]
-        return frames
+    def _get_video_duration(self) -> float:
+        """
+        Get the duration of the video
 
-    def _get_video_duration(self):
+        :return: Duration of the video in seconds
+        :raises RuntimeError: If ffprobe fails
+        """
         command = [
             "ffprobe",
             "-v",
@@ -79,33 +92,34 @@ class VideoFrame:
             "format=duration",
             "-of",
             "default=noprint_wrappers=1:nokey=1",
-            self.video_path,
+            str(self.video_path),
         ]
         try:
-            process = subprocess.Popen(
-                command, stdout=subprocess.PIPE, stderr=subprocess.PIPE
-            )
-            out, err = process.communicate()
+            result = subprocess.run(command, capture_output=True, text=True, check=True)
+            duration = float(result.stdout.strip())
+        except subprocess.CalledProcessError as e:
+            raise RuntimeError(f"ffprobe error: {e.stderr}")
         except FileNotFoundError:
             custom_console.bot_error_log(
                 "[FFMPEG-ffprobe not found] - Install ffmpeg or check your system path"
             )
             exit(1)
-
-        if process.returncode != 0:
-            raise RuntimeError(f"ffprobe error: {err.decode()}")
-
-        duration = float(out.decode().strip())
         return duration
 
-    def _extract_frame(self, time):
-        # FFmpeg
+    def _extract_frame(self, time: float) -> Image:
+        """
+        Extract a single frame from the video at the specified time.
+
+        :param time: The time to extract the frame.
+        :return: The extracted frame as a PIL Image.
+        :raises RuntimeError: If ffmpeg fails.
+        """
         command = [
             "ffmpeg",
             "-ss",
-            str(time),  # Speed up
+            str(time),
             "-i",
-            self.video_path,
+            str(self.video_path),
             "-vframes",
             "1",
             "-threads",
@@ -115,18 +129,13 @@ class VideoFrame:
             "-",
         ]
         try:
-            process = subprocess.Popen(
-                command, stdout=subprocess.PIPE, stderr=subprocess.PIPE
-            )
-            out, err = process.communicate()
+            result = subprocess.run(command, capture_output=True, check=True)
+            return Image.open(io.BytesIO(result.stdout))
+        except subprocess.CalledProcessError as e:
+            raise RuntimeError(f"[FFmpeg] Error: {e.stderr}")
         except FileNotFoundError:
             custom_console.bot_error_log(
                 "[FFMPEG not found] - Install ffmpeg or check your system path",
                 style="red bold",
             )
             exit(1)
-
-        if process.returncode != 0:
-            raise RuntimeError(f"[FFmpeg] Error: {err.decode()}")
-
-        return Image.open(io.BytesIO(out))

@@ -11,6 +11,9 @@ IMGBB_KEY=
 ## FREEIMAGE API_KEY - https://freeimage.host/
 FREE_IMAGE_KEY=
 
+## JACK
+JACK_API_KEY=
+JACK_URL=
 
 ##################################################################################
                                     ## TORRENT CLIENT ##
@@ -23,30 +26,38 @@ QBIT_URL=
 QBIT_PORT=
 
 
-##################################################################################
-                                    ## USER OPTIONS ##
-##################################################################################
+#####################################################################################
+#################################### USER PREFERENCES ###############################
+#####################################################################################
 
+################################
 # DUPLICATE
+#
 # True = It Searches for duplicates
 # False = Does not search for duplicates
-duplicate_on=False
+DUPLICATE_ON=False
 
 
 
+################################
 # SCREENSHOT
+#
 # Choose the numbers of screenshots you want upload to tracker
-number_of_screenshots=4
+NUMBER_OF_SCREENSHOTS=6
+COMPRESS_SCSHOT=4
 
 
 
+################################
 # TORRENT ARCHIVE
+#
 # Path for your local torrent file
-torrent_archive=''
+TORRENT_ARCHIVE=''
 
 
-
+################################
 # PREFERRED LANGUAGE ISO 639-1
+#
 # Italy    - IT (Italian)
 # Spain    - ES (Spanish)
 # Germany  - DE (German)
@@ -56,11 +67,10 @@ torrent_archive=''
 # Brazil   - PT (Portuguese)
 # Japan    - JA (Japanese)
 # Bulgaria - BG (Bulgarian)
-preferred_lang=it
+PREFERRED_LANG=
 
 
-
+################################
 # Size threshold (%). Disabled = 100
-size_th=100
-
-# EXCLUDE FILES BY THEIR EXTENSIONS
+#
+SIZE_TH=100
