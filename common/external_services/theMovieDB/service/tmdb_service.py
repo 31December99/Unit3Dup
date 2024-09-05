@@ -73,6 +73,6 @@ class TmdbService:
         return filtered_shows
 
 
-def tv_show(self):
-    k = self.latest_show_by_country(country_code="IT")
-    
+    def tv_show(self):
+        k = self.latest_show_by_country(country_code="IT")
+
