@@ -22,6 +22,7 @@ class CommandLine:
         # Upload commands
         parser.add_argument("-u", "--upload", type=str, help="Upload Path")
         parser.add_argument("-f", "--folder", type=str, help="Upload single folder")
+        parser.add_argument("-j", "--jacket", action="store_true", help="")
 
         parser.add_argument(
             "-t", "--tracker", type=str, default="itt", help="Tracker Name"
@@ -105,8 +106,7 @@ class CommandLine:
             sys.exit()
 
         if not os.path.exists(f"service.env"):
-            custom_console.bot_error_log(
-                f"Configuration file 'service.env' not found")
+            custom_console.bot_error_log(f"Configuration file 'service.env' not found")
             sys.exit()
 
         database_tracker = os.path.join("trackers", f"{self.args.tracker}.json")
