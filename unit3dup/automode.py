@@ -129,7 +129,7 @@ class Auto:
         else:
             media_type = self.movie_category
 
-        return File.create(
+        return File(
             file_name=file,
             folder=self.path,
             media_type=media_type,
@@ -159,7 +159,7 @@ class Auto:
         else:
             media_type = self.movie_category
 
-        return Folder.create(
+        return Folder(
             folder=self.path,
             subfolder=subdir,
             media_type=media_type,
