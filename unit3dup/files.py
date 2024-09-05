@@ -49,7 +49,7 @@ class Files:
 
         torrent_pack = bool(re.search(r"S\d+(?!.*E\d+)", self.path))
         return (
-            Contents.create_instance(
+            Contents(
                 file_name=self.file_name,
                 folder=self.folder,
                 name=self.name,
