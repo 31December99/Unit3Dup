@@ -4,7 +4,8 @@ from dataclasses import dataclass
 
 @dataclass
 class Contents:
-    """ Create a new object with the attributes of Contents """
+    """Create a new object with the attributes of Contents"""
+
     file_name: str
     folder: str
     name: str
@@ -25,6 +26,7 @@ class File:
     For each File, create an object with attributes:
     file_name, folder, media_type, torrent_name, source, other, audio_codec, subtitle, resolution
     """
+
     file_name: str
     folder: str
     media_type: str
@@ -48,6 +50,7 @@ class Folder:
     folder, subfolder, media_type, torrent_name, source, other, audio_codec, subtitle, resolution
 
     """
+
     folder: str
     subfolder: str
     media_type: str
