@@ -3,6 +3,7 @@ import pprint
 
 from common.external_services.theMovieDB.core.tmdb_tvshow_api import TmdbTvShowApi
 from common.external_services.theMovieDB.core.tmdb_movie_api import TmdbMovieApi
+from common.external_services.theMovieDB.core.models.tvshow_on_the_air import OnTheAir
 from common.external_services.theMovieDB.core.models.movie_nowplaying import (
     NowPlayingByCountry,
 )
@@ -42,7 +43,7 @@ class TmdbService:
                 if release_info.iso_3166_1 == country_code
             ]
 
-    def latest_show_by_country(self, country_code: str) -> list:
+    def latest_show_by_country(self, country_code: str) -> list["OnTheAir"]:
         """
         Retrieve the latest TV shows from a specific country
 
@@ -50,18 +51,28 @@ class TmdbService:
             country_code (str): The ISO 3166-1 alpha-2 country code (e.g., 'IT' for Italy)
 
         Returns:
-            list: A list of TvShowByCountry instances for TV shows from the specified country
+            list: A list of OnTheAir instances for TV shows from the specified country
         """
         # Get each tv_show by country
-        """
-        return [
-            TvShowByCountry.create(tvshow=tv_show)
-            for tv_show in self.tv_show_api.  .on_the_air()
-            if tv_show.origin_country == country_code
-        ]
-        """
+        on_the_air_list = self.tv_show_api.on_the_air()
 
-    def tv_show(self):
-        results = self.tv_show_api.tv_show_translations(tv_show_id=57532)
-        pprint.pprint(results)
+        filtered_shows = []
 
+        for on_the_air in on_the_air_list:
+            # Query all translations for the TV show
+            tv_show_list = self.tv_show_api.tv_show_translations(tv_show_id=on_the_air.id)
+
+            # Get the languages from the translations
+            translation_languages = {
+                translation.iso_639_1.lower() for translation in tv_show_list.translations
+            }
+
+            # Check if the preferred language is available
+            if country_code.lower() in translation_languages:
+                filtered_shows.append(on_the_air)
+        return filtered_shows
+
+
+def tv_show(self):
+    k = self.latest_show_by_country(country_code="IT")
+    
