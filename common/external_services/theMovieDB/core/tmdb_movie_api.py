@@ -5,12 +5,12 @@ from common.config import config
 from common.external_services.sessions.session import MyHttp
 from common.external_services.sessions.agents import Agent
 from common.external_services.theMovieDB.core.models.movie_nowplaying import NowPlaying
-from common.external_services.theMovieDB.core.exceptions import exception_handler
 from common.external_services.theMovieDB.core.models.movie_release_info import (
     MovieReleaseInfo,
 )
 
 base_url = "https://api.themoviedb.org/3"
+ENABLE_LOG = True
 
 
 class TmdbMovieApi(MyHttp):
@@ -27,7 +27,6 @@ class TmdbMovieApi(MyHttp):
         super().__init__(headers)
         self.http_client = self.session
 
-    @exception_handler
     def now_playing(self) -> list[NowPlaying]:
         """
         Retrieves the currently playing movies.
@@ -42,7 +41,6 @@ class TmdbMovieApi(MyHttp):
             print(f"Request error: {response.status_code}")
             return []
 
-    @exception_handler
     def latest_movie(self, now_playing: NowPlaying) -> list[MovieReleaseInfo]:
         """
         Retrieves the latest release information for a specified movie
@@ -58,7 +56,6 @@ class TmdbMovieApi(MyHttp):
             print(f"Request error: {response.status_code}")
             return []
 
-    @exception_handler
     def movie_details(self, movie_id: int):
         """
         Retrieves the details for a specified movie
@@ -72,7 +69,6 @@ class TmdbMovieApi(MyHttp):
             print(f"Request error: {response.status_code}")
             return {}
 
-    @exception_handler
     def movie_credits(self, movie_id: int):
         """
         Retrieves the credits (cast and crew) for a specified movie
@@ -86,7 +82,6 @@ class TmdbMovieApi(MyHttp):
             print(f"Request error: {response.status_code}")
             return {}
 
-    @exception_handler
     def movie_images(self, movie_id: int):
         """
         Retrieves the images for a specified movie
@@ -100,7 +95,6 @@ class TmdbMovieApi(MyHttp):
             print(f"Request error: {response.status_code}")
             return {}
 
-    @exception_handler
     def movie_videos(self, movie_id: int):
         """
         Retrieves the videos (trailers, etc.) for a specified movie
@@ -114,7 +108,6 @@ class TmdbMovieApi(MyHttp):
             print(f"Request error: {response.status_code}")
             return {}
 
-    @exception_handler
     def movie_similar(self, movie_id: int):
         """
         Retrieves a list of similar movies to the specified movie
@@ -128,7 +121,6 @@ class TmdbMovieApi(MyHttp):
             print(f"Request error: {response.status_code}")
             return []
 
-    @exception_handler
     def movie_recommendations(self, movie_id: int):
         """
         Retrieves a list of recommended movies based on the specified movie
@@ -142,7 +134,17 @@ class TmdbMovieApi(MyHttp):
             print(f"Request error: {response.status_code}")
             return []
 
-    @exception_handler
+    def movie_alternative_title(self, movie_id: int):
+        """
+        Retrieves a list of recommended movies based on the specified movie
+        """
+
+        response = self.get_url(
+            f"{base_url}/movie/{movie_id}/alternative_title", params=TmdbMovieApi.params
+        )
+
+        return response
+
     def search_movies(self, query: str):
         """
         Searches for movies based on a query
@@ -155,7 +157,6 @@ class TmdbMovieApi(MyHttp):
             print(f"Request error: {response.status_code}")
             return []
 
-    @exception_handler
     def movie_genres(self):
         """
         Retrieves the list of movie genres
