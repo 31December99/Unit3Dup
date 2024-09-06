@@ -88,12 +88,6 @@ def exception_handler(log_errors: bool = True) -> Callable[..., Any]:
                 if log_errors:
                     custom_console.bot_error_log(f"Request Error: {e}")
 
-            """
-            except Exception as e:
-                if log_errors:
-                    custom_console.bot_error_log(f"An unexpected error occurred: '{e}'")
-            """
-
         return wrapper
 
     return decorator
