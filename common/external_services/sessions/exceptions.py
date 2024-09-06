@@ -45,20 +45,55 @@ class HttpRequestError(HttpError):
         return f"HttpRequestError: {self.message} (status code: {self.status_code})"
 
 
-def exception_handler(func: Callable[..., Any]) -> Callable[..., Any]:
-    @wraps(func)
-    def wrapper(*args: Any, **kwargs: Any) -> Any:
-        try:
-            return func(*args, **kwargs)
-        except HttpAuthError as e:
-            custom_console.bot_error_log(f"Authentication Error: {e}")
-        except HttpNotFoundError as e:
-            custom_console.bot_error_log(f"Not Found Error: {e}")
-        except HttpRateLimitError as e:
-            custom_console.bot_error_log(f"Rate Limit Error: {e}")
-        except HttpRequestError as e:
-            custom_console.bot_error_log(f"Request Error: {e}")
-        except Exception as e:
-            custom_console.bot_error_log(f"An unexpected error occurred: '{e}'")
+def exception_handler(log_errors: bool = True) -> Callable[..., Any]:
+    """
+    Decorator for handling exceptions and optionally logging them.
 
-    return wrapper
+    Args:
+        log_errors (bool): Whether to log the errors. If True, errors will be logged.
+
+    Returns:
+        Callable[..., Any]: The decorator that handles exceptions.
+    """
+
+    def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
+        @wraps(func)
+        def wrapper(*args: Any, **kwargs: Any) -> Any:
+            try:
+                response, url = func(*args, **kwargs)
+
+                if response.status_code == 404:
+                    raise HttpNotFoundError()
+                elif response.status_code == 401:
+                    raise HttpAuthError()
+                elif response.status_code == 429:
+                    raise HttpRateLimitError()
+                elif response.status_code >= 400:
+                    raise HttpRequestError(status_code=response.status_code)
+                return response
+
+            except HttpAuthError as e:
+                if log_errors:
+                    custom_console.bot_error_log(f"Authentication Error: {e}")
+
+            except HttpNotFoundError as e:
+                if log_errors:
+                    custom_console.bot_error_log(f"Not Found Error: {e}")
+
+            except HttpRateLimitError as e:
+                if log_errors:
+                    custom_console.bot_error_log(f"Rate Limit Error: {e}")
+
+            except HttpRequestError as e:
+                if log_errors:
+                    custom_console.bot_error_log(f"Request Error: {e}")
+
+            """
+            except Exception as e:
+                if log_errors:
+                    custom_console.bot_error_log(f"An unexpected error occurred: '{e}'")
+            """
+
+        return wrapper
+
+    return decorator
