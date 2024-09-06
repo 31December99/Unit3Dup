@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from dataclasses import dataclass, field
-from .movie_release_info import MovieReleaseInfo
+from .release_info import MovieReleaseInfo
 
 
 @dataclass
