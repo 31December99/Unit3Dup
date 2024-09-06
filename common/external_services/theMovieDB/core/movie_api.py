@@ -4,9 +4,13 @@ import pprint
 from common.config import config
 from common.external_services.sessions.session import MyHttp
 from common.external_services.sessions.agents import Agent
-from common.external_services.theMovieDB.core.models.movie_nowplaying import NowPlaying
-from common.external_services.theMovieDB.core.models.movie_release_info import (
+from common.external_services.theMovieDB.core.models.movie.nowplaying import NowPlaying
+from common.external_services.theMovieDB.core.models.movie.release_info import (
     MovieReleaseInfo,
+)
+from common.external_services.theMovieDB.core.models.movie.alternative_titles import (
+    AltTitle,
+    Title,
 )
 
 base_url = "https://api.themoviedb.org/3"
@@ -29,7 +33,7 @@ class TmdbMovieApi(MyHttp):
 
     def now_playing(self) -> list[NowPlaying]:
         """
-        Retrieves the currently playing movies.
+        Retrieves the currently playing movies
         """
         response = self.get_url(
             f"{base_url}/movie/now_playing", params=TmdbMovieApi.params
@@ -49,9 +53,19 @@ class TmdbMovieApi(MyHttp):
             f"{base_url}/movie/{now_playing.id}/release_dates",
             params=TmdbMovieApi.params,
         )
+
         if response.status_code == 200:
             movie_latest = response.json().get("results", [])
-            return [MovieReleaseInfo(**movie_data) for movie_data in movie_latest]
+            pprint.pprint(movie_latest)
+
+            # Use the class method to create and validate MovieReleaseInfo instances
+            release_info_list = [
+                MovieReleaseInfo.validate_data(movie_data)
+                for movie_data in movie_latest
+            ]
+
+            # Filter out None values (invalid data)
+            return [info for info in release_info_list if info is not None]
         else:
             print(f"Request error: {response.status_code}")
             return []
@@ -134,16 +148,35 @@ class TmdbMovieApi(MyHttp):
             print(f"Request error: {response.status_code}")
             return []
 
-    def movie_alternative_title(self, movie_id: int):
+    def movie_alternative_title(self, movie_id: int) -> list["AltTitle"]:
         """
         Retrieves a list of recommended movies based on the specified movie
         """
 
         response = self.get_url(
-            f"{base_url}/movie/{movie_id}/alternative_title", params=TmdbMovieApi.params
+            f"{base_url}/movie/{movie_id}/alternative_titles",
+            params=TmdbMovieApi.params,
         )
 
-        return response
+        if response:
+            data = response.json()
+            titles = data.get("titles", [])
+
+            return [
+                # Create AltTitle object with an unique id movie_id
+                AltTitle(
+                    id=movie_id,
+                    # Add the titles
+                    titles=[
+                        Title.from_dict(title_data)
+                        for title_data in titles
+                        # Add it only if the json attribute name is identical to the @dataclass attribute
+                        if Title.from_dict(title_data) is not None
+                    ],
+                )
+            ]
+        else:
+            return []
 
     def search_movies(self, query: str):
         """
