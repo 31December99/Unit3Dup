@@ -2,10 +2,9 @@
 
 import httpx
 import diskcache as dc
-from common.external_services.sessions.exceptions import (
-    HttpRequestError,
-    exception_handler,
-)
+from common.external_services.sessions.exceptions import exception_handler
+
+ENABLE_LOG = True
 
 
 class MyHttp:
@@ -32,8 +31,8 @@ class MyHttp:
         params = "&".join(f"{key}={val}" for key, val in sorted(params.items()))
         return f"{url}?{params}"
 
-    @exception_handler
-    def get_url(self, url: str, params: dict, use_cache: bool = True) -> httpx.Response:
+    @exception_handler(log_errors=ENABLE_LOG)
+    def get_url(self, url: str, params: dict, use_cache: bool = True) -> (httpx.Response, str):
         """
         GET request to the specified URL
 
@@ -54,26 +53,18 @@ class MyHttp:
                 headers=response_data["headers"],
                 content=response_data["content"],
             )
-            return response
+            return response, url
 
-        try:
-            response = self.session.get(url, params=params)
-            response.raise_for_status()
+        response = self.session.get(url, params=params)
 
-            if use_cache:
-                self.cache[cache_key] = {
-                    "status_code": response.status_code,
-                    "headers": dict(response.headers),
-                    "content": response.content,
-                }
+        if use_cache:
+            self.cache[cache_key] = {
+                "status_code": response.status_code,
+                "headers": dict(response.headers),
+                "content": response.content,
+            }
 
-            return response
-        except httpx.HTTPStatusError as http_err:
-            # Handle specific HTTP status errors
-            raise HttpRequestError(http_err.response.status_code, f"HTTP Status Error: {http_err}")
-        except httpx.RequestError as req_err:
-            # Handle general request errors
-            raise HttpRequestError(0, f"Request error occurred: {req_err}")
+        return response, url
 
     def clear_cache(self):
         """Clears the HTTP response cache"""
