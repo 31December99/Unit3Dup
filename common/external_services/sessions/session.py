@@ -22,6 +22,16 @@ class MyHttp:
         """Returns the HTTP session"""
         return self.session
 
+    @staticmethod
+    def create_cache_key(url: str, params: dict) -> str:
+        """ Generates the cache key based on the URL and query parameters (otherwise the resource is not updated in
+        the cache.. """
+
+        # Add the query to the cached endpoint
+        # Sorted params to avoid duplicate
+        params = "&".join(f"{key}={val}" for key, val in sorted(params.items()))
+        return f"{url}?{params}"
+
     @exception_handler
     def get_url(self, url: str, params: dict, use_cache: bool = True) -> httpx.Response:
         """
@@ -30,13 +40,15 @@ class MyHttp:
         Args:
             url (str): The URL to request
             use_cache (bool): Whether to use cached response if available
-            params:
+            params (dict): The query parameters for the request
 
         Returns:
             httpx.Response: The response object from the GET request
         """
-        if use_cache and url in self.cache:
-            response_data = self.cache[url]
+        cache_key = self.create_cache_key(url, params)
+
+        if use_cache and cache_key in self.cache:
+            response_data = self.cache[cache_key]
             response = httpx.Response(
                 status_code=response_data["status_code"],
                 headers=response_data["headers"],
@@ -49,7 +61,7 @@ class MyHttp:
             response.raise_for_status()
 
             if use_cache:
-                self.cache[url] = {
+                self.cache[cache_key] = {
                     "status_code": response.status_code,
                     "headers": dict(response.headers),
                     "content": response.content,
@@ -62,6 +74,7 @@ class MyHttp:
         except httpx.RequestError as req_err:
             # Handle general request errors
             raise HttpRequestError(0, f"Request error occurred: {req_err}")
+
     def clear_cache(self):
         """Clears the HTTP response cache"""
         self.cache.clear()
