@@ -51,7 +51,7 @@ class NowPlayingByCountry:
     vote_average: float | None = None
     vote_count: int | None = None
     iso_3166_1: str | None = None
-    release_dates: dict[str, str] = field(default_factory=dict)
+    release_dates: list[dict[str, str]] = field(default_factory=dict)
 
     def __repr__(self):
         """Returns a string representation"""
