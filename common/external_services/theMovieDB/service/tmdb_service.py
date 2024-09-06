@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 import pprint
 
-from common.external_services.theMovieDB.core.tmdb_tvshow_api import TmdbTvShowApi
-from common.external_services.theMovieDB.core.tmdb_movie_api import TmdbMovieApi
-from common.external_services.theMovieDB.core.models.tvshow_on_the_air import OnTheAir
-from common.external_services.theMovieDB.core.models.movie_nowplaying import (
+from common.external_services.theMovieDB.core.tvshow_api import TmdbTvShowApi
+from common.external_services.theMovieDB.core.movie_api import TmdbMovieApi
+from common.external_services.theMovieDB.core.models.tvshow.on_the_air import OnTheAir
+from common.external_services.theMovieDB.core.models.movie.nowplaying import (
     NowPlayingByCountry,
 )
 
@@ -72,7 +72,8 @@ class TmdbService:
                 filtered_shows.append(on_the_air)
         return filtered_shows
 
-
     def tv_show(self):
-        k = self.latest_show_by_country(country_code="IT")
+        # Get every the movie now_playing
+        alternative_title = self.movie_api.movie_alternative_title(movie_id=533535)
+        pprint.pprint(alternative_title)
 
