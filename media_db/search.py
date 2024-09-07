@@ -27,7 +27,7 @@ class TvShow:
         _alternate_title = guess_filename.guessit_alternative
         result = self.mytmdb.search(_title)
 
-        # Se non ci sono risultati prima di richiedere all'utente provo ad unire il  main title con l'alternative title
+        # Se non ci sono risultati prima di richiedere all'utente provo a unire il main title con l'alternative title
         if not result:
             new_title = " ".join([_title, _alternate_title])
             result = self.mytmdb.search(new_title)
