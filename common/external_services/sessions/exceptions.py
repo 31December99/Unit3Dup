@@ -60,7 +60,7 @@ def exception_handler(log_errors: bool = True) -> Callable[..., Any]:
         @wraps(func)
         def wrapper(*args: Any, **kwargs: Any) -> Any:
             try:
-                response, url = func(*args, **kwargs)
+                response = func(*args, **kwargs)
 
                 if response.status_code == 404:
                     raise HttpNotFoundError()
