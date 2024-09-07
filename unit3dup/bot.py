@@ -16,7 +16,7 @@ class Bot:
     """
 
     def __init__(
-        self, path: str, tracker_name: str, cli: argparse.Namespace, mode="man"
+            self, path: str, tracker_name: str, cli: argparse.Namespace, mode="man"
     ):
         """
         Initialize the Bot instance with path, tracker name, command-line interface object, and mode
@@ -70,13 +70,35 @@ class Bot:
         self.torrent_manager.process(contents)
 
     def jack(self):
-
         custom_console.panel_message("Analyzing... Please wait")
+        # Examples
 
-        # Returns a list of Releases
+        # Now Playing by country
         releases_latest = self.tmdb_service.latest_movie_by_country(country_code="IT")
-
         custom_console.log(releases_latest)
+        custom_console.rule()
 
-        # tv_shows = self.tmdb_service.latest_show_by_country(country_code='IT')
-        self.tmdb_service.tv_show()
+        # Alternative title for a movie
+        alternative_title = self.tmdb_service.movie_alternative_title(movie_id=533535)
+        custom_console.log(alternative_title)
+        custom_console.rule()
+
+        # Search for a movie title
+        search_movie = self.tmdb_service.search_movies(query="Blade Runner 2049")
+        custom_console.log(search_movie)
+        custom_console.rule()
+
+        # On The Air by country
+        tv_shows = self.tmdb_service.latest_show_by_country(country_code="IT")
+        custom_console.log(tv_shows)
+        custom_console.rule()
+
+        # Tv Show Details by ID
+        tv_show_details = self.tmdb_service.tv_show_details(tv_show_id=84773)
+        custom_console.log(tv_show_details)
+        custom_console.rule()
+
+        # Search for a tv show title
+        search_tv_show = self.tmdb_service.search_tv_show(query="Il Signore degli Anelli: Gli Anelli del Potere")
+        custom_console.log(search_tv_show)
+        custom_console.rule()
