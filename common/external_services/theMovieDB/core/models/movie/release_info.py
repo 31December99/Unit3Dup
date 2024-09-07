@@ -18,7 +18,7 @@ class MovieReleaseInfo:
         return f"<ReleaseInfo iso_3166_1={self.iso_3166_1}, release_dates={self.release_dates}>"
 
     @classmethod
-    def validate_data(cls, data: dict) -> 'MovieReleaseInfo | None':
+    def validate(cls, data: dict) -> 'MovieReleaseInfo | None':
         """
         Validates the data; return None if it's invalid
         """
