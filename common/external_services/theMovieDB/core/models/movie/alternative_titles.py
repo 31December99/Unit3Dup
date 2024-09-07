@@ -19,7 +19,7 @@ class Title:
         self.logger = logger.getChild(self.__class__.__name__)
 
     @staticmethod
-    def from_dict(data: dict[str, any]) -> "Title | None":
+    def from_data(data: dict[str, any]) -> "Title | None":
         try:
             return Title(
                 iso_3166_1=data["iso_3166_1"],
@@ -40,13 +40,13 @@ class AltTitle:
     titles: list[Title]
 
     @classmethod
-    def from_json(cls, json_str: str) -> "AltTitle":
+    def validate(cls, json_str: str) -> "AltTitle":
         data = json.loads(json_str)
         id_ = data.get("id", 0)
         titles_data = data.get("titles", [])
         titles = [
-            Title.from_dict(title_data)
+            Title.from_data(title_data)
             for title_data in titles_data
-            if Title.from_dict(title_data) is not None
+            if Title.from_data(title_data) is not None
         ]
         return cls(id=id_, titles=titles)
