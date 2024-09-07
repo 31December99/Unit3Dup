@@ -30,18 +30,26 @@ class TmdbService:
             list: List of `MovieByCountry` instances for the specified country.
         """
 
-        # Get every the movie now_playing
+        # Get all the movies currently playing
         now_playing = self.movie_api.now_playing()
+
+        results = []
+
         for movie in now_playing:
-            # For each movie get each latest
+            # For each movie, get its latest release information
             latest_movie_list = self.movie_api.latest_movie(now_playing=movie)
 
-            # For each latest search for the preferred country code
-            return [
-                NowPlayingByCountry.create(now_playing=movie, release_info=release_info)
+            # Filter the releases by the preferred country code and create NowPlayingByCountry instances
+            country_movies = [
+                NowPlayingByCountry.from_data(now_playing=movie, release_info=release_info)
                 for release_info in latest_movie_list
                 if release_info.iso_3166_1 == country_code
             ]
+
+            # Add the filtered movies to the results list
+            results.extend(country_movies)
+
+        return results
 
     def latest_show_by_country(self, country_code: str) -> list["OnTheAir"]:
         """
@@ -60,11 +68,14 @@ class TmdbService:
 
         for on_the_air in on_the_air_list:
             # Query all translations for the TV show
-            tv_show_list = self.tv_show_api.tv_show_translations(tv_show_id=on_the_air.id)
+            tv_show_list = self.tv_show_api.tv_show_translations(
+                tv_show_id=on_the_air.id
+            )
 
             # Get the languages from the translations
             translation_languages = {
-                translation.iso_639_1.lower() for translation in tv_show_list.translations
+                translation.iso_639_1.lower()
+                for translation in tv_show_list.translations
             }
 
             # Check if the preferred language is available
@@ -72,8 +83,8 @@ class TmdbService:
                 filtered_shows.append(on_the_air)
         return filtered_shows
 
-    def tv_show(self):
-        # Get every the movie now_playing
-        alternative_title = self.movie_api.movie_alternative_title(movie_id=533535)
-        pprint.pprint(alternative_title)
+    def movie_alternative_title(self, movie_id: int):
+        return self.movie_api.movie_alternative_title(movie_id=movie_id)
 
+    def search_movies(self, query: str):
+        return self.movie_api.search_movies(query=query)
