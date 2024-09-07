@@ -96,7 +96,7 @@ PATH environment user variable
 1. Download the updater (zip) [Download autoupdate.py](https://gist.github.com/31December99/8e51466feb9df1606fd4199141ac54bb)
 2. run python3 autoupdate.py
 3. run pip install -r requirements.txt
-3. Set up the configuration .env file(s) service and itt ( rename .back in .env)
+4. Set up the configuration .env file(s) service and itt ( rename .back in .env)
 
 ### Update Bot 
 python3 autoupdate.py
