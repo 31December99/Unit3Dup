@@ -23,12 +23,3 @@ class TvShow:
     backdrop_path: str | None = None
     poster_path: str | None = None
     adult: bool = False
-
-    def __repr__(self) -> str:
-        """
-        Provides a string representation of the TvShow object.
-
-        Returns:
-            str: A string representation of the TV show object.
-        """
-        return f"TvShow(id={self.id}, name='{self.name}', first_air_date='{self.first_air_date}')"

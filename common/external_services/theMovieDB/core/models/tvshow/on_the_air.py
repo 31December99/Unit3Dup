@@ -25,6 +25,3 @@ class OnTheAir:
     original_name: str | None = None
     first_air_date: str | None = None
     name: str | None = None
-
-    def __repr__(self):
-        return f"<OnTheAir title={self.name} id={self.id}>"
