@@ -44,7 +44,6 @@ class TmdbMovieApi(MyHttp):
             movies_list = response.json().get("results", [])
             return [NowPlaying(**movie_data) for movie_data in movies_list]
         else:
-            print(f"Request error: {response.status_code}")
             return []
 
     def latest_movie(self, now_playing: NowPlaying) -> list[MovieReleaseInfo]:
@@ -67,7 +66,6 @@ class TmdbMovieApi(MyHttp):
             # Filter out None values (invalid data)
             return [info for info in release_info_list if info is not None]
         else:
-            print(f"Request error: {response.status_code}")
             return []
 
     def movie_details(self, movie_id: int):
@@ -80,7 +78,6 @@ class TmdbMovieApi(MyHttp):
         if response.status_code == 200:
             return response.json()
         else:
-            print(f"Request error: {response.status_code}")
             return {}
 
     def movie_credits(self, movie_id: int):
@@ -93,7 +90,6 @@ class TmdbMovieApi(MyHttp):
         if response.status_code == 200:
             return response.json()
         else:
-            print(f"Request error: {response.status_code}")
             return {}
 
     def movie_images(self, movie_id: int):
@@ -106,7 +102,6 @@ class TmdbMovieApi(MyHttp):
         if response.status_code == 200:
             return response.json()
         else:
-            print(f"Request error: {response.status_code}")
             return {}
 
     def movie_videos(self, movie_id: int):
@@ -119,7 +114,6 @@ class TmdbMovieApi(MyHttp):
         if response.status_code == 200:
             return response.json()
         else:
-            print(f"Request error: {response.status_code}")
             return {}
 
     def movie_similar(self, movie_id: int):
@@ -132,7 +126,6 @@ class TmdbMovieApi(MyHttp):
         if response.status_code == 200:
             return response.json().get("results", [])
         else:
-            print(f"Request error: {response.status_code}")
             return []
 
     def movie_recommendations(self, movie_id: int):
@@ -145,7 +138,6 @@ class TmdbMovieApi(MyHttp):
         if response.status_code == 200:
             return response.json().get("results", [])
         else:
-            print(f"Request error: {response.status_code}")
             return []
 
     def movie_alternative_title(self, movie_id: int) -> list["AltTitle"]:
@@ -188,7 +180,6 @@ class TmdbMovieApi(MyHttp):
             movies_list = response.json().get("results", [])
             return [Movie(**data) for data in movies_list]
         else:
-            print(f"Request error: {response.status_code}")
             return []
 
     def movie_genres(self):
@@ -201,5 +192,4 @@ class TmdbMovieApi(MyHttp):
         if response.status_code == 200:
             return response.json().get("genres", [])
         else:
-            print(f"Request error: {response.status_code}")
             return {}
