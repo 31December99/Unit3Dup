@@ -32,7 +32,7 @@ class MyHttp:
         return f"{url}?{params}"
 
     @exception_handler(log_errors=ENABLE_LOG)
-    def get_url(self, url: str, params: dict, use_cache: bool = True) -> (httpx.Response, str):
+    def get_url(self, url: str, params: dict, use_cache: bool = False) -> httpx.Response:
         """
         GET request to the specified URL
 
@@ -53,7 +53,7 @@ class MyHttp:
                 headers=response_data["headers"],
                 content=response_data["content"],
             )
-            return response, url
+            return response
 
         response = self.session.get(url, params=params)
 
@@ -64,7 +64,7 @@ class MyHttp:
                 "content": response.content,
             }
 
-        return response, url
+        return response
 
     def clear_cache(self):
         """Clears the HTTP response cache"""
