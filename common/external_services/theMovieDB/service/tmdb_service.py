@@ -51,6 +51,12 @@ class TmdbService:
 
         return results
 
+    def movie_alternative_title(self, movie_id: int):
+        return self.movie_api.movie_alternative_title(movie_id=movie_id)
+
+    def search_movies(self, query: str):
+        return self.movie_api.search_movies(query=query)
+
     def latest_show_by_country(self, country_code: str) -> list["OnTheAir"]:
         """
         Retrieve the latest TV shows from a specific country
@@ -83,8 +89,9 @@ class TmdbService:
                 filtered_shows.append(on_the_air)
         return filtered_shows
 
-    def movie_alternative_title(self, movie_id: int):
-        return self.movie_api.movie_alternative_title(movie_id=movie_id)
+    def tv_show_details(self, tv_show_id):
+        return self.tv_show_api.tv_show_details(tv_show_id=tv_show_id)
 
-    def search_movies(self, query: str):
-        return self.movie_api.search_movies(query=query)
+    def search_tv_show(self, query: str):
+        return self.tv_show_api.search_tv_shows(query=query)
+
