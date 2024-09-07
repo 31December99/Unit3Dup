@@ -24,7 +24,7 @@ class MyHttp:
     @staticmethod
     def create_cache_key(url: str, params: dict) -> str:
         """ Generates the cache key based on the URL and query parameters (otherwise the resource is not updated in
-        the cache.. """
+        the cache..) """
 
         # Add the query to the cached endpoint
         # Sorted params to avoid duplicate
