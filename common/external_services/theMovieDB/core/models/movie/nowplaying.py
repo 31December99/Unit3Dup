@@ -44,13 +44,6 @@ class NowPlayingByCountry(NowPlaying):
             logger.debug(f"Warning: Invalid iso_3166_1 code '{self.iso_3166_1}'. It must be a two-letter country code.")
             self.iso_3166_1 = None
 
-    def __repr__(self):
-        """Returns a string """
-        return (
-            f"<NowPlayingByCountry title={self.title} id={self.id}, "
-            f"iso_3166_1={self.iso_3166_1}, release_dates={self.release_dates}>"
-        )
-
     @staticmethod
     def from_data(now_playing: NowPlaying, release_info: "MovieReleaseInfo") -> "NowPlayingByCountry":
         """
