@@ -104,8 +104,8 @@ class ConfigUnit3D:
         TORRENT_ARCHIVE (str): Path to the torrent archive
         PREFERRED_LANG (str): Preferred language
         SIZE_TH (int): Size threshold
-        JACK_API_KEY (str): API key for Jackett
-        JACK_URL (str): URL for Jackett
+        PW_API_KEY (str): API key for PW
+        PW_URL (str): URL for PW
         COMPRESS_SCSHOT (int): Compression level for screenshots
 
     Methods:
@@ -140,8 +140,8 @@ class ConfigUnit3D:
         self.TORRENT_ARCHIVE: str = ""
         self.PREFERRED_LANG: str = ""
         self.SIZE_TH: int = 100
-        self.JACK_API_KEY: str = ""
-        self.JACK_URL: str = ""
+        self.PW_API_KEY: str = ""
+        self.PW_URL: str = ""
         self.COMPRESS_SCSHOT: int = 6
 
         self.tracker_values: dict = {}
@@ -186,10 +186,10 @@ class ConfigUnit3D:
         self.QBIT_PASS = config_load_service("QBIT_PASS")
         self.QBIT_URL = config_load_service("QBIT_URL")
         self.QBIT_PORT = config_load_service("QBIT_PORT")
-        self.JACK_API_KEY = config_load_service("JACK_API_KEY")
         self.TORRENT_ARCHIVE = config_load_service("TORRENT_ARCHIVE")
-        self.JACK_URL = config_load_service.get(
-            "JACK_URL", default="http://127.0.0.1:9117/"
+        self.PW_API_KEY = config_load_service("PW_API_KEY")
+        self.PW_URL = config_load_service.get(
+            "PW_URL", default="http://localhost:9696/api/v1"
         )
         self.PREFERRED_LANG = config_load_service.get("PREFERRED_LANG", default="")
         self.SIZE_TH = config_load_service.get("SIZE_TH", default=100)
@@ -236,9 +236,9 @@ class ConfigUnit3D:
             os.path.splitext(file_name)[0].lower()
             for file_name in os.listdir()
             if os.path.isfile(file_name)
-               and os.path.splitext(file_name)[1].lower() == ".env"
-               and "service.env" not in file_name.lower()
-               and "console.env" not in file_name.lower()
+            and os.path.splitext(file_name)[1].lower() == ".env"
+            and "service.env" not in file_name.lower()
+            and "console.env" not in file_name.lower()
         ]
 
         for tracker_name in env_files:
