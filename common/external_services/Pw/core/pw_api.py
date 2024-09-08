@@ -14,7 +14,7 @@ class PwAPI(MyHttp):
 
     def __init__(self):
         """
-        Initialize the TvShowApi instance with an HTTP client
+        Initialize the PwApi instance
         """
         headers = Agent.headers()
         headers.update(
