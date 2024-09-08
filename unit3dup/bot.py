@@ -110,11 +110,16 @@ class Bot:
         )
         custom_console.log(search_tv_show)
         custom_console.rule()
-        """
+
         # Get PW indexers
         indexers = self.pw_service.get_indexers()
         custom_console.log(indexers)
+        """
 
         # Query the indexers
-        search = self.pw_service.search(query="Maze Runner")
-        custom_console.log(search)
+        search = self.pw_service.search(query="Maze runner")
+        for index, s in enumerate(search):
+            if s.seeders > 1:
+                torrent_file = search[index]
+                custom_console.log(torrent_file)
+
