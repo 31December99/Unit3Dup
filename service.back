@@ -11,9 +11,9 @@ IMGBB_KEY=
 ## FREEIMAGE API_KEY - https://freeimage.host/
 FREE_IMAGE_KEY=
 
-## JACK
-JACK_API_KEY=
-JACK_URL=
+## PW
+PW_API_KEY=
+PW_URL=http://localhost:9696/api/v1
 
 ##################################################################################
                                     ## TORRENT CLIENT ##
