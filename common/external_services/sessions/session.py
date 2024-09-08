@@ -28,7 +28,9 @@ class MyHttp:
 
         # Add the query to the cached endpoint
         # Sorted params to avoid duplicate
-        params = "&".join(f"{key}={val}" for key, val in sorted(params.items()))
+
+        if params:
+            params = "&".join(f"{key}={val}" for key, val in sorted(params.items()))
         return f"{url}?{params}"
 
     @exception_handler(log_errors=ENABLE_LOG)
