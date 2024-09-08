@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import json
+
 
 import httpx
 import diskcache as dc
@@ -23,18 +25,19 @@ class MyHttp:
 
     @staticmethod
     def create_cache_key(url: str, params: dict) -> str:
-        """ Generates the cache key based on the URL and query parameters (otherwise the resource is not updated in
-        the cache..) """
+        """Generates the cache key based on the URL and query parameters (otherwise the resource is not updated in
+        the cache.)"""
 
         # Add the query to the cached endpoint
         # Sorted params to avoid duplicate
-
         if params:
             params = "&".join(f"{key}={val}" for key, val in sorted(params.items()))
         return f"{url}?{params}"
 
     @exception_handler(log_errors=ENABLE_LOG)
-    def get_url(self, url: str, params: dict, use_cache: bool = False) -> httpx.Response:
+    def get_url(
+            self, url: str, params=None, body: json = json, use_cache: bool = False, get_method: bool = True
+    ) -> httpx.Response:
         """
         GET request to the specified URL
 
@@ -42,6 +45,8 @@ class MyHttp:
             url (str): The URL to request
             use_cache (bool): Whether to use cached response if available
             params (dict): The query parameters for the request
+            get_method (bool): Defines the type of HTTP request (GET, POST) True= Get , False = Post
+            body (JSON): Defines the body of the PUT request
 
         Returns:
             httpx.Response: The response object from the GET request
@@ -57,7 +62,12 @@ class MyHttp:
             )
             return response
 
-        response = self.session.get(url, params=params)
+        if get_method:
+            # GET
+            response = self.session.get(url, params=params)
+        else:
+            # PUT
+            response = self.session.put(url, params=params, json=body)
 
         if use_cache:
             self.cache[cache_key] = {
