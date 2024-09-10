@@ -53,14 +53,14 @@ class UploadDocument(UploadBot):
         super().__init__(content)
 
     def payload(self):
-        return payload.Data.create_instance(
+        return payload.Data(
             metainfo=self.metainfo,
             name=self.content.name,
             file_name=self.file_name,
             result="",
             category=self.content.category,
             standard=0,
-            mediainfo="",
+            media_info="",
             description=self.content.doc_description,
         )
 
@@ -84,13 +84,13 @@ class UploadVideo(UploadBot):
 
     def payload(self, tv_show: list, video_info: pvtTracker):
         if video_info:
-            return payload.Data.create_instance(
+            return payload.Data(
                 metainfo=self.metainfo,
                 name=self.content.name,
                 file_name=self.file_name,
                 result=tv_show,
                 category=self.content.category,
-                mediainfo=video_info.mediainfo,
+                media_info=video_info.mediainfo,
                 description=video_info.description,
                 standard=video_info.is_hd,
 
