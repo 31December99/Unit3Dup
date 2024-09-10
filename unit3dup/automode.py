@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import os
-from unit3dup.contents import File, Folder
+from unit3dup.contents import Media
 from common.utility.utility import Manage_titles
 from common.utility import title
 from common.config import config
@@ -45,23 +45,23 @@ class Auto:
 
             if self.auto == "man":
                 # -u command (single file or scan each file in the folder)
-                return self._lists(movies_path=[], series_path=series_path)
+                return self._lists(files_path=[], subfolders_path=series_path)
 
             if self.auto == "folder":
                 # -f command (single folder series or 'saga')
-                return self._lists(movies_path=[], series_path=[self.path])
+                return self._lists(files_path=[], subfolders_path=[self.path])
         else:
-            return self._lists(movies_path=[self.path], series_path=[])
+            return self._lists(files_path=[self.path], subfolders_path=[])
 
     def scan(self):
         """
         Scans the directory for video files and subdirectories.
 
         If the path is a file, logs an error since scanning requires a folder. Otherwise, scans
-        the folder and subfolders, sorting files and subdirectories, and processes them.
+        the folder and subfolders, sorting files and subdirectories, and processes them
         """
-        movies_path = []
-        series_path = []
+        files_path = []
+        subfolders_path = []
 
         if not self.is_dir:
             custom_console.bot_error_log("We can't scan a file.")
@@ -73,84 +73,32 @@ class Auto:
                 # Sort files
                 files.sort(reverse=False)
 
+                # Get the files path from the self.path
                 if path == self.path:
-                    movies_path = [
+                    files_path = [
                         os.path.join(self.path, file)
                         for file in files
                         if Manage_titles.filter_ext(file)
                     ]
+                # Get the subfolders path from the self.path
                 if sub_dirs:
                     # Maximum level of subfolder depth = 1
                     if self.depth_walker(path) < 1:
-                        series_path = [
+                        subfolders_path = [
                             os.path.join(self.path, subdir) for subdir in sub_dirs
                         ]
-        return self._lists(movies_path=movies_path, series_path=series_path)
+        return self._lists(files_path=files_path, subfolders_path=subfolders_path)
 
-    def _lists(self, movies_path: list, series_path: list):
-        """
-        Creates a list of media objects from given movie and series paths.
+    def _lists(self, files_path: list, subfolders_path: list):
 
-        Args:
-            movies_path (list): A list of paths to movie files.
-            series_path (list): A list of paths to series directories.
-
-        Returns:
-            list: A combined list of File and Folder objects created from the paths.
-        """
-        movies = [
+        return [
             result
-            for file in movies_path
-            if (result := self.create_file_path(file)) is not None
+            for media in files_path + subfolders_path
+            if (result := self.create_media_path(media)) is not None
         ]
 
-        # None in the series means a folder without a Sx tag
-        series = [
-            result
-            for subdir in series_path
-            if (result := self.create_folder_path(subdir)) is not None
-        ]
-        return series + movies
+    def create_media_path(self, subdir: str) -> Media | None:
 
-    def create_file_path(self, file: str) -> File | None:
-        """
-        Creates a File object from a given file path.
-
-        Args:
-            file (str): The path to the file.
-
-        Returns:
-            File | None: A File object created from the path, or None if not applicable.
-        """
-        file_name, ext = os.path.splitext(file)
-        guess_filename = title.Guessit(file_name)
-        if guess_filename.guessit_season:
-            media_type = self.serie_category
-        else:
-            media_type = self.movie_category
-
-        return File(
-            file_name=file,
-            folder=self.path,
-            media_type=media_type,
-            torrent_name=guess_filename.guessit_title,
-            source=guess_filename.source,
-            other=guess_filename.other,
-            audio_codec=guess_filename.audio_codec,
-            subtitle=guess_filename.subtitle,
-            resolution=guess_filename.screen_size,
-        )
-
-    def create_folder_path(self, subdir: str) -> Folder | None:
-        """
-        Determines whether the folder contains a season tag or is a "movie folder" and creates a Folder object.
-
-        Args:
-            subdir (str): The name of the subdirectory.
-
-        Returns:
-            Folder | None: A Folder object created from the subdirectory, or None if not applicable.
-        """
         file_name, ext = os.path.splitext(subdir)
         guess_filename = title.Guessit(file_name)
 
@@ -159,11 +107,10 @@ class Auto:
         else:
             media_type = self.movie_category
 
-        return Folder(
+        return Media(
             folder=self.path,
             subfolder=subdir,
             media_type=media_type,
-            torrent_name=guess_filename.guessit_title,
             source=guess_filename.source,
             other=guess_filename.other,
             audio_codec=guess_filename.audio_codec,
@@ -181,7 +128,7 @@ class Auto:
         Returns:
             int: The depth level of the path, where depth < 1 indicates a maximum of one level of subfolders
         """
-        return path[len(self.path) :].count(os.sep)
+        return path[len(self.path):].count(os.sep)
 
     @staticmethod
     def list_video_files(manual_path: str) -> list:
