@@ -70,9 +70,14 @@ class TorrentManager:
 
         return tracker_response, torrent_response
 
-    def qbitt(self, tracker_response: str, torrent_response, content) -> None:
-        Qbitt(
+    @staticmethod
+    def qbitt(tracker_response: str, torrent_response, content) -> None:
+        qb = Qbitt.connect(
             tracker_data_response=tracker_response,
             torrent=torrent_response,
             contents=content,
         )
+        if qb:
+            qb.send_to_client()
+
+
