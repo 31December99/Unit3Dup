@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 
 from rich.console import Console
+from common.clients.qbitt import Qbitt
+from common.custom_console import custom_console
+from common.config import config
+from unit3dup.bot import Bot
+from unit3dup import pvtTracker
 from unit3dup.torrent import View
 from unit3dup.command import CommandLine
-from unit3dup.ping import Ping
-from unit3dup.bot import Bot
-from common.custom_console import custom_console
 
 console = Console(log_path=False)
 
@@ -14,24 +16,26 @@ def main():
     """
     Main function to handle the command line interface (CLI)
     """
-    # Display welcome message
+    # /// Display welcome message
     custom_console.welcome_message()
 
-    # Initialize command line interface
+    # /// Initialize command line interface
     cli = CommandLine()
 
-    # Ping services if scanning or uploading is selected
-    if cli.args.scan or cli.args.upload:
-        # Validate environment files and test external services
-        ping = Ping()
-        track_err = ping.process_tracker()
-        qbit_err = ping.process_qbit()
-        tmdb_err = ping.process_tmdb()
+    # /// Test the Tracker (always)
+    tracker = pvtTracker.Unit3d(
+        base_url=config.ITT_URL, api_token=config.ITT_APIKEY, pass_key=""
+    )
+    if tracker.get_alive(alive=True, perPage=1):
+        custom_console.bot_log(f"[TRACKER HOST].... Online")
 
-        if not (tmdb_err and qbit_err and track_err):
-            console.log("Check your configuration file. Exit..")
+    # /// Test the torrent client
+    if cli.args.scan or cli.args.upload:
+        test_client_torrent = Qbitt.is_online()
+        if not test_client_torrent:
             exit(1)
 
+    # \\\ Commands options  \\\
     # Manual upload mode
     if cli.args.upload:
         unit3dup = Bot(
