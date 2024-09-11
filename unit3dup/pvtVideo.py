@@ -3,9 +3,10 @@
 from common.external_services.imageHost import ImgBB, Freeimage, ImageUploaderFallback
 from common.mediainfo import MediaFile
 from common.config import config
-from unit3dup.ping import offline_uploaders
 from common.frames import VideoFrame
 from common.custom_console import custom_console
+
+offline_uploaders = []
 
 
 class Video:
@@ -26,7 +27,7 @@ class Video:
         self.file_name: str = file_name
 
         # Screenshots samples
-        samples_n: int = config.SCREENSHOTS if 2 <= config.SCREENSHOTS <= 10 else 4
+        samples_n: int = config.NUMBER_OF_SCREENSHOTS if 2 <= config.NUMBER_OF_SCREENSHOTS <= 10 else 4
 
         # New object frame
         self.video_frames: VideoFrame = VideoFrame(self.file_name, num_screenshots=samples_n)
@@ -74,7 +75,7 @@ class Video:
 
     def _description(self, extracted_frames: list) -> str:
         """Generate a description with image URLs uploaded to ImgBB"""
-        custom_console.bot_log(f"\n[GENERATING IMAGES..] [HD {'ON' if self.is_hd==0 else 'OFF'}]")
+        custom_console.bot_log(f"\n[GENERATING IMAGES..] [HD {'ON' if self.is_hd == 0 else 'OFF'}]")
         description = "[center]\n"
         console_url = []
         for img_bytes in extracted_frames:
