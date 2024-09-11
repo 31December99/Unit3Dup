@@ -4,7 +4,7 @@ import os
 from unit3dup.contents import Media
 from common.utility.utility import Manage_titles
 from common.utility import title
-from common.config import config
+from common.config import trackers
 from common.custom_console import custom_console
 
 
@@ -25,9 +25,9 @@ class Auto:
         self.series = None
         self.movies = None
         self.path = path
-        self.config = config.trackers.get_tracker(tracker_name)
-        self.movie_category = self.config.tracker_values.category("movie")
-        self.serie_category = self.config.tracker_values.category("tvshow")
+        self.trackers = trackers.get_tracker(tracker_name)
+        self.movie_category = self.trackers.tracker_values.category("movie")
+        self.serie_category = self.trackers.tracker_values.category("tvshow")
         self.is_dir = os.path.isdir(self.path)
         self.auto = mode
 
