@@ -12,7 +12,7 @@ class Torrent:
     def __init__(self):
         self.perPage = 30
         self.tracker = pvtTracker.Unit3d(
-            base_url=config.BASE_URL, api_token=config.API_TOKEN, pass_key=""
+            base_url=config.ITT_URL, api_token=config.ITT_APIKEY, pass_key=""
         )
 
         print()
@@ -138,7 +138,7 @@ class View(Torrent):
         super().__init__()
         self.perPage = 30
         self.tracker = pvtTracker.Unit3d(
-            base_url=config.BASE_URL, api_token=config.API_TOKEN, pass_key=""
+            base_url=config.ITT_URL, api_token=config.ITT_APIKEY, pass_key=""
         )
 
         print()
