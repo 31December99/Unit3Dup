@@ -4,7 +4,7 @@ import requests
 
 from unit3dup import pvtTracker, payload, contents
 from abc import ABC, abstractmethod
-from common.config import config
+from common.config import config, trackers
 from common.custom_console import custom_console
 
 
@@ -20,9 +20,9 @@ class UploadBot(ABC):
         self.torrent_path = content.torrent_path
         self.torrent_file_path = os.path.join(self.torrent_path, self.file_name)
 
-        self.config = config.trackers.get_tracker(self.tracker_name)
-        self.API_TOKEN = config.API_TOKEN
-        self.BASE_URL = config.BASE_URL
+        self.trackers = trackers.get_tracker(self.tracker_name)
+        self.API_TOKEN = config.ITT_APIKEY
+        self.BASE_URL = config.ITT_URL
 
     def send(self, tracker: pvtTracker) -> requests:
         tracker_response = tracker.upload_t(
@@ -72,7 +72,7 @@ class UploadDocument(UploadBot):
         tracker.data["tmdb"] = 0
         tracker.data["category_id"] = data.category
         tracker.data["description"] = data.description
-        tracker.data["type_id"] = self.config.tracker_values.filterType(data.file_name)
+        tracker.data["type_id"] = self.trackers.tracker_values.filterType(data.file_name)
         tracker.data["resolution_id"] = ""
         # tracker.data["torrent-cover"] = "" TODO: not yet implemented
         return tracker
@@ -107,13 +107,13 @@ class UploadVideo(UploadBot):
         tracker.data["tmdb"] = data.result.video_id
         tracker.data["keywords"] = data.result.keywords
         tracker.data["category_id"] = data.category
-        tracker.data["resolution_id"] = self.config.tracker_values.filterResolution(
+        tracker.data["resolution_id"] = self.trackers.tracker_values.filterResolution(
             data.file_name
         )
         tracker.data["sd"] = data.standard
         tracker.data["mediainfo"] = data.media_info
         tracker.data["description"] = data.description
-        tracker.data["type_id"] = self.config.tracker_values.filterType(data.file_name)
+        tracker.data["type_id"] = self.trackers.tracker_values.filterType(data.file_name)
         tracker.data["season_number"] = data.myguess.guessit_season
         tracker.data["episode_number"] = (
             data.myguess.guessit_episode if not self.content.torrent_pack else 0
