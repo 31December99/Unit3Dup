@@ -1,17 +1,15 @@
 # -*- coding: utf-8 -*-
 import guessit
 
-
 from media_db.search import TvShow
 from common.utility.utility import Manage_titles, System
 from common.utility import title
 from common.constants import my_language
-from common.config import config
+from common.config import config, trackers
 from common.custom_console import custom_console
 from unit3dup.torrent import Torrent
 from unit3dup.contents import Contents
 from unit3dup.media_manager.MediaInfoManager import MediaInfoManager
-
 
 
 class Series:
@@ -107,9 +105,9 @@ class Duplicate:
     def __init__(self, content: Contents):
         self.content: Contents = content
         self.torrent_info = Torrent()
-        self.config = config.trackers.get_tracker(tracker_name=content.tracker_name)
-        self.movie_category = self.config.tracker_values.category("movie")
-        self.serie_category = self.config.tracker_values.category("tvshow")
+        self.trackers = trackers.get_tracker(tracker_name=content.tracker_name)
+        self.movie_category = self.trackers.tracker_values.category("movie")
+        self.serie_category = self.trackers.tracker_values.category("tvshow")
         self.guess_filename = title.Guessit(self.content.display_name)
         self.flag_already = False
         self.content_size = System.get_size(content.torrent_path)
