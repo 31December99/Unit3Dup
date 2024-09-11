@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 
 import argparse
-import pprint
 
-from common.config import config
+from common.config import trackers
 from common.custom_console import custom_console
 from common.external_services.theMovieDB.tmdb_service import TmdbService
 from common.external_services.Pw.pw_service import PwService
@@ -35,7 +34,7 @@ class Bot:
         self.mode = mode
 
         # Load Tracker configuration
-        self.tracker_config = config.trackers.get_tracker(tracker_name=tracker_name)
+        self.tracker_config = trackers.get_tracker(tracker_name=tracker_name)
 
         # Torrent Manager
         self.torrent_manager = TorrentManager(
