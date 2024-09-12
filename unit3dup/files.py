@@ -4,7 +4,7 @@ import os
 import re
 
 from unit3dup.contents import Contents
-from common.config import trackers
+from common.trackers.trackers import ITTData
 from common.utility.utility import Manage_titles
 from common.mediainfo import MediaFile
 
@@ -32,7 +32,7 @@ class Files:
         self.movies: list = []
         self.series: list = []
         self.is_dir = os.path.isdir(self.path)
-        self.trackers = trackers.get_tracker(tracker_name)
+        self.tracker_data = ITTData.load_from_module()
 
     def get_data(self) -> Contents | bool:
         """
@@ -81,8 +81,8 @@ class Files:
         media_docu_type = Manage_titles.media_docu_type(self.file_name)
         # If this is a document it becomes a document category
         if media_docu_type:
-            # overwrite media_type
-            self.category = self.trackers.tracker_values.category(media_docu_type)
+            # overwrite media_type # todo: 'cover image' not yet implemented
+            self.category = self.tracker_data.category.get(media_docu_type)
 
         self.size = os.path.getsize(self.path)
         self.meta_info = json.dumps(
@@ -109,8 +109,8 @@ class Files:
         media_docu_type = Manage_titles.media_docu_type(self.file_name)
         # If there is a document in the folder it becomes a document folder
         if media_docu_type:
-            # overwrite media_type
-            self.category = self.trackers.tracker_values.category(media_docu_type)
+            # overwrite media_type # todo: 'cover image' not yet implemented
+            self.category = self.tracker_data.category.get(media_docu_type)
 
         total_size = 0
         for file in files:
