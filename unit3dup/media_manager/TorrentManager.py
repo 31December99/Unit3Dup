@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import argparse
 from typing import List, Optional
 from unit3dup.media_manager.VideoManager import VideoManager
@@ -6,15 +8,18 @@ from common.config import config
 from common.constants import my_language
 from common.clients.qbitt import Qbitt
 from common.custom_console import custom_console
+from common.trackers.trackers import ITTData
 
 
 class TorrentManager:
-    def __init__(self, cli: argparse.Namespace, tracker_config):
+    def __init__(self, cli: argparse.Namespace, tracker_name = None):  # todo tracker_name
         self.cli = cli
-        self.tracker_config = tracker_config
-        self.movie_category = self.tracker_config.tracker_values.category("movie")
-        self.serie_category = self.tracker_config.tracker_values.category("tvshow")
-        self.docu_category = self.tracker_config.tracker_values.category("edicola")
+
+        tracker_data = ITTData.load_from_module()
+
+        self.movie_category = tracker_data.category.get("movie")
+        self.serie_category = tracker_data.category.get("tvshow")
+        self.docu_category = tracker_data.category.get("edicola")
         self.preferred_lang = my_language(config.PREFERRED_LANG)
 
     def process(self, contents: List) -> None:
@@ -45,7 +50,7 @@ class TorrentManager:
                     )
                     return None, None
 
-        if self.cli.duplicate or config.DUPLICATE == "True":
+        if self.cli.duplicate or config.DUPLICATE_ON == "True":
             results = video_manager.check_duplicate()
             if results:
                 custom_console.bot_error_log(
@@ -79,5 +84,3 @@ class TorrentManager:
         )
         if qb:
             qb.send_to_client()
-
-
