@@ -109,9 +109,11 @@ class CommandLine:
             custom_console.bot_error_log(f"Configuration file 'service.env' not found")
             sys.exit()
 
+        """
         database_tracker = os.path.join("trackers", f"{self.args.tracker}.json")
         if not os.path.exists(database_tracker):
             custom_console.bot_error_log(
                 f"Configuration file '{self.args.tracker}.json' not found for tracker '{self.args.tracker}'"
             )
             sys.exit()
+        """
