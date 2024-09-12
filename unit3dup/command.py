@@ -98,22 +98,3 @@ class CommandLine:
         if self.args.upload and not os.path.exists(self.args.upload):
             custom_console.bot_error_log(f"The path {self.args.upload} does not exist.")
             sys.exit()
-
-        if not os.path.exists(f"{self.args.tracker}.env"):
-            custom_console.bot_error_log(
-                f"Configuration file '{self.args.tracker}.env' not found for tracker '{self.args.tracker}'"
-            )
-            sys.exit()
-
-        if not os.path.exists(f"service.env"):
-            custom_console.bot_error_log(f"Configuration file 'service.env' not found")
-            sys.exit()
-
-        """
-        database_tracker = os.path.join("trackers", f"{self.args.tracker}.json")
-        if not os.path.exists(database_tracker):
-            custom_console.bot_error_log(
-                f"Configuration file '{self.args.tracker}.json' not found for tracker '{self.args.tracker}'"
-            )
-            sys.exit()
-        """
