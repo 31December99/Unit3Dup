@@ -4,7 +4,7 @@ import os
 from unit3dup.contents import Media
 from common.utility.utility import Manage_titles
 from common.utility import title
-from common.config import trackers
+from common.trackers.trackers import ITTData
 from common.custom_console import custom_console
 
 
@@ -13,7 +13,7 @@ class Auto:
     A class for managing and processing video files and directories based on a given mode
     """
 
-    def __init__(self, path: str, tracker_name: str, mode="auto"):
+    def __init__(self, path: str, tracker_name=None, mode="auto"):  # todo: select the trackcer (tracker_name)
         """
         Initialize the Auto instance with path, tracker configuration, and mode.
 
@@ -22,12 +22,14 @@ class Auto:
             tracker_name (str): The name of the tracker configuration to be used.
             mode (str): The mode of operation, either 'auto', 'man', or 'folder'. Default is 'auto'.
         """
+        tracker_data = ITTData.load_from_module()
+
         self.series = None
         self.movies = None
         self.path = path
-        self.trackers = trackers.get_tracker(tracker_name)
-        self.movie_category = self.trackers.tracker_values.category("movie")
-        self.serie_category = self.trackers.tracker_values.category("tvshow")
+
+        self.movie_category = tracker_data.category.get("movie")
+        self.serie_category = tracker_data.category.get("tvshow")
         self.is_dir = os.path.isdir(self.path)
         self.auto = mode
 
