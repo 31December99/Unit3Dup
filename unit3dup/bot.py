@@ -2,7 +2,6 @@
 
 import argparse
 
-from common.config import trackers
 from common.custom_console import custom_console
 from common.external_services.theMovieDB.tmdb_service import TmdbService
 from common.external_services.Pw.pw_service import PwService
@@ -17,7 +16,7 @@ class Bot:
     """
 
     def __init__(
-        self, path: str, tracker_name: str, cli: argparse.Namespace, mode="man"
+            self, path: str, tracker_name: str, cli: argparse.Namespace, mode="man"
     ):
         """
         Initialize the Bot instance with path, tracker name, command-line interface object, and mode
@@ -33,13 +32,8 @@ class Bot:
         self.cli = cli
         self.mode = mode
 
-        # Load Tracker configuration
-        self.tracker_config = trackers.get_tracker(tracker_name=tracker_name)
-
         # Torrent Manager
-        self.torrent_manager = TorrentManager(
-            cli=self.cli, tracker_config=self.tracker_config
-        )
+        self.torrent_manager = TorrentManager(cli=self.cli)
 
         # TMDB service
         self.tmdb_service = TmdbService()
@@ -121,4 +115,3 @@ class Bot:
             if s.seeders > 1:
                 torrent_file = search[index]
                 custom_console.log(torrent_file)
-
