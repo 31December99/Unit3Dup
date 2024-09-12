@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import os
 from common.custom_console import custom_console
 from pydantic_settings import BaseSettings
@@ -5,8 +7,6 @@ from pydantic import Field, field_validator
 from dotenv import load_dotenv
 from urllib.parse import urlparse
 from pathlib import Path
-from rich.text import Text
-from trackers.trackers import TrackerConfig
 
 
 def create_default_env_file(path):
@@ -65,75 +65,6 @@ if not torrent_archive_path.exists():
 
 # Load environment variables
 load_dotenv(dotenv_path=default_env_path)
-
-
-class Tracker: #todo need a dedicated file
-    """
-    A class to represent a tracker configuration
-
-    Attributes:
-        api_token (str): The API token for the tracker
-        base_url (str): The base URL for the tracker
-        tracker_values (dict): Additional configuration values for the tracker
-    """
-
-    def __init__(self, api_token: str, base_url: str, tracker_values: TrackerConfig):
-        self.api_token = api_token
-        self.base_url = base_url
-        self.tracker_values = tracker_values
-
-
-class TrackerManager:
-    """
-    A class to manage multiple trackers
-
-    Attributes:
-        message (Text): A message template used for logging
-        tracker_name (str): The name of the current tracker
-        trackers (dict): A dictionary to store tracker instances
-
-    Methods:
-        add_tracker(tracker: Tracker):
-            Adds a Tracker instance to the manager
-        get_tracker(tracker_name: str) -> Tracker | None:
-            Retrieves a Tracker instance by its name
-    """
-
-    message = Text("Configuration file ")
-
-    def __init__(self, tracker_name: str):
-        self.tracker_name = tracker_name
-        self.trackers = {}
-
-    def add_tracker(self, tracker: Tracker):
-        """
-        Adds a Tracker instance to the TrackerManager
-
-        Args:
-            tracker (Tracker): The Tracker instance to add
-        """
-        self.trackers[self.tracker_name] = tracker
-
-    def get_tracker(self, tracker_name: str) -> Tracker | None:
-        """
-        Retrieves a Tracker instance by its name
-
-        Args:
-            tracker_name (str): The name of the tracker to retrieve
-
-        Returns:
-            Tracker: The Tracker instance if found, otherwise logs an error and exits
-        """
-        tracker = self.trackers.get(tracker_name, None)
-
-        if not tracker:
-            self.message.append(
-                f"\n Unable to load '{tracker_name}' configuration file",
-                style="bold red",
-            )
-            custom_console.bot_log(self.message)
-            exit(1)
-        return tracker
 
 
 class Config(BaseSettings):
@@ -279,19 +210,3 @@ class Config(BaseSettings):
 
 
 config = Config()
-
-current_folder = os.path.dirname(__file__)
-root_folder = os.path.abspath(os.path.join(current_folder, ".."))
-tracker_env_path = os.path.join(root_folder, "itt")
-tracker_json_path = os.path.join(root_folder, "trackers", "itt.json")
-
-tracker_values = TrackerConfig(tracker_json_path)
-
-trackers = TrackerManager("itt")
-trackers.add_tracker(
-    Tracker(
-        api_token=config.ITT_APIKEY,
-        base_url=config.ITT_URL,
-        tracker_values=tracker_values,
-    )
-)
