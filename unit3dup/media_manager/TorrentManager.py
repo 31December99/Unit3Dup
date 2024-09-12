@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import argparse
-from typing import List, Optional
 from unit3dup.media_manager.VideoManager import VideoManager
 from unit3dup.media_manager.DocuManager import DocuManager
 from common.config import config
@@ -22,11 +21,11 @@ class TorrentManager:
         self.docu_category = tracker_data.category.get("edicola")
         self.preferred_lang = my_language(config.PREFERRED_LANG)
 
-    def process(self, contents: List) -> None:
+    def process(self, contents: list) -> None:
         for content in contents:
             # custom_console.bot_log(content.file_name)
-            tracker_response: Optional[str] = None
-            torrent_response: Optional[str] = None
+            tracker_response: str | None = None
+            torrent_response: str | None = None
 
             if content.category in {self.movie_category, self.serie_category}:
                 tracker_response, torrent_response = self.process_video_content(content)
@@ -37,7 +36,7 @@ class TorrentManager:
             if tracker_response:
                 self.qbitt(tracker_response, torrent_response, content)
 
-    def process_video_content(self, content) -> (Optional[str], Optional[str]):
+    def process_video_content(self, content) -> (str | None, str | None):
         custom_console.rule()
         video_manager = VideoManager(content=content)
 
@@ -66,7 +65,7 @@ class TorrentManager:
 
         return tracker_response, torrent_response
 
-    def process_docu_content(self, content) -> (Optional[str], Optional[str]):
+    def process_docu_content(self, content) -> (str | None, str | None):
         docu_manager = DocuManager(content=content)
         torrent_response = docu_manager.torrent()
         tracker_response = None
