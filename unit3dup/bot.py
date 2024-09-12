@@ -67,7 +67,7 @@ class Bot:
         # Process
         self.torrent_manager.process(contents)
 
-    def jack(self):
+    def pw(self):
         custom_console.panel_message("Analyzing... Please wait")
         # Examples
 
