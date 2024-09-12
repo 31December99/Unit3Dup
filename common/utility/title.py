@@ -58,6 +58,14 @@ class Guessit:
         return self.guessit["season"] if "season" in self.guessit else None
 
     @property
+    def guessit_episode_title(self):
+        """
+        Get the episode title
+        :return:
+        """
+        return self.guessit["episode_title"] if "episode_title" in self.guessit else None
+
+    @property
     def type(self):
         """
         Determina se è una serie verificando la presenza di un numero di stagione
