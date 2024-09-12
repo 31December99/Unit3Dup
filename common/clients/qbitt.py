@@ -15,7 +15,7 @@ from common.custom_console import custom_console
 class Qbitt:
 
     def __init__(
-            self, tracker_data_response: str, torrent: Mytorrent, contents: Contents
+        self, tracker_data_response: str, torrent: Mytorrent, contents: Contents
     ):
         self.torrent = torrent
         self.torrent_path = contents.torrent_path
@@ -27,27 +27,27 @@ class Qbitt:
 
     @classmethod
     def _check_connection(cls) -> typing.Optional[Client]:
-        qb = Client(f"{config.QBIT_URL}:{config.QBIT_PORT}/")
         try:
+            qb = Client(f"{config.QBIT_URL}:{config.QBIT_PORT}/")
+
             qb.login(username=config.QBIT_USER, password=config.QBIT_PASS)
             qb.torrents()
             custom_console.bot_log(f"[QBITTORENT]...... Online")
             return qb
         except requests.exceptions.HTTPError:
             custom_console.bot_error_log(
-                "[QBITTORENT] HTTP Error. Check IP/port or run qBittorrent."
+                "[QBITTORENT] HTTP Error. Check IP/port or run qBittorrent"
             )
         except requests.exceptions.ConnectionError:
             custom_console.bot_error_log(
-                "[QBITTORENT] Connection Error. Check IP/port or run qBittorrent."
+                "[QBITTORENT] Connection Error. Check IP/port or run qBittorrent"
             )
         except qbittorrent.client.LoginRequired:
             custom_console.bot_error_log(
-                "[QBITTORENT] Login required. Check your username and password."
+                "[QBITTORENT] Login required. Check your username and password"
             )
         except Exception as e:
             custom_console.bot_error_log(f"[QBITTORENT] Unexpected error: {str(e)}")
-
         return None
 
     @classmethod
@@ -57,7 +57,7 @@ class Qbitt:
 
     @classmethod
     def connect(
-            cls, tracker_data_response: str, torrent: Mytorrent, contents: Contents
+        cls, tracker_data_response: str, torrent: Mytorrent, contents: Contents
     ):
         qb = cls._check_connection()
         if qb:
