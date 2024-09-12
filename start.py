@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 
 from rich.console import Console
-from common.clients.qbitt import Qbitt
 from common.custom_console import custom_console
+from common.command import CommandLine
+from common.clients.qbitt import Qbitt
 from common.config import config
 from unit3dup.bot import Bot
 from unit3dup import pvtTracker
 from unit3dup.torrent import View
-from unit3dup.command import CommandLine
+
 
 console = Console(log_path=False)
 
@@ -60,15 +61,15 @@ def main():
         )
         unit3dup.run()
 
-    # Jacket mode
-    if cli.args.jacket:
+    # Pw
+    if cli.args.pw:
         unit3dup = Bot(
             path=cli.args.folder,
             tracker_name=cli.args.tracker,
             cli=cli.args,
             mode="folder",
         )
-        unit3dup.jack()
+        unit3dup.pw()
 
     # Commands list: commands not necessary for upload but may be useful
     torrent_info = View()
