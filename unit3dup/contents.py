@@ -1,5 +1,6 @@
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from common.utility import title
 
 
 @dataclass
@@ -18,6 +19,11 @@ class Contents:
     display_name: str
     doc_description: str
     audio_languages: list[str]
+    episode_title: str = field(init=False)
+
+    def __post_init__(self):
+        guess_filename = title.Guessit(self.file_name)
+        self.episode_title = guess_filename.guessit_episode_title
 
 
 @dataclass
