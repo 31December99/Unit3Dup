@@ -21,6 +21,11 @@ IMGBB_KEY=
 FREE_IMAGE_KEY=
 PW_API_KEY=
 PW_URL=http://localhost:9696/api/v1
+FTPX_USER=
+FTPX_PASS=
+FTPX_IP=
+FTPX_PORT=
+
 
 # TORRENT CLIENT
 QBIT_USER=
@@ -28,13 +33,31 @@ QBIT_PASS=
 QBIT_URL=http://localhost:8080
 QBIT_PORT=
 
-# USER PREFERENCES
+############################################## USER PREFERENCES ##############################################
+
+# Search for possible candidates for duplicate files
 DUPLICATE_ON=False
+
+# Number of screenshots we create
 NUMBER_OF_SCREENSHOTS=6
+
+# Level of compression for screenshot ( quality) ) 0 = Best quality
 COMPRESS_SCSHOT=4
+
+# Path for each torrent file created
 TORRENT_ARCHIVE=
+
+# Preferred language. Discard videos with a language different from preferred_lang
 PREFERRED_LANG=
+
+# Discard videos whose size deviates by more than the specified percentage (size_th) from the video in tracker
 SIZE_TH=100
+
+# FTPx local path for the download
+FTPX_LOCAL_PATH= 
+
+# FTP folder. Read from this folder when connecting to the server. Default = "."
+FTPX_ROOT=
 """
     with open(path, "w") as f:
         f.write(default_content.strip())
@@ -78,6 +101,10 @@ class Config(BaseSettings):
     FREE_IMAGE_KEY: str | None = Field(default=None, env="FREE_IMAGE_KEY")
     PW_API_KEY: str | None = Field(default=None, env="PW_API_KEY")
     PW_URL: str = Field(default="http://localhost:9696/api/v1", env="PW_URL")
+    FTPX_USER: str | None = Field(default=None, env="FTPX_USER")
+    FTPX_PASS: str | None = Field(default=None, env="FTPX_PASS")
+    FTPX_IP: str | None = Field(default=None, env="FTPX_IP")
+    FTPX_PORT: int | None = Field(default=None, env="FTPX_PORT")
 
     # TORRENT CLIENT
     QBIT_USER: str | None = Field(default=None, env="QBIT_USER")
@@ -92,6 +119,8 @@ class Config(BaseSettings):
     TORRENT_ARCHIVE: str | None = Field(default=None, env="TORRENT_ARCHIVE")
     PREFERRED_LANG: str | None = Field(default=None, env="PREFERRED_LANG")
     SIZE_TH: int = Field(default=100, env="SIZE_TH")
+    FTPX_LOCAL_PATH: str | None = Field(default=None, env="FTPX_LOCAL_PATH")
+    FTPX_ROOT: str | None = Field(default=".", env="FTPX_ROOT")
 
     def __init__(self, **values: any):
         super().__init__(**values)
@@ -126,7 +155,7 @@ class Config(BaseSettings):
     @field_validator("PW_URL")
     def validate_pw_url(cls, value):
         if not value:
-            custom_console.bot_error_log("No PW_URL provided")
+            custom_console.bot_question_log("[Optional] No PW_URL provided\n")
         return cls.validate_url(value, cls.__fields__["PW_URL"].default)
 
     @field_validator("TMDB_APIKEY")
@@ -150,7 +179,7 @@ class Config(BaseSettings):
     @field_validator("PW_API_KEY")
     def validate_pw_apikey(cls, value):
         if not value:
-            custom_console.bot_error_log("No PW API_KEY provided")
+            custom_console.bot_question_log("[Optional] No PW_API_KEY provided\n")
         return value
 
     @field_validator("QBIT_USER")
@@ -206,6 +235,42 @@ class Config(BaseSettings):
     def validate_size_th(cls, value):
         if not isinstance(value, int) or value <= 0:
             return cls.__fields__["SIZE_TH"].default
+        return value
+
+    @field_validator("FTPX_USER")
+    def validate_ftpx_user(cls, value):
+        if not value:
+            custom_console.bot_question_log("[Optional] No FTPX_USER provided\n")
+        return value
+
+    @field_validator("FTPX_PASS")
+    def validate_ftpx_pass(cls, value):
+        if not value:
+            custom_console.bot_question_log("[Optional] No FTPX_PASS provided\n")
+        return value
+
+    @field_validator("FTPX_IP")
+    def validate_ftpx_ip(cls, value):
+        if not value:
+            custom_console.bot_question_log("[Optional] No FTPX_IP provided\n")
+        return value
+
+    @field_validator("FTPX_PORT")
+    def validate_ftpx_port(cls, value):
+        if not value:
+            custom_console.bot_question_log("[Optional] No FTPX_PORT provided\n")
+        return value
+
+    @field_validator("FTPX_LOCAL_PATH")
+    def validate_ftpx_local_path(cls, value):
+        if not value:
+            custom_console.bot_question_log("[Optional] No FTPX_LOCAL_PATH provided\n")
+        return value
+
+    @field_validator("FTPX_ROOT")
+    def validate_ftpx_root(cls, value):
+        if not value:
+            custom_console.bot_question_log("[Optional] No FTPX_ROOT folder provided\n")
         return value
 
 
