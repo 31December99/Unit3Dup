@@ -2,11 +2,16 @@
 
 import argparse
 
-from common.custom_console import custom_console
 from common.external_services.theMovieDB.tmdb_service import TmdbService
-from common.external_services.Pw.pw_service import PwService
+from common.external_services.ftpx.core.models.list import FTPDirectory
 from unit3dup.media_manager.ContentManager import ContentManager
 from unit3dup.media_manager.TorrentManager import TorrentManager
+from common.external_services.Pw.pw_service import PwService
+from common.external_services.ftpx.core.menu import Menu
+from common.external_services.ftpx.client import Client
+from common.custom_console import custom_console
+from common.extractor import Extractor
+from common.config import config
 
 
 class Bot:
@@ -38,9 +43,6 @@ class Bot:
         # TMDB service
         self.tmdb_service = TmdbService()
 
-        # PW service
-        self.pw_service = PwService()
-
         # Get user contents
         self.content_manager = ContentManager(
             path=self.path, tracker_name=self.tracker_name, mode=self.mode
@@ -56,6 +58,9 @@ class Bot:
         custom_console.panel_message("Analyzing... Please wait")
 
         files = self.content_manager.get_files()
+        extractor = Extractor(media=files)
+        extractor.is_rar()
+
         contents = [
             content
             for item in files
@@ -64,10 +69,14 @@ class Bot:
         # Print the list of selected files being processed
         custom_console.bot_process_table_log(contents)
 
-        # Process
+        # Process them
         self.torrent_manager.process(contents)
 
     def pw(self):
+
+        # PW service
+        pw_service = PwService()
+
         custom_console.panel_message("Analyzing... Please wait")
         # Examples
 
@@ -110,8 +119,48 @@ class Bot:
         """
 
         # Query the indexers
-        search = self.pw_service.search(query="Maze runner")
+        search = pw_service.search(query="Maze runner")
         for index, s in enumerate(search):
             if s.seeders > 1:
                 torrent_file = search[index]
                 custom_console.log(torrent_file)
+
+    def ftp(self):
+        """
+        Controller
+        """
+        if not config.FTPX_LOCAL_PATH:
+            custom_console.bot_error_log(
+                "Set FTPX_LOCAL_PATH for -ftp command. Exit..."
+            )
+            exit(1)
+
+        # FTP service
+        ftp_client = Client()
+        menu = Menu()
+
+        page = ftp_client.home_page()
+        menu.show(table=page)
+
+        while 1:
+            user_option = ftp_client.user_input()
+            # return a table(page) or a selected folder (FTPDirectory)
+            page = ftp_client.input_manager(user_option)
+            if page == 0:
+                ftp_client.quit()
+            if not page:
+                continue
+
+            # Display the page as FtpDirectory (user choice)
+            if isinstance(page, FTPDirectory):
+                ftp_directory_name = page.name
+                # Change the path based on the user choice
+                if page.type == "Folder":
+                    page = ftp_client.change_path(selected_folder=ftp_directory_name)
+                    menu.show(table=page)
+                else:
+                    ftp_client.select_file(one_file_selected=page)
+                continue
+
+            # Display the page as table
+            menu.show(table=page)
