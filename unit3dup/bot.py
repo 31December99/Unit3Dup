@@ -21,7 +21,7 @@ class Bot:
     """
 
     def __init__(
-            self, path: str, tracker_name: str, cli: argparse.Namespace, mode="man"
+        self, path: str, tracker_name: str, cli: argparse.Namespace, mode="man"
     ):
         """
         Initialize the Bot instance with path, tracker name, command-line interface object, and mode
@@ -32,6 +32,7 @@ class Bot:
             cli (argparse.Namespace): The command-line arguments object
             mode (str): The mode of operation, default is 'man'
         """
+        self.content_manager = None
         self.path = path
         self.tracker_name = tracker_name
         self.cli = cli
@@ -43,24 +44,25 @@ class Bot:
         # TMDB service
         self.tmdb_service = TmdbService()
 
+    def run(self) -> None:
+        """
+        Start the process
+        """
+        custom_console.panel_message("Analyzing... Please wait")
+
         # Get user contents
         self.content_manager = ContentManager(
             path=self.path, tracker_name=self.tracker_name, mode=self.mode
         )
 
-    def run(self) -> None:
-        """
-        Executes the main workflow of the bot
-
-        This method analyzes files, retrieves media content, logs the contents being processed,
-        and then processes them using the Torrent Manager
-        """
-        custom_console.panel_message("Analyzing... Please wait")
-
+        # Get the contents
         files = self.content_manager.get_files()
-        extractor = Extractor(media=files)
-        extractor.is_rar()
 
+        # Search for rar files and decompress them
+        extractor = Extractor(media=files)
+        extractor.unrar()
+
+        # Create the file objects
         contents = [
             content
             for item in files
@@ -129,6 +131,8 @@ class Bot:
         """
         Controller
         """
+        custom_console.bot_question_log("\nConnecting to the remote FTP...")
+
         if not config.FTPX_LOCAL_PATH:
             custom_console.bot_error_log(
                 "Set FTPX_LOCAL_PATH for -ftp command. Exit..."
@@ -137,6 +141,8 @@ class Bot:
 
         # FTP service
         ftp_client = Client()
+        custom_console.bot_question_log(f"Connected to {ftp_client.sys_info()}\n\n")
+
         menu = Menu()
 
         page = ftp_client.home_page()
@@ -148,6 +154,7 @@ class Bot:
             page = ftp_client.input_manager(user_option)
             if page == 0:
                 ftp_client.quit()
+                #todo
             if not page:
                 continue
 
