@@ -258,3 +258,6 @@ class Client:
 
     def quit(self):
         self.ftpx_service.quit()
+
+    def sys_info(self):
+        return self.ftpx_service.syst()
