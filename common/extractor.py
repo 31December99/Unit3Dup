@@ -31,7 +31,7 @@ class Extractor:
                 file_name = os.path.join(delete_folder, file)
                 os.remove(file_name)
 
-    def is_rar(self) -> bool:
+    def unrar(self) -> bool:
         with Progress(
             SpinnerColumn(spinner_name="earth"), console=custom_console, transient=True
         ) as progress:
