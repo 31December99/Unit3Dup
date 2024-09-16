@@ -49,7 +49,6 @@ class FtpXCmds(FTP_TLS):
             self.keep_alive_thread.join()
 
         super().quit()
-        exit(1)
 
     @classmethod
     def new(
@@ -129,3 +128,7 @@ class FtpXCmds(FTP_TLS):
 
     def _size(self, file_path: str):
         return self.size(filename=file_path)
+
+    def _syst(self):
+        return self.sendcmd("SYST")
+
