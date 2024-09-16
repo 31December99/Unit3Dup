@@ -64,12 +64,20 @@ def main():
     # Pw
     if cli.args.pw:
         unit3dup = Bot(
-            path=cli.args.folder,
+            path=cli.args.pw,
             tracker_name=cli.args.tracker,
             cli=cli.args,
-            mode="folder",
         )
         unit3dup.pw()
+
+    # ftp
+    if cli.args.ftp:
+        unit3dup = Bot(
+            path=cli.args.ftp,
+            tracker_name=cli.args.tracker,
+            cli=cli.args,
+        )
+        unit3dup.ftp()
 
     # Commands list: commands not necessary for upload but may be useful
     torrent_info = View()
