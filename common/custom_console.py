@@ -15,15 +15,15 @@ console = Console(log_path=False)
 class CustomConsole(Console):
 
     def __init__(
-        self,
-        welcome_msg: str,
-        welcome_msg_color: str,
-        welcome_msg_border_color: str,
-        panel_msg_color: str,
-        panel_msg_border_color: str,
-        normal_color: str,
-        error_color: str,
-        question_msg_color: str,
+            self,
+            welcome_msg: str,
+            welcome_msg_color: str,
+            welcome_msg_border_color: str,
+            panel_msg_color: str,
+            panel_msg_border_color: str,
+            normal_color: str,
+            error_color: str,
+            question_msg_color: str,
     ):
 
         super().__init__()
