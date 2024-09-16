@@ -11,7 +11,7 @@ from common.trackers.trackers import ITTData
 
 
 class TorrentManager:
-    def __init__(self, cli: argparse.Namespace, tracker_name = None):  # todo tracker_name
+    def __init__(self, cli: argparse.Namespace, tracker_name=None):  # todo tracker_name
         self.cli = cli
 
         tracker_data = ITTData.load_from_module()
