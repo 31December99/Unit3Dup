@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 import os
+import datetime
+import re
+from datetime import datetime
 from thefuzz import fuzz
 
 
@@ -134,6 +137,7 @@ class Manage_titles:
             ".drc",
             ".m3u8",
             ".pdf",
+            ".rar",
         ]
 
         return os.path.splitext(file)[1].lower() in video_ext
@@ -150,6 +154,38 @@ class Manage_titles:
         return fuzz.ratio(str1.lower(), str2.lower())
 
 
+class MyString:
+
+    @staticmethod
+    def parse_date(line_str: str) -> datetime | None:
+        """
+        Parse a string with or without time
+        """
+
+        # Case string with time attribute
+        match_time = re.search(r"(\w{3})\s+(\d{1,2})\s+(\d{2}:\d{2})", line_str)
+
+        # Case string without time attribute
+        match_no_time = re.search(r"(\w{3})\s+(\d{1,2})\s+(\d{4})", line_str)
+
+        if match_time:
+            # Build a datetime object
+            month, day, time = match_time.groups()
+            year = datetime.now().year
+            data_ora = datetime.strptime(
+                f"{month} {day} {time} {year}", "%b %d %H:%M %Y"
+            )
+
+        elif match_no_time:
+            # Build a datetime object with no time
+            month, day, year = match_no_time.groups()
+            data_ora = datetime.strptime(f"{month} {day} {year}", "%b %d %Y")
+        else:
+            # Invalid string
+            return
+        return data_ora
+
+
 class System:
 
     @staticmethod
@@ -157,7 +193,7 @@ class System:
 
         # Size of single file
         if os.path.isfile(folder_path):
-            return round(os.path.getsize(folder_path) / (1024**3), 2)
+            return round(os.path.getsize(folder_path) / (1024 ** 3), 2)
         else:
             # size of folder
             total_size = 0
@@ -166,4 +202,4 @@ class System:
                     file_path = os.path.join(dirpath, file)
                     if not os.path.islink(file_path):
                         total_size += os.path.getsize(file_path)
-            return round(total_size / (1024**3), 2)
+            return round(total_size / (1024 ** 3), 2)
