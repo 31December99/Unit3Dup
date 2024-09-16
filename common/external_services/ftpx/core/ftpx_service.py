@@ -51,7 +51,14 @@ class FtpX(FtpXCmds):
             os.makedirs(local_dir)
 
         # Download...
-        self._retr(remote_path=remote_path, local_path=local_path, size=self.file_size(remote_path))
+        self._retr(
+            remote_path=remote_path,
+            local_path=local_path,
+            size=self.file_size(remote_path),
+        )
 
     def file_size(self, file_path: str):
         return self._size(file_path=file_path)
+
+    def syst(self):
+        return self._syst()
