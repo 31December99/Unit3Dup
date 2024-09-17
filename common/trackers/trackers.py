@@ -7,9 +7,9 @@ from common.utility.utility import Manage_titles
 
 @dataclass
 class ITTData:
-    category: dict[str, str]
+    category: dict[str, int]
     freelech: dict[str, int]
-    type_id: dict[str, str]
+    type_id: dict[str, int]
     resolution: dict[str, int]
     codec: list
 
