@@ -109,7 +109,7 @@ class UploadVideo(UploadBot):
         tracker.data["tmdb"] = data.result.video_id
         tracker.data["keywords"] = data.result.keywords
         tracker.data["category_id"] = data.category
-        tracker.data["resolution_id"] = self.tracker_data.filter_type(data.file_name)
+        tracker.data["resolution_id"] = self.tracker_data.filter_resolution(data.file_name)
         tracker.data["sd"] = data.standard
         tracker.data["mediainfo"] = data.media_info
         tracker.data["description"] = data.description
