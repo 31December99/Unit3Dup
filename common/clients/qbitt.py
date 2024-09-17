@@ -32,7 +32,7 @@ class Qbitt:
 
             qb.login(username=config.QBIT_USER, password=config.QBIT_PASS)
             qb.torrents()
-            custom_console.bot_log(f"[QBITTORENT]...... Online")
+            custom_console.bot_log(f"[QBITTORRENT]...... Online")
             return qb
         except requests.exceptions.HTTPError:
             custom_console.bot_error_log(
