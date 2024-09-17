@@ -1,30 +1,26 @@
 # -*- coding: utf-8 -*-
+
 import threading
 import time
-
-from common.custom_console import custom_console
 from rich.progress import Progress
-from common.config import config
 from ftplib import FTP_TLS
-
+from common.custom_console import custom_console
+from common.config import config
 
 class FtpXCmds(FTP_TLS):
     def __init__(self):
         super().__init__()
-        self._stop_download = False
-
-        # Keep the connection alive (seconds)
-        self.keep_alive_interval = 60
-        # Flag to stop the thread when quitting
-        self.keep_alive_stop_flag = threading.Event()
-        # Separate thread to run noop to the server
-        self.keep_alive_thread = threading.Thread(target=self._keep_alive)
-        # Daemon mode
-        self.keep_alive_thread.daemon = True
-        # Start the thread
-        self.keep_alive_thread.start()
-        # Flag to show if quitting is in progress
         self.is_quitting = False
+        if config.FTPX_KEEP_ALIVE:
+            # Time interval to keep the connection alive (in seconds)
+            self.keep_alive_interval = 10
+            # flag to stop the keep-alive thread
+            self.keep_alive_stop_flag = threading.Event()
+            # Separate thread to run noop to the server
+            self.keep_alive_thread = threading.Thread(target=self._keep_alive)
+            # Daemon mode
+            self.keep_alive_thread.daemon = True
+            self.keep_alive_thread.start()
 
     def _keep_alive(self):
         while not self.keep_alive_stop_flag.is_set():
@@ -36,18 +32,25 @@ class FtpXCmds(FTP_TLS):
                 if not self.is_quitting:
                     self.quit()
 
+    @staticmethod
+    def _execute_command(command_fn, *args, **kwargs):
+        try:
+            return command_fn(*args, **kwargs)
+        except Exception as e:
+            custom_console.bot_error_log(f"Error during {command_fn.__name__} command: {e}")
+            exit(1)
+
     def quit(self):
-        """Close the FTP connection and stop the keep-alive thread"""
-        custom_console.bot_question_log("Exiting... Please wait for the app to close..")
+        custom_console.bot_question_log("Exiting... Please wait for the app to close\n")
         if self.is_quitting:
             return
+        if config.FTPX_KEEP_ALIVE:
+            # Set the stop flag for the keep-alive thread
+            self.keep_alive_stop_flag.set()
+            if self.keep_alive_thread.is_alive():
+                # Wait for the thread to finish
+                self.keep_alive_thread.join()
         self.is_quitting = True
-        # Flag to stop the thread
-        self.keep_alive_stop_flag.set()
-        if self.keep_alive_thread.is_alive():
-            # Wait for thread finish
-            self.keep_alive_thread.join()
-
         super().quit()
 
     @classmethod
@@ -79,22 +82,14 @@ class FtpXCmds(FTP_TLS):
         output_lines = []
 
         def collect_line(line):
-            """Callback function to collect output lines"""
             output_lines.append(line)
 
-        try:
-            self._send_pret("LIST")
-            self.retrlines(f"LIST {path}", callback=collect_line)
-            return output_lines
-        except Exception as e:
-            custom_console.bot_error_log(f"Error during LIST command: {e}")
-            return []
+        self._execute_command(self._send_pret, "LIST")
+        self._execute_command(self.retrlines, f"LIST {path}", callback=collect_line)
+        return output_lines
 
     def _retr(self, remote_path, local_path: str, size: int) -> bool:
-        """Retrieve a file from FTP server using RETR with PRET"""
-        try:
-            self._send_pret(f"RETR {remote_path}")
-
+        def download():
             with open(local_path, "wb") as local_file:
                 with Progress() as progress:
                     task = progress.add_task(
@@ -106,29 +101,22 @@ class FtpXCmds(FTP_TLS):
                         progress.update(task, advance=len(chunk))
 
                     self.retrbinary(f"RETR {remote_path}", write_chunk)
-            return True
-        except Exception as e:
-            custom_console.bot_error_log(f"[_retr]: {e}")
-            return False
+
+        return self._execute_command(self._send_pret, f"RETR {remote_path}") and self._execute_command(download)
 
     def _cwd(self, path):
-        """Change the working directory on FTP server"""
-        try:
-            self._send_pret(f"CWD {path}")
-            self.cwd(path)
-        except Exception as e:
-            custom_console.bot_error_log(f"Error during directory change: {e}")
+        # Change the working directory on the FTP server using PRET
+        self._execute_command(self._send_pret, f"CWD {path}")
+        self._execute_command(self.cwd, path)
 
     def _pwd(self) -> str:
-        try:
-            return self.pwd()
-        except Exception as e:
-            custom_console.bot_error_log(f"Error during pwd command: {e}")
-            self.quit()
+        # Get the current directory on the FTP server
+        return self._execute_command(self.pwd)
 
     def _size(self, file_path: str):
-        return self.size(filename=file_path)
+        # Get the size of a file on the FTP server
+        return self._execute_command(self.size, filename=file_path)
 
     def _syst(self):
-        return self.sendcmd("SYST")
-
+        # Send the syst command to get system info from the server
+        return self._execute_command(self.sendcmd, "SYST")
