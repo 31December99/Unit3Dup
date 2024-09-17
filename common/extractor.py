@@ -38,6 +38,9 @@ class Extractor:
             task = progress.add_task("Working...", total=100)
 
             for media in self.media_list:
+                if not os.path.isdir(media.subfolder):
+                    continue
+
                 folder_list = os.listdir(media.subfolder)
 
                 for file_name in folder_list:
