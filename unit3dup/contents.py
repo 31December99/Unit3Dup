@@ -24,6 +24,8 @@ class Contents:
     def __post_init__(self):
         guess_filename = title.Guessit(self.file_name)
         self.episode_title = guess_filename.guessit_episode_title
+        if self.episode_title:
+            self.display_name = ' '.join(self.display_name.replace(self.episode_title, '').split())
 
 
 @dataclass
