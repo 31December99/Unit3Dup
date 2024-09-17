@@ -23,7 +23,6 @@ class TorrentManager:
 
     def process(self, contents: list) -> None:
         for content in contents:
-            # custom_console.bot_log(content.file_name)
             tracker_response: str | None = None
             torrent_response: str | None = None
 
