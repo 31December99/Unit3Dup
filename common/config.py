@@ -58,6 +58,8 @@ FTPX_LOCAL_PATH=
 
 # FTP folder. Read from this folder when connecting to the server. Default = "."
 FTPX_ROOT=
+
+FTPX_KEEP_ALIVE=False
 """
     with open(path, "w") as f:
         f.write(default_content.strip())
@@ -121,6 +123,7 @@ class Config(BaseSettings):
     SIZE_TH: int = Field(default=100, env="SIZE_TH")
     FTPX_LOCAL_PATH: str | None = Field(default=None, env="FTPX_LOCAL_PATH")
     FTPX_ROOT: str | None = Field(default=".", env="FTPX_ROOT")
+    FTPX_KEEP_ALIVE: bool | None = Field(default=False, env="FTPX_KEEP_ALIVE")
 
     def __init__(self, **values: any):
         super().__init__(**values)
