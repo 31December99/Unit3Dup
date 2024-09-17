@@ -21,7 +21,7 @@ class Bot:
     """
 
     def __init__(
-        self, path: str, tracker_name: str, cli: argparse.Namespace, mode="man"
+            self, path: str, tracker_name: str, cli: argparse.Namespace, mode="man"
     ):
         """
         Initialize the Bot instance with path, tracker name, command-line interface object, and mode
@@ -154,7 +154,7 @@ class Bot:
             page = ftp_client.input_manager(user_option)
             if page == 0:
                 ftp_client.quit()
-                #todo
+                break
             if not page:
                 continue
 
