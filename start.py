@@ -70,13 +70,14 @@ def main():
         )
         unit3dup.pw()
 
-    # ftp
-    if cli.args.ftp and cli.args.scan:
+    # ftp and upload
+    if cli.args.ftp:
         unit3dup = Bot(
             path=cli.args.scan, tracker_name=cli.args.tracker, cli=cli.args, mode="auto"
         )
         unit3dup.ftp()
-        unit3dup.run()
+        if cli.args.scan:
+            unit3dup.run()
 
     # Commands list: commands not necessary for upload but may be useful
     torrent_info = View()
