@@ -29,8 +29,8 @@ class MyPage:
         self.items_per_page = items_per_page
         self.current_page = 1
         self.total_pages = (
-                                   len(self.items) + self.items_per_page - 1
-                           ) // self.items_per_page
+            len(self.items) + self.items_per_page - 1
+        ) // self.items_per_page
 
     def get_items(self) -> list[Folder]:
         """
@@ -85,7 +85,7 @@ class MyPage:
         table.add_column("Category", style="green", header_style="bold green")
 
         for idx, category in enumerate(
-                page, start=1
+            page, start=1
         ):  # Adjust index to start from 1 for display
             row_style = "white" if idx % 2 == 0 else "bright_black"
             table.add_row(
@@ -131,7 +131,9 @@ class Client:
 
         # Quit if there are no files in the root folder
         if not home_folder:
-            custom_console.bot_error_log("Root folder not found or there are no files..")
+            custom_console.bot_error_log(
+                "Root folder not found or there are no files.."
+            )
             self.ftpx_service.quit()
 
         # Create a page with the current folder
@@ -192,8 +194,17 @@ class Client:
             download_list = [(self.remote_path, self.current_list_of_files[0].size)]
 
         for remote_file, size in download_list:
+
+            # Skip the first '/' otherwise it would create a list with a leading space
+            remote_file_path = remote_file[1:].split("/")
+            # Get only the last two subfolders
+            if len(remote_file_path) > 2:
+                remote_short_path = remote_file_path[-2:]
+            else:
+                remote_short_path = remote_file_path
+
             download_to_local_path = os.path.join(
-                config.FTPX_LOCAL_PATH, remote_file.lstrip("/")
+                config.FTPX_LOCAL_PATH, *remote_short_path
             )
             custom_console.bot_log(
                 f"Server:{os.path.basename(remote_file)} -> Client:{download_to_local_path}"
@@ -250,7 +261,9 @@ class Client:
         elif action.upper() == "U":
             return self.page_up()
         elif action.upper() == "D":
-            return self.download()
+            self.download()
+            # Exit after the download
+            return 0
         elif action.upper() == "Q":
             return 0
         else:
