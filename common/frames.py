@@ -97,8 +97,9 @@ class VideoFrame:
         try:
             result = subprocess.run(command, capture_output=True, text=True, check=True)
             duration = float(result.stdout.strip())
-        except subprocess.CalledProcessError as e:
-            raise RuntimeError(f"ffprobe error: {e.stderr}")
+        except subprocess.CalledProcessError:
+            custom_console.bot_error_log(f"ffprobe error: The media is invalid {self.video_path}")
+            exit(1)
         except FileNotFoundError:
             custom_console.bot_error_log(
                 "[FFMPEG-ffprobe not found] - Install ffmpeg or check your system path"
