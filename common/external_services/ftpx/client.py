@@ -140,6 +140,8 @@ class Client:
         self.page = MyPage(home_folder)
         # current ftp remote path
         self.remote_path = None
+        # current download local path
+        self.download_to_local_path = None
         # Current list of files (as shown in the Table of Contents)
         self.current_list_of_files: list["FTPDirectory"] = []
         # Selected single file
@@ -190,7 +192,7 @@ class Client:
                 for file in self.current_list_of_files
             ]
         else:
-            # Get the singole file selected
+            # Get the single file selected
             download_list = [(self.remote_path, self.current_list_of_files[0].size)]
 
         for remote_file, size in download_list:
@@ -203,15 +205,15 @@ class Client:
             else:
                 remote_short_path = remote_file_path
 
-            download_to_local_path = os.path.join(
+            self.download_to_local_path = os.path.join(
                 config.FTPX_LOCAL_PATH, *remote_short_path
             )
             custom_console.bot_log(
-                f"Server:{os.path.basename(remote_file)} -> Client:{download_to_local_path}"
+                f"Server:{os.path.basename(remote_file)} -> Client:{self.download_to_local_path}"
             )
 
             self.ftpx_service.download_file(
-                remote_path=remote_file, local_path=download_to_local_path
+                remote_path=remote_file, local_path=self.download_to_local_path
             )
 
     def select_file(self, one_file_selected: FTPDirectory):
