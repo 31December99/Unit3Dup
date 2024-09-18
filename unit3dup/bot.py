@@ -75,10 +75,11 @@ class Bot:
         self.torrent_manager.process(contents)
 
     def pw(self):
-
         # PW service
-        pw_service = PwService()
+        if not config.PW_API_KEY:
+            return
 
+        pw_service = PwService()
         custom_console.panel_message("Analyzing... Please wait")
         # Examples
 
