@@ -57,7 +57,7 @@ class FtpXCmds(FTP_TLS):
     def new(
         cls,
         host=config.FTPX_IP,
-        port=config.FTPX_PORT,
+        port=int(config.FTPX_PORT),
         user=config.FTPX_USER,
         passwd=config.FTPX_PASS,
     ):
