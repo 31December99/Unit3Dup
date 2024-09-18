@@ -9,7 +9,6 @@ from unit3dup.bot import Bot
 from unit3dup import pvtTracker
 from unit3dup.torrent import View
 
-
 console = Console(log_path=False)
 
 
@@ -73,11 +72,9 @@ def main():
     # ftp and upload
     if cli.args.ftp:
         unit3dup = Bot(
-            path=cli.args.scan, tracker_name=cli.args.tracker, cli=cli.args, mode="auto"
+            path='', tracker_name=cli.args.tracker, cli=cli.args, mode="folder"
         )
         unit3dup.ftp()
-        if cli.args.scan:
-            unit3dup.run()
 
     # Commands list: commands not necessary for upload but may be useful
     torrent_info = View()
