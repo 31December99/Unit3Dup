@@ -21,7 +21,7 @@ class Bot:
     """
 
     def __init__(
-            self, path: str, tracker_name: str, cli: argparse.Namespace, mode="man"
+        self, path: str, tracker_name: str, cli: argparse.Namespace, mode="man"
     ):
         """
         Initialize the Bot instance with path, tracker name, command-line interface object, and mode
@@ -171,3 +171,11 @@ class Bot:
 
             # Display the page as table
             menu.show(table=page)
+
+        # Return the path for the upload
+        if ftp_client.download_to_local_path:
+            scan_path = ftp_client.download_to_local_path.split("/")
+            scan_path = "/".join(scan_path[:-1])
+            print(scan_path)
+            self.path = scan_path
+            self.run()
