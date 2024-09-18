@@ -106,7 +106,7 @@ class Config(BaseSettings):
     FTPX_USER: str | None = Field(default=None, env="FTPX_USER")
     FTPX_PASS: str | None = Field(default=None, env="FTPX_PASS")
     FTPX_IP: str | None = Field(default=None, env="FTPX_IP")
-    FTPX_PORT: int | None = Field(default=None, env="FTPX_PORT")
+    FTPX_PORT: str | None = Field(default="2121", env="FTPX_PORT")
 
     # TORRENT CLIENT
     QBIT_USER: str | None = Field(default=None, env="QBIT_USER")
