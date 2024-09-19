@@ -143,6 +143,12 @@ class Manage_titles:
         return os.path.splitext(file)[1].lower() in video_ext
 
     @staticmethod
+    def replace(subdir: str):
+        # wrong guessit when substring is 'S01-'
+        # '-'
+        return subdir.replace('-', '.')
+
+    @staticmethod
     def media_docu_type(file_name: str) -> str:
         ext = os.path.splitext(file_name)[1].lower()
         type_ = {".pdf": "edicola"}
