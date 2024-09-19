@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import json
 import os
-import time
 import torf
 from tqdm import tqdm
 from common.custom_console import custom_console
@@ -35,11 +34,8 @@ class Mytorrent:
 
     def hash(self):
         custom_console.print(f"\n[ HASHING ] {self.mytorr.name}")
-        start = time.time()
         with HashProgressBar() as progress:
             self.mytorr.generate(threads=4, callback=progress.callback, interval=0)
-        end = time.time()
-        # custom_console.print(f"Hashed in {end - start} s\n")
 
     def write(self) -> bool:
         full_path = f"{self.torrent_path}.torrent"
