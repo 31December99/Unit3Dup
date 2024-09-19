@@ -39,7 +39,7 @@ class Media:
 
     folder: str
     subfolder: str
-    media_type: str
+    media_type: int
     source: str
     other: str
     audio_codec: str
