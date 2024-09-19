@@ -56,7 +56,7 @@ class MyTmdb:
                 if not result:
                     return None
         else:
-            result.keywords = self.keywords(result.video_id)
+            details, result.keywords = self.keywords(result.video_id)
         return result
 
     def input_tmdb(self) -> Results:
