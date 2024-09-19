@@ -3,9 +3,10 @@
 import threading
 import time
 from rich.progress import Progress
-from ftplib import FTP_TLS
+from ftplib import FTP_TLS, all_errors
 from common.custom_console import custom_console
 from common.config import config
+
 
 class FtpXCmds(FTP_TLS):
     def __init__(self):
@@ -55,11 +56,11 @@ class FtpXCmds(FTP_TLS):
 
     @classmethod
     def new(
-        cls,
-        host=config.FTPX_IP,
-        port=int(config.FTPX_PORT),
-        user=config.FTPX_USER,
-        passwd=config.FTPX_PASS,
+            cls,
+            host=config.FTPX_IP,
+            port=int(config.FTPX_PORT),
+            user=config.FTPX_USER,
+            passwd=config.FTPX_PASS,
     ):
         """Create an instance of FtpXCmds and handle connection and login"""
         ftp = cls()
@@ -67,10 +68,9 @@ class FtpXCmds(FTP_TLS):
             ftp.connect(host, port)
             ftp.login(user=user, passwd=passwd)
             ftp.prot_p()  # Enable SSL
-        except Exception as e:
-            print(f"Error during connection or login: {e}")
-            ftp.quit()
-            raise
+        except all_errors as e:
+            custom_console.bot_error_log(f"\nFTP Server Error: {e}")
+            exit(1)
         return ftp
 
     def _send_pret(self, command):
