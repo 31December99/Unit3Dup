@@ -88,6 +88,9 @@ class MyTmdb:
                         results.backdrop_path = details["backdrop_path"]
                         results.video_id = tmdb_id
                         return results
+                else:
+                    results.video_id = 0
+                    return results
 
     def __requests(self):
         self.__result = self.tmdb.search(self.ext_title)
