@@ -42,13 +42,3 @@ class ITTData:
                 return self.type_id.get("encode", -1)
 
         return self.type_id.get("altro", -1)
-
-    def filter_resolution(self, file_name: str) -> int:
-
-        file_name = Manage_titles.clean(file_name)
-        word_list = file_name.lower().strip().split(" ")
-        for word in word_list:
-            if word in self.resolution:
-                return self.resolution[word]
-
-        return -1
