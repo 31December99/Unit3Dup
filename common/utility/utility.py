@@ -144,9 +144,14 @@ class Manage_titles:
 
     @staticmethod
     def replace(subdir: str):
+        res = ["4320", "2160", "1080", "720", "576", "480"]
         # wrong guessit when substring is 'S01-'
         # '-'
-        return subdir.replace('-', '.')
+        subdir = subdir.replace("-", ".")
+        # wrong guessit season when there are no 'p' or 'i' in then subdir string
+        for wrong_res in res:
+            subdir = subdir.replace(wrong_res, ' ')
+        return subdir
 
     @staticmethod
     def media_docu_type(file_name: str) -> str:
@@ -199,7 +204,7 @@ class System:
 
         # Size of single file
         if os.path.isfile(folder_path):
-            return round(os.path.getsize(folder_path) / (1024 ** 3), 2)
+            return round(os.path.getsize(folder_path) / (1024**3), 2)
         else:
             # size of folder
             total_size = 0
@@ -208,4 +213,4 @@ class System:
                     file_path = os.path.join(dirpath, file)
                     if not os.path.islink(file_path):
                         total_size += os.path.getsize(file_path)
-            return round(total_size / (1024 ** 3), 2)
+            return round(total_size / (1024**3), 2)
