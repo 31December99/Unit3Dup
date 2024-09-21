@@ -1,172 +1,67 @@
-import json
 import os
+from common.trackers.trackers import ITTData
+from dataclasses import dataclass, field
+from common.mediainfo import MediaFile
+from common.utility import title
 
 
+@dataclass
 class Contents:
+    """Create a new object with the attributes of Contents"""
 
-    def __init__(
-        self,
-        file_name: str,
-        folder: str,
-        name: str,
-        size: int,
-        metainfo: json,
-        category: int,
-        tracker_name: str,
-        torrent_pack: bool,
-        torrent_path: str,
-        display_name: str,
-        doc_description: str,
-        audio_languages: list,
-    ):
-        self.file_name = file_name
-        self.name = name
-        self.folder = folder
-        self.size = size
-        self.metainfo = metainfo
-        self.category = category
-        self.tracker_name = tracker_name
-        self.torrent_pack = torrent_pack
-        self.torrent_path = torrent_path
-        self.display_name = display_name
-        self.doc_description = doc_description
-        self.audio_languages = audio_languages
+    file_name: str
+    folder: str
+    name: str
+    size: int
+    metainfo: str
+    category: int
+    tracker_name: str
+    torrent_pack: bool
+    torrent_path: str
+    display_name: str
+    doc_description: str
+    audio_languages: list[str]
+    episode_title: str = field(init=False)
+    resolution: int = field(init=False)
 
-    @classmethod
-    def create_instance(
-        cls,
-        file_name: str,
-        folder: str,
-        name: str,
-        size: int,
-        metainfo: json,
-        category: int,
-        tracker_name: str,
-        torrent_pack: bool,
-        torrent_path: str,
-        display_name: str,
-        doc_description: str,
-        audio_languages: list,
-    ):
-        return cls(
-            file_name,
-            folder,
-            name,
-            size,
-            metainfo,
-            category,
-            tracker_name,
-            torrent_pack,
-            torrent_path,
-            display_name,
-            doc_description,
-            audio_languages,
-        )
+    def __post_init__(self):
+        # Search for the episode title
+        guess_filename = title.Guessit(self.file_name)
+        self.episode_title = guess_filename.guessit_episode_title
+        if self.episode_title:
+            self.display_name = " ".join(
+                self.display_name.replace(self.episode_title, "").split()
+            )
+
+        # Search for resolution based on mediainfo string
+        tracker_data = ITTData.load_from_module()
+        file_path = os.path.join(self.folder, self.file_name)
+        media_file = MediaFile(file_path)
+        video_height = f"{media_file.video_height}p"
+        if video_height not in tracker_data.resolution:
+            self.resolution = tracker_data.resolution['altro']
+        else:
+            self.resolution = tracker_data.resolution[video_height]
 
 
-class File:
-    """
-    For each File , create an object with attributes:
-    file_name, folder, media_type
+@dataclass
+class Media:
     """
 
-    def __init__(
-        self,
-        file_name: str,
-        folder: str,
-        media_type: str,
-        torrent_name: str,
-        source: str,
-        other: str,
-        audio_codec: str,
-        subtitle: str,
-        resolution: str,
-    ):
-        self.torrent_path = os.path.join(folder, file_name)
-        self.folder = folder
-        self.media_type = media_type
-        self.torrent_name = torrent_name
-        self.source = source
-        self.other = other
-        self.audio_code = audio_codec
-        self.subtitle = subtitle
-        self.resolution = resolution
-
-    @classmethod
-    def create(
-        cls,
-        file_name: str,
-        folder: str,
-        media_type: str,
-        torrent_name: str,
-        source: str,
-        other: str,
-        audio_codec: str,
-        subtitle: str,
-        resolution: str,
-    ):
-        return cls(
-            file_name,
-            folder,
-            media_type,
-            torrent_name,
-            source,
-            other,
-            audio_codec,
-            subtitle,
-            resolution,
-        )
-
-
-class Folder:
-    """
     For each Folder, create an object with attributes:
-    folder, subfolder, media_type
+    folder, subfolder, media_type, other, audio_codec, subtitle, resolution
+
     """
 
-    def __init__(
-        self,
-        folder: str,
-        subfolder: str,
-        media_type: str,
-        torrent_name: str,
-        source: str,
-        other: str,
-        audio_codec: str,
-        subtitle: str,
-        resolution: str,
-    ):
-        self.torrent_path = os.path.join(folder, subfolder)
-        self.subfolder = subfolder
-        self.media_type = media_type
-        self.torrent_name = torrent_name
-        self.source = source
-        self.other = other
-        self.audio_code = audio_codec
-        self.subtitle = subtitle
-        self.resolution = resolution
+    folder: str
+    subfolder: str
+    media_type: int
+    source: str
+    other: str
+    audio_codec: str
+    subtitle: str
+    resolution: str
 
-    @classmethod
-    def create(
-        cls,
-        folder: str,
-        subfolder: str,
-        media_type: str,
-        torrent_name: str,
-        source: str,
-        other: str,
-        audio_codec: str,
-        subtitle: str,
-        resolution: str,
-    ):
-        return cls(
-            folder,
-            subfolder,
-            media_type,
-            torrent_name,
-            source,
-            other,
-            audio_codec,
-            subtitle,
-            resolution,
-        )
+    @property
+    def torrent_path(self) -> str:
+        return os.path.join(self.folder, self.subfolder)

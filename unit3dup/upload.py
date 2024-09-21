@@ -5,6 +5,7 @@ import requests
 from unit3dup import pvtTracker, payload, contents
 from abc import ABC, abstractmethod
 from common.config import config
+from common.trackers.trackers import ITTData
 from common.custom_console import custom_console
 
 
@@ -19,10 +20,8 @@ class UploadBot(ABC):
         self.metainfo = content.metainfo
         self.torrent_path = content.torrent_path
         self.torrent_file_path = os.path.join(self.torrent_path, self.file_name)
-
-        self.config = config.trackers.get_tracker(self.tracker_name)
-        self.API_TOKEN = config.API_TOKEN
-        self.BASE_URL = config.BASE_URL
+        self.API_TOKEN = config.ITT_APIKEY
+        self.BASE_URL = config.ITT_URL
 
     def send(self, tracker: pvtTracker) -> requests:
         tracker_response = tracker.upload_t(
@@ -51,16 +50,17 @@ class UploadBot(ABC):
 class UploadDocument(UploadBot):
     def __init__(self, content: contents):
         super().__init__(content)
+        self.tracker_data = ITTData.load_from_module()
 
     def payload(self):
-        return payload.Data.create_instance(
+        return payload.Data(
             metainfo=self.metainfo,
             name=self.content.name,
             file_name=self.file_name,
             result="",
             category=self.content.category,
             standard=0,
-            mediainfo="",
+            media_info="",
             description=self.content.doc_description,
         )
 
@@ -72,7 +72,7 @@ class UploadDocument(UploadBot):
         tracker.data["tmdb"] = 0
         tracker.data["category_id"] = data.category
         tracker.data["description"] = data.description
-        tracker.data["type_id"] = self.config.tracker_values.filterType(data.file_name)
+        tracker.data["type_id"] = self.tracker_data.filter_type(data.file_name)
         tracker.data["resolution_id"] = ""
         # tracker.data["torrent-cover"] = "" TODO: not yet implemented
         return tracker
@@ -81,22 +81,24 @@ class UploadDocument(UploadBot):
 class UploadVideo(UploadBot):
     def __init__(self, content: contents):
         super().__init__(content)
+        self.tracker_data = ITTData.load_from_module()
 
     def payload(self, tv_show: list, video_info: pvtTracker):
         if video_info:
-            return payload.Data.create_instance(
+            return payload.Data(
                 metainfo=self.metainfo,
                 name=self.content.name,
                 file_name=self.file_name,
                 result=tv_show,
                 category=self.content.category,
-                mediainfo=video_info.mediainfo,
+                media_info=video_info.mediainfo,
                 description=video_info.description,
                 standard=video_info.is_hd,
-
             )
         else:
-            custom_console.bot_error_log(f"[Payload] Unable to create a 'video payload' -> {video_info}")
+            custom_console.bot_error_log(
+                f"[Payload] Unable to create a 'video payload' -> {video_info}"
+            )
             return
 
     def tracker(self, data: payload) -> pvtTracker:
@@ -107,13 +109,11 @@ class UploadVideo(UploadBot):
         tracker.data["tmdb"] = data.result.video_id
         tracker.data["keywords"] = data.result.keywords
         tracker.data["category_id"] = data.category
-        tracker.data["resolution_id"] = self.config.tracker_values.filterResolution(
-            data.file_name
-        )
+        tracker.data["resolution_id"] = self.content.resolution
         tracker.data["sd"] = data.standard
         tracker.data["mediainfo"] = data.media_info
         tracker.data["description"] = data.description
-        tracker.data["type_id"] = self.config.tracker_values.filterType(data.file_name)
+        tracker.data["type_id"] = self.tracker_data.filter_type(data.file_name)
         tracker.data["season_number"] = data.myguess.guessit_season
         tracker.data["episode_number"] = (
             data.myguess.guessit_episode if not self.content.torrent_pack else 0

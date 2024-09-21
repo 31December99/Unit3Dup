@@ -12,7 +12,7 @@ class Torrent:
     def __init__(self):
         self.perPage = 30
         self.tracker = pvtTracker.Unit3d(
-            base_url=config.BASE_URL, api_token=config.API_TOKEN, pass_key=""
+            base_url=config.ITT_URL, api_token=config.ITT_APIKEY, pass_key=""
         )
 
         print()
@@ -37,14 +37,14 @@ class Torrent:
             description=description, perPage=self.perPage
         )
 
-    def get_by_bdinfo(self, bdinfo: str) -> requests:
-        return self.tracker.get_bdinfo(bdinfo=bdinfo, perPage=self.perPage)
+    def get_by_bdinfo(self, bd_info: str) -> requests:
+        return self.tracker.get_bdinfo(bdinfo=bd_info, perPage=self.perPage)
 
     def get_by_uploader(self, username: str) -> requests:
         return self.tracker.get_uploader(uploader=username, perPage=self.perPage)
 
-    def get_by_start_year(self, startyear: str) -> requests:
-        return self.tracker.start_year(start_year=startyear, perPage=self.perPage)
+    def get_by_start_year(self, start_year: str) -> requests:
+        return self.tracker.start_year(start_year=start_year, perPage=self.perPage)
 
     def get_by_end_year(self, end_year: str) -> requests:
         return self.tracker.end_year(end_year=end_year, perPage=self.perPage)
@@ -138,7 +138,7 @@ class View(Torrent):
         super().__init__()
         self.perPage = 30
         self.tracker = pvtTracker.Unit3d(
-            base_url=config.BASE_URL, api_token=config.API_TOKEN, pass_key=""
+            base_url=config.ITT_URL, api_token=config.ITT_APIKEY, pass_key=""
         )
 
         print()
@@ -214,7 +214,7 @@ class View(Torrent):
         self.page_view(tracker_data=tracker_data, tracker=self.tracker)
 
     def view_by_bdinfo(self, bdinfo: str):
-        tracker_data = self.get_by_bdinfo(self, bdinfo=bdinfo)
+        tracker_data = self.get_by_bdinfo(bd_info=bdinfo)
 
         custom_console.bot_log(f"Filter by the torrent's BDInfo.. '{bdinfo.upper()}'")
         self.page_view(tracker_data=tracker_data, tracker=self.tracker)
@@ -225,7 +225,7 @@ class View(Torrent):
         self.page_view(tracker_data=tracker_data, tracker=self.tracker)
 
     def view_by_start_year(self, startyear: str):
-        tracker_data = self.get_by_start_year(startyear=startyear)
+        tracker_data = self.get_by_start_year(start_year=startyear)
         custom_console.bot_log(
             f"StartYear torrents.. Return only torrents whose content was released"
             f" after or in the given year '{startyear.upper()}'"
