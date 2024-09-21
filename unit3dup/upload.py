@@ -109,12 +109,11 @@ class UploadVideo(UploadBot):
         tracker.data["tmdb"] = data.result.video_id
         tracker.data["keywords"] = data.result.keywords
         tracker.data["category_id"] = data.category
-        tracker.data["resolution_id"] = self.tracker_data.filter_resolution(data.file_name)
+        tracker.data["resolution_id"] = self.content.resolution
         tracker.data["sd"] = data.standard
         tracker.data["mediainfo"] = data.media_info
         tracker.data["description"] = data.description
         tracker.data["type_id"] = self.tracker_data.filter_type(data.file_name)
-
         tracker.data["season_number"] = data.myguess.guessit_season
         tracker.data["episode_number"] = (
             data.myguess.guessit_episode if not self.content.torrent_pack else 0
