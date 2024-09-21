@@ -13,7 +13,9 @@ class Auto:
     A class for managing and processing video files and directories based on a given mode
     """
 
-    def __init__(self, path: str, tracker_name=None, mode="auto"):  # todo: select the trackcer (tracker_name)
+    def __init__(
+            self, path: str, tracker_name=None, mode="auto"
+    ):  # todo: select the tracker (tracker_name)
         """
         Initialize the Auto instance with path, tracker configuration, and mode.
 
@@ -101,9 +103,8 @@ class Auto:
 
     def create_media_path(self, subdir: str) -> Media | None:
 
-        file_name, ext = os.path.splitext(subdir)
-        # wrong guessit with '-' char , example 'S01-'
-        temp_name = Manage_titles.replace(subdir)
+        # Get the subdir
+        temp_name = os.path.basename(subdir)
         guess_filename = title.Guessit(temp_name)
 
         if guess_filename.guessit_season:
@@ -132,7 +133,7 @@ class Auto:
         Returns:
             int: The depth level of the path, where depth < 1 indicates a maximum of one level of subfolders
         """
-        return path[len(self.path) :].count(os.sep)
+        return path[len(self.path):].count(os.sep)
 
     @staticmethod
     def list_video_files(manual_path: str) -> list:
