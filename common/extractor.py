@@ -31,7 +31,8 @@ class Extractor:
                 file_name = os.path.join(delete_folder, file)
                 os.remove(file_name)
 
-    def unrar(self) -> bool:
+    def unrar(self) -> bool | None:
+        # only -f option
         with Progress(
             SpinnerColumn(spinner_name="earth"), console=custom_console, transient=True
         ) as progress:
@@ -55,14 +56,17 @@ class Extractor:
                                 self.path, media.subfolder, file_name
                             )
 
-                            patoolib.extract_archive(
-                                first_part,
-                                outdir=os.path.join(self.path, media.subfolder),
-                                verbosity=-1,
-                            )
+                            try:
+                                patoolib.extract_archive(
+                                    first_part,
+                                    outdir=os.path.join(self.path, media.subfolder),
+                                    verbosity=-1,
+                                )
+                            except patoolib.util.PatoolError as e:
+                                custom_console.bot_error_log(e)
+                                return False
 
-                            custom_console.bot_log(
-                                "[is_rar] Decompression complete"
-                            )
+                            custom_console.bot_log("[is_rar] Decompression complete")
                             self.delete_old_rar(subfolder=media.subfolder)
                             return True
+                return None
