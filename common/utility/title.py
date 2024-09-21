@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 import guessit
+from common.utility.utility import Manage_titles
 
 
 class Guessit:
 
     def __init__(self, filename: str):
-        self.guessit = guessit.guessit(filename)
+        temp_name = Manage_titles.replace(filename)
+        self.guessit = guessit.guessit(temp_name)
         self.filename = filename
 
     @property
