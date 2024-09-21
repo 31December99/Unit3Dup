@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 import os
+import datetime
+import re
+from datetime import datetime
 from thefuzz import fuzz
 
 
@@ -134,9 +137,21 @@ class Manage_titles:
             ".drc",
             ".m3u8",
             ".pdf",
+            ".rar",
         ]
 
         return os.path.splitext(file)[1].lower() in video_ext
+
+    @staticmethod
+    def replace(subdir: str):
+        res = ["4320", "2160", "1080", "720", "576", "480"]
+        # wrong guessit when substring is 'S01-'
+        # '-'
+        subdir = subdir.replace("-", ".")
+        # wrong guessit season when there are no 'p' or 'i' in then subdir string
+        for wrong_res in res:
+            subdir = subdir.replace(wrong_res, ' ')
+        return subdir
 
     @staticmethod
     def media_docu_type(file_name: str) -> str:
@@ -148,6 +163,38 @@ class Manage_titles:
     @staticmethod
     def fuzzyit(str1: str, str2: str) -> int:
         return fuzz.ratio(str1.lower(), str2.lower())
+
+
+class MyString:
+
+    @staticmethod
+    def parse_date(line_str: str) -> datetime | None:
+        """
+        Parse a string with or without time
+        """
+
+        # Case string with time attribute
+        match_time = re.search(r"(\w{3})\s+(\d{1,2})\s+(\d{2}:\d{2})", line_str)
+
+        # Case string without time attribute
+        match_no_time = re.search(r"(\w{3})\s+(\d{1,2})\s+(\d{4})", line_str)
+
+        if match_time:
+            # Build a datetime object
+            month, day, time = match_time.groups()
+            year = datetime.now().year
+            data_ora = datetime.strptime(
+                f"{month} {day} {time} {year}", "%b %d %H:%M %Y"
+            )
+
+        elif match_no_time:
+            # Build a datetime object with no time
+            month, day, year = match_no_time.groups()
+            data_ora = datetime.strptime(f"{month} {day} {year}", "%b %d %Y")
+        else:
+            # Invalid string
+            return
+        return data_ora
 
 
 class System:

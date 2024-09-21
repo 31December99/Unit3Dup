@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 import guessit
+from common.utility.utility import Manage_titles
 
 
 class Guessit:
 
     def __init__(self, filename: str):
-        self.guessit = guessit.guessit(filename)
+        temp_name = Manage_titles.replace(filename)
+        self.guessit = guessit.guessit(temp_name)
         self.filename = filename
 
     @property
@@ -56,6 +58,14 @@ class Guessit:
         """
         # return int(self.guessit['season']) if 'season' in self.guessit else None
         return self.guessit["season"] if "season" in self.guessit else None
+
+    @property
+    def guessit_episode_title(self):
+        """
+        Get the episode title
+        :return:
+        """
+        return self.guessit["episode_title"] if "episode_title" in self.guessit else None
 
     @property
     def type(self):

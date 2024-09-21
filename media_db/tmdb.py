@@ -56,17 +56,19 @@ class MyTmdb:
                 if not result:
                     return None
         else:
-            result.keywords = self.keywords(result.video_id)
+            details, result.keywords = self.keywords(result.video_id)
         return result
 
     def input_tmdb(self) -> Results:
-        custom_console.bot_log(f"[red reverse]{self.file_name}[/red reverse] Unable to identify the TMDB ID."
-                               f" Please enter the tmdb0 ID number..")
+        custom_console.bot_log(
+            f"[red reverse]{self.file_name}[/red reverse] Unable to identify the TMDB ID."
+            f" Please enter the tmdb0 ID number.."
+        )
         results = Results()
         while True:
             tmdb_id = input(f"> ")
             if not tmdb_id.isdigit():
-                custom_console.bot_err.log(
+                custom_console.bot_error_log(
                     f"I do not recognize {tmdb_id} as a number. Please try again.."
                 )
                 continue
@@ -76,11 +78,18 @@ class MyTmdb:
             if "y" == user_answ.lower():
                 # Zero = No TMDB ID
                 if tmdb_id != "0":
-                    keywords = self.keywords(int(tmdb_id))
-                    custom_console.bot_log(keywords)
-                if "The resource you requested could not be found." not in keywords:
-                    results.video_id = tmdb_id
-                    results.keywords = keywords
+                    details, keywords = self.keywords(int(tmdb_id))
+                    # Keywords
+                    if keywords:
+                        results.keywords = keywords
+                    # If details then return the tmdb_id
+                    if details:
+                        results.poster_path = details["poster_path"]
+                        results.backdrop_path = details["backdrop_path"]
+                        results.video_id = tmdb_id
+                        return results
+                else:
+                    results.video_id = 0
                     return results
 
     def __requests(self):
@@ -256,13 +265,16 @@ class MyTmdb:
                             if ratio > 95:
                                 return page
 
-    def keywords(self, video_id: int) -> str:
+    def keywords(self, video_id: int) -> (str, str):
         try:
             details = self.tmdb.details(video_id)
         except tmdbv3api.exceptions.TMDbException as e:
-            return str(e)
+            custom_console.bot_error_log(f"Keywords - {video_id} - Report it {e} ")
+            exit(1)
         if "keywords" in details:
             keywords = details.keywords
             if keywords["keywords"]:
                 keywords = ",".join([key["name"] for key in keywords["keywords"]])
-                return keywords
+        else:
+            keywords = None
+        return details, keywords

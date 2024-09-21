@@ -4,7 +4,7 @@ import os
 import re
 
 from unit3dup.contents import Contents
-from common.config import config
+from common.trackers.trackers import ITTData
 from common.utility.utility import Manage_titles
 from common.mediainfo import MediaFile
 
@@ -32,7 +32,7 @@ class Files:
         self.movies: list = []
         self.series: list = []
         self.is_dir = os.path.isdir(self.path)
-        self.config = config.trackers.get_tracker(tracker_name)
+        self.tracker_data = ITTData.load_from_module()
 
     def get_data(self) -> Contents | bool:
         """
@@ -49,7 +49,7 @@ class Files:
 
         torrent_pack = bool(re.search(r"S\d+(?!.*E\d+)", self.path))
         return (
-            Contents.create_instance(
+            Contents(
                 file_name=self.file_name,
                 folder=self.folder,
                 name=self.name,
@@ -72,23 +72,22 @@ class Files:
         self.folder = os.path.dirname(self.path)
         self.display_name, ext = os.path.splitext(self.file_name)
         self.display_name = Manage_titles.clean(self.display_name)
-        self.name = self.file_name
         self.torrent_path = os.path.join(self.folder, self.file_name)
-        self.size = os.path.getsize(self.path)
+
+        self.name = self.file_name
         self.doc_description = self.file_name
         media_info = MediaFile(file_path=os.path.join(self.folder, self.file_name))
         self.languages = media_info.available_languages
-
         media_docu_type = Manage_titles.media_docu_type(self.file_name)
         # If this is a document it becomes a document category
         if media_docu_type:
-            # overwrite media_type
-            self.category = self.config.tracker_values.category(media_docu_type)
+            # overwrite media_type # todo: 'cover image' not yet implemented
+            self.category = self.tracker_data.category.get(media_docu_type)
 
+        self.size = os.path.getsize(self.path)
         self.meta_info = json.dumps(
             [{"length": self.size, "path": [self.file_name]}], indent=4
         )
-
         return True
 
     def process_folder(self) -> bool:
@@ -96,14 +95,13 @@ class Files:
         if not files:
             # No video files found in the directory - skip
             return False
+        self.meta_info_list = []
 
         self.file_name = files[0]
         self.folder = self.path
         self.display_name = Manage_titles.clean(os.path.basename(self.path))
-
         self.torrent_path = self.folder
         self.name = os.path.basename(self.folder)
-        self.meta_info_list = []
         self.doc_description = "\n".join(files)
         media_info = MediaFile(file_path=os.path.join(self.folder, self.file_name))
         self.languages = media_info.available_languages
@@ -111,8 +109,8 @@ class Files:
         media_docu_type = Manage_titles.media_docu_type(self.file_name)
         # If there is a document in the folder it becomes a document folder
         if media_docu_type:
-            # overwrite media_type
-            self.category = self.config.tracker_values.category(media_docu_type)
+            # overwrite media_type # todo: 'cover image' not yet implemented
+            self.category = self.tracker_data.category.get(media_docu_type)
 
         total_size = 0
         for file in files:

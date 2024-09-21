@@ -1,62 +1,85 @@
 # -*- coding: utf-8 -*-
 
 from rich.console import Console
-from unit3dup.torrent import View
-from unit3dup.command import CommandLine
-from unit3dup.ping import Ping
-from unit3dup.bot import Bot
 from common.custom_console import custom_console
+from common.command import CommandLine
+from common.clients.qbitt import Qbitt
+from common.config import config
+from unit3dup.bot import Bot
+from unit3dup import pvtTracker
+from unit3dup.torrent import View
 
 console = Console(log_path=False)
 
 
 def main():
-
-    # WELCOME MESSAGE
+    """
+    Main function to handle the command line interface (CLI)
+    """
+    # /// Display welcome message
     custom_console.welcome_message()
 
-    # Read arguments from the command line
+    # /// Initialize command line interface
     cli = CommandLine()
 
-    # Validate env files and test the external services
-    ping = Ping()
+    # /// Test the Tracker (always)
+    tracker = pvtTracker.Unit3d(
+        base_url=config.ITT_URL, api_token=config.ITT_APIKEY, pass_key=""
+    )
+    if tracker.get_alive(alive=True, perPage=1):
+        custom_console.bot_log(f"[TRACKER HOST].... Online")
 
-    # Always ping the tracker
-    track_err = ping.process_tracker()
-
-    # Ping only if scanning is selected
+    # /// Test the torrent client
     if cli.args.scan or cli.args.upload:
-        qbit_err = ping.process_qbit()
-        tmdb_err = ping.process_tmdb()
-        if not (tmdb_err and qbit_err and track_err):
-            console.log("Check your configuration file. Exit..")
+        test_client_torrent = Qbitt.is_online()
+        if not test_client_torrent:
             exit(1)
 
-    """Manual Mode"""
+    # \\\ Commands options  \\\
+    # Manual upload mode
     if cli.args.upload:
         unit3dup = Bot(
             path=cli.args.upload, tracker_name=cli.args.tracker, cli=cli.args
         )
         unit3dup.run()
 
-    """Manual Mode and single folder"""
+    # Manual folder mode
     if cli.args.folder:
         unit3dup = Bot(
-            path=cli.args.folder, tracker_name=cli.args.tracker, cli=cli.args, mode='folder'
+            path=cli.args.folder,
+            tracker_name=cli.args.tracker,
+            cli=cli.args,
+            mode="folder",
         )
         unit3dup.run()
 
-    """ Auto Mode """
-    if cli.args.scan:
+    # Auto mode
+    if cli.args.scan and not cli.args.ftp:
         unit3dup = Bot(
             path=cli.args.scan, tracker_name=cli.args.tracker, cli=cli.args, mode="auto"
         )
         unit3dup.run()
 
-    """ COMMANDS LIST: commands not necessary for the upload but may be useful """
+    # Pw
+    if cli.args.pw:
+        unit3dup = Bot(
+            path=cli.args.pw,
+            tracker_name=cli.args.tracker,
+            cli=cli.args,
+        )
+        unit3dup.pw()
 
+    # ftp and upload
+    if cli.args.ftp:
+        unit3dup = Bot(
+            path='', tracker_name=cli.args.tracker, cli=cli.args, mode="folder"
+        )
+        unit3dup.ftp()
+
+    # Commands list: commands not necessary for upload but may be useful
     torrent_info = View()
 
+    # Search by different criteria
     if cli.args.search:
         torrent_info.view_search(cli.args.search)
         return
@@ -181,6 +204,7 @@ def main():
         torrent_info.view_personal()
         return
 
+    # Handle case with no arguments
     if not cli.args:
         console.print("Syntax error! Please check your commands")
         return

@@ -1,50 +1,22 @@
 # -*- coding: utf-8 -*-
+
+from dataclasses import dataclass, field
 from common.utility import title, utility
 from media_db import results
 
 
+@dataclass
 class Data:
+    metainfo: str
+    name: str
+    file_name: str
+    result: results
+    category: int
+    standard: int
+    media_info: str
+    description: str
+    myguess: title.Guessit = field(init=False)
 
-    def __init__(
-        self,
-        metainfo: str,
-        name: str,
-        file_name: str,
-        result: results,
-        category: int,
-        standard: int,
-        mediainfo: str,
-        description: str,
-    ):
-        self.metainfo = metainfo
-        self.name = utility.Manage_titles.clean(name)
-        self.file_name = file_name
-        self.myguess = title.Guessit(file_name)
-        self.result = result
-        self.category = category
-        self.standard = standard
-        self.media_info = mediainfo
-        self.description = description
-
-    @classmethod
-    def create_instance(
-        cls,
-        metainfo: str,
-        name: str,
-        file_name: str,
-        result: results,
-        category: int,
-        standard: int,
-        mediainfo: str,
-        description: str,
-    ):
-        return cls(
-            metainfo,
-            name,
-            file_name,
-            result,
-            category,
-            standard,
-            mediainfo,
-            description,
-        )
+    def __post_init__(self):
+        self.name = utility.Manage_titles.clean(self.name)
+        self.myguess = title.Guessit(self.file_name)

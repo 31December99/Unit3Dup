@@ -3,6 +3,7 @@ import os
 import time
 import typing
 import requests
+import qbittorrent
 
 from qbittorrent import Client
 from common.config import config
@@ -21,9 +22,54 @@ class Qbitt:
         self.torrent_file = None
         self.torrents = None
         self.torrent_archive = config.TORRENT_ARCHIVE
+        self.tracker_data_response = tracker_data_response
+        self.qb = None
 
-        self.qb = Client(f"{config.QBIT_URL}:{config.QBIT_PORT}/")
-        download_torrent_dal_tracker = requests.get(tracker_data_response)
+    @classmethod
+    def _check_connection(cls) -> typing.Optional[Client]:
+        try:
+            qb = Client(f"{config.QBIT_URL}:{config.QBIT_PORT}/")
+
+            qb.login(username=config.QBIT_USER, password=config.QBIT_PASS)
+            qb.torrents()
+            custom_console.bot_log(f"[QBITTORRENT]...... Online")
+            return qb
+        except requests.exceptions.HTTPError:
+            custom_console.bot_error_log(
+                "[QBITTORENT] HTTP Error. Check IP/port or run qBittorrent"
+            )
+        except requests.exceptions.ConnectionError:
+            custom_console.bot_error_log(
+                "[QBITTORENT] Connection Error. Check IP/port or run qBittorrent"
+            )
+        except qbittorrent.client.LoginRequired:
+            custom_console.bot_error_log(
+                "[QBITTORENT] Login required. Check your username and password"
+            )
+        except Exception as e:
+            custom_console.bot_error_log(f"[QBITTORENT] Unexpected error: {str(e)}")
+        return None
+
+    @classmethod
+    def is_online(cls) -> bool:
+        qb = cls._check_connection()
+        return qb is not None
+
+    @classmethod
+    def connect(
+        cls, tracker_data_response: str, torrent: Mytorrent, contents: Contents
+    ):
+        qb = cls._check_connection()
+        if qb:
+            # Get a new istance of `Qbitt`
+            instance = cls(tracker_data_response, torrent, contents)
+            # Reuse the same qbittorrent Client connection for the new instance
+            instance.qb = qb
+            return instance
+        return None
+
+    def send_to_client(self):
+        download_torrent_dal_tracker = requests.get(self.tracker_data_response)
 
         if download_torrent_dal_tracker.status_code == 200:
             self.torrent_file = self.download(download_torrent_dal_tracker)
@@ -46,7 +92,7 @@ class Qbitt:
             full_path_archive = os.path.join(self.torrent_archive, file_name)
             os.replace(full_path_origin, full_path_archive)
         else:
-            # Or save to current the path
+            # Or save to the current path
             full_path_archive = f"{self.torrent_path}.torrent"
 
         # File archived
