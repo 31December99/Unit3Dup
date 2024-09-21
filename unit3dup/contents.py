@@ -1,5 +1,7 @@
 import os
+from common.trackers.trackers import ITTData
 from dataclasses import dataclass, field
+from common.mediainfo import MediaFile
 from common.utility import title
 
 
@@ -20,12 +22,26 @@ class Contents:
     doc_description: str
     audio_languages: list[str]
     episode_title: str = field(init=False)
+    resolution: int = field(init=False)
 
     def __post_init__(self):
+        # Search for the episode title
         guess_filename = title.Guessit(self.file_name)
         self.episode_title = guess_filename.guessit_episode_title
         if self.episode_title:
-            self.display_name = ' '.join(self.display_name.replace(self.episode_title, '').split())
+            self.display_name = " ".join(
+                self.display_name.replace(self.episode_title, "").split()
+            )
+
+        # Search for resolution based on mediainfo string
+        tracker_data = ITTData.load_from_module()
+        file_path = os.path.join(self.folder, self.file_name)
+        media_file = MediaFile(file_path)
+        video_height = f"{media_file.video_height}p"
+        if video_height not in tracker_data.resolution:
+            self.resolution = tracker_data.resolution['altro']
+        else:
+            self.resolution = tracker_data.resolution[video_height]
 
 
 @dataclass
