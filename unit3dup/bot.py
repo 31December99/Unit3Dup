@@ -60,7 +60,10 @@ class Bot:
 
         # Search for rar files and decompress them
         extractor = Extractor(media=files)
-        extractor.unrar()
+
+        result = extractor.unrar()
+        if result is False:
+            exit(1)
 
         # Create the file objects
         contents = [
@@ -177,6 +180,5 @@ class Bot:
         if ftp_client.download_to_local_path:
             scan_path = ftp_client.download_to_local_path.split("/")
             scan_path = "/".join(scan_path[:-1])
-            print(scan_path)
             self.path = scan_path
             self.run()
