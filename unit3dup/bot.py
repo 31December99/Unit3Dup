@@ -13,6 +13,8 @@ from common.custom_console import custom_console
 from common.extractor import Extractor
 from common.config import config
 
+from common.external_services.igdb.client import IGdbServiceApi
+
 
 class Bot:
     """
@@ -21,7 +23,7 @@ class Bot:
     """
 
     def __init__(
-        self, path: str, tracker_name: str, cli: argparse.Namespace, mode="man"
+            self, path: str, tracker_name: str, cli: argparse.Namespace, mode="man"
     ):
         """
         Initialize the Bot instance with path, tracker name, command-line interface object, and mode
@@ -182,3 +184,15 @@ class Bot:
             scan_path = "/".join(scan_path[:-1])
             self.path = scan_path
             self.run()
+
+    def igdb(self):
+
+
+        #IGDB service
+        self.ig_db = IGdbServiceApi()
+        self.ig_db.login()
+        print(self.ig_db.request("Lineage"))
+
+
+
+
