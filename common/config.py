@@ -25,7 +25,8 @@ FTPX_USER=
 FTPX_PASS=
 FTPX_IP=
 FTPX_PORT=
-
+IGDB_CLIENT_ID=
+IGDB_ACCESS_TK=
 
 # TORRENT CLIENT
 QBIT_USER=
@@ -107,6 +108,8 @@ class Config(BaseSettings):
     FTPX_PASS: str | None = Field(default=None, env="FTPX_PASS")
     FTPX_IP: str | None = Field(default=None, env="FTPX_IP")
     FTPX_PORT: str | None = Field(default="2121", env="FTPX_PORT")
+    IGDB_CLIENT_ID: str | None = Field(default=None, env="IGDB_CLIENT_ID")
+    IGDB_ACCESS_TK: str | None = Field(default=None, env="IGDB_ACCESS_TK")
 
     # TORRENT CLIENT
     QBIT_USER: str | None = Field(default=None, env="QBIT_USER")
@@ -274,6 +277,18 @@ class Config(BaseSettings):
     def validate_ftpx_root(cls, value):
         if not value:
             custom_console.bot_question_log("[Optional] No FTPX_ROOT folder provided\n")
+        return value
+
+    @field_validator("IGDB_CLIENT_ID")
+    def validate_igdb_client_id(cls, value):
+        if not value:
+            custom_console.bot_question_log("[Optional] No IGDB_CLIENT_ID provided\n")
+        return value
+
+    @field_validator("IGDB_ACCESS_TK")
+    def validate_igdb_access_tk(cls, value):
+        if not value:
+            custom_console.bot_question_log("[Optional] No IGDB_ACCESS_TK provided\n")
         return value
 
 
