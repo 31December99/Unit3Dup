@@ -14,7 +14,7 @@ class Files:
     Identify the files (movies) and folders (series) regardless
     """
 
-    def __init__(self, path: str, tracker_name: str, media_type: int):
+    def __init__(self, path: str, tracker_name: str, media_type: int, game_title: str, game_crew: list):
         self.languages = None
         self.display_name = None
         self.meta_info_list: list = []
@@ -27,6 +27,8 @@ class Files:
         self.doc_description = None
 
         self.category: int = media_type
+        self.game_title: str = game_title
+        self.game_crew: list = game_crew
         self.tracker_name: str = tracker_name
         self.path: str = path
         self.movies: list = []
@@ -62,6 +64,8 @@ class Files:
                 display_name=self.display_name,
                 doc_description=self.doc_description,
                 audio_languages=self.languages,
+                game_title=self.game_title,
+                game_crew=self.game_crew,
             )
             if process
             else False
@@ -126,5 +130,5 @@ class Files:
         Add to the list every file if its extension is in the video_ext.
         """
         return [
-            file for file in os.listdir(self.path) if Manage_titles.filter_ext(file)
+            file for file in os.listdir(self.path)  # if Manage_titles.filter_ext(file) add games files
         ]
