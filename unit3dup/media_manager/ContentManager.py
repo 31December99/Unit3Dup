@@ -27,6 +27,8 @@ class ContentManager:
             path=item.torrent_path,
             tracker_name=self.tracker_name,
             media_type=item.media_type,
+            game_title=item.game_title,
+            game_crew=item.crew,
         )
         content = files.get_data()
         if content is False:
