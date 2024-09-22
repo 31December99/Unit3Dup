@@ -37,12 +37,8 @@ class HttpRateLimitError(HttpError):
 class HttpRequestError(HttpError):
     """Exception raised for general request errors."""
 
-    def __init__(self, status_code: int, message: str = "Request failed"):
+    def __init__(self, message: str = "Request failed"):
         super().__init__(message)
-        self.status_code = status_code
-
-    def __str__(self):
-        return f"HttpRequestError: {self.message} (status code: {self.status_code})"
 
 
 def exception_handler(log_errors: bool = True) -> Callable[..., Any]:
@@ -69,7 +65,7 @@ def exception_handler(log_errors: bool = True) -> Callable[..., Any]:
                 elif response.status_code == 429:
                     raise HttpRateLimitError()
                 elif response.status_code >= 400:
-                    raise HttpRequestError(status_code=response.status_code)
+                    raise HttpRequestError()
                 return response
 
             except HttpAuthError as e:
