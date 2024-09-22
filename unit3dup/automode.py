@@ -3,8 +3,6 @@
 import os
 from unit3dup.contents import Media
 from common.utility.utility import Manage_titles
-from common.utility import title
-from common.trackers.trackers import ITTData
 from common.custom_console import custom_console
 
 
@@ -24,14 +22,10 @@ class Auto:
             tracker_name (str): The name of the tracker configuration to be used.
             mode (str): The mode of operation, either 'auto', 'man', or 'folder'. Default is 'auto'.
         """
-        tracker_data = ITTData.load_from_module()
 
         self.series = None
         self.movies = None
         self.path = path
-
-        self.movie_category = tracker_data.category.get("movie")
-        self.serie_category = tracker_data.category.get("tvshow")
         self.is_dir = os.path.isdir(self.path)
         self.auto = mode
 
@@ -103,24 +97,9 @@ class Auto:
 
     def create_media_path(self, subdir: str) -> Media | None:
 
-        # Get the subdir
-        temp_name = os.path.basename(subdir)
-        guess_filename = title.Guessit(temp_name)
-
-        if guess_filename.guessit_season:
-            media_type = self.serie_category
-        else:
-            media_type = self.movie_category
-
         return Media(
             folder=self.path,
             subfolder=subdir,
-            media_type=media_type,
-            source=guess_filename.source,
-            other=guess_filename.other,
-            audio_codec=guess_filename.audio_codec,
-            subtitle=guess_filename.subtitle,
-            resolution=guess_filename.screen_size,
         )
 
     def depth_walker(self, path) -> int:
