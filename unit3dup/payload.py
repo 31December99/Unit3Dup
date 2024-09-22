@@ -16,7 +16,8 @@ class Data:
     media_info: str
     description: str
     myguess: title.Guessit = field(init=False)
+    igdb: int
 
     def __post_init__(self):
         self.name = utility.Manage_titles.clean(self.name)
-        self.myguess = title.Guessit(self.file_name)
+        self.myguess = title.Guessit(self.file_name).guessit_title
