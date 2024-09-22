@@ -15,24 +15,14 @@ def create_default_env_file(path):
 ITT_URL=https://itatorrents.xyz
 ITT_APIKEY=
 
-# EXTERNAL SERVICE
 TMDB_APIKEY=
 IMGBB_KEY=
 FREE_IMAGE_KEY=
-PW_API_KEY=
-PW_URL=http://localhost:9696/api/v1
-FTPX_USER=
-FTPX_PASS=
-FTPX_IP=
-FTPX_PORT=
-IGDB_CLIENT_ID=
-IGDB_ACCESS_TK=
 
-# TORRENT CLIENT
 QBIT_USER=
 QBIT_PASS=
-QBIT_URL=http://localhost:8080
-QBIT_PORT=
+QBIT_URL=http://localhost
+QBIT_PORT=8080
 
 ############################################## USER PREFERENCES ##############################################
 
@@ -53,14 +43,30 @@ PREFERRED_LANG=
 
 # Discard videos whose size deviates by more than the specified percentage (size_th) from the video in tracker
 SIZE_TH=100
+##############################################################################################################
 
-# FTPx local path for the download
+
+
+
+
+
+################  OPTIONAL  #############  
+# PW
+PW_API_KEY=
+PW_URL=http://localhost:9696/api/v1
+
+# FTPX 
+FTPX_USER=
+FTPX_PASS=
+FTPX_IP=
+FTPX_PORT=2121
 FTPX_LOCAL_PATH= 
-
-# FTP folder. Read from this folder when connecting to the server. Default = "."
 FTPX_ROOT=
-
 FTPX_KEEP_ALIVE=False
+
+# IGDB
+IGDB_CLIENT_ID=
+IGDB_ACCESS_TK=
 """
     with open(path, "w") as f:
         f.write(default_content.strip())
@@ -160,9 +166,15 @@ class Config(BaseSettings):
 
     @field_validator("PW_URL")
     def validate_pw_url(cls, value):
-        if not value:
-            custom_console.bot_question_log("[Optional] No PW_URL provided\n")
+        # if not value:
+        # custom_console.bot_question_log("[Optional] No PW_URL provided\n")
         return cls.validate_url(value, cls.__fields__["PW_URL"].default)
+
+    @field_validator("PW_API_KEY")
+    def validate_pw_apikey(cls, value):
+        # if not value:
+        # custom_console.bot_question_log("[Optional] No PW_API_KEY provided\n")
+        return value
 
     @field_validator("TMDB_APIKEY")
     def validate_tmdb_apikey(cls, value):
@@ -180,12 +192,6 @@ class Config(BaseSettings):
     def validate_freeimage_apikey(cls, value):
         if not value:
             custom_console.bot_error_log("No FREE IMAGE API_KEY provided")
-        return value
-
-    @field_validator("PW_API_KEY")
-    def validate_pw_apikey(cls, value):
-        if not value:
-            custom_console.bot_question_log("[Optional] No PW_API_KEY provided\n")
         return value
 
     @field_validator("QBIT_USER")
@@ -245,50 +251,50 @@ class Config(BaseSettings):
 
     @field_validator("FTPX_USER")
     def validate_ftpx_user(cls, value):
-        if not value:
-            custom_console.bot_question_log("[Optional] No FTPX_USER provided\n")
+        # if not value:
+        # custom_console.bot_question_log("[Optional] No FTPX_USER provided\n")
         return value
 
     @field_validator("FTPX_PASS")
     def validate_ftpx_pass(cls, value):
-        if not value:
-            custom_console.bot_question_log("[Optional] No FTPX_PASS provided\n")
+        # if not value:
+        # custom_console.bot_question_log("[Optional] No FTPX_PASS provided\n")
         return value
 
     @field_validator("FTPX_IP")
     def validate_ftpx_ip(cls, value):
-        if not value:
-            custom_console.bot_question_log("[Optional] No FTPX_IP provided\n")
+        # if not value:
+        # custom_console.bot_question_log("[Optional] No FTPX_IP provided\n")
         return value
 
     @field_validator("FTPX_PORT")
     def validate_ftpx_port(cls, value):
-        if not value:
-            custom_console.bot_question_log("[Optional] No FTPX_PORT provided\n")
+        # if not value:
+        # custom_console.bot_question_log("[Optional] No FTPX_PORT provided\n")
         return value
 
     @field_validator("FTPX_LOCAL_PATH")
     def validate_ftpx_local_path(cls, value):
-        if not value:
-            custom_console.bot_question_log("[Optional] No FTPX_LOCAL_PATH provided\n")
+        # if not value:
+        # custom_console.bot_question_log("[Optional] No FTPX_LOCAL_PATH provided\n")
         return value
 
     @field_validator("FTPX_ROOT")
     def validate_ftpx_root(cls, value):
-        if not value:
-            custom_console.bot_question_log("[Optional] No FTPX_ROOT folder provided\n")
+        # if not value:
+        # custom_console.bot_question_log("[Optional] No FTPX_ROOT folder provided\n")
         return value
 
     @field_validator("IGDB_CLIENT_ID")
     def validate_igdb_client_id(cls, value):
-        if not value:
-            custom_console.bot_question_log("[Optional] No IGDB_CLIENT_ID provided\n")
+        # if not value:
+        # custom_console.bot_question_log("[Optional] No IGDB_CLIENT_ID provided\n")
         return value
 
     @field_validator("IGDB_ACCESS_TK")
     def validate_igdb_access_tk(cls, value):
-        if not value:
-            custom_console.bot_question_log("[Optional] No IGDB_ACCESS_TK provided\n")
+        # if not value:
+        # custom_console.bot_question_log("[Optional] No IGDB_ACCESS_TK provided\n")
         return value
 
 
