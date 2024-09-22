@@ -3,6 +3,7 @@
 import argparse
 from unit3dup.media_manager.VideoManager import VideoManager
 from unit3dup.media_manager.DocuManager import DocuManager
+from unit3dup.media_manager.GameManager import GameManager
 from common.config import config
 from common.constants import my_language
 from common.clients.qbitt import Qbitt
@@ -19,6 +20,7 @@ class TorrentManager:
         self.movie_category = tracker_data.category.get("movie")
         self.serie_category = tracker_data.category.get("tvshow")
         self.docu_category = tracker_data.category.get("edicola")
+        self.game_category = tracker_data.category.get("game")
         self.preferred_lang = my_language(config.PREFERRED_LANG)
 
     def process(self, contents: list) -> None:
@@ -26,12 +28,19 @@ class TorrentManager:
             tracker_response: str | None = None
             torrent_response: str | None = None
 
+            # Video
             if content.category in {self.movie_category, self.serie_category}:
                 tracker_response, torrent_response = self.process_video_content(content)
 
+            # Document
             elif content.category == self.docu_category:
                 tracker_response, torrent_response = self.process_docu_content(content)
 
+            # Game
+            elif content.category == self.game_category:
+                tracker_response, torrent_response = self.process_game_content(content)
+
+            # Qbittorent
             if tracker_response:
                 self.qbitt(tracker_response, torrent_response, content)
 
@@ -62,6 +71,19 @@ class TorrentManager:
         else:
             tracker_response = None
 
+        return tracker_response, torrent_response
+
+    def process_game_content(self, content) -> (str | None, str | None):
+        custom_console.rule()
+
+        game_manager = GameManager(content=content)
+        game_manager.igdb()
+        torrent_response = game_manager.torrent()
+
+        if not self.cli.torrent and torrent_response:
+            tracker_response = game_manager.upload()
+        else:
+            tracker_response = None
         return tracker_response, torrent_response
 
     def process_docu_content(self, content) -> (str | None, str | None):
