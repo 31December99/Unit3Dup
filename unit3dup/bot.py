@@ -11,7 +11,6 @@ from common.external_services.ftpx.core.menu import Menu
 from common.external_services.ftpx.client import Client
 from common.custom_console import custom_console
 from common.extractor import Extractor
-from common.config import config
 
 from common.external_services.igdb.client import IGdbServiceApi
 
@@ -80,10 +79,8 @@ class Bot:
         self.torrent_manager.process(contents)
 
     def pw(self):
-        # PW service
-        if not config.PW_API_KEY:
-            return
 
+        # PW service
         pw_service = PwService()
         custom_console.panel_message("Analyzing... Please wait")
         # Examples
@@ -137,13 +134,7 @@ class Bot:
         """
         Controller
         """
-        custom_console.bot_question_log("\nConnecting to the remote FTP...")
-
-        if not config.FTPX_LOCAL_PATH:
-            custom_console.bot_error_log(
-                "Set FTPX_LOCAL_PATH for -ftp command. Exit..."
-            )
-            exit(1)
+        custom_console.bot_question_log("\nConnecting to the remote FTP...\n")
 
         # FTP service
         ftp_client = Client()
@@ -190,8 +181,9 @@ class Bot:
 
         #IGDB service
         self.ig_db = IGdbServiceApi()
-        self.ig_db.login()
-        print(self.ig_db.request("Lineage"))
+        response = self.ig_db.login()
+        if response:
+            print(self.ig_db.request("Lineage"))
 
 
 
