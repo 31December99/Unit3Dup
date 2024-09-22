@@ -91,15 +91,22 @@ If you have not installed ffmpeg install it:
 - Windows : unzip https://www.ffmpeg.org/download.html and add its folder to
 PATH environment user variable
 
-### Bot Installation
+## Bot Installation
 
 1. Download the updater (zip) [Download autoupdate.py](https://gist.github.com/31December99/8e51466feb9df1606fd4199141ac54bb)
 2. run python3 autoupdate.py
 3. run pip install -r requirements.txt
-4. Set up the configuration .env file(s) service and itt ( rename .back in .env)
+4. START the bot in order to create the service.env file
+5. **Complete the service.env file.
+   The fields marked as optional are not required and are not essential for uploading media to the tracker**
+## ! Note regarding the service.env file !
+   The service.env file is located in the home directory on Linux
+   or under the AppData folder on Windows
 
 ### Update Bot 
 python3 autoupdate.py
+
+pip install -r requirements.txt
 
 ___
 ### Configuration

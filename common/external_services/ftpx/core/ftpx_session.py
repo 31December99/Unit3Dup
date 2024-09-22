@@ -38,7 +38,9 @@ class FtpXCmds(FTP_TLS):
         try:
             return command_fn(*args, **kwargs)
         except Exception as e:
-            custom_console.bot_error_log(f"Error during {command_fn.__name__} command: {e}")
+            custom_console.bot_error_log(
+                f"Error during {command_fn.__name__} command: {e}"
+            )
             exit(1)
 
     def quit(self):
@@ -56,12 +58,38 @@ class FtpXCmds(FTP_TLS):
 
     @classmethod
     def new(
-            cls,
-            host=config.FTPX_IP,
-            port=int(config.FTPX_PORT),
-            user=config.FTPX_USER,
-            passwd=config.FTPX_PASS,
+        cls,
+        host=config.FTPX_IP,
+        port=int(config.FTPX_PORT),
+        user=config.FTPX_USER,
+        passwd=config.FTPX_PASS,
     ):
+
+        validate_ftpx_config = True
+        if not config.FTPX_IP:
+            custom_console.bot_question_log("No FTPX_IP provided\n")
+            validate_ftpx_config = False
+
+        if not config.FTPX_PORT:
+            custom_console.bot_question_log("No FTPX_PORT provided\n")
+            validate_ftpx_config = False
+
+        if not config.FTPX_USER:
+            custom_console.bot_question_log("No FTPX_USER provided\n")
+            validate_ftpx_config = False
+
+        if not config.FTPX_PASS:
+            custom_console.bot_question_log("No FTPX_PASS provided\n")
+            validate_ftpx_config = False
+
+        if not config.FTPX_LOCAL_PATH:
+            custom_console.bot_question_log("No FTPX_LOCAL_PATH provided\n")
+            validate_ftpx_config = False
+
+        if not validate_ftpx_config:
+            custom_console.bot_error_log(f"Please check your service.env file or verify if the FTP server is online")
+            exit(1)
+
         """Create an instance of FtpXCmds and handle connection and login"""
         ftp = cls()
         try:
@@ -70,6 +98,9 @@ class FtpXCmds(FTP_TLS):
             ftp.prot_p()  # Enable SSL
         except all_errors as e:
             custom_console.bot_error_log(f"\nFTP Server Error: {e}")
+            custom_console.bot_error_log(
+                f"Please check your service.env file or verify if the FTP server is online"
+            )
             exit(1)
         return ftp
 
@@ -102,7 +133,9 @@ class FtpXCmds(FTP_TLS):
 
                     self.retrbinary(f"RETR {remote_path}", write_chunk)
 
-        return self._execute_command(self._send_pret, f"RETR {remote_path}") and self._execute_command(download)
+        return self._execute_command(
+            self._send_pret, f"RETR {remote_path}"
+        ) and self._execute_command(download)
 
     def _cwd(self, path):
         # Change the working directory on the FTP server using PRET

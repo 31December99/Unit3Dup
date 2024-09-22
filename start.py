@@ -76,6 +76,12 @@ def main():
         )
         unit3dup.ftp()
 
+    if cli.args.game:
+        unit3dup = Bot(
+            path='', tracker_name=cli.args.tracker, cli=cli.args, mode="folder"
+        )
+        unit3dup.igdb()
+
     # Commands list: commands not necessary for upload but may be useful
     torrent_info = View()
 

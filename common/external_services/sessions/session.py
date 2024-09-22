@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 import json
 
-
 import httpx
 import diskcache as dc
+import logging
 from common.external_services.sessions.exceptions import exception_handler
 
-ENABLE_LOG = True
+ENABLE_LOG = False
+logging.getLogger("httpx").setLevel(logging.CRITICAL)
 
 
 class MyHttp:
@@ -36,7 +37,14 @@ class MyHttp:
 
     @exception_handler(log_errors=ENABLE_LOG)
     def get_url(
-            self, url: str, params=None, body: json = json, use_cache: bool = False, get_method: bool = True
+            self,
+            url: str,
+            params=None,
+            headers=None,
+            data=None,
+            body: json = json,
+            use_cache: bool = False,
+            get_method: bool = True,
     ) -> httpx.Response:
         """
         GET request to the specified URL
@@ -66,8 +74,8 @@ class MyHttp:
             # GET
             response = self.session.get(url, params=params)
         else:
-            # PUT
-            response = self.session.put(url, params=params, json=body)
+            # POST !
+            response = self.session.post(url, params=params, headers=headers, data=data)
 
         if use_cache:
             self.cache[cache_key] = {

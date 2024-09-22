@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 
-from common.config import config
-from common.external_services.sessions.agents import Agent
-from common.external_services.sessions.session import MyHttp
-from common.external_services.Pw.core.models.indexers import Indexer
-from common.external_services.Pw.core.models.search import Search
 from common.external_services.Pw.core.models.torrent_client_config import (
     TorrentClientConfig,
 )
+from common.external_services.Pw.core.models.indexers import Indexer
+from common.external_services.Pw.core.models.search import Search
+from common.external_services.sessions.session import MyHttp
+from common.external_services.sessions.agents import Agent
+from common.custom_console import custom_console
+from common.config import config
 
 
 class PwAPI(MyHttp):
@@ -26,6 +27,14 @@ class PwAPI(MyHttp):
         self.base_url = config.PW_URL
         self.api_key = config.PW_API_KEY
         self.dataclass = {f"{self.base_url}/indexer": Indexer}
+
+        if not config.PW_URL:
+            custom_console.bot_question_log("No PW_URL provided\n")
+            exit(1)  # todo: classmathod
+
+        if not config.PW_API_KEY:
+            custom_console.bot_question_log("No PW_API_KEY provided\n")
+            exit(1)  # todo: classmathod
 
     def get_indexers(self) -> ["Indexer"]:
         """Get all indexers."""
@@ -73,7 +82,7 @@ class PwAPI(MyHttp):
         url = f"{self.base_url}/downloadclient/1"
         response = self.get_url(url=url, body=payload, get_method=False)
 
-        # TODO: No errors, but does not load in qBittorrent
+        # TODO: Test again - get_url() updated 21/09/2024
         if response.status_code == 202 or response.status_code == 200:
             result = response.json()
         else:
