@@ -48,12 +48,19 @@ class MyGit:
         # Update the repository
         origin = repo.remotes.origin
         origin.pull()
-        console.log(
-            f"Repository updated successfully to '{repo.tags[-1]}'", style="bold blue"
-        )
-        console.rule("", style="violet bold")
+        # Sorted
+        tags = sorted(repo.tags, key=lambda t: t.commit.committed_date)
 
-        # Reapply stashed local changes, if any
+        if tags:
+            latest_tag = tags[-1]
+            console.log(
+                f"Repository updated successfully to latest tag '{latest_tag}'",
+                style="bold blue"
+            )
+        else:
+            console.log("No tags found in the repository.", style="bold yellow")
+
+        # check  stashed local changes
         if repo.git.stash("list"):
             repo.git.stash("pop")
 
