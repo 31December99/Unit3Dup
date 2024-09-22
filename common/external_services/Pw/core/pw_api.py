@@ -73,7 +73,7 @@ class PwAPI(MyHttp):
         url = f"{self.base_url}/downloadclient/1"
         response = self.get_url(url=url, body=payload, get_method=False)
 
-        # TODO: No errors, but does not load in qBittorrent
+        # TODO: Test again - get_url() updated 21/09/2024
         if response.status_code == 202 or response.status_code == 200:
             result = response.json()
         else:
