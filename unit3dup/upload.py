@@ -120,3 +120,33 @@ class UploadVideo(UploadBot):
         )
 
         return tracker
+
+
+class UploadGame(UploadBot):
+    def __init__(self, content: contents):
+        super().__init__(content)
+        self.tracker_data = ITTData.load_from_module()
+
+    def payload(self):
+        return payload.Data(
+            metainfo=self.metainfo,
+            name=self.content.name,
+            file_name=self.file_name,
+            result="",
+            category=self.content.category,
+            standard=0,
+            media_info="",
+            description=self.content.doc_description,
+        )
+
+    def tracker(self, data: payload) -> pvtTracker:
+        tracker = pvtTracker.Unit3d(
+            base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key=""
+        )
+        tracker.data["name"] = self.content.display_name
+        tracker.data["tmdb"] = 0
+        tracker.data["category_id"] = data.category
+        tracker.data["description"] = data.description
+        tracker.data["type_id"] = self.tracker_data.filter_type(data.file_name)
+        tracker.data["resolution_id"] = ""
+        return tracker
