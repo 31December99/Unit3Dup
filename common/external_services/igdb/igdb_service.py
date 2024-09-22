@@ -5,6 +5,7 @@ from common.custom_console import custom_console
 from common.external_services.sessions.session import MyHttp
 from common.external_services.sessions.agents import Agent
 from common.external_services.igdb.core.models.game import Game
+from common.external_services.igdb.core.platformid import platform_id
 from common.config import config
 
 base_request_url = "https://api.igdb.com/v4/"
@@ -48,27 +49,19 @@ class IGdbServiceApi(MyHttp):
         else:
             return False
 
-    def request(self, title: str) -> list["Game"]:
-
-        from common.utility import title
+    def request(self, title: str, platform: list) -> list["Game"]:
 
         header_access = {
             "Client-ID": config.IGDB_CLIENT_ID,
             "Authorization": f"Bearer {self.access_token}",
             "Content-Type": "application/json",
         }
-        print(title)
-        # query = f'fields *; search "Elden ring";'
-        query = f'fields id,name; search "{title}";'
+
+        # Search by title and platform
+        query = f'fields id,name; search "{title}"; where platforms = ({platform_id[platform[0]]});'
         build_request = urljoin(base_request_url, "games")
         response = self.get_url(
             build_request, get_method=False, headers=header_access, data=query
         )
         query = response.json()
-
-        guess_filename = title.Guessit(
-            "Dragon.Ball.FighterZ.v1.33.incl.DLC.PS4-CUSA09072"
-        )
-        print(guess_filename.guessit_title)
-
         return [Game(**game_data) for game_data in query]
