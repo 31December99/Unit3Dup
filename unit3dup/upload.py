@@ -26,7 +26,7 @@ class UploadBot(ABC):
 
     def send(self, tracker: pvtTracker) -> requests:
         tracker_response = tracker.upload_t(
-            data=tracker.data, full_path=self.torrent_path
+            data=tracker.data, torrent_path=self.torrent_path
         )
 
         if tracker_response.status_code == 200:
@@ -95,6 +95,7 @@ class UploadVideo(UploadBot):
                 media_info=video_info.mediainfo,
                 description=video_info.description,
                 standard=video_info.is_hd,
+                igdb=0,  # not used
             )
         else:
             custom_console.bot_error_log(
