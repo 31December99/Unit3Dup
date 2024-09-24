@@ -6,6 +6,7 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.text import Text
 from rich.table import Table
+from common.trackers.itt import itt_data
 
 from decouple import Config, RepositoryEnv, UndefinedValueError
 
@@ -100,19 +101,37 @@ class CustomConsole(Console):
     def bot_question_log(self, message: str):
         console.print(message, end="", style=self.question_msg_color)
 
-    def bot_process_table_log(self, content: list):
+    @staticmethod
+    def get_key_by_value(tracker_data, category, value):
+        if category in tracker_data:
+            if isinstance(tracker_data[category], dict):
+                for k, v in tracker_data[category].items():
+                    if v == value:
+                        return k
+
+    @staticmethod
+    def bot_process_table_log(content: list):
 
         table = Table(
-            title="Selected Files List",
+            title="Here is your files list" if content else "There are no files here",
             border_style="bold blue",
             header_style="red blue",
         )
+
         table.add_column("Torrent Pack", style="dim")
+        table.add_column("Media", justify="left", style="bold green")
         table.add_column("Path", justify="left", style="bold green")
 
         for item in content:
             pack = "Yes" if item.torrent_pack else "No"
-            table.add_row(pack, item.torrent_path)
+            category_name = CustomConsole.get_key_by_value(itt_data, "CATEGORY", item.category)
+            if not category_name:
+                category_name = ''
+            table.add_row(
+                pack,
+                category_name,
+                item.torrent_path,
+            )
 
         console.print(Align.center(table))
 
