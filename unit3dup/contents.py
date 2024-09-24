@@ -77,7 +77,6 @@ class Media:
         temp_name = os.path.basename(self.subfolder)
 
         temp_name = temp_name.replace(".", " ")
-        # temp_name = temp_name.replace("_", " ")
         temp_name = temp_name.replace("-", " ")
 
         for crew_name in self.crew:
@@ -87,6 +86,7 @@ class Media:
             temp_name = temp_name.replace(tag_name, "")
 
         for suffix in suffixes:
+            temp_name = temp_name.replace("_", " ")
             temp_name = temp_name.lower().replace(suffix.lower(), "")
         return title.Guessit(temp_name.strip())
 
@@ -122,7 +122,8 @@ class Media:
 
     @property
     def game_tags(self) -> list:
-        matches = re.findall(tag_pattern, self.subfolder, re.IGNORECASE)
+        temp_name = self.subfolder.replace("_", " ").strip()
+        matches = re.findall(tag_pattern, temp_name, re.IGNORECASE)
         return matches
 
     @property
