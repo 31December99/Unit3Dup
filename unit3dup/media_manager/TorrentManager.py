@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
 
 import argparse
+
 from unit3dup.media_manager.VideoManager import VideoManager
-from unit3dup.media_manager.DocuManager import DocuManager
+from unit3dup.media_manager.models.qbitt import QBittorrent
 from unit3dup.media_manager.GameManager import GameManager
-from common.config import config
-from common.constants import my_language
-from common.clients.qbitt import Qbitt
 from common.custom_console import custom_console
 from common.trackers.trackers import ITTData
+from common.constants import my_language
+from common.clients.qbitt import Qbitt
+from common.config import config
 
 
 class TorrentManager:
@@ -24,83 +25,53 @@ class TorrentManager:
         self.preferred_lang = my_language(config.PREFERRED_LANG)
 
     def process(self, contents: list) -> None:
-        for content in contents:
-            tracker_response: str | None = None
-            torrent_response: str | None = None
 
-            # Video
-            if content.category in {self.movie_category, self.serie_category}:
-                tracker_response, torrent_response = self.process_video_content(content)
+        game_process_results: list["QBittorrent"] = []
+        video_process_results: list["QBittorrent"] = []
 
-            # Document
-            elif content.category == self.docu_category:
-                tracker_response, torrent_response = self.process_docu_content(content)
+        # // GAME
+        games = [
+            content for content in contents if content.category == self.game_category
+        ]
 
-            # Game
-            elif content.category == self.game_category:
-                tracker_response, torrent_response = self.process_game_content(content)
+        # Build the torrent file and upload each game to the tracker
+        if games:
+            game_manager = GameManager(contents=games, cli=self.cli)
+            game_process_results = game_manager.process()
 
-            # Qbittorent
-            if tracker_response:
-                self.qbitt(tracker_response, torrent_response, content)
+        # // VIDEO
+        videos = [
+            content
+            for content in contents
+            if content.category in {self.movie_category, self.serie_category}
+        ]
 
-    def process_video_content(self, content) -> (str | None, str | None):
-        custom_console.rule()
-        video_manager = VideoManager(content=content)
+        # Build the torrent file and upload each video to the tracker
+        if videos:
+            video_manager = VideoManager(contents=videos, cli=self.cli)
+            video_process_results = video_manager.process()
 
-        if "not found" not in content.audio_languages:
-            if config.PREFERRED_LANG.lower():
-                if config.PREFERRED_LANG.lower() not in content.audio_languages:
-                    custom_console.bot_error_log(
-                        "[Languages] ** Your preferred lang is not in your media being uploaded"
-                        ", skipping ! **"
-                    )
-                    return None, None
+        # // QBITTORRENT
+        if game_process_results:
+            # Seeds if -torrent is off
+            if not self.cli.torrent:
+                self.send_to_qbittorrent(game_process_results)
 
-        if self.cli.duplicate or config.DUPLICATE_ON == "True":
-            results = video_manager.check_duplicate()
-            if results:
-                custom_console.bot_error_log(
-                    f"\n*** User chose to skip '{content.file_name}' ***\n"
-                )
-                return None, None
-
-        torrent_response = video_manager.torrent()
-        if not self.cli.torrent and torrent_response:
-            tracker_response = video_manager.upload()
-        else:
-            tracker_response = None
-
-        return tracker_response, torrent_response
-
-    def process_game_content(self, content) -> (str | None, str | None):
-        custom_console.rule()
-
-        game_manager = GameManager(content=content)
-        game_manager.igdb()
-        torrent_response = game_manager.torrent()
-
-        if not self.cli.torrent and torrent_response:
-            tracker_response = game_manager.upload()
-        else:
-            tracker_response = None
-        return tracker_response, torrent_response
-
-    def process_docu_content(self, content) -> (str | None, str | None):
-        docu_manager = DocuManager(content=content)
-        torrent_response = docu_manager.torrent()
-        tracker_response = None
-        if not self.cli.torrent and torrent_response:
-            tracker_response = docu_manager.upload()
-
-        return tracker_response, torrent_response
+        if video_process_results:
+            # Seeds if -torrent is off
+            if not self.cli.torrent:
+                self.send_to_qbittorrent(video_process_results)
 
     @staticmethod
-    def qbitt(tracker_response: str, torrent_response, content) -> None:
-        qb = Qbitt.connect(
-            tracker_data_response=tracker_response,
-            torrent=torrent_response,
-            contents=content,
-        )
-        if qb:
-            qb.send_to_client()
+    def send_to_qbittorrent(qbittorrent_list: list["QBittorrent"]) -> None:
+
+        custom_console.panel_message("\nSending torrents to the client... Please wait")
+        for qbittorrent_file in qbittorrent_list:
+            if qbittorrent_file.tracker_response:
+                qb = Qbitt.connect(
+                    tracker_data_response=qbittorrent_file.tracker_response,
+                    torrent=qbittorrent_file.torrent_response,
+                    contents=qbittorrent_file.content,
+                )
+                if qb:
+                    qb.send_to_client()
