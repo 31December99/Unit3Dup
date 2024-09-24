@@ -61,6 +61,9 @@ class Extractor:
 
     def unrar(self) -> bool | None:
         # only -f option
+        if not os.path.isdir(self.subfolder):
+            return
+
         with Progress(
                 SpinnerColumn(spinner_name="earth"), console=custom_console, transient=True
         ) as progress:
