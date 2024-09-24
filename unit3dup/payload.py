@@ -20,4 +20,4 @@ class Data:
 
     def __post_init__(self):
         self.name = utility.Manage_titles.clean(self.name)
-        self.myguess = title.Guessit(self.file_name).guessit_title
+        self.myguess = title.Guessit(self.file_name)  #.guessit_title
