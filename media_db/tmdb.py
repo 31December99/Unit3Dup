@@ -62,7 +62,7 @@ class MyTmdb:
     def input_tmdb(self) -> Results:
         custom_console.bot_log(
             f"[red reverse]{self.file_name}[/red reverse] Unable to identify the TMDB ID."
-            f" Please enter the tmdb0 ID number.."
+            f" Please enter the tmdb ID number.."
         )
         results = Results()
         while True:
