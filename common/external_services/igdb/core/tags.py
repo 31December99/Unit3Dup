@@ -17,8 +17,8 @@ crew_patterns = [
     "I_Know",
     "Razor1911",
     "RUNE",
-    "FitGirl Repack",
-    "DODI Repack",
+    "FitGirl",
+    "DODI",
     "ElAmigos",
     "RazorDOX",
     "RAZOR",
@@ -416,4 +416,5 @@ suffixes = [
     "Remastered",
     "Ultimate Edition",
     "Collector's Edition",
+    "for nintendo switch",
 ]
