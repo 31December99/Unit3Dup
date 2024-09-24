@@ -157,4 +157,5 @@ platform_id = {
     "DAYDREAM": 164,  # Daydream
     "PSVR": 165,  # PlayStation VR
     "PKMN": 166,  # Pokémon mini
+    "PS5": 167,  # PS5..
 }
