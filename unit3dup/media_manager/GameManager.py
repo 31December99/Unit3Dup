@@ -32,10 +32,15 @@ class GameManager:
 
         qbittorrent_list = []
         for content in self.contents:
-            # Look for the IGDB ID #todo if it does not exist, report it at the end
+            # Look for the IGDB ID #todo if it does not exist, report it at the end of the process
             game_data = ig_dbapi.request(
                 title=content.game_title, platform=content.game_tags
             )
+
+            if not game_data:
+                custom_console.bot_error_log(f"IGDB ID not found for the title {content.game_title}")
+                exit(1)
+
 
             # Hash
             torrent_response = self.torrent(content=content)
