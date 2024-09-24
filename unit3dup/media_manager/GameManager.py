@@ -32,15 +32,15 @@ class GameManager:
 
         qbittorrent_list = []
         for content in self.contents:
+            # Look for the IGDB ID #todo if it does not exist, report it at the end
+            game_data = ig_dbapi.request(
+                title=content.game_title, platform=content.game_tags
+            )
+
+            # Hash
             torrent_response = self.torrent(content=content)
 
             if not self.cli.torrent and torrent_response:
-
-                # Look for the IGDB ID only if it is after the torrent was created
-                game_data = ig_dbapi.request(
-                    title=content.game_title, platform=content.game_tags
-                )
-
                 # Upload only if it is after the torrent was created
                 tracker_response = self.upload(content=content, ig_db_data=game_data)
             else:
