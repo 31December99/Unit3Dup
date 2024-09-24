@@ -14,7 +14,8 @@ class Files:
     Identify the files (movies) and folders (series) regardless
     """
 
-    def __init__(self, path: str, tracker_name: str, media_type: int, game_title: str, game_crew: list):
+    def __init__(self, path: str, tracker_name: str, media_type: int, game_title: str, game_crew: list,
+                 game_tags: list):
         self.languages = None
         self.display_name = None
         self.meta_info_list: list = []
@@ -29,6 +30,7 @@ class Files:
         self.category: int = media_type
         self.game_title: str = game_title
         self.game_crew: list = game_crew
+        self.game_tags: list = game_tags
         self.tracker_name: str = tracker_name
         self.path: str = path
         self.movies: list = []
@@ -66,6 +68,7 @@ class Files:
                 audio_languages=self.languages,
                 game_title=self.game_title,
                 game_crew=self.game_crew,
+                game_tags=self.game_tags,
             )
             if process
             else False
@@ -95,12 +98,17 @@ class Files:
         return True
 
     def process_folder(self) -> bool:
-        files = self.list_video_files()
-        if not files:
-            # No video files found in the directory - skip
-            return False
-        self.meta_info_list = []
+        # Search for game files
+        if self.game_crew:
+            files = self.list_game_files()
+        else:
+            # Search for video files
+            files = self.list_video_files()
 
+        if not files:
+            return False
+
+        self.meta_info_list = []
         self.file_name = files[0]
         self.folder = self.path
         self.display_name = Manage_titles.clean(os.path.basename(self.path))
@@ -127,8 +135,16 @@ class Files:
 
     def list_video_files(self) -> list:
         """
-        Add to the list every file if its extension is in the video_ext.
+        Add every video file to the list
         """
         return [
-            file for file in os.listdir(self.path)  # if Manage_titles.filter_ext(file) add games files
+            file for file in os.listdir(self.path) if Manage_titles.filter_ext(file)
+        ]
+
+    def list_game_files(self) -> list:
+        """
+        Add every file to the list
+        """
+        return [
+            file for file in os.listdir(self.path)
         ]
