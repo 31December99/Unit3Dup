@@ -28,15 +28,15 @@ class Field:
 @dataclass
 class TorrentClientConfig:
     categories: list[str] = field(default_factory=list)
-    configContract: str = ""
+    configContract: str | None = None
     enable: bool = True
     fields: list[Field] = field(default_factory=list)
     id: int = 0
-    implementation: str = ""
-    implementationName: str = ""
-    infoLink: str = ""
-    name: str = ""
+    implementation: str | None = None
+    implementationName: str | None = None
+    infoLink: str | None = None
+    name: str | None = None
     priority: int = 0
-    protocol: str = ""
+    protocol: str | None = None
     supportsCategories: bool = False
     tags: list[str] = field(default_factory=list)

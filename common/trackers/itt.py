@@ -4,7 +4,8 @@ itt_data = {
     "CATEGORY": {
         "movie": 1,
         "tvshow": 2,
-        "edicola": 7
+        "edicola": 7,
+        "game": 4
     },
     "FREELECH": {
         "size20": 100,
@@ -15,6 +16,7 @@ itt_data = {
     "TYPE_ID": {
         "full-disc": 1,
         "remux": 2,
+        "bdremux": 2,
         "vh": 2,
         "untouched": 2,
         "bd-untouched": 2,

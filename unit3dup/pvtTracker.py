@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
+import os
 import requests
 
-from urllib.parse import urljoin
 from common.custom_console import custom_console
+from urllib.parse import urljoin
+from common.config import config
 
 
 class Myhttp:
@@ -274,8 +276,14 @@ class Torrents(Tracker):
 
 
 class Uploader(Tracker):
-    def upload_t(self, data: dict, full_path: str) -> requests:
-        with open(f"{full_path}.torrent", "rb") as torrent:
+    def upload_t(self, data: dict, torrent_path: str) -> requests:
+        if not config.TORRENT_ARCHIVE:
+            full_path = f"{torrent_path}.torrent"
+        else:
+            torrent_file_name = os.path.basename(torrent_path)
+            full_path = os.path.join(config.TORRENT_ARCHIVE, f"{torrent_file_name}.torrent")
+
+        with open(full_path, "rb") as torrent:
             file_torrent = {"torrent": torrent}
             return self._post(file=file_torrent, data=data, params=self.params)
 
