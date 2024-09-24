@@ -12,13 +12,11 @@ from common.external_services.ftpx.client import Client
 from common.custom_console import custom_console
 from common.extractor import Extractor
 
-from common.external_services.igdb.client import IGdbServiceApi
-
 
 class Bot:
     """
     A class to manage and execute media-related tasks including file processing,
-    torrent management, and interaction with the TMDB service.
+    torrent management, and interaction with the TMDB service
     """
 
     def __init__(
@@ -39,11 +37,11 @@ class Bot:
         self.cli = cli
         self.mode = mode
 
-        # Torrent Manager
+        # Bot Manager
         self.torrent_manager = TorrentManager(cli=self.cli)
 
         # TMDB service
-        self.tmdb_service = TmdbService()
+        # self.tmdb_service = TmdbService()
 
     def run(self) -> None:
         """
@@ -56,12 +54,13 @@ class Bot:
             path=self.path, tracker_name=self.tracker_name, mode=self.mode
         )
 
-        # Get the contents
+        # Get the contents (Media)
         files = self.content_manager.get_files()
-
         # Search for rar files and decompress them
+        if not files:
+            custom_console.bot_error_log("There are no files to process")
+            return
         extractor = Extractor(media=files)
-
         result = extractor.unrar()
         if result is False:
             exit(1)
@@ -72,6 +71,7 @@ class Bot:
             for item in files
             if (content := self.content_manager.get_media(item))
         ]
+
         # Print the list of selected files being processed
         custom_console.bot_process_table_log(contents)
 
@@ -83,7 +83,7 @@ class Bot:
         # PW service
         pw_service = PwService()
         custom_console.panel_message("Analyzing... Please wait")
-        # Examples
+        # Examples Test
 
         """
         # Now Playing by country
@@ -175,16 +175,3 @@ class Bot:
             scan_path = "/".join(scan_path[:-1])
             self.path = scan_path
             self.run()
-
-    def igdb(self):
-
-
-        #IGDB service
-        self.ig_db = IGdbServiceApi()
-        response = self.ig_db.login()
-        if response:
-            print(self.ig_db.request("Lineage"))
-
-
-
-

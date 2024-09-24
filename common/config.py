@@ -3,10 +3,12 @@
 import os
 from common.custom_console import custom_console
 from pydantic_settings import BaseSettings
-from pydantic import Field, field_validator
+from pydantic import Field, field_validator, fields
 from dotenv import load_dotenv
 from urllib.parse import urlparse
 from pathlib import Path
+
+service_filename = "Unit3Dbot_service.env"
 
 
 def create_default_env_file(path):
@@ -32,11 +34,14 @@ DUPLICATE_ON=False
 # Number of screenshots we create
 NUMBER_OF_SCREENSHOTS=6
 
-# Level of compression for screenshot ( quality) ) 0 = Best quality
+# Level of compression for screenshot (quality) 0 = Best quality
 COMPRESS_SCSHOT=4
 
 # Path for each torrent file created
 TORRENT_ARCHIVE=
+
+# Torrent file comment (max 100 chars)
+TORRENT_COMMENT=
 
 # Preferred language. Discard videos with a language different from preferred_lang
 PREFERRED_LANG=
@@ -72,27 +77,24 @@ IGDB_ACCESS_TK=
         f.write(default_content.strip())
 
 
-# Define the path for the configuration file ( Windows/Linux)
-if os.name == "nt":
-    default_env_path = Path(os.getenv("APPDATA", ".")) / "service.env"
-    torrent_archive_path = Path(os.getenv("APPDATA", ".")) / "torrent_archive"
-else:
-    default_env_path = Path.home() / "service.env"
+# Define the path for the configuration file
+if os.name == "nt":  # If on Windows
+    default_env_path = Path(os.getenv("LOCALAPPDATA", ".")) / f"{service_filename}"
+    torrent_archive_path = Path(os.getenv("LOCALAPPDATA", ".")) / "torrent_archive"
+else:  # If on Linux/macOS
+    default_env_path = Path.home() / f"{service_filename}"
     torrent_archive_path = Path.home() / "torrent_archive"
 
-# print the configuration path
-custom_console.bot_log(f"Default configuration path... {default_env_path}")
+custom_console.bot_question_log(f"Default configuration path: {default_env_path}\n")
 
 # Create the configuration file if it does not exist
 if not default_env_path.exists():
-    custom_console.bot_log(f"Create default configuration file... {default_env_path}")
+    print(f"Create default configuration file: {default_env_path}")
     create_default_env_file(default_env_path)
 
 # Create the directory for the torrent archive if it does not exist
 if not torrent_archive_path.exists():
-    custom_console.bot_log(
-        f"Create default torrent archive path... {torrent_archive_path}"
-    )
+    print(f"Create default torrent archive path: {torrent_archive_path}")
     os.makedirs(torrent_archive_path, exist_ok=True)
 
 # Load environment variables
@@ -102,7 +104,7 @@ load_dotenv(dotenv_path=default_env_path)
 class Config(BaseSettings):
     # TRACKER
     ITT_APIKEY: str | None = Field(default=None, env="ITT_APIKEY")
-    ITT_URL: str | None = Field(default=None, env="ITT_URL")
+    ITT_URL: str = Field(default="https://itatorrents.xyz", env="ITT_URL")
 
     # EXTERNAL SERVICE
     TMDB_APIKEY: str | None = Field(default=None, env="TMDB_APIKEY")
@@ -120,14 +122,15 @@ class Config(BaseSettings):
     # TORRENT CLIENT
     QBIT_USER: str | None = Field(default=None, env="QBIT_USER")
     QBIT_PASS: str | None = Field(default=None, env="QBIT_PASS")
-    QBIT_URL: str = Field(default="http://localhost:8080", env="QBIT_URL")
+    QBIT_URL: str = Field(default="http://127.0.0.1", env="QBIT_URL")
     QBIT_PORT: str | None = Field(default="8080", env="QBIT_PORT")
 
     # USER PREFERENCES
-    DUPLICATE_ON: bool = Field(default=False, env="DUPLICATE_ON")
+    DUPLICATE_ON: str = Field(default=False, env="DUPLICATE_ON")
     NUMBER_OF_SCREENSHOTS: int = Field(default=6, env="NUMBER_OF_SCREENSHOTS")
     COMPRESS_SCSHOT: int = Field(default=4, env="COMPRESS_SCSHOT")
     TORRENT_ARCHIVE: str | None = Field(default=None, env="TORRENT_ARCHIVE")
+    TORRENT_COMMENT: str | None = Field(default=None, env="TORRENT_COMMENT")
     PREFERRED_LANG: str | None = Field(default=None, env="PREFERRED_LANG")
     SIZE_TH: int = Field(default=100, env="SIZE_TH")
     FTPX_LOCAL_PATH: str | None = Field(default=None, env="FTPX_LOCAL_PATH")
@@ -138,19 +141,35 @@ class Config(BaseSettings):
         super().__init__(**values)
 
     @staticmethod
-    def validate_url(value: str | None, default_value: str) -> str:
+    def validate_url(value: str | None, field: str, fields: dict) -> str:
         if not value:
-            return default_value
+            return fields[field].default
         parsed_url = urlparse(value)
         if not (parsed_url.scheme and parsed_url.netloc):
-            raise ValueError(f"{value} Invalid Url")
+            custom_console.bot_error_log(
+                f"{value} is an invalid URL. Using default: {fields[field].default}"
+            )
+            return fields[field].default
         return value
+
+    @staticmethod
+    def validate_boolean(value: any, field: str, fields: dict) -> bool:
+        if isinstance(value, str):
+            lowered_value = value.lower()
+            if lowered_value in ["true", "1", "yes"]:
+                return True
+            elif lowered_value in ["false", "0", "no"]:
+                return False
+        custom_console.bot_error_log(
+            f"{value} is not a valid boolean for {field}. Using default: {fields[field].default}"
+        )
+        return fields[field].default
 
     @field_validator("ITT_URL")
     def validate_itt_url(cls, value):
         if not value:
             custom_console.bot_error_log("No ITT_URL provided")
-        return cls.validate_url(value, cls.__fields__["ITT_URL"].default)
+        return cls.validate_url(value, "ITT_URL", cls.__fields__)
 
     @field_validator("ITT_APIKEY")
     def validate_itt_apikey(cls, value):
@@ -162,13 +181,13 @@ class Config(BaseSettings):
     def validate_qbit_url(cls, value):
         if not value:
             custom_console.bot_error_log("No QBIT_URL provided")
-        return cls.validate_url(value, cls.__fields__["QBIT_URL"].default)
+        return cls.validate_url(value, "QBIT_URL", cls.__fields__)
 
     @field_validator("PW_URL")
     def validate_pw_url(cls, value):
         # if not value:
         # custom_console.bot_question_log("[Optional] No PW_URL provided\n")
-        return cls.validate_url(value, cls.__fields__["PW_URL"].default)
+        return cls.validate_url(value, "PW_URL", cls.__fields__)
 
     @field_validator("PW_API_KEY")
     def validate_pw_apikey(cls, value):
@@ -214,10 +233,7 @@ class Config(BaseSettings):
 
     @field_validator("DUPLICATE_ON")
     def validate_duplicate_on(cls, value):
-        if not isinstance(value, bool):
-            custom_console.bot_error_log("DUPLICATE_ON should be a boolean")
-            return cls.__fields__["DUPLICATE_ON"].default
-        return value
+        return cls.validate_boolean(value, "DUPLICATE_ON", cls.__fields__)
 
     @field_validator("NUMBER_OF_SCREENSHOTS")
     def validate_n_screenshot(cls, value):
@@ -235,6 +251,12 @@ class Config(BaseSettings):
     def validate_torrent_archive(cls, value):
         if not isinstance(value, str):
             return cls.__fields__["TORRENT_ARCHIVE"].default
+        return value
+
+    @field_validator("TORRENT_COMMENT")
+    def validate_torrent_comment(cls, value):
+        if not isinstance(value, str):
+            return cls.__fields__["TORRENT_COMMENT"].default
         return value
 
     @field_validator("PREFERRED_LANG")

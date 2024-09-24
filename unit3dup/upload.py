@@ -2,11 +2,12 @@ import json
 import os
 import requests
 
+from common.external_services.igdb.core.models.game import Game
 from unit3dup import pvtTracker, payload, contents
-from abc import ABC, abstractmethod
-from common.config import config
 from common.trackers.trackers import ITTData
 from common.custom_console import custom_console
+from abc import ABC, abstractmethod
+from common.config import config
 
 
 class UploadBot(ABC):
@@ -25,7 +26,7 @@ class UploadBot(ABC):
 
     def send(self, tracker: pvtTracker) -> requests:
         tracker_response = tracker.upload_t(
-            data=tracker.data, full_path=self.torrent_path
+            data=tracker.data, torrent_path=self.torrent_path
         )
 
         if tracker_response.status_code == 200:
@@ -94,6 +95,7 @@ class UploadVideo(UploadBot):
                 media_info=video_info.mediainfo,
                 description=video_info.description,
                 standard=video_info.is_hd,
+                igdb=0,  # not used
             )
         else:
             custom_console.bot_error_log(
@@ -127,7 +129,7 @@ class UploadGame(UploadBot):
         super().__init__(content)
         self.tracker_data = ITTData.load_from_module()
 
-    def payload(self):
+    def payload(self, igdb: Game):
         return payload.Data(
             metainfo=self.metainfo,
             name=self.content.name,
@@ -137,6 +139,7 @@ class UploadGame(UploadBot):
             standard=0,
             media_info="",
             description=self.content.doc_description,
+            igdb=igdb.id,
         )
 
     def tracker(self, data: payload) -> pvtTracker:
@@ -149,4 +152,5 @@ class UploadGame(UploadBot):
         tracker.data["description"] = data.description
         tracker.data["type_id"] = self.tracker_data.filter_type(data.file_name)
         tracker.data["resolution_id"] = ""
+        tracker.data["igdb"] = data.igdb
         return tracker

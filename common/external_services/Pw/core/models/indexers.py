@@ -52,7 +52,7 @@ class Field:
 class Indexer:
     added: str = ''
     appProfileId: int = 0
-    capabilities: Capability = Capability()
+    capabilities: Capability = field(default_factory=Capability)
     configContract: str = ''
     definitionName: str = ''
     description: str = ''
