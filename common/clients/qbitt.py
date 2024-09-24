@@ -32,7 +32,7 @@ class Qbitt:
 
             qb.login(username=config.QBIT_USER, password=config.QBIT_PASS)
             qb.torrents()
-            custom_console.bot_log(f"[QBITTORRENT]...... Online")
+            # custom_console.bot_log(f"[QBITTORRENT]...... Online")
             return qb
         except requests.exceptions.HTTPError:
             custom_console.bot_error_log(
@@ -83,21 +83,18 @@ class Qbitt:
             # Search for your torrent
             self.qbit(self.torrents)
 
-    def download(self, link: requests) -> typing.IO:
-
+    def download(self, tracker_torrent_url: requests) -> typing.IO:
         # Archive the torrent file if torrent_archive is set
         if self.torrent_archive:
-            full_path_origin = f"{self.torrent_path}.torrent"
             file_name = f"{os.path.basename(self.torrent_path)}.torrent"
             full_path_archive = os.path.join(self.torrent_archive, file_name)
-            os.replace(full_path_origin, full_path_archive)
         else:
             # Or save to the current path
             full_path_archive = f"{self.torrent_path}.torrent"
 
         # File archived
         with open(full_path_archive, "wb") as file:
-            file.write(link.content)
+            file.write(tracker_torrent_url.content)
 
         # Ready for seeding
         return open(full_path_archive, "rb")
