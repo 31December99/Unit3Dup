@@ -13,6 +13,7 @@ crew_patterns = [
     "GOG",
     "TENOKE",
     "rG",
+    "ILEARN",
     "I_Know",
     "Razor1911",
     "RUNE",
@@ -239,7 +240,8 @@ crew_patterns = [
     "BANSHEE",
     "NIGHTRIDER",
     "JAGUAR",
-    "RIFT"
+    "RIFT",
+    "DUPLEX",
 ]
 
 platform_patterns = [
@@ -398,7 +400,9 @@ platform_patterns = [
     "DAYDREAM",
     "PSVR",
     "PKMN",
-    "XONE"
+    "XONE",
+    "MACOS",
+    "PS5",
 ]
 
 
