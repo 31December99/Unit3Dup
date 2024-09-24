@@ -1,28 +1,23 @@
+# -*- coding: utf-8 -*-
+
 import os
 import re
 
+from common.external_services.igdb.core.tags import (
+    crew_patterns,
+    suffixes,
+    platform_patterns,
+)
 from common.trackers.trackers import ITTData
 from dataclasses import dataclass, field
 from common.mediainfo import MediaFile
 from common.utility import title
 
-crew_pattern = (
-    r"\b("
-    # Nintendo Switch
-    r"NSW-(VENOM|nogrp|LiGHTFORCE|SUXXORS|HR|NiiNTENDO|GANT|BREWS)|"
-    # PC
-    r"REPACK-Kaos|GOG|TENOKE|rG|I\sKnow|Razor1911|RUNE|FitGirl\sRepack|DODI\sRepack|ElAmigos|"
-    r"RazorDOX|RAZOR|SKIDROW|DINOByTES|TiNYiSO|FCKDRM|FLT|Unleashed|"
-    # PS4 e PS5
-    r"PS4|PS5|"
-    r"I_KnoW)\b"
-)
+# Get the name of the crew only if it's the last substring in the title by \b$
+crew_pattern = r"\b(" + "|".join(pattern.replace(" ", "_") for pattern in crew_patterns) + r")\b$"
 
-tag_pattern = (
-    r"\b(PC|WIN|WIN32|WIN64|LIN|LNX|MAC|OSX|XBOX|X360|XONE|XBO|XSX|XSS|PS1|PSX|PS2|PS3|PS4|PS5|PSP|PSV|NES"
-    r"|SNES|N64|GC|NGC|WII|WIIU|NS|SWITCH|3DS|NDS|DS|GEN|MD|SAT|DC|GB|GBC|GBA|ANDROID|IOS|STADIA|LUNA|VR"
-    r"|RIFT|VIVE|DLC|Linux)\b"
-)
+# Get the platform substr
+tag_pattern = r"\b(" + "|".join(platform_patterns) + r")\b"
 
 
 @dataclass
@@ -45,6 +40,7 @@ class Contents:
     resolution: int = field(init=False)
     game_title: str
     game_crew: list
+    game_tags: list
 
     def __post_init__(self):
         # Search for the episode title
@@ -79,13 +75,20 @@ class Media:
     @property
     def guess_filename(self):
         temp_name = os.path.basename(self.subfolder)
+
         temp_name = temp_name.replace(".", " ")
+        # temp_name = temp_name.replace("_", " ")
+        temp_name = temp_name.replace("-", " ")
+
         for crew_name in self.crew:
             temp_name = temp_name.replace(crew_name, "")
 
-        for tag_name in self.tags:
+        for tag_name in self.game_tags:
             temp_name = temp_name.replace(tag_name, "")
-        return title.Guessit(temp_name)
+
+        for suffix in suffixes:
+            temp_name = temp_name.lower().replace(suffix.lower(), "")
+        return title.Guessit(temp_name.strip())
 
     @property
     def source(self):
@@ -113,12 +116,12 @@ class Media:
 
     @property
     def crew(self) -> list:
-        matches = re.findall(crew_pattern, self.subfolder, re.IGNORECASE)
-        extracted_tags = [match[0] for match in matches]
-        return extracted_tags
+        temp_name = self.subfolder.replace(".", " ").strip()
+        matches = re.findall(crew_pattern, temp_name, re.IGNORECASE)
+        return matches
 
     @property
-    def tags(self) -> list:
+    def game_tags(self) -> list:
         matches = re.findall(tag_pattern, self.subfolder, re.IGNORECASE)
         return matches
 
