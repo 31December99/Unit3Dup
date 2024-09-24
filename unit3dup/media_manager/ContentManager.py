@@ -29,6 +29,7 @@ class ContentManager:
             media_type=item.media_type,
             game_title=item.game_title,
             game_crew=item.crew,
+            game_tags=item.game_tags,
         )
         content = files.get_data()
         if content is False:
