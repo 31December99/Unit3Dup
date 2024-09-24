@@ -62,9 +62,28 @@ class IGdbServiceApi:
                 custom_console.bot_question_log("Login failed.\n")
                 return []
 
-        platform_name = platform_id[platform[0].upper()]
+        # The platform name comes from the title
+        if platform:
+            if platform[0].upper() in platform_id:
+                # The platform ID comes from the IGDB database
+                platform_name = platform_id[platform[0].upper()]
+            else:
+                custom_console.bot_error_log(
+                    f"Platform {platform} name not found in the BOT database "
+                    f"for the title '{title}'\n"
+                    f"Please report or add it"
+                )
+                exit(1)
+
+        else:
+            # Platform not found in content creation
+            custom_console.bot_question_log(
+                f"\nPlatform not found for the title '{title}'. Searching without it... \n"
+            )
+            platform_name = ""
+
         result = self._query(title=title, platform_name=platform_name)
-        if not result:
+        if not result and platform_name:
             result = self._query(title=title, platform_name="")
         return result
 
@@ -90,5 +109,5 @@ class IGdbServiceApi:
             query = response.json()
             return [Game(**game_data) for game_data in query]
         except Exception as e:
-            print(e)
-            input()
+            custom_console.bot_error_log(f"Please report it {e}")
+            exit(1)
