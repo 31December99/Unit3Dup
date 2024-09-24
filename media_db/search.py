@@ -51,17 +51,18 @@ class TvShow:
                 else "nourl"
             )
             result.poster_path = url_poster
-            """
+
             custom_console.bot_log(f"\n[TMDB ID]................  {result.video_id}")
             custom_console.bot_log(f"[TMDB POSTER]............  {result.poster_path}")
             custom_console.bot_log(f"[TMDB BACKDROP]..........  {result.backdrop_path}")
-            custom_console.bot_log(f"[TMDB KEYWORDS]..........  {result.keywords}\n")
-            """
+            # custom_console.bot_log(f"[TMDB KEYWORDS]..........  {result.keywords}\n")
 
+            """
             # Print the list of search results
             custom_console.bot_tmdb_table_log(
                 result=result, title=_title, media_info_language=self.content.audio_languages
             )
+            """
 
             return result
         else:
