@@ -27,7 +27,8 @@ def main():
         base_url=config.ITT_URL, api_token=config.ITT_APIKEY, pass_key=""
     )
     if tracker.get_alive(alive=True, perPage=1):
-        custom_console.bot_log(f"[TRACKER HOST].... Online")
+        # custom_console.bot_log(f"[TRACKER HOST].... Online")
+        pass
 
     # /// Test the torrent client
     if cli.args.scan or cli.args.upload:
@@ -38,49 +39,43 @@ def main():
     # \\\ Commands options  \\\
     # Manual upload mode
     if cli.args.upload:
-        unit3dup = Bot(
+        bot = Bot(
             path=cli.args.upload, tracker_name=cli.args.tracker, cli=cli.args
         )
-        unit3dup.run()
+        bot.run()
 
     # Manual folder mode
     if cli.args.folder:
-        unit3dup = Bot(
+        bot = Bot(
             path=cli.args.folder,
             tracker_name=cli.args.tracker,
             cli=cli.args,
             mode="folder",
         )
-        unit3dup.run()
+        bot.run()
 
     # Auto mode
     if cli.args.scan and not cli.args.ftp:
-        unit3dup = Bot(
+        bot = Bot(
             path=cli.args.scan, tracker_name=cli.args.tracker, cli=cli.args, mode="auto"
         )
-        unit3dup.run()
+        bot.run()
 
     # Pw
     if cli.args.pw:
-        unit3dup = Bot(
+        bot = Bot(
             path=cli.args.pw,
             tracker_name=cli.args.tracker,
             cli=cli.args,
         )
-        unit3dup.pw()
+        bot.pw()
 
     # ftp and upload
     if cli.args.ftp:
-        unit3dup = Bot(
+        bot = Bot(
             path='', tracker_name=cli.args.tracker, cli=cli.args, mode="folder"
         )
-        unit3dup.ftp()
-
-    if cli.args.game:
-        unit3dup = Bot(
-            path='', tracker_name=cli.args.tracker, cli=cli.args, mode="folder"
-        )
-        unit3dup.igdb()
+        bot.ftp()
 
     # Commands list: commands not necessary for upload but may be useful
     torrent_info = View()
