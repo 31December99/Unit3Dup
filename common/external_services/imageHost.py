@@ -113,9 +113,9 @@ class ImageUploaderFallback:
 
         # If there is no error from json response
         if result:
-            custom_console.bot_log(
-                f"[{self.uploader.__class__.__name__}]..... [ON-LINE]"
-            )
+            """
+            custom_console.bot_log(f"[{self.uploader.__class__.__name__}]..... [ON-LINE]")
+            """
             if not test:
                 return result
 
