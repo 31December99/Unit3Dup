@@ -68,8 +68,9 @@ class IGdbServiceApi:
                 # The platform ID comes from the IGDB database
                 platform_name = platform_id[platform[0].upper()]
             else:
+                custom_console.rule()
                 custom_console.bot_error_log(
-                    f"Platform {platform} name not found in the BOT database "
+                    f"\nPlatform {platform} name not found in the BOT database "
                     f"for the title '{title}'\n"
                     f"Please report or add it"
                 )
