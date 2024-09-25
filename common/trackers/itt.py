@@ -54,6 +54,10 @@ itt_data = {
         "dlmux": 27,
         "bdmux": 29
     },
+    "TAGS": {
+        "SD": 1,
+        "HD": 0,
+    },
     "RESOLUTION": {
         "4320p": 1,
         "2160p": 2,

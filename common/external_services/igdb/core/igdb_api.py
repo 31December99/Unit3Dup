@@ -31,7 +31,7 @@ class IGdbServiceApi:
 
         params = {
             "client_id": config.IGDB_CLIENT_ID,
-            "client_secret": config.IGDB_ACCESS_TK,
+            "client_secret": config.IGDB_ID_SECRET,
             "grant_type": "client_credentials",
         }
 
@@ -39,8 +39,8 @@ class IGdbServiceApi:
             custom_console.bot_question_log("No IGDB_CLIENT_ID provided\n")
             return False
 
-        if not config.IGDB_ACCESS_TK:
-            custom_console.bot_question_log("No IGDB_ACCESS_TK provided\n")
+        if not config.IGDB_ID_SECRET:
+            custom_console.bot_question_log("No IGDB_ID_SECRET provided\n")
             return False
 
         response = cls.http_client.get_url(oauth, params=params, get_method=False)
