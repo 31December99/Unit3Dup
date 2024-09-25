@@ -49,30 +49,59 @@ class Bot:
         """
         custom_console.panel_message("Analyzing... Please wait")
 
-        # Get user contents
+        # Get Files list with basic attributes
+        # from the upload() or scan command()
+        # and create an object Media
+        # torrent_path
+        # media_type
+        # crew
+        # game_tags
+        # game_title
         self.content_manager = ContentManager(
             path=self.path, tracker_name=self.tracker_name, mode=self.mode
         )
+        file_media_list = self.content_manager.get_files()
 
-        # Get the contents (Media)
-        files = self.content_manager.get_files()
         # Search for rar files and decompress them
-        if not files:
+        if not file_media_list:
             custom_console.bot_error_log("There are no files to process")
             return
-        extractor = Extractor(media=files)
+        extractor = Extractor(media=file_media_list)
         result = extractor.unrar()
         if result is False:
             exit(1)
 
-        # Create the file objects
+        # Create an object Files for each file from the files_list
+        # We need to prepare each file (Files class) to create a content object (Contents):
+
+        # file without folder
+        # file with folder
+        # folder with files
+        # tv show title string
+        # movie title string
+        # display_name for the tracker website string
+        # media_info json
+        # game by crew
+        # game title for query igdb
+        # game tags (platform) for query igdb
+        # document
+        # doc description
+        # torrent package
+        # torrent name
+        # torrent file name
+        # torrent meta_file
+        # torrent size (field)
+        # audio languages
+
+        # Media > Files > Content
         contents = [
             content
-            for item in files
-            if (content := self.content_manager.get_media(item))
+            for media in file_media_list
+            if (content := self.content_manager.get_media(media))
         ]
 
         # Print the list of selected files being processed
+        # the contents objects
         custom_console.bot_process_table_log(contents)
 
         # Process them
