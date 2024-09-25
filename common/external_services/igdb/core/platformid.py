@@ -13,6 +13,7 @@ platform_id = {
     "X360": 12,  # Xbox 360
     "DOS": 13,  # PC DOS
     "MAC": 14,  # Mac
+    "MACOS": 14,  # Mac
     "C64": 15,  # Commodore C64/128
     "AMIGA": 16,  # Amiga
     "NES": 18,  # Nintendo Entertainment System
