@@ -9,6 +9,7 @@ from common.external_services.igdb.core.tags import (
     platform_patterns,
 )
 
+from common.custom_console import custom_console
 from common.trackers.trackers import ITTData
 from dataclasses import dataclass, field
 from common.mediainfo import MediaFile
@@ -16,7 +17,7 @@ from common.utility import title
 
 # Get the name of the crew only if it's the last substring in the title by \b$
 crew_pattern = (
-        r"\b(" + "|".join(pattern.replace(" ", "_") for pattern in crew_patterns) + r")\b$"
+    r"\b(" + "|".join(pattern.replace(" ", "_") for pattern in crew_patterns) + r")\b$"
 )
 
 # Get the platform substr
@@ -56,45 +57,53 @@ class Contents:
                 self.display_name.replace(self.episode_title, "").split()
             )
 
-        # Load the tracker data from the dictionary
-        tracker_data = ITTData.load_from_module()
-        # Read from the current video file the height field
-        file_path = os.path.join(self.folder, self.file_name)
-        media_file = MediaFile(file_path)
+        if not self.game_crew:
+            # Load the tracker data from the dictionary
+            tracker_data = ITTData.load_from_module()
+            # Read from the current video file the height field
+            file_path = os.path.join(self.folder, self.file_name)
+            media_file = MediaFile(file_path)
 
-        # Get the resolution sub from the dictionary
-        resolutions = tracker_data.resolution
-        # Remove duplicate because the 'i' and 'p' and return a set
-        resolution_values = {
-            key[:-1] for key in resolutions.keys() if key[:-1].isdigit()
-        }
+            # Get the resolution sub from the dictionary
+            resolutions = tracker_data.resolution
+            # Remove duplicate because the 'i' and 'p' and return a set
+            resolution_values = {
+                key[:-1] for key in resolutions.keys() if key[:-1].isdigit()
+            }
 
-        # The resolution from the mediainfo not always mach those in tracker data
-        # so we apply the difference between 'x' (tracker resolution in set) and the video_height
-        # do it for each value in resolution_values and return the min among all values
-        # example: height = 1000...
-        # For 720: abs(720 - 1000) = 280
-        # For 1080: abs(1080 - 1000) = 80
-        # -> get 1080
-        closest_resolution = min(
-            resolution_values, key=lambda x: abs(int(x) - media_file.video_height)
-        )
+            # The resolution from the mediainfo not always mach those in tracker data
+            # so we apply the difference between 'x' (tracker resolution in set) and the video_height
+            # do it for each value in resolution_values and return the min among all values
+            # example: height = 1000...
+            # For 720: abs(720 - 1000) = 280
+            # For 1080: abs(1080 - 1000) = 80
+            # -> get 1080
 
-        # Get scan type: progressive or interlaced
-        scan_type = media_file.video_scan_type
+            if media_file.video_height:
+                closest_resolution = min(
+                    resolution_values,
+                    key=lambda x: abs(int(x) - int(media_file.video_height)),
+                )
 
-        if scan_type:
-            if scan_type.lower() == 'progressive':
-                closest_resolution = f"{closest_resolution}p"
+                # Get scan type: progressive or interlaced
+                scan_type = media_file.video_scan_type
+
+                if scan_type:
+                    if scan_type.lower() == "progressive":
+                        closest_resolution = f"{closest_resolution}p"
+                    else:
+                        closest_resolution = f"{closest_resolution}i"
+                else:
+                    closest_resolution = tracker_data.resolution["altro"]
+
+                if closest_resolution not in tracker_data.resolution:
+                    self.resolution = tracker_data.resolution["altro"]
+                else:
+                    self.resolution = tracker_data.resolution[closest_resolution]
             else:
-                closest_resolution = f"{closest_resolution}i"
-        else:
-            closest_resolution = tracker_data.resolution['altro']
-
-        if closest_resolution not in tracker_data.resolution:
-            self.resolution = tracker_data.resolution["altro"]
-        else:
-            self.resolution = tracker_data.resolution[closest_resolution]
+                custom_console.bot_error_log(f"Video Height resolution not found in {self.file_name}")
+                custom_console.bot_error_log(f"Set to default value {tracker_data.category['altro']}")
+                self.resolution = tracker_data.resolution["altro"]
 
 
 @dataclass
