@@ -222,6 +222,8 @@ class Client:
             self.ftpx_service.current_path(), one_file_selected.name
         )
         self.single_file_selected = True
+        ## change the path ( replace '\' to '/' for windows OS) ##
+        self.remote_path = self.remote_path.replace("\\", "/")
 
         # Create a list of FPTDirectory for a single file
         self.current_list_of_files = [one_file_selected]
@@ -230,7 +232,9 @@ class Client:
         self.remote_path = os.path.join(
             self.ftpx_service.current_path(), selected_folder
         )
-        # change the path
+
+        ## change the path ( replace '\' to '/' for windows OS) ##
+        self.remote_path = self.remote_path.replace("\\", "/")
         self.ftpx_service.change_dir(new_path=self.remote_path)
         # // Build a new Home page for the current folder
         home_folder = self.ftpx_service.get_list(remote_path=config.FTPX_ROOT)
