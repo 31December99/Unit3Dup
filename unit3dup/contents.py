@@ -94,7 +94,11 @@ class Contents:
                     else:
                         closest_resolution = f"{closest_resolution}i"
                 else:
-                    closest_resolution = tracker_data.resolution["altro"]
+                    # else read the interlaced field..
+                    if media_file.is_interlaced:
+                        closest_resolution = f"{closest_resolution}i"
+                    else:
+                        closest_resolution = f"{closest_resolution}p"
 
                 if closest_resolution not in tracker_data.resolution:
                     self.resolution = tracker_data.resolution["altro"]
@@ -149,12 +153,6 @@ class Media:
     @property
     def subtitle(self):
         return self.guess_filename.subtitle
-
-    """
-    @property
-    def resolution(self):
-        return self.guess_filename.screen_size
-    """
 
     @property
     def torrent_path(self) -> str:
