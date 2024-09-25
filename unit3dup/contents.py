@@ -8,13 +8,16 @@ from common.external_services.igdb.core.tags import (
     suffixes,
     platform_patterns,
 )
+
 from common.trackers.trackers import ITTData
 from dataclasses import dataclass, field
 from common.mediainfo import MediaFile
 from common.utility import title
 
 # Get the name of the crew only if it's the last substring in the title by \b$
-crew_pattern = r"\b(" + "|".join(pattern.replace(" ", "_") for pattern in crew_patterns) + r")\b$"
+crew_pattern = (
+        r"\b(" + "|".join(pattern.replace(" ", "_") for pattern in crew_patterns) + r")\b$"
+)
 
 # Get the platform substr
 tag_pattern = r"\b(" + "|".join(platform_patterns) + r")\b"
@@ -43,7 +46,9 @@ class Contents:
     game_tags: list
 
     def __post_init__(self):
+        ###
         # Search for the episode title
+        ####
         guess_filename = title.Guessit(self.file_name)
         self.episode_title = guess_filename.guessit_episode_title
         if self.episode_title:
@@ -51,15 +56,45 @@ class Contents:
                 self.display_name.replace(self.episode_title, "").split()
             )
 
-        # Search for resolution based on mediainfo string
+        # Load the tracker data from the dictionary
         tracker_data = ITTData.load_from_module()
+        # Read from the current video file the height field
         file_path = os.path.join(self.folder, self.file_name)
         media_file = MediaFile(file_path)
-        video_height = f"{media_file.video_height}p"
-        if video_height not in tracker_data.resolution:
+
+        # Get the resolution sub from the dictionary
+        resolutions = tracker_data.resolution
+        # Remove duplicate because the 'i' and 'p' and return a set
+        resolution_values = {
+            key[:-1] for key in resolutions.keys() if key[:-1].isdigit()
+        }
+
+        # The resolution from the mediainfo not always mach those in tracker data
+        # so we apply the difference between 'x' (tracker resolution in set) and the video_height
+        # do it for each value in resolution_values and return the min among all values
+        # example: height = 1000...
+        # For 720: abs(720 - 1000) = 280
+        # For 1080: abs(1080 - 1000) = 80
+        # -> get 1080
+        closest_resolution = min(
+            resolution_values, key=lambda x: abs(int(x) - media_file.video_height)
+        )
+
+        # Get scan type: progressive or interlaced
+        scan_type = media_file.video_scan_type
+
+        if scan_type:
+            if scan_type.lower() == 'progressive':
+                closest_resolution = f"{closest_resolution}p"
+            else:
+                closest_resolution = f"{closest_resolution}i"
+        else:
+            closest_resolution = tracker_data.resolution['altro']
+
+        if closest_resolution not in tracker_data.resolution:
             self.resolution = tracker_data.resolution["altro"]
         else:
-            self.resolution = tracker_data.resolution[video_height]
+            self.resolution = tracker_data.resolution[closest_resolution]
 
 
 @dataclass
@@ -106,9 +141,11 @@ class Media:
     def subtitle(self):
         return self.guess_filename.subtitle
 
+    """
     @property
     def resolution(self):
         return self.guess_filename.screen_size
+    """
 
     @property
     def torrent_path(self) -> str:
