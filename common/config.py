@@ -71,7 +71,7 @@ FTPX_KEEP_ALIVE=False
 
 # IGDB
 IGDB_CLIENT_ID=
-IGDB_ACCESS_TK=
+IGDB_ID_SECRET=
 """
     with open(path, "w") as f:
         f.write(default_content.strip())
@@ -117,7 +117,7 @@ class Config(BaseSettings):
     FTPX_IP: str | None = Field(default=None, env="FTPX_IP")
     FTPX_PORT: str | None = Field(default="2121", env="FTPX_PORT")
     IGDB_CLIENT_ID: str | None = Field(default=None, env="IGDB_CLIENT_ID")
-    IGDB_ACCESS_TK: str | None = Field(default=None, env="IGDB_ACCESS_TK")
+    IGDB_ID_SECRET: str | None = Field(default=None, env="IGDB_ID_SECRET")
 
     # TORRENT CLIENT
     QBIT_USER: str | None = Field(default=None, env="QBIT_USER")
@@ -313,10 +313,10 @@ class Config(BaseSettings):
         # custom_console.bot_question_log("[Optional] No IGDB_CLIENT_ID provided\n")
         return value
 
-    @field_validator("IGDB_ACCESS_TK")
-    def validate_igdb_access_tk(cls, value):
+    @field_validator("IGDB_ID_SECRET")
+    def validate_igdb_id_secret(cls, value):
         # if not value:
-        # custom_console.bot_question_log("[Optional] No IGDB_ACCESS_TK provided\n")
+        # custom_console.bot_question_log("[Optional] No IGDB_ID_SECRET provided\n")
         return value
 
 

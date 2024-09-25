@@ -55,11 +55,19 @@ class MediaFile:
 
     @property
     def video_height(self):
-        """Returns the height of the videoo"""
+        """Returns the height of the video"""
         video = self.video_track
         if video:
-            return video[0].get('height', 'Unknown')
-        return 'Unknown'
+            return video[0].get('height', None)
+        return None
+
+    @property
+    def video_scan_type(self):
+        """Returns the scan type"""
+        video = self.video_track
+        if video:
+            return video[0].get('scan_type', None)
+        return None
 
     @property
     def video_aspect_ratio(self):
