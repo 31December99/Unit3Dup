@@ -66,10 +66,13 @@ class Bot:
         if not file_media_list:
             custom_console.bot_error_log("There are no files to process")
             return
-        extractor = Extractor(media=file_media_list)
-        result = extractor.unrar()
-        if result is False:
-            exit(1)
+
+        # Decompress the rar files( only for ftp)
+        if self.cli.ftp:
+            extractor = Extractor(media=file_media_list)
+            result = extractor.unrar()
+            if result is False:
+                exit(1)
 
         # Create an object Files for each file from the files_list
         # We need to prepare each file (Files class) to create a content object (Contents):
