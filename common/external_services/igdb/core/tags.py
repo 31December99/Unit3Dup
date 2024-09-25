@@ -177,7 +177,6 @@ crew_patterns = [
     "FAITH",
     "SABER",
     "BLITZ",
-    "PRIME",
     "SPECTRUM",
     "SHADOWFANG",
     "FROST",
