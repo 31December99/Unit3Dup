@@ -12,6 +12,8 @@ class ContentManager:
         self.mode = mode
 
     def get_files(self) -> List:
+        # Create a list of file objects (Media) based on the commands from the CLI user
+        # For each media object, add basic attributes from the create_path method of the AutoMode class
         return self.manual(self.mode) if self.mode in ["man", "folder"] else self.auto()
 
     def manual(self, mode: str) -> List:
@@ -23,6 +25,8 @@ class ContentManager:
         return auto.scan()
 
     def get_media(self, item) -> Optional:
+        # Create a Files object with basic information from the Media class
+        # and obtain the content object by adding more attributes
         files = Files(
             path=item.torrent_path,
             tracker_name=self.tracker_name,
@@ -31,6 +35,8 @@ class ContentManager:
             game_crew=item.crew,
             game_tags=item.game_tags,
         )
+
+        # Create and return a content object
         content = files.get_data()
         if content is False:
             return None
