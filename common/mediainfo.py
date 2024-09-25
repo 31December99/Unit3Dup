@@ -58,8 +58,8 @@ class MediaFile:
         """Returns the height of the video"""
         video = self.video_track
         if video:
-            return video[0].get('height', 'Unknown')
-        return 'Unknown'
+            return video[0].get('height', None)
+        return None
 
     @property
     def video_scan_type(self):
