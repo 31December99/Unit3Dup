@@ -197,6 +197,9 @@ class Client:
 
         for remote_file, size in download_list:
 
+            # Replace slashes for the os Windows environment
+            remote_file = remote_file.replace("\\", "/")
+
             # Skip the first '/' otherwise it would create a list with a leading space
             remote_file_path = remote_file[1:].split("/")
             # Get only the last two subfolders
