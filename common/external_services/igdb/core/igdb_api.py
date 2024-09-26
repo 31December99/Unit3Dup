@@ -51,6 +51,7 @@ class IGdbServiceApi:
             cls.token_type = authentication["token_type"]
             return True
         else:
+            custom_console.bot_error_log("Failed to authenticate with IGDB.\n")
             return False
 
     def request(self, title: str, platform: list) -> list["Game"]:
@@ -62,10 +63,15 @@ class IGdbServiceApi:
                 custom_console.bot_question_log("Login failed.\n")
                 return []
 
-        # The platform name comes from the title
+        # Normalize the title by replacing underscores with spaces
+        normalized_title = title.replace('_', ' ')
+        print(f"Normalized title: {normalized_title}")
+
+        platform_name = ""
+
+        # Determine the platform name if provided
         if platform:
             if platform[0].upper() in platform_id:
-                # The platform ID comes from the IGDB database
                 platform_name = platform_id[platform[0].upper()]
             else:
                 custom_console.rule()
@@ -76,25 +82,32 @@ class IGdbServiceApi:
                 )
                 exit(1)
 
-        else:
-            # Platform not found in content creation
-            custom_console.bot_question_log(
-                f"\nPlatform not found for the title '{title}'. Searching without it... \n"
-            )
-            platform_name = ""
+        # Perform initial search with the specified platform
+        print(f"Searching for title: {normalized_title} on platform: {platform_name}")
+        result = self._query(title=normalized_title, platform_name=platform_name)
 
-        result = self._query(title=title, platform_name=platform_name)
+        # If no results are found, try without platform
         if not result and platform_name:
-            result = self._query(title=title, platform_name="")
-        return result
+            custom_console.bot_error_log("No results found in IGDB with platform. Trying without platform.")
+            result = self._query(title=normalized_title, platform_name="")
+
+        # If still no results, perform a broader search using a key term
+        if not result:
+            custom_console.bot_error_log("No results found in IGDB. Trying a broader search.")
+            result = self._query(title=normalized_title.split()[0], platform_name="")
+
+        # Filter results to match the closest game name
+        filtered_result = self._filter_results(result, normalized_title)
+
+        return filtered_result if filtered_result else result
 
     def _query(self, title: str, platform_name: str) -> list["Game"]:
-
         header_access = {
             "Client-ID": config.IGDB_CLIENT_ID,
             "Authorization": f"Bearer {self.access_token}",
             "Content-Type": "application/json",
         }
+
         try:
             if platform_name:
                 query = f'fields id,name; search "{title}"; where platforms = ({platform_name});'
@@ -102,13 +115,43 @@ class IGdbServiceApi:
                 query = f'fields id,name; search "{title}";'
 
             build_request = urljoin(base_request_url, "games")
+            print(f"IGDB Query: {query}")
 
             response = self.http_client.get_url(
                 build_request, get_method=False, headers=header_access, data=query
             )
 
-            query = response.json()
-            return [Game(**game_data) for game_data in query]
+            if response.status_code != 200:
+                custom_console.bot_error_log(f"Error from IGDB API: {response.status_code} - {response.text}")
+                return []
+
+            try:
+                query_result = response.json()
+            except ValueError:
+                custom_console.bot_error_log("Failed to parse JSON response.")
+                return []
+
+            if not query_result:
+                return []
+
+            return [Game(**game_data) for game_data in query_result]
+
         except Exception as e:
             custom_console.bot_error_log(f"Please report it {e}")
             exit(1)
+
+    def _filter_results(self, games: list["Game"], search_title: str) -> list["Game"]:
+        """
+        Filters the list of games to find the closest match to the search title.
+        """
+        lower_search_title = search_title.lower()
+
+        # Find games that have the closest match to the title
+        matches = [game for game in games if lower_search_title in game.name.lower()]
+
+        # If exact matches found, return them; otherwise, return partial matches
+        if matches:
+            return matches
+
+        # Additional filtering logic can be added here if needed
+        return games
