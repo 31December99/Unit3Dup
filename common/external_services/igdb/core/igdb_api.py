@@ -73,6 +73,14 @@ class IGdbServiceApi:
         if platform:
             if platform[0].upper() in platform_id:
                 platform_name = platform_id[platform[0].upper()]
+            else:
+                custom_console.rule()
+                custom_console.bot_error_log(
+                    f"\nPlatform {platform} name not found in the BOT database "
+                    f"for the title '{title}'\n"
+                    f"Please report or add it"
+                )
+                exit(1)
 
         # Perform initial search with the specified platform
         print(f"Searching for title: {normalized_title} on platform: {platform_name}")

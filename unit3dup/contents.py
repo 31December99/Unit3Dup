@@ -106,7 +106,7 @@ class Contents:
                     self.resolution = tracker_data.resolution[closest_resolution]
             else:
                 custom_console.bot_error_log(f"Video Height resolution not found in {self.file_name}")
-                custom_console.bot_error_log(f"Set to default value {tracker_data.category['altro']}")
+                custom_console.bot_error_log(f"Set to default value {tracker_data.resolution['altro']}")
                 self.resolution = tracker_data.resolution["altro"]
 
 
