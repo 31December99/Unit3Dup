@@ -45,6 +45,9 @@ class FtpX(FtpXCmds):
     def download_file(self, remote_path: str, local_path: str):
         """Download a file from the ftp server"""
 
+        # format the path. Replace '\' to '/' from Windows OS to linux
+        remote_path = remote_path.replace("\\", "/")
+
         # Create the local folder if it does not exist
         local_dir = os.path.dirname(local_path)
         if not os.path.exists(local_dir):
