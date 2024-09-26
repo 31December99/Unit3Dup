@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import argparse
+import os
 
 from common.external_services.theMovieDB.tmdb_service import TmdbService
 from common.external_services.ftpx.core.models.list import FTPDirectory
@@ -62,7 +63,6 @@ class Bot:
         )
         file_media_list = self.content_manager.get_files()
 
-        # Search for rar files and decompress them
         if not file_media_list:
             custom_console.bot_error_log("There are no files to process")
             return
@@ -72,6 +72,7 @@ class Bot:
             extractor = Extractor(media=file_media_list)
             result = extractor.unrar()
             if result is False:
+                custom_console.bot_error_log("Unrar Exit")
                 exit(1)
 
         # Create an object Files for each file from the files_list
@@ -201,9 +202,8 @@ class Bot:
             # Display the page as table
             menu.show(table=page)
 
-        # Return the path for the upload
         if ftp_client.download_to_local_path:
-            scan_path = ftp_client.download_to_local_path.split("/")
-            scan_path = "/".join(scan_path[:-1])
-            self.path = scan_path
+            # Get only the folder part for the scanning process
+            self.path = os.path.dirname(ftp_client.download_to_local_path)
+            # Upload -f process
             self.run()
