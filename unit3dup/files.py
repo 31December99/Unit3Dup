@@ -3,9 +3,10 @@ import json
 import os
 import re
 
-from unit3dup.contents import Contents
-from common.trackers.trackers import ITTData
+from common.custom_console import custom_console
 from common.utility.utility import Manage_titles
+from common.trackers.trackers import ITTData
+from unit3dup.contents import Contents
 from common.mediainfo import MediaFile
 
 
@@ -15,13 +16,13 @@ class Files:
     """
 
     def __init__(
-        self,
-        path: str,
-        tracker_name: str,
-        media_type: int,
-        game_title: str,
-        game_crew: list,
-        game_tags: list,
+            self,
+            path: str,
+            tracker_name: str,
+            media_type: int,
+            game_title: str,
+            game_crew: list,
+            game_tags: list,
     ):
         self.languages = None
         self.display_name = None
@@ -54,11 +55,13 @@ class Files:
         Verify if name is part of torrent pack folder
         """
         if not self.is_dir:
+            custom_console.bot_error_log(f"Process Files... <{self.path}>")
             # Check for valid extension
             process = (
                 self.process_file() if Manage_titles.filter_ext(self.path) else False
             )
         else:
+            custom_console.bot_error_log(f"Process Folder... <{self.path}>")
             process = self.process_folder()
 
         # Determines if it's a torrent pack by checking for a SxEx substring
