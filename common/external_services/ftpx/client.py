@@ -197,7 +197,7 @@ class Client:
 
         for remote_file, size in download_list:
 
-            # Replace slashes for the os Windows environment
+            # format the path. Replace '\' to '/' from Windows OS to linux
             remote_file = remote_file.replace("\\", "/")
 
             # Skip the first '/' otherwise it would create a list with a leading space
@@ -225,7 +225,7 @@ class Client:
             self.ftpx_service.current_path(), one_file_selected.name
         )
         self.single_file_selected = True
-        ## change the path ( replace '\' to '/' for windows OS) ##
+        # format the path. Replace '\' to '/' from Windows OS to linux
         self.remote_path = self.remote_path.replace("\\", "/")
 
         # Create a list of FPTDirectory for a single file
@@ -236,7 +236,7 @@ class Client:
             self.ftpx_service.current_path(), selected_folder
         )
 
-        ## change the path ( replace '\' to '/' for windows OS) ##
+        # format the path. Replace '\' to '/' from Windows OS to linux
         self.remote_path = self.remote_path.replace("\\", "/")
         self.ftpx_service.change_dir(new_path=self.remote_path)
         # // Build a new Home page for the current folder
