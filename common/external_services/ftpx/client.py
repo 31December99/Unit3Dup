@@ -24,7 +24,7 @@ class MyPage:
     Handles pagination logic
     """
 
-    def __init__(self, items: list[Folder], items_per_page=20):
+    def __init__(self, items: list[Folder], items_per_page=50):
         self.items = items
         self.items_per_page = items_per_page
         self.current_page = 1
