@@ -312,7 +312,6 @@ platform_patterns = [
     "SCD",
     "NGM",
     "NGA",
-    "WEB",
     "SG",
     "DM30",
     "TG16",
