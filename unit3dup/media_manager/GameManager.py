@@ -37,10 +37,15 @@ class GameManager:
                 title=content.game_title, platform=content.game_tags
             )
 
-            if not game_data:
-                custom_console.bot_error_log(f"IGDB ID not found for the title {content.game_title}")
-                exit(1)
+            # Print the results
+            custom_console.bot_log('\nResults:')
+            [custom_console.bot_log(result) for result in game_data]
 
+            if not game_data:
+                custom_console.bot_error_log(
+                    f"IGDB ID not found for the title {content.game_title}"
+                )
+                exit(1)
 
             # Hash
             torrent_response = self.torrent(content=content)
