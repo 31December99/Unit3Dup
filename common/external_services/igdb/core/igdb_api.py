@@ -83,17 +83,17 @@ class IGdbServiceApi:
                 exit(1)
 
         # Perform initial search with the specified platform
-        custom_console.bot_log(f"Searching for title: '{normalized_title}' on platform: '{platform_name}'")
+        custom_console.bot_log(f"Searching for title: '{normalized_title}' on platform: '{platform_name}'\n")
         result = self._query(title=normalized_title, platform_name=platform_name)
 
         # If no results are found, try without platform
         if not result and platform_name:
-            custom_console.bot_log("\n'No results found in IGDB' with platform. Trying without platform.\n")
+            custom_console.bot_log("'No results found in IGDB with platform'\n\nTrying without platform:")
             result = self._query(title=normalized_title, platform_name="")
 
         # If still no results, perform a broader search using a key term
         if not result:
-            custom_console.bot_question_log("No results found in IGDB. Trying a broader search.")
+            custom_console.bot_log("'No results found in IGDB'\n\nTrying a broader search:")
             result = self._query(title=normalized_title.split()[0], platform_name="")
 
         # Filter results to match the closest game name
