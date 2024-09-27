@@ -6,8 +6,10 @@ from common.external_services.igdb.core.models.game import Game
 from unit3dup.media_manager.models.qbitt import QBittorrent
 from common.custom_console import custom_console
 from unit3dup.pvtTorrent import Mytorrent
-from unit3dup.upload import UploadGame
+from unit3dup.duplicate import Duplicate
 from unit3dup.contents import Contents
+from unit3dup.upload import UploadGame
+from common.config import config
 
 
 class GameManager:
@@ -38,7 +40,7 @@ class GameManager:
             )
 
             # Print the results
-            custom_console.bot_log('\nResults:')
+            custom_console.bot_log("\nResults:")
             [custom_console.bot_log(result) for result in game_data]
 
             if not game_data:
@@ -46,6 +48,15 @@ class GameManager:
                     f"IGDB ID not found for the title {content.game_title}"
                 )
                 exit(1)
+
+            # Check for duplicate game. Search in the tracker e compare with your game title
+            if self.cli.duplicate or config.DUPLICATE_ON:
+                results = self.check_duplicate(content=content)
+                if results:
+                    custom_console.bot_error_log(
+                        f"\n*** User chose to skip '{content.file_name}' ***\n"
+                    )
+                    continue
 
             # Hash
             torrent_response = self.torrent(content=content)
@@ -70,6 +81,11 @@ class GameManager:
         my_torrent = Mytorrent(contents=content, meta=content.metainfo)
         my_torrent.hash()
         return my_torrent if my_torrent.write() else None
+
+    @staticmethod
+    def check_duplicate(content: Contents):
+        duplicate = Duplicate(content=content)
+        return duplicate.process()
 
     @staticmethod
     def upload(content: Contents, ig_db_data: list["Game"]):
