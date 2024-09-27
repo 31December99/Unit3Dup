@@ -149,9 +149,10 @@ class Files:
         # Contains the path of the folder passed from the CLI command
         self.folder = self.path
 
-        # Description media_info inside the torrent page only for tv_show/movie categories
-        media_info = MediaFile(file_path=os.path.join(self.folder, self.file_name))
-        self.languages = media_info.available_languages
+        if self.category != self.tracker_data.category.get('game'):
+            # Description media_info inside the torrent page only for tv_show/movie categories
+            media_info = MediaFile(file_path=os.path.join(self.folder, self.file_name))
+            self.languages = media_info.available_languages
 
         # Contains the display_name, which is the name shown on the tracker page list
         # or on the tracker page
