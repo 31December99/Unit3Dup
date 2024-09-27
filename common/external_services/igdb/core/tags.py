@@ -149,7 +149,6 @@ crew_patterns = [
     "WARRIOR",
     "LEGEND",
     "DREAMWALKER",
-    "DRAGON",
     "SILVERBLADE",
     "DARKFALL",
     "WINDWALKER",
@@ -385,7 +384,6 @@ platform_patterns = [
     "TGCD",
     "TRS80C",
     "FM7",
-    "DRAGON",
     "PCW",
     "EINSTEIN",
     "MO5",
@@ -416,4 +414,5 @@ suffixes = [
     "Ultimate Edition",
     "Collector's Edition",
     "for nintendo switch",
+    "update",
 ]
