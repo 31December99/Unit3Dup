@@ -88,7 +88,7 @@ class IGdbServiceApi:
 
         # If no results are found, try without platform
         if not result and platform_name:
-            custom_console.bot_question_log("\nNo results found in IGDB with platform. Trying without platform.\n")
+            custom_console.bot_log("\n'No results found in IGDB' with platform. Trying without platform.\n")
             result = self._query(title=normalized_title, platform_name="")
 
         # If still no results, perform a broader search using a key term
