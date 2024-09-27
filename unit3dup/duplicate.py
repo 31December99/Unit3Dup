@@ -164,7 +164,7 @@ class Duplicate:
 
         # Start message prints the size of the user file
         custom_console.panel_message(
-            f"Searching for duplicate [{self.content_size} GB]"
+            f"Searching for duplicate {self.content.torrent_path} [{self.content_size} GB]"
         )
 
         # Compare and return a result
