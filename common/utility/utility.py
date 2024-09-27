@@ -137,7 +137,6 @@ class Manage_titles:
             ".drc",
             ".m3u8",
             ".pdf",
-            ".rar",
         ]
 
         return os.path.splitext(file)[1].lower() in video_ext
