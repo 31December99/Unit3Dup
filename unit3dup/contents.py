@@ -182,7 +182,7 @@ class Media:
             media_type = serie_category
         else:
             media_type = movie_category
-        if self.crew:
+        if self.crew or self.game_tags:
             media_type = game_category
         return media_type
 
