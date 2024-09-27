@@ -137,7 +137,7 @@ class IGdbServiceApi:
             return [Game(**game_data) for game_data in query_result]
 
         except Exception as e:
-            custom_console.bot_error_log(f"Please report it {e}")
+            custom_console.bot_error_log(f"Please report it {e} {self.__class__.__name__}")
             exit(1)
 
     @staticmethod
