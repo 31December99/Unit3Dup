@@ -65,12 +65,12 @@ class IGdbServiceApi:
 
         # Normalize the title by replacing underscores with spaces
         normalized_title = title.replace('_', ' ')
-        print(f"Normalized title: {normalized_title}")
+        custom_console.bot_log(f"\nNormalized title: '{normalized_title}'")
 
         platform_name = ""
-
         # Determine the platform name if provided
         if platform:
+            custom_console.bot_log(f"PLATFORM: {platform}")
             if platform[0].upper() in platform_id:
                 platform_name = platform_id[platform[0].upper()]
             else:
@@ -83,17 +83,17 @@ class IGdbServiceApi:
                 exit(1)
 
         # Perform initial search with the specified platform
-        print(f"Searching for title: {normalized_title} on platform: {platform_name}")
+        custom_console.bot_log(f"Searching for title: '{normalized_title}' on platform: '{platform_name}'")
         result = self._query(title=normalized_title, platform_name=platform_name)
 
         # If no results are found, try without platform
         if not result and platform_name:
-            custom_console.bot_error_log("No results found in IGDB with platform. Trying without platform.")
+            custom_console.bot_question_log("No results found in IGDB with platform. Trying without platform.")
             result = self._query(title=normalized_title, platform_name="")
 
         # If still no results, perform a broader search using a key term
         if not result:
-            custom_console.bot_error_log("No results found in IGDB. Trying a broader search.")
+            custom_console.bot_question_log("No results found in IGDB. Trying a broader search.")
             result = self._query(title=normalized_title.split()[0], platform_name="")
 
         # Filter results to match the closest game name
@@ -115,7 +115,7 @@ class IGdbServiceApi:
                 query = f'fields id,name; search "{title}";'
 
             build_request = urljoin(base_request_url, "games")
-            print(f"IGDB Query: {query}")
+            custom_console.bot_log(f"IGDB Query: '{query}'")
 
             response = self.http_client.get_url(
                 build_request, get_method=False, headers=header_access, data=query
@@ -140,7 +140,8 @@ class IGdbServiceApi:
             custom_console.bot_error_log(f"Please report it {e}")
             exit(1)
 
-    def _filter_results(self, games: list["Game"], search_title: str) -> list["Game"]:
+    @staticmethod
+    def _filter_results(games: list["Game"], search_title: str) -> list["Game"]:
         """
         Filters the list of games to find the closest match to the search title.
         """
