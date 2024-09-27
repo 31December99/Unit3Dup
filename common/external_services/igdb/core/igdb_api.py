@@ -64,7 +64,7 @@ class IGdbServiceApi:
                 return []
 
         # Normalize the title by replacing underscores with spaces
-        normalized_title = title.replace('_', ' ')
+        normalized_title = title.replace("_", " ")
         custom_console.bot_log(f"\nNormalized title: '{normalized_title}'")
 
         platform_name = ""
@@ -83,17 +83,23 @@ class IGdbServiceApi:
                 exit(1)
 
         # Perform initial search with the specified platform
-        custom_console.bot_log(f"Searching for title: '{normalized_title}' on platform: '{platform_name}'\n")
+        custom_console.bot_log(
+            f"Searching for title: '{normalized_title}' on platform: '{platform_name}'\n"
+        )
         result = self._query(title=normalized_title, platform_name=platform_name)
 
         # If no results are found, try without platform
         if not result and platform_name:
-            custom_console.bot_log("'No results found in IGDB with platform'\n\nTrying without platform:")
+            custom_console.bot_log(
+                "'No results found in IGDB with platform'\n\nTrying without platform:"
+            )
             result = self._query(title=normalized_title, platform_name="")
 
         # If still no results, perform a broader search using a key term
         if not result:
-            custom_console.bot_log("'No results found in IGDB'\n\nTrying a broader search:")
+            custom_console.bot_log(
+                "'No results found in IGDB'\n\nTrying a broader search:"
+            )
             result = self._query(title=normalized_title.split()[0], platform_name="")
 
         # Filter results to match the closest game name
@@ -109,10 +115,18 @@ class IGdbServiceApi:
         }
 
         try:
+            """
             if platform_name:
                 query = f'fields id,name; search "{title}"; where platforms = ({platform_name});'
             else:
                 query = f'fields id,name; search "{title}";'
+            """
+            # Filter by category to include main games, DLCs, remakes, remasters, expansions, and expanded games
+            category_filter = "category = (0, 1, 2, 8, 9, 10)"
+            if platform_name:
+                query = f'fields id,name; search "{title}"; where platforms = ({platform_name}) & {category_filter};'
+            else:
+                query = f'fields id,name; search "{title}"; where {category_filter};'
 
             build_request = urljoin(base_request_url, "games")
             custom_console.bot_log(f"IGDB Query: '{query}'")
@@ -122,7 +136,9 @@ class IGdbServiceApi:
             )
 
             if response.status_code != 200:
-                custom_console.bot_error_log(f"Error from IGDB API: {response.status_code} - {response.text}")
+                custom_console.bot_error_log(
+                    f"Error from IGDB API: {response.status_code} - {response.text}"
+                )
                 return []
 
             try:
@@ -137,7 +153,9 @@ class IGdbServiceApi:
             return [Game(**game_data) for game_data in query_result]
 
         except Exception as e:
-            custom_console.bot_error_log(f"Please report it {e} {self.__class__.__name__}")
+            custom_console.bot_error_log(
+                f"Please report it {e} {self.__class__.__name__}"
+            )
             exit(1)
 
     @staticmethod
