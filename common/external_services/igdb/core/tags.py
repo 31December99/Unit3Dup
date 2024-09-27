@@ -238,6 +238,7 @@ crew_patterns = [
     "JAGUAR",
     "RIFT",
     "DUPLEX",
+    "VILLAGERZ",
 ]
 
 platform_patterns = [
