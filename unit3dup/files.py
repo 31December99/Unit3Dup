@@ -134,10 +134,10 @@ class Files:
 
     def process_folder(self) -> bool:
         # Search for game files
-        if self.game_crew:
+        if self.category == self.tracker_data.category.get('game'):
             files_list = self.list_game_files()
         else:
-            # Search for video files
+            # Search for video files/docu ( not yet implemented)
             files_list = self.list_video_files()
 
         if not files_list:
