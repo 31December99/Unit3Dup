@@ -28,8 +28,6 @@ crew_patterns = [
     "FCKDRM",
     "FLT",
     "Unleashed",
-    "PS4",
-    "PS5",
     "I_KnoW",
     "CPY",
     "RELOADED",
