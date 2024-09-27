@@ -135,7 +135,7 @@ class Media:
 
         for suffix in suffixes:
             temp_name = temp_name.replace("_", " ")
-            temp_name = temp_name.lower().replace(suffix.lower(), "")
+            temp_name = re.sub(rf"\b{suffix}\b", "", temp_name, re.IGNORECASE)
         return title.Guessit(temp_name.strip())
 
     @property
