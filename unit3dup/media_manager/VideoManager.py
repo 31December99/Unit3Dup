@@ -107,7 +107,7 @@ class VideoManager:
     def check_duplicate(self, content: Contents):
         self.tv_show_result = self.tmdb(content=content)
         duplicate = Duplicate(content=content)
-        return duplicate.process(self.tv_show_result)
+        return duplicate.process()
 
     def upload(self, content: Contents):
 
