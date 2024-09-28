@@ -15,7 +15,7 @@ crew_patterns = [
     "TENOKE",
     "rG",
     "ILEARN",
-    "I_Know",
+    "I Know",
     "Razor1911",
     "RUNE",
     "FitGirl",
@@ -29,7 +29,6 @@ crew_patterns = [
     "FCKDRM",
     "FLT",
     "Unleashed",
-    "I_KnoW",
     "CPY",
     "RELOADED",
     "HATRED",
@@ -403,6 +402,13 @@ platform_patterns = [
 
 
 suffixes = [
+        'update', 'build', 'patch', 'version', 'remaster', 'repack',
+        'complete', 'edition', 'ultimate', 'definitive', 'remake', 'season', 'episode'
+    ]
+
+
+"""
+suffixes = [
     "Complete Edition",
     "Game of the Year Edition",
     "Deluxe Edition",
@@ -429,3 +435,4 @@ suffixes = [
     "episode",
 ]
 
+"""
