@@ -15,11 +15,6 @@ from dataclasses import dataclass, field
 from common.mediainfo import MediaFile
 from common.utility import title
 
-# Get the name of the crew only if it's the last substring in the title by \b$
-crew_pattern = (
-    r"\b(" + "|".join(pattern.replace(" ", "_") for pattern in crew_patterns) + r")\b$"
-)
-
 # Get the platform substr
 tag_pattern = r"\b(" + "|".join(platform_patterns) + r")\b"
 
@@ -57,9 +52,10 @@ class Contents:
                 self.display_name.replace(self.episode_title, "").split()
             )
 
-        if not self.game_crew:
-            # Load the tracker data from the dictionary
-            tracker_data = ITTData.load_from_module()
+        # Load the tracker data from the dictionary
+        tracker_data = ITTData.load_from_module()
+
+        if self.category != tracker_data.category.get('game'):
             # Read from the current video file the height field
             file_path = os.path.join(self.folder, self.file_name)
             media_file = MediaFile(file_path)
@@ -105,8 +101,12 @@ class Contents:
                 else:
                     self.resolution = tracker_data.resolution[closest_resolution]
             else:
-                custom_console.bot_error_log(f"Video Height resolution not found in {self.file_name}")
-                custom_console.bot_error_log(f"Set to default value {tracker_data.resolution['altro']}")
+                custom_console.bot_error_log(
+                    f"{self.__class__.__name__} Video Height resolution not found in {self.file_name}"
+                )
+                custom_console.bot_error_log(
+                    f"{self.__class__.__name__} Set to default value {tracker_data.resolution['altro']}"
+                )
                 self.resolution = tracker_data.resolution["altro"]
 
 
@@ -121,22 +121,12 @@ class Media:
     subfolder: str
 
     @property
+    def filename(self):
+        return os.path.basename(self.subfolder).lower()
+
+    @property
     def guess_filename(self):
-        temp_name = os.path.basename(self.subfolder)
-
-        temp_name = temp_name.replace(".", " ")
-        temp_name = temp_name.replace("-", " ")
-
-        for crew_name in self.crew:
-            temp_name = temp_name.replace(crew_name, "")
-
-        for tag_name in self.game_tags:
-            temp_name = temp_name.replace(tag_name, "")
-
-        for suffix in suffixes:
-            temp_name = temp_name.replace("_", " ")
-            temp_name = re.sub(rf"\b{suffix}\b", "", temp_name, re.IGNORECASE)
-        return title.Guessit(temp_name.strip())
+        return title.Guessit(self.filename_sanitized)
 
     @property
     def source(self):
@@ -160,15 +150,11 @@ class Media:
 
     @property
     def crew(self) -> list:
-        temp_name = self.subfolder.replace(".", " ").strip()
-        matches = re.findall(crew_pattern, temp_name, re.IGNORECASE)
-        return matches
+        return self.crew_list
 
     @property
     def game_tags(self) -> list:
-        temp_name = self.subfolder.replace("_", " ").strip()
-        matches = re.findall(tag_pattern, temp_name, re.IGNORECASE)
-        return matches
+        return self.platform_list
 
     @property
     def media_type(self):
@@ -185,9 +171,61 @@ class Media:
         if self.crew or self.game_tags:
             media_type = game_category
 
-        custom_console.bot_log(f"Categories: {media_type} GameTags: {self.game_tags}  Crew: {self.crew}")
+        custom_console.bot_log(
+            f"Categories: {media_type} GameTags: {self.game_tags}  Crew: {self.crew}"
+        )
         return media_type
 
     @property
     def game_title(self):
         return self.guess_filename.guessit_title
+
+    def __post_init__(self):
+
+        # Basename of the content path
+        self.filename_sanitized = self.filename
+
+        # Remove each prefix from the string
+        """
+        for suffix in suffixes:
+            self.filename_sanitized = re.sub(
+                rf"\b{suffix}\b", "", self.filename_sanitized
+            )
+        """
+
+        # Remove v version
+        self.filename_sanitized = re.sub(
+            r"v\d+(?:[ .]\d+)*", "", self.filename_sanitized
+        ).strip()
+
+        # Remove dots, hyphens and extra spaces
+        self.filename_sanitized = re.sub(
+            r"[.\-_]", " ", self.filename_sanitized
+        ).strip()
+        self.filename_sanitized = re.sub(r"\s+", " ", self.filename_sanitized)
+
+        # Get the crew name
+        crew_regex = (
+                r"\b(" + "|".join(re.escape(pattern) for pattern in crew_patterns) + r")\b"
+        )
+        self.crew_list = re.findall(crew_regex, self.filename_sanitized, re.IGNORECASE)
+
+        # Get the platform name
+        platform_regex = (
+                r"\b("
+                + "|".join(re.escape(pattern) for pattern in platform_patterns)
+                + r")\b"
+        )
+        self.platform_list = re.findall(
+            platform_regex, self.filename_sanitized, re.IGNORECASE
+        )
+
+        # Remove the crew string from the name
+        if self.crew_list:
+            for crew in self.crew_list:
+                self.filename_sanitized = self.filename_sanitized.replace(crew, "")
+
+        # Remove the platform string from the name
+        if self.platform_list:
+            for platform in self.platform_list:
+                self.filename_sanitized = self.filename_sanitized.replace(platform, "")
