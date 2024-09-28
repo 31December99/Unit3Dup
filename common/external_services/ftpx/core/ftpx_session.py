@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+import ftplib
 import threading
 import time
 from rich.progress import Progress
@@ -54,15 +54,19 @@ class FtpXCmds(FTP_TLS):
                 # Wait for the thread to finish
                 self.keep_alive_thread.join()
         self.is_quitting = True
-        super().quit()
+
+        try:
+            super().quit()
+        except ftplib.error_temp as e:
+            custom_console.bot_error_log(e)
 
     @classmethod
     def new(
-        cls,
-        host=config.FTPX_IP,
-        port=int(config.FTPX_PORT),
-        user=config.FTPX_USER,
-        passwd=config.FTPX_PASS,
+            cls,
+            host=config.FTPX_IP,
+            port=int(config.FTPX_PORT),
+            user=config.FTPX_USER,
+            passwd=config.FTPX_PASS,
     ):
 
         validate_ftpx_config = True
