@@ -13,14 +13,17 @@ service_filename = "Unit3Dbot_service.env"
 
 def create_default_env_file(path):
     default_content = """
+################################################## CONFIG ###################################################
 # TRACKER
 ITT_URL=https://itatorrents.xyz
 ITT_APIKEY=
 
+# TMDB;IMGBB;FREE_IMAGE
 TMDB_APIKEY=
 IMGBB_KEY=
 FREE_IMAGE_KEY=
 
+# QBITTORRENT CLIENT
 QBIT_USER=
 QBIT_PASS=
 QBIT_URL=http://localhost
@@ -48,14 +51,11 @@ PREFERRED_LANG=
 
 # Discard videos whose size deviates by more than the specified percentage (size_th) from the video in tracker
 SIZE_TH=100
+
+
 ##############################################################################################################
-
-
-
-
-
-
 ################  OPTIONAL  #############  
+#########################################
 # PW
 PW_API_KEY=
 PW_URL=http://localhost:9696/api/v1
