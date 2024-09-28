@@ -42,6 +42,7 @@ class GameManager:
             # Print the results
             custom_console.bot_log("\nResults:")
             [custom_console.bot_log(result) for result in game_data]
+            custom_console.bot_log(f"Selected: {game_data[0]}")
 
             if not game_data:
                 custom_console.bot_error_log(
