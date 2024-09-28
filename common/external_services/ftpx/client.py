@@ -289,6 +289,7 @@ class Client:
             return self.page_up()
         elif action.upper() == "D":
             self.download()
+            return 0
         elif action.upper() == "S":
             self.search()
         elif action.upper() == "Q":
