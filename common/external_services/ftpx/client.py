@@ -16,7 +16,12 @@ class Folder:
     """
 
     def __init__(self, name: str):
-        self.name = name
+        self.size: str | None = None
+        self.time: str | None = None
+        self.date: str | None = None
+        self.group: str | None = None
+        self.type: str | None = None
+        self.name: str = name
 
 
 class MyPage:
@@ -29,8 +34,8 @@ class MyPage:
         self.items_per_page = items_per_page
         self.current_page = 1
         self.total_pages = (
-            len(self.items) + self.items_per_page - 1
-        ) // self.items_per_page
+                                   len(self.items) + self.items_per_page - 1
+                           ) // self.items_per_page
 
     def get_items(self) -> list[Folder]:
         """
@@ -85,7 +90,7 @@ class MyPage:
         table.add_column("Category", style="green", header_style="bold green")
 
         for idx, category in enumerate(
-            page, start=1
+                page, start=1
         ):  # Adjust index to start from 1 for display
             row_style = "white" if idx % 2 == 0 else "bright_black"
             table.add_row(
@@ -247,6 +252,19 @@ class Client:
         self.current_list_of_files = home_folder
         return self.home_page()
 
+    def user_input_search(self):
+        custom_console.print("Search '->' ", end='', style='violet bold')
+        keyword = input()
+        for item in self.page.get_items():
+            if keyword.lower() in item.name.lower():
+                custom_console.bot_question_log(
+                    f"\nTYPE: {item.type} \nNAME: {item.name} \nGROUP: {item.group} \nSIZE: {item.size}"
+                    f"DATE: {item.date}\n TIME: {item.time}\n")
+                custom_console.rule(style='violet bold')
+
+    def search(self):
+        self.user_input_search()
+
     def user_input(self) -> str:
         """
         Asks the user for the folder.
@@ -257,7 +275,7 @@ class Client:
         prompt_message = Text(f"\n-> {self.remote_path}\n", style="bold violet")
 
         prompt_message.append(
-            "[N]next, [P]prev, [U]up, [D]download, [Q]quit, or enter a valid number",
+            "[N]next, [P]rev, [U]p, [D]ownload, [Q]uit, [S]earch or enter a valid number",
             style="reset",
         )
         return Prompt.ask(prompt_message)
@@ -271,8 +289,8 @@ class Client:
             return self.page_up()
         elif action.upper() == "D":
             self.download()
-            # Exit after the download
-            return 0
+        elif action.upper() == "S":
+            self.search()
         elif action.upper() == "Q":
             return 0
         else:
