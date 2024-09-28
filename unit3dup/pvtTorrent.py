@@ -36,7 +36,11 @@ class Mytorrent:
     def hash(self):
         custom_console.print(f"\n[ HASHING ] {self.mytorr.name}")
         with HashProgressBar() as progress:
-            self.mytorr.generate(threads=4, callback=progress.callback, interval=0)
+            try:
+                self.mytorr.generate(threads=4, callback=progress.callback, interval=0)
+            except torf.TorfError as e:
+                custom_console.bot_error_log(e)
+                exit(1)
 
     def write(self) -> bool:
         if not config.TORRENT_ARCHIVE:

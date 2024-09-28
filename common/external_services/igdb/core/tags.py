@@ -10,11 +10,12 @@ crew_patterns = [
     "GANT",
     "BREWS",
     "REPACK-Kaos",
+    "KaOs",
     "GOG",
     "TENOKE",
     "rG",
     "ILEARN",
-    "I_Know",
+    "I Know",
     "Razor1911",
     "RUNE",
     "FitGirl",
@@ -28,9 +29,6 @@ crew_patterns = [
     "FCKDRM",
     "FLT",
     "Unleashed",
-    "PS4",
-    "PS5",
-    "I_KnoW",
     "CPY",
     "RELOADED",
     "HATRED",
@@ -149,7 +147,6 @@ crew_patterns = [
     "WARRIOR",
     "LEGEND",
     "DREAMWALKER",
-    "DRAGON",
     "SILVERBLADE",
     "DARKFALL",
     "WINDWALKER",
@@ -241,6 +238,7 @@ crew_patterns = [
     "JAGUAR",
     "RIFT",
     "DUPLEX",
+    "VILLAGERZ",
 ]
 
 platform_patterns = [
@@ -315,7 +313,6 @@ platform_patterns = [
     "SCD",
     "NGM",
     "NGA",
-    "WEB",
     "SG",
     "DM30",
     "TG16",
@@ -385,7 +382,6 @@ platform_patterns = [
     "TGCD",
     "TRS80C",
     "FM7",
-    "DRAGON",
     "PCW",
     "EINSTEIN",
     "MO5",
@@ -406,6 +402,13 @@ platform_patterns = [
 
 
 suffixes = [
+        'update', 'build', 'patch', 'version', 'remaster', 'repack',
+        'complete', 'edition', 'ultimate', 'definitive', 'remake', 'season', 'episode'
+    ]
+
+
+"""
+suffixes = [
     "Complete Edition",
     "Game of the Year Edition",
     "Deluxe Edition",
@@ -416,4 +419,20 @@ suffixes = [
     "Ultimate Edition",
     "Collector's Edition",
     "for nintendo switch",
+    "update",
+    "build",
+    "patch",
+    "version",
+    "v",
+    "remaster",
+    "repack",
+    "complete",
+    "edition",
+    "ultimate",
+    "definitive",
+    "remake",
+    "season",
+    "episode",
 ]
+
+"""

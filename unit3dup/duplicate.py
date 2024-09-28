@@ -71,14 +71,15 @@ class CompareTitles:
 
     def same_date(self):
         return (
-                self.content_date == self.tracker_date
-                or self.content_date is None
-                or self.tracker_date is None
+            self.content_date == self.tracker_date
+            or self.content_date is None
+            or self.tracker_date is None
         )
 
     def is_greater95(self) -> bool:
         return True if self.ratio > 95 else False
 
+    # not used
     def is_best_resolution(self):
         if self.tracker_file.screen_size:
             self.tracker_screen_size = int(
@@ -104,109 +105,176 @@ class CompareTitles:
 class Duplicate:
 
     def __init__(self, content: Contents):
+
+        # User content from the scan process
         self.content: Contents = content
+
+        # Class to get info about a torrent
         self.torrent_info = Torrent()
+
+        # Load the constants tracker
         tracker_data = ITTData.load_from_module()
 
+        # Category Movie
         self.movie_category = tracker_data.category.get("movie")
+
+        # Category TvShow
         self.serie_category = tracker_data.category.get("tvshow")
+
+        # Category Game
+        self.game_category = tracker_data.category.get("game")
+
+        # Category that comes for the User's media
+        self.category = content.category
+
+        # the user torrent title
         self.guess_filename = title.Guessit(self.content.display_name)
-        self.flag_already = False
+
+        # Size of the user's content
         self.content_size = System.get_size(content.torrent_path)
+
+        # convert the user preferred language to iso
         self.preferred_lang = my_language(config.PREFERRED_LANG)
+
+        # Determine how much differs from the user's media size
         self.size_threshold = config.SIZE_TH
 
-    def process(self, tmdb_id: str) -> bool:
+        # Final result
+        self.flag_already = False
+
+        # For printing output
+        self.TMDB_ID_WIDTH = 6
+        self.IGDB_ID_WIDTH = 6
+        self.SIZE_WIDTH = 4
+        self.NAME_WIDTH = 30
+        self.RESOLUTION_WIDTH = 5
+        self.INFO_HASH_WIDTH = 40
+        self.DELTA_SIZE_WIDTH = 2
+
+    def process(self) -> bool:
         return self.search()
 
     def search(self) -> bool:
-        tracker_data = self.torrent_info.search(self.guess_filename.guessit_title)
-        already_present = False
-        custom_console.panel_message(
-            f"Searching for duplicate [{self.content_size} GB]"
-            # f" '{self.content.torrent_path}'"
-        )
-        for t_data in tracker_data["data"]:
-            already_present = self._view_data(t_data)
 
+        # Search torrent by Name
+        tracker_search = self.torrent_info.search(self.guess_filename.guessit_title)
+
+        # Flag for the search results
+        already_present = False
+
+        # Start message prints the size of the user file
+        custom_console.panel_message(
+            f"Searching for duplicate {self.content.torrent_path} [{self.content_size} GB]"
+        )
+
+        # Compare and return a result
+        for t_data in tracker_search["data"]:
+            already_present = self._process_tracker_data(t_data)
+
+        # if a result is found ask the user
         if already_present:
             while 1:
                 custom_console.bot_question_log(
                     "\nPress (C) to continue, (S) to SKIP.. (Q) Quit - "
                 )
                 user_answer = input()
+                # Choice to continue
                 if "c" == user_answer.lower():
                     return False
+                # Skip this media
                 if "s" == user_answer.lower():
                     return True
+                # Exit
                 if "q" == user_answer.lower():
                     exit(1)
 
-    def _view_data(self, data: dict) -> bool:
+    def _calculate_threshold(self, size: int) -> int:
+        # Size in GB
+        # Skip duplicate check if the size is out of the threshold
+        size = round(size / (1024**3), 2)
+        return round(abs(self.content_size - size) / max(self.content_size, size) * 100)
 
-        for key, value in data.items():
+    def _print_output(self, value: dict, delta_size: int):
+
+        name = value["name"]
+        resolution = value.get("resolution", "[n/a]")
+        info_hash = value.get("info_hash", 0)
+        size = value.get("size", 0)
+        tmdb_id = value.get("tmdb_id", 0)
+        igdb_id = value.get("igdb_id", 0)
+
+        if self.category != self.game_category:
+            mediainfo_manager = MediaInfoManager(media_info_output=value)
+            languages = (
+                mediainfo_manager.languages.upper()
+                if mediainfo_manager.languages
+                else "N/A"
+            )
+        else:
+            languages = "[n/a]"
+
+        formatted_tmdb_id = f"{tmdb_id:>{self.TMDB_ID_WIDTH}}"
+        formatted_igdb_id = f"{igdb_id:>{self.IGDB_ID_WIDTH}}"
+        formatted_size = f"{size:>{self.SIZE_WIDTH}.2f} GB"
+        formatted_name = f"{name:<{self.NAME_WIDTH}}"
+        formatted_resolution = f"{resolution:<{self.RESOLUTION_WIDTH}}"
+        formatted_info_hash = f"{info_hash:<{self.INFO_HASH_WIDTH}}"
+        formatted_size_th = f"{delta_size:<{self.DELTA_SIZE_WIDTH}}"
+
+        if tmdb_id != 0:
+            output = (
+                f"[TMDB-ID {formatted_tmdb_id}] "
+                f"[{formatted_size} delta={formatted_size_th}%] "
+                f"'[HASH {formatted_info_hash}]' "
+                f"[{formatted_resolution}]' "
+                f"{formatted_name},"
+                f"[{languages}]'"
+            )
+        else:
+            output = (
+                f"[IGDB-ID {formatted_igdb_id}] "
+                f"[{formatted_size} delta={formatted_size_th}%] "
+                f"'[HASH {formatted_info_hash}]' "
+                f"{formatted_name},"
+            )
+
+        custom_console.bot_log(output)
+
+    def _process_tracker_data(self, data_from_the_tracker: dict) -> bool:
+        for key, tracker_value in data_from_the_tracker.items():
             if "attributes" in key:
                 if (
-                        value["category_id"] == self.movie_category
-                        or value["category_id"] == self.serie_category
+                    tracker_value["category_id"] == self.movie_category
+                    or tracker_value["category_id"] == self.serie_category
+                    or tracker_value["category_id"] == self.game_category
                 ):
 
-                    name = value["name"]
-                    resolution = value["resolution"]
-                    info_hash = value["info_hash"]
-
-                    # Size in GB
-                    # Skip duplicate check if the size is out of the threshold
-                    size = round(value["size"] / (1024 ** 3), 2)
-                    delta_size = round(abs(self.content_size - size) / max(self.content_size, size) * 100)
-
+                    delta_size = self._calculate_threshold(size=tracker_value["size"])
                     if delta_size > config.SIZE_TH:
                         continue
 
-                    tmdb_id = value["tmdb_id"]
-                    tracker_file_name = title.Guessit(name)
                     already = self.compare(
-                        tracker_file=tracker_file_name, content_file=self.guess_filename
+                        value=tracker_value, content_file=self.guess_filename
                     )
-
                     if already:
-                        # Format field
-                        tmdb_id_width = 6
-                        size_width = 4
-                        name_width = 30
-                        resolution_width = 5
-                        info_hash_width = 40
-                        delta_size_width = 2
-                        mediainfo_manager = MediaInfoManager(media_info_output=value)
-
-                        formatted_tmdb_id = f"{tmdb_id:>{tmdb_id_width}}"
-                        formatted_size = f"{size:>{size_width}.2f} GB"
-                        formatted_name = f"{name:<{name_width}}"
-                        formatted_resolution = f"{resolution:<{resolution_width}}"
-                        formatted_info_hash = f"{info_hash:<{info_hash_width}}"
-                        formatted_size_th = f"{delta_size:<{delta_size_width}}"
-                        languages = mediainfo_manager.languages.upper() if mediainfo_manager.languages else "N/A"
-
-                        custom_console.bot_log(
-                            f"[TMDB-ID {formatted_tmdb_id}] [{formatted_size} delta={formatted_size_th}%]"
-                            f" '[HASH {formatted_info_hash}] [{formatted_resolution}]' "
-                            f"{formatted_name}, '[{languages}]'"
-                        )
-
+                        self._print_output(value=tracker_value, delta_size=delta_size)
                         self.flag_already = True
 
         # At least one media needs to match the tracker database
         return self.flag_already
 
-    def compare(self, tracker_file: guessit, content_file: guessit) -> bool:
-        already = CompareTitles(tracker_file=tracker_file, content_file=content_file)
+    @staticmethod
+    def compare(value: guessit, content_file: guessit) -> bool:
+        name = value["name"]
+        already = CompareTitles(
+            tracker_file=title.Guessit(name), content_file=content_file
+        )
         return already.process()
 
     # not used
+    """
     def search_by_tmdb(self, tmdb_id: int) -> bool:
-        """
-        Search media by tmdb id on the tracker
-        """
+        # Search media by tmdb id on the tracker
 
         # Request results from the video online database
         # Get Season
@@ -231,3 +299,4 @@ class Duplicate:
         if self.content.category == self.movie_category:
             movies = Movies(raw_data=raw_data, name=self.content.name)
             return movies.video()
+    """

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
+from datetime import datetime
 
 from common.external_services.ftpx.core.ftpx_session import FtpXCmds
 from common.external_services.ftpx.core.models.list import FTPDirectory
@@ -34,7 +35,15 @@ class FtpX(FtpXCmds):
                 date_time := MyString.parse_date(file)
             )  # Assign date_time only if its valid
         ]
-        return folder
+
+        # The first in list is the most recent
+        sorted_folder = sorted(
+            folder,
+            key=lambda entry: datetime.combine(entry.date, entry.time),
+            reverse=True,
+        )
+
+        return sorted_folder
 
     def current_path(self):
         return self._pwd()
@@ -44,6 +53,9 @@ class FtpX(FtpXCmds):
 
     def download_file(self, remote_path: str, local_path: str):
         """Download a file from the ftp server"""
+
+        # format the path. Replace '\' to '/' from Windows OS to linux
+        remote_path = remote_path.replace("\\", "/")
 
         # Create the local folder if it does not exist
         local_dir = os.path.dirname(local_path)
