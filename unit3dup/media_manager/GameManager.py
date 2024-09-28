@@ -42,13 +42,13 @@ class GameManager:
             # Print the results
             custom_console.bot_log("\nResults:")
             [custom_console.bot_log(result) for result in game_data]
-            custom_console.bot_log(f"Selected: {game_data[0]}")
-
-            if not game_data:
+            if game_data:
+                custom_console.bot_log(f"Selected: {game_data[0]}")
+            else:
                 custom_console.bot_error_log(
                     f"IGDB ID not found for the title {content.game_title}"
                 )
-                exit(1)
+                continue
 
             # Check for duplicate game. Search in the tracker e compare with your game title
             if self.cli.duplicate or config.DUPLICATE_ON:
