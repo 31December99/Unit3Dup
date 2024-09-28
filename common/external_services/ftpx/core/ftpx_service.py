@@ -45,8 +45,6 @@ class FtpX(FtpXCmds):
 
         return sorted_folder
 
-        # return folder
-
     def current_path(self):
         return self._pwd()
 
