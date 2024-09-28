@@ -15,10 +15,6 @@ from dataclasses import dataclass, field
 from common.mediainfo import MediaFile
 from common.utility import title
 
-# Get the platform substr
-tag_pattern = r"\b(" + "|".join(platform_patterns) + r")\b"
-
-
 @dataclass
 class Contents:
     """Create a new object with the attributes of Contents"""
@@ -186,7 +182,10 @@ class Media:
         self.filename_sanitized = self.filename
 
         # Remove each prefix from the string
+        #
         """
+            Many suffixes are part of the title
+            
         for suffix in suffixes:
             self.filename_sanitized = re.sub(
                 rf"\b{suffix}\b", "", self.filename_sanitized
@@ -204,9 +203,9 @@ class Media:
         ).strip()
         self.filename_sanitized = re.sub(r"\s+", " ", self.filename_sanitized)
 
-        # Get the crew name
+        # Get the crew name only if the substr is at end of the string
         crew_regex = (
-                r"\b(" + "|".join(re.escape(pattern) for pattern in crew_patterns) + r")\b"
+                r"\b(" + "|".join(re.escape(pattern) for pattern in crew_patterns) + r")\b$"
         )
         self.crew_list = re.findall(crew_regex, self.filename_sanitized, re.IGNORECASE)
 
