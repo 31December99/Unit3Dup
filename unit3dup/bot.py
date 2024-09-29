@@ -67,8 +67,8 @@ class Bot:
             custom_console.bot_error_log("There are no files to process")
             return
 
-        # Decompress the rar files( only for ftp)
-        if self.cli.ftp:
+        # Decompress the rar files( only for ftp or -unrar flag)
+        if self.cli.ftp or self.cli.unrar:
             extractor = Extractor(media=file_media_list)
             result = extractor.unrar()
             if result is False:
