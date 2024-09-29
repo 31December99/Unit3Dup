@@ -88,7 +88,7 @@ class GameManager:
 
     @staticmethod
     def input_manager() -> int | None:
-        custom_console.print("\nChoice a result to send to the tracker ", end='', style='violet bold')
+        custom_console.print("\nChoice a result to send to the tracker (Q=exit) ", end='', style='violet bold')
         user_choice = input()
         if user_choice.upper() == "Q":
             exit(1)
