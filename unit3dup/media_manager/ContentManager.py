@@ -34,6 +34,8 @@ class ContentManager:
             game_title=item.game_title,
             game_crew=item.crew,
             game_tags=item.game_tags,
+            season=item.guess_season,
+            episode=item.guess_episode,
         )
 
         # Create and return a content object
