@@ -1,105 +1,84 @@
-# -*- coding: utf-8 -*-
-import subprocess
 import os
-import sys
+import requests
+import zipfile
+from io import BytesIO
 
 
-def install_git(package):
-    subprocess.check_call([sys.executable, "-m", "pip", "install", package])
-
-
-class MyGit:
+class MyGitReleaseDownloader:
     """
-    Install gitPython and update the repository
+    Download the last repo release
     """
 
-    def __init__(self, repo_local_path: str):
-        self.repo_local_path = repo_local_path
-        self.repo_url = "https://github.com/31December99/Unit3Dup.git"
-        self.repo_exist = os.path.exists(self.repo_local_path)
+    def __init__(self, repo_url: str, destination_path: str):
+        self.repo_url = repo_url
+        self.api_url = f"https://api.github.com/repos/{self._extract_repo_owner_and_name()}/releases/latest"
+        self.destination_path = destination_path
 
-    def process(self) -> bool:
-        if not self.repo_exist:
-            console.log(
-                f"Cloning repository from {self.repo_url} to {self.repo_local_path}",
-                style="bold blue",
-            )
-            git.Repo.clone_from(self.repo_url, self.repo_local_path)
-            return True
+    def _extract_repo_owner_and_name(self):
+        """
+        Extract my name
+        """
+        return "/".join(self.repo_url.rstrip("/").split("/")[-2:])
+
+    def download_latest_release(self):
+        """
+        Download the lastest release ( zip file) or update if necessary
+        """
+        response = requests.get(self.api_url)
+
+        if response.status_code != 200:
+            print(f"Error : {response.status_code} Please report it")
+            return False
+
+        # Get the url of the zip release
+        latest_release = response.json()
+        zip_url = latest_release['zipball_url']
+
+        # Downloading..
+        print(f"Download from {zip_url}...")
+        zip_response = requests.get(zip_url)
+
+        if zip_response.status_code == 200:
+            # Decompress or update the repo
+            self._unzip_and_update(zip_response.content)
         else:
-            self._update()
+            print(f"Download Error. Please report it {zip_response.status_code}")
+            return False
 
-    def _update(self):
-        # Check if the path is a valid Git repository
-        try:
-            repo = git.Repo(self.repo_local_path)
-        except git.exc.InvalidGitRepositoryError:
-            console.log(
-                f"{self.repo_local_path} is not a valid Git repository.",
-                style="red bold",
-            )
-            # this folder has no git metadata, so we are going to clone into a new folder
-            self._clone()
-            return
+        return True
 
-        if repo.is_dirty(untracked_files=True):
-            repo.git.stash("save", "--include-untracked")
+    def _unzip_and_update(self, zip_content):
+        """
+        Zip file extraction
+        """
+        if not os.path.exists(self.destination_path):
+            print(f"Create the Folder {self.destination_path}...")
+            os.makedirs(self.destination_path)
 
-        # Update the repository
-        origin = repo.remotes.origin
-        origin.pull()
-        # Sorted
-        tags = sorted(repo.tags, key=lambda t: t.commit.committed_date)
+        # Unzip...
+        print(f"Estrazione e aggiornamento nella cartella {self.destination_path}...")
 
-        if tags:
-            latest_tag = tags[-1]
-            console.log(
-                f"Repository updated successfully to latest tag '{latest_tag}'",
-                style="bold blue"
-            )
-        else:
-            console.log("No tags found in the repository.", style="bold yellow")
+        with zipfile.ZipFile(BytesIO(zip_content)) as zip_file:
+            # For each file or folder in zip file
+            for file_info in zip_file.infolist():
+                extracted_file_path = os.path.join(self.destination_path, file_info.filename)
 
-        # check  stashed local changes
-        if repo.git.stash("list"):
-            repo.git.stash("pop")
+                # Make folder if it does not exist
+                if file_info.is_dir():
+                    if not os.path.exists(extracted_file_path):
+                        os.makedirs(extracted_file_path)
+                else:
+                    # Overwite the file only if it is different from the previous version
+                    print(f"Aggiornamento del file: {extracted_file_path}")
+                    with zip_file.open(file_info) as source, open(extracted_file_path, "wb") as target:
+                        target.write(source.read())
 
-    def _clone(self):
-        # Define a new position
-        current_dir = os.getcwd()
-        new_folder_path = os.path.join(current_dir, "Unit3d-up")
-
-        # Verify the folder
-        if os.path.exists(new_folder_path):
-            console.log(
-                f"Folder {new_folder_path} already exists. Please remove it manually and retry",
-                style="red bold",
-            )
-            exit(1)
-
-        # Cloning..
-        git.Repo.clone_from(self.repo_url, new_folder_path)
-        console.log(
-            f"Cloned repository from {self.repo_url} to {new_folder_path}",
-            style="bold blue",
-        )
+        print(f"Finish {self.destination_path}")
 
 
 if __name__ == "__main__":
-    # Test Imports
-    try:
-        import git
-        import rich
-    except ImportError:
-        print("Installation in progress...")
-        install_git("gitpython")
-        install_git("rich")
+    repo_url = "https://github.com/31December99/Unit3Dup"
+    destination_path = os.path.join(os.getcwd(), "Unit3Dup")
 
-    import git
-    from rich.console import Console
-
-    console = Console(log_path=False)
-
-    console.rule("- Autoupdate for Unit3D-up -", style="violet bold")
-    my_git = MyGit(repo_local_path=os.getcwd())
-    my_git.process()
+    downloader = MyGitReleaseDownloader(repo_url, destination_path)
+    downloader.download_latest_release()
