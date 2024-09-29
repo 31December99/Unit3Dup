@@ -19,6 +19,7 @@ crew_patterns = [
     "Razor1911",
     "RUNE",
     "FitGirl",
+    "Repack",
     "DODI",
     "ElAmigos",
     "RazorDOX",
@@ -269,9 +270,6 @@ platform_patterns = [
     "MD",
     "32X",
     "SAT",
-    "GB",
-    "AND",
-    "GG",
     "XBLA",
     "3DS",
     "PSP",
@@ -280,7 +278,6 @@ platform_patterns = [
     "NGAGE",
     "TZ",
     "PSN",
-    "VITA",
     "VC",
     "PS4",
     "XBO",
@@ -300,7 +297,6 @@ platform_patterns = [
     "SMS",
     "A8",
     "A5200",
-    "INT",
     "CV",
     "BBC",
     "VEC",
@@ -335,10 +331,8 @@ platform_patterns = [
     "HP2100",
     "HP3000",
     "SIGMA7",
-    "CALL",
     "P11",
     "CDC70",
-    "PLATO",
     "IMLAC",
     "MC",
     "ONLIVE",
@@ -362,7 +356,6 @@ platform_patterns = [
     "NPS",
     "AFTV",
     "V7000",
-    "ELECTRON",
     "NG64",
     "NGCD",
     "N3DS",
@@ -401,9 +394,20 @@ platform_patterns = [
 
 
 suffixes = [
-        'update', 'build', 'patch', 'version', 'remaster', 'repack',
-        'complete', 'edition', 'ultimate', 'definitive', 'remake', 'season', 'episode'
-    ]
+    "update",
+    "build",
+    "patch",
+    "version",
+    "remaster",
+    "repack",
+    "complete",
+    "edition",
+    "ultimate",
+    "definitive",
+    "remake",
+    "season",
+    "episode",
+]
 
 
 """

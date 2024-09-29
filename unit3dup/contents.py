@@ -36,6 +36,8 @@ class Contents:
     game_title: str
     game_crew: list
     game_tags: list
+    season: str | None = None
+    episode: str | None = None
 
     def __post_init__(self):
         ###
@@ -51,7 +53,7 @@ class Contents:
         # Load the tracker data from the dictionary
         tracker_data = ITTData.load_from_module()
 
-        if self.category != tracker_data.category.get('game'):
+        if self.category != tracker_data.category.get("game"):
             # Read from the current video file the height field
             file_path = os.path.join(self.folder, self.file_name)
             media_file = MediaFile(file_path)
@@ -123,6 +125,14 @@ class Media:
     @property
     def guess_filename(self):
         return title.Guessit(self.filename_sanitized)
+
+    @property
+    def guess_season(self):
+        return self.guess_filename.guessit_season
+
+    @property
+    def guess_episode(self):
+        return self.guess_filename.guessit_episode
 
     @property
     def source(self):
@@ -205,15 +215,15 @@ class Media:
 
         # Get the crew name only if the substr is at end of the string
         crew_regex = (
-                r"\b(" + "|".join(re.escape(pattern) for pattern in crew_patterns) + r")\b$"
+            r"\b(" + "|".join(re.escape(pattern) for pattern in crew_patterns) + r")\b$"
         )
         self.crew_list = re.findall(crew_regex, self.filename_sanitized, re.IGNORECASE)
 
         # Get the platform name
         platform_regex = (
-                r"\b("
-                + "|".join(re.escape(pattern) for pattern in platform_patterns)
-                + r")\b"
+            r"\b("
+            + "|".join(re.escape(pattern) for pattern in platform_patterns)
+            + r")\b"
         )
         self.platform_list = re.findall(
             platform_regex, self.filename_sanitized, re.IGNORECASE
