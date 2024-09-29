@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 import os
-import shutil
-
 import patoolib
 import logging
 
@@ -24,15 +22,40 @@ class Extractor:
         # List of Media object
         self.media_list = media
 
-    def delete_old_rar(self, subfolder: str):
+    def delete_old_rar(self, rar_volumes_list: list):
 
-        delete_folder = os.path.join(self.path, subfolder)
-        list_files_to_delete = os.listdir(delete_folder)
+        # Construct the original archive with the path
+        files_to_delete = []
+        for file_rar in rar_volumes_list:
+            files_to_delete.append(os.path.join(self.path, file_rar))
 
-        for file in list_files_to_delete:
-            if file.lower().endswith(".rar"):
-                file_name = os.path.join(delete_folder, file)
-                os.remove(file_name)
+        custom_console.bot_log(
+            f"There are {len(files_to_delete)} old files to delete.."
+        )
+        for index, old_file in enumerate(files_to_delete):
+            custom_console.bot_log(f"{index} - Old file: {old_file}")
+
+            # Ask user for each file
+            while 1:
+                delete_choice = input("Delete the old file ? (Y/N) Q=quit ")
+                # Wait for an answer
+                if delete_choice:
+                    # Only letters
+                    if delete_choice.isalpha():
+                        if delete_choice.upper() == "Y":
+                            print("Your choice: Yes")
+                            print(f"Deleted {old_file}")
+                            # Remove
+                            os.remove(old_file)
+                            break
+                        if delete_choice.upper() == "N":
+                            # Continue to next file
+                            print("Your choice: No")
+                            break
+                        if delete_choice.upper() == "Q":
+                            # Exit..
+                            print("Your choice: Quit")
+                            exit(1)
 
     @staticmethod
     def list_rar_files(subfolder: str) -> ["str"]:
@@ -40,36 +63,17 @@ class Extractor:
         # Filter by *.rar and sorted
         return sorted([file for file in folder_list if file.lower().endswith(".rar")])
 
-    def remove_subfolder(self, subfolder: str):
-        # Folder root ( download folder)
-        root_dir = self.subfolder
-
-        # Get list of files from the subfolder
-        for filename in os.listdir(subfolder):
-            file_path = os.path.join(subfolder, filename)
-
-            # Remove only files
-            if os.path.isfile(file_path):
-                # move from the subfolder to the root
-                try:
-                    shutil.move(file_path, root_dir)
-                except shutil.Error as e:
-                    custom_console.bot_error_log(e)
-                    return False
-        # remove the subfolder
-        shutil.rmtree(subfolder)
-
     def unrar(self) -> bool | None:
         # only -f option
         if not os.path.isdir(self.subfolder):
             return
 
         with Progress(
-                SpinnerColumn(spinner_name="earth"), console=custom_console, transient=True
+            SpinnerColumn(spinner_name="earth"), console=custom_console, transient=True
         ) as progress:
             progress.add_task("Working...", total=100)
 
-            # Get the list of *.rar files
+            # Get the list of *.rar files sorted
             folder_list = self.list_rar_files(self.subfolder)
 
             # Is not empty
@@ -80,7 +84,7 @@ class Extractor:
             else:
                 return None
 
-            # Build the first volume filename or use the only file present
+            # Build the First Volume filename or use the only file present
             first_part = os.path.join(self.path, self.subfolder, folder_list[0])
 
             # Run Extract
@@ -92,16 +96,10 @@ class Extractor:
                 )
             except patoolib.util.PatoolError as e:
                 custom_console.bot_error_log("\nError remove old file if necessary..")
+                custom_console.bot_error_log("\n{e}")
                 return False
-
-            # Remove the archive
             custom_console.bot_log("[is_rar] Decompression complete")
-            self.delete_old_rar(subfolder=self.subfolder)
 
-            # Search for subfolder
-            for root, subfolders, files in os.walk(self.subfolder):
-                if subfolders:
-                    # remove each subfolder and move the contents to the root
-                    for subfolder in subfolders:
-                        self.remove_subfolder(os.path.join(self.path, subfolder))
-            return True
+        # Remove the original archive or the original multipart archive
+        self.delete_old_rar(rar_volumes_list=folder_list)
+        return True
