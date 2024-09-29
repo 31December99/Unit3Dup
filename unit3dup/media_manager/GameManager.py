@@ -33,24 +33,18 @@ class GameManager:
             exit(1)
 
         qbittorrent_list = []
+        result = 0
         for content in self.contents:
             # Look for the IGDB ID #todo if it does not exist, report it at the end of the process
-            game_data = ig_dbapi.request(
+            game_data_results = ig_dbapi.request(
                 title=content.game_title, platform=content.game_tags
             )
 
-            # Print the results
-            custom_console.bot_log("\nResults:")
-            [custom_console.bot_log(result) for result in game_data]
-            if game_data:
-                custom_console.bot_log(f"Selected: {game_data[0]}")
-            else:
-                custom_console.bot_error_log(
-                    f"IGDB ID not found for the title {content.game_title}"
-                )
-                continue
+            # Print the results and ask the user for their choice
+            if len(game_data_results) > 1:
+                result = self.select_result(results=game_data_results)
 
-            # Check for duplicate game. Search in the tracker e compare with your game title
+            # Check for duplicate game result. Search in the tracker e compare with your game title
             if self.cli.duplicate or config.DUPLICATE_ON:
                 results = self.check_duplicate(content=content)
                 if results:
@@ -64,7 +58,7 @@ class GameManager:
 
             if not self.cli.torrent and torrent_response:
                 # Upload only if it is after the torrent was created
-                tracker_response = self.upload(content=content, ig_db_data=game_data)
+                tracker_response = self.upload(content=content, ig_db_data=game_data_results[result])
             else:
                 tracker_response = None
 
@@ -76,6 +70,30 @@ class GameManager:
             qbittorrent_list.append(data_for_torrent_client)
 
         return qbittorrent_list
+
+    # Ask user to choice a result
+    def select_result(self, results: list["Game"]) -> None | int:
+
+        # Print the results
+        custom_console.bot_log("\nResults:")
+        if results:
+            for index, result in enumerate(results):
+                custom_console.bot_log(f"{index} {result}")
+
+            while 1:
+                result = self.input_manager()
+                if result is not None and 0 <= result < len(results):
+                    custom_console.bot_log(f"Selected: {results[result]}")
+                    return result
+
+    @staticmethod
+    def input_manager() -> int | None:
+        custom_console.print("\nChoice a result to send to the tracker ", end='', style='violet bold')
+        user_choice = input()
+        if user_choice.upper() == "Q":
+            exit(1)
+        if user_choice.isdigit():
+            return int(user_choice)
 
     @staticmethod
     def torrent(content: Contents):
@@ -89,15 +107,14 @@ class GameManager:
         return duplicate.process()
 
     @staticmethod
-    def upload(content: Contents, ig_db_data: list["Game"]):
+    def upload(content: Contents, ig_db_data: Game):
         unit3d_up = UploadGame(content)
 
         # Create a new payload
-        # todo : choose the best match not [0]
         if not ig_db_data:
             custom_console.bot_error_log("IGDB ID non trovato")
             exit(1)
-        data = unit3d_up.payload(igdb=ig_db_data[0])
+        data = unit3d_up.payload(igdb=ig_db_data)
 
         # Get a new tracker instance
         tracker = unit3d_up.tracker(data=data)
