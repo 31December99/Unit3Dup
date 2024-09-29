@@ -129,7 +129,7 @@ class IGdbServiceApi:
                 query = f'fields id,name; search "{title}"; where {category_filter};'
 
             build_request = urljoin(base_request_url, "games")
-            custom_console.bot_log(f"IGDB Query: '{query}'")
+            # custom_console.bot_log(f"IGDB Query: '{query}'") Debug
 
             response = self.http_client.get_url(
                 build_request, get_method=False, headers=header_access, data=query
