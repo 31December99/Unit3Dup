@@ -13,19 +13,22 @@ class TvShow:
         super().__init__()
         self.titles = None
         self.content = content
+        self.episode_title: str | None = None
         category = content.category
 
         show = {
             1: "Movie",
             2: "Serie",
         }
-        self.mytmdb = tmdb.MyTmdb(table=show[category], file_name=content.file_name)
+        self.mytmdb = tmdb.MyTmdb(table=show[category], content=content)
 
     def start(self, file_name: str):
         guess_filename = title.Guessit(file_name)
         _title = guess_filename.guessit_title
         _alternate_title = guess_filename.guessit_alternative
         result = self.mytmdb.search(_title)
+        # search episode title for the SxEx of the current content file_name or None if it's a movie
+        self.episode_title = self.mytmdb.episode_title
 
         # Se non ci sono risultati prima di richiedere all'utente provo a unire il main title con l'alternative title
         if not result:

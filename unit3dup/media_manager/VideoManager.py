@@ -92,7 +92,13 @@ class VideoManager:
         return True
 
     def tmdb(self, content: Contents):
+        # Search for a title ( Movie or Season) and return the episode title
         tv_show_result = self._my_tmdb.start(content.file_name)
+
+        # if it's a season and the episode title is available
+        # remove the episode title from the display_name
+        if self._my_tmdb.episode_title:
+            content.display_name = content.display_name.replace(self._my_tmdb.episode_title, '')
         return tv_show_result
 
     def _video_info(self):

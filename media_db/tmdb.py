@@ -2,31 +2,36 @@
 import sys
 import tmdbv3api.exceptions
 
-from unidecode import unidecode
-from tmdbv3api import TMDb, Movie, TV
-from thefuzz import fuzz
-from media_db.results import Results
-from common.utility.utility import Manage_titles
-from common.config import config
 from common.custom_console import custom_console
+from common.utility.utility import Manage_titles
+from tmdbv3api import TMDb, Movie, TV, Season
+from unit3dup.contents import Contents
+from media_db.results import Results
+from common.config import config
+from unidecode import unidecode
+from thefuzz import fuzz
 
 
 class MyTmdb:
 
-    def __init__(self, table: str, file_name: str, year="", videoid=""):
+    def __init__(self, table: str, content: Contents, year="", videoid=""):
         self.table = table
+        self.content = content
         self.ext_title = None
         self.year = year
         self.videoid = videoid
         self.tmdb = None
         self._tmdb = TMDb()
-        self._tmdb.language = "it-EN"
+        #self._tmdb.language = "it-EN"
+        self._tmdb.language = "EN"
         self._tmdb.api_key = config.TMDB_APIKEY
         self.__mv_tmdb = Movie()
         self.__tv_tmdb = TV()
+        self.season = Season()
         self.__result = None
         self.__page = []
-        self.file_name = file_name
+        self.file_name = content.file_name
+        self.episode_title: str | None = None
 
         if self.table == "Serie":
             self.tmdb = self.__tv_tmdb
@@ -56,7 +61,14 @@ class MyTmdb:
                 if not result:
                     return None
         else:
+            # Search the episode name in seasons details and remove it from the filename content
             details, result.keywords = self.keywords(result.video_id)
+            if self.table == "Serie":
+                season_details = self.season.details(result.video_id, self.content.season)
+                episodes = season_details["episodes"]
+                for episode in episodes:
+                    if episode["episode_number"] == self.content.episode:
+                        self.episode_title = Manage_titles.clean(episode["name"])
         return result
 
     def input_tmdb(self) -> Results:

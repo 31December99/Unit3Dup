@@ -23,6 +23,8 @@ class Files:
             game_title: str,
             game_crew: list,
             game_tags: list,
+            season: str,
+            episode: str,
     ):
         self.languages = None
         self.display_name = None
@@ -42,6 +44,8 @@ class Files:
         self.game_title: str = game_title
         self.game_crew: list = game_crew
         self.game_tags: list = game_tags
+        self.episode: str = episode
+        self.season: str = season
         self.tracker_name: str = tracker_name
         self.path: str = path
         self.movies: list = []
@@ -55,13 +59,13 @@ class Files:
         Verify if name is part of torrent pack folder
         """
         if not self.is_dir:
-            custom_console.bot_error_log(f"Process Files... <{self.path}>")
+            custom_console.bot_log(f"'Process Files...' <{self.path}>")
             # Check for valid extension
             process = (
                 self.process_file() if Manage_titles.filter_ext(self.path) else False
             )
         else:
-            custom_console.bot_error_log(f"Process Folder... <{self.path}>")
+            custom_console.bot_log(f"'Process Folder...' <{self.path}>")
             process = self.process_folder()
 
         # Determines if it's a torrent pack by checking for a SxEx substring
@@ -74,6 +78,8 @@ class Files:
                 file_name=self.file_name,
                 folder=self.folder,
                 name=self.name,
+                season=self.season,
+                episode=self.episode,
                 size=self.size,
                 metainfo=self.meta_info,
                 category=self.category,
