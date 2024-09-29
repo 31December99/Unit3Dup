@@ -162,8 +162,10 @@ class MediaFile:
     def is_interlaced(self):
         video = self.video_track
         if video:
-            encoding_settings = video[0].get("encoding_settings")
-            match = re.search(r"interlaced=(\d)", encoding_settings)
-            if match:
-                return int(match.group(1))
+            encoding_settings = video[0].get("encoding_settings", None)
+            if encoding_settings:
+                match = re.search(r"interlaced=(\d)", encoding_settings)
+                if match:
+                    return int(match.group(1))
+
         return None
