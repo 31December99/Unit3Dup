@@ -63,11 +63,12 @@ class MyTmdb:
         else:
             # Search the episode name in seasons details and remove it from the filename content
             details, result.keywords = self.keywords(result.video_id)
-            season_details = self.season.details(result.video_id, self.content.season)
-            episodes = season_details["episodes"]
-            for episode in episodes:
-                if episode["episode_number"] == self.content.episode:
-                    self.episode_title = Manage_titles.clean(episode["name"])
+            if self.table == "Serie":
+                season_details = self.season.details(result.video_id, self.content.season)
+                episodes = season_details["episodes"]
+                for episode in episodes:
+                    if episode["episode_number"] == self.content.episode:
+                        self.episode_title = Manage_titles.clean(episode["name"])
         return result
 
     def input_tmdb(self) -> Results:
