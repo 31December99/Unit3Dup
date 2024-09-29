@@ -308,7 +308,6 @@ platform_patterns = [
     "OUYA",
     "BB",
     "WP",
-    "II",
     "X1",
     "SCD",
     "NGM",
