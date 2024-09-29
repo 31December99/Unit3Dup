@@ -47,7 +47,9 @@ class VideoFrame:
         """
         resized_image = self.resize_image(frame)
         buffered = io.BytesIO()
-        resized_image.save(buffered, format="PNG", optimize=True, compress_level=config.COMPRESS_SCSHOT)
+        resized_image.save(
+            buffered, format="PNG", optimize=True, compress_level=config.COMPRESS_SCSHOT
+        )
         return buffered.getvalue()
 
     def resize_image(self, image: Image, width: int = 350) -> Image:
@@ -98,7 +100,9 @@ class VideoFrame:
             result = subprocess.run(command, capture_output=True, text=True, check=True)
             duration = float(result.stdout.strip())
         except subprocess.CalledProcessError:
-            custom_console.bot_error_log(f"ffprobe error: The media is invalid {self.video_path}")
+            custom_console.bot_error_log(
+                f"ffprobe error: The media is invalid {self.video_path}"
+            )
             exit(1)
         except FileNotFoundError:
             custom_console.bot_error_log(
@@ -130,13 +134,18 @@ class VideoFrame:
             "-",
         ]
         try:
-            result = subprocess.run(command, capture_output=True, check=True)
+            result = subprocess.run(command, capture_output=True, check=True, timeout=20)
             return Image.open(io.BytesIO(result.stdout))
         except subprocess.CalledProcessError as e:
-            raise RuntimeError(f"[FFmpeg] Error: {e.stderr}")
+            custom_console.bot_error_log(f"[FFmpeg] Error: Please verify if your file is corrupt")
+            exit(1)
+        except subprocess.TimeoutExpired:
+            custom_console.bot_error_log(f"[FFmpeg] Error: Time Out. Please verify if your file is corrupt")
+            exit(1)
         except FileNotFoundError:
             custom_console.bot_error_log(
                 "[FFMPEG not found] - Install ffmpeg or check your system path",
                 style="red bold",
             )
             exit(1)
+
