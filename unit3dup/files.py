@@ -23,6 +23,8 @@ class Files:
             game_title: str,
             game_crew: list,
             game_tags: list,
+            season: str,
+            episode: str,
     ):
         self.languages = None
         self.display_name = None
@@ -42,6 +44,8 @@ class Files:
         self.game_title: str = game_title
         self.game_crew: list = game_crew
         self.game_tags: list = game_tags
+        self.episode: str = episode
+        self.season: str = season
         self.tracker_name: str = tracker_name
         self.path: str = path
         self.movies: list = []
@@ -74,6 +78,8 @@ class Files:
                 file_name=self.file_name,
                 folder=self.folder,
                 name=self.name,
+                season=self.season,
+                episode=self.episode,
                 size=self.size,
                 metainfo=self.meta_info,
                 category=self.category,
