@@ -22,8 +22,7 @@ class MyTmdb:
         self.videoid = videoid
         self.tmdb = None
         self._tmdb = TMDb()
-        #self._tmdb.language = "it-EN"
-        self._tmdb.language = "EN"
+        self._tmdb.language = "it-EN"
         self._tmdb.api_key = config.TMDB_APIKEY
         self.__mv_tmdb = Movie()
         self.__tv_tmdb = TV()
