@@ -65,7 +65,8 @@ class Guessit:
         Get the episode title
         :return:
         """
-        return self.guessit["episode_title"] if "episode_title" in self.guessit else None
+        return guessit.guessit(self.filename, {"excludes": "part"}).get("episode_title", "")
+
 
     @property
     def type(self):
