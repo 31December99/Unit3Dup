@@ -97,8 +97,10 @@ class VideoManager:
 
         # if it's a season and the episode title is available
         # remove the episode title from the display_name
-        if self._my_tmdb.episode_title:
-            content.display_name = content.display_name.replace(self._my_tmdb.episode_title, '')
+        if not content.episode_title:
+            if self._my_tmdb.episode_title:
+                content.display_name = content.display_name.replace(self._my_tmdb.episode_title, '')
+
         return tv_show_result
 
     def _video_info(self):
