@@ -106,8 +106,9 @@ class Contents:
                     f"{self.__class__.__name__} Set to default value {tracker_data.resolution['altro']}"
                 )
                 self.resolution = tracker_data.resolution["altro"]
-        # Game
-        self.resolution = tracker_data.resolution["altro"]
+        else:
+            # Game
+            self.resolution = tracker_data.resolution["altro"]
 
 
 @dataclass
@@ -217,15 +218,15 @@ class Media:
 
         # Get the crew name only if the substr is at end of the string
         crew_regex = (
-                r"\b(" + "|".join(re.escape(pattern) for pattern in crew_patterns) + r")\b$"
+            r"\b(" + "|".join(re.escape(pattern) for pattern in crew_patterns) + r")\b$"
         )
         self.crew_list = re.findall(crew_regex, self.filename_sanitized, re.IGNORECASE)
 
         # Get the platform name
         platform_regex = (
-                r"\b("
-                + "|".join(re.escape(pattern) for pattern in platform_patterns)
-                + r")\b"
+            r"\b("
+            + "|".join(re.escape(pattern) for pattern in platform_patterns)
+            + r")\b"
         )
         self.platform_list = re.findall(
             platform_regex, self.filename_sanitized, re.IGNORECASE
