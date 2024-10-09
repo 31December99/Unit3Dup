@@ -25,6 +25,7 @@ class Files:
             game_tags: list,
             season: str,
             episode: str,
+            screen_size: str,
     ):
         self.languages = None
         self.display_name = None
@@ -39,6 +40,7 @@ class Files:
         self.file_name = None
         self.torrent_path = None
         self.doc_description = None
+        self.screen_size = screen_size
 
         self.category: int = media_type
         self.game_title: str = game_title
@@ -92,6 +94,7 @@ class Files:
                 game_title=self.game_title,
                 game_crew=self.game_crew,
                 game_tags=self.game_tags,
+                screen_size=self.screen_size
             )
             if process
             else False
