@@ -63,6 +63,7 @@ class UploadDocument(UploadBot):
             standard=0,
             media_info="",
             description=self.content.doc_description,
+            igdb=0,  # not used
         )
 
     def tracker(self, data: payload) -> pvtTracker:
@@ -111,7 +112,8 @@ class UploadVideo(UploadBot):
         tracker.data["tmdb"] = data.result.video_id
         tracker.data["keywords"] = data.result.keywords
         tracker.data["category_id"] = data.category
-        tracker.data["resolution_id"] = self.content.resolution
+        tracker.data[
+            "resolution_id"] = self.content.screen_size if self.content.screen_size else self.content.resolution
         tracker.data["sd"] = data.standard
         tracker.data["mediainfo"] = data.media_info
         tracker.data["description"] = data.description

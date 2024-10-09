@@ -15,6 +15,7 @@ from dataclasses import dataclass, field
 from common.mediainfo import MediaFile
 from common.utility import title
 
+
 @dataclass
 class Contents:
     """Create a new object with the attributes of Contents"""
@@ -38,6 +39,7 @@ class Contents:
     game_tags: list
     season: str | None = None
     episode: str | None = None
+    screen_size: str | None = None
 
     def __post_init__(self):
         ###
@@ -53,7 +55,10 @@ class Contents:
         # Load the tracker data from the dictionary
         tracker_data = ITTData.load_from_module()
 
-        if self.category != tracker_data.category.get("game"):
+        if self.category in {
+            tracker_data.category.get("movie"),
+            tracker_data.category.get("tvshow"),
+        }:
             # Read from the current video file the height field
             file_path = os.path.join(self.folder, self.file_name)
             media_file = MediaFile(file_path)
@@ -142,6 +147,15 @@ class Media:
         return self.guess_filename.source
 
     @property
+    def screen_size(self):
+        tracker_data = ITTData.load_from_module()
+        screen_split = self.filename_sanitized.split(" ")
+        for screen in screen_split:
+            if screen in tracker_data.resolution:
+                print(screen)
+                return tracker_data.resolution[screen]
+
+    @property
     def other(self):
         return self.guess_filename.other
 
@@ -218,15 +232,15 @@ class Media:
 
         # Get the crew name only if the substr is at end of the string
         crew_regex = (
-            r"\b(" + "|".join(re.escape(pattern) for pattern in crew_patterns) + r")\b$"
+                r"\b(" + "|".join(re.escape(pattern) for pattern in crew_patterns) + r")\b$"
         )
         self.crew_list = re.findall(crew_regex, self.filename_sanitized, re.IGNORECASE)
 
         # Get the platform name
         platform_regex = (
-            r"\b("
-            + "|".join(re.escape(pattern) for pattern in platform_patterns)
-            + r")\b"
+                r"\b("
+                + "|".join(re.escape(pattern) for pattern in platform_patterns)
+                + r")\b"
         )
         self.platform_list = re.findall(
             platform_regex, self.filename_sanitized, re.IGNORECASE
