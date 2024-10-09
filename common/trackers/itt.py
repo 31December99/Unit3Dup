@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 itt_data = {
-    "CATEGORY": {"movie": 1, "tvshow": 2, "edicola": 7, "game": 4},
+    "CATEGORY": {"movie": 1, "tvshow": 2, "edicola": 6, "game": 4},
     "FREELECH": {"size20": 100, "size15": 75, "size10": 50, "size5": 25},
     "TYPE_ID": {
         "full-disc": 1,
