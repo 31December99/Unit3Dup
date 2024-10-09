@@ -63,6 +63,7 @@ class UploadDocument(UploadBot):
             standard=0,
             media_info="",
             description=self.content.doc_description,
+            igdb=0,  # not used
         )
 
     def tracker(self, data: payload) -> pvtTracker:
