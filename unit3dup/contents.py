@@ -39,6 +39,7 @@ class Contents:
     game_tags: list
     season: str | None = None
     episode: str | None = None
+    screen_size: str | None = None
 
     def __post_init__(self):
         ###
@@ -54,7 +55,10 @@ class Contents:
         # Load the tracker data from the dictionary
         tracker_data = ITTData.load_from_module()
 
-        if self.category in {tracker_data.category.get("movie"), tracker_data.category.get("tvshow")}:
+        if self.category in {
+            tracker_data.category.get("movie"),
+            tracker_data.category.get("tvshow"),
+        }:
             # Read from the current video file the height field
             file_path = os.path.join(self.folder, self.file_name)
             media_file = MediaFile(file_path)
@@ -141,6 +145,15 @@ class Media:
     @property
     def source(self):
         return self.guess_filename.source
+
+    @property
+    def screen_size(self):
+        tracker_data = ITTData.load_from_module()
+        screen_split = self.filename_sanitized.split(" ")
+        for screen in screen_split:
+            if screen in tracker_data.resolution:
+                print(screen)
+                return tracker_data.resolution[screen]
 
     @property
     def other(self):
