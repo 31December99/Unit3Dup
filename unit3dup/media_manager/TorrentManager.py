@@ -5,6 +5,7 @@ import argparse
 from unit3dup.media_manager.VideoManager import VideoManager
 from unit3dup.media_manager.models.qbitt import QBittorrent
 from unit3dup.media_manager.GameManager import GameManager
+from unit3dup.media_manager.DocuManager import DocuManager
 from common.custom_console import custom_console
 from common.trackers.trackers import ITTData
 from common.constants import my_language
@@ -28,6 +29,7 @@ class TorrentManager:
 
         game_process_results: list["QBittorrent"] = []
         video_process_results: list["QBittorrent"] = []
+        docu_process_results: list["QBittorrent"] = []
 
         # // GAME
         games = [
@@ -51,6 +53,15 @@ class TorrentManager:
             video_manager = VideoManager(contents=videos, cli=self.cli)
             video_process_results = video_manager.process()
 
+            # // Doc
+        doc = [
+            content for content in contents if content.category == self.docu_category
+        ]
+
+        if doc:
+            docu_manager = DocuManager(contents=doc, cli=self.cli)
+            docu_process_results = docu_manager.process()
+
         # // QBITTORRENT
         if game_process_results:
             # Seeds if -torrent is off
@@ -61,6 +72,11 @@ class TorrentManager:
             # Seeds if -torrent is off
             if not self.cli.torrent:
                 self.send_to_qbittorrent(video_process_results)
+
+        if docu_process_results:
+            # Seeds if -torrent is off
+            if not self.cli.torrent:
+                self.send_to_qbittorrent(docu_process_results)
 
     @staticmethod
     def send_to_qbittorrent(qbittorrent_list: list["QBittorrent"]) -> None:
