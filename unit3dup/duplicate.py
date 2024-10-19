@@ -200,6 +200,8 @@ class Duplicate:
         resolution = value.get("resolution", "[n/a]")
         info_hash = value.get("info_hash", 0)
         size = value.get("size", 0)
+        # Convert to GB
+        size = round(size / (1024 ** 3), 2)
         tmdb_id = value.get("tmdb_id", 0)
         igdb_id = value.get("igdb_id", 0)
 
