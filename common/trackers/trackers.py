@@ -19,11 +19,11 @@ class ITTData:
         Carica i dati da un modulo e crea un'istanza di ITTData.
         """
         return cls(
-            category=itt_data.get('CATEGORY'),
-            freelech=itt_data.get('FREELECH'),
-            type_id=itt_data.get('TYPE_ID'),
-            resolution=itt_data.get('RESOLUTION'),
-            codec=itt_data.get('CODEC'),
+            category=itt_data.get("CATEGORY"),
+            freelech=itt_data.get("FREELECH"),
+            type_id=itt_data.get("TYPE_ID"),
+            resolution=itt_data.get("RESOLUTION"),
+            codec=itt_data.get("CODEC"),
         )
 
     def filter_type(self, file_name: str) -> int:
