@@ -152,7 +152,7 @@ class Media:
         screen_split = self.filename_sanitized.split(" ")
         for screen in screen_split:
             if screen in tracker_data.resolution:
-                print(screen)
+                # print(screen)
                 return tracker_data.resolution[screen]
 
     @property
