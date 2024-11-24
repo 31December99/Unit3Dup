@@ -253,6 +253,7 @@ class Duplicate:
 
                     delta_size = self._calculate_threshold(size=tracker_value["size"])
                     if delta_size > config.SIZE_TH:
+                        # Not a duplicate
                         continue
 
                     already = self.compare(
