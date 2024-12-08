@@ -103,8 +103,12 @@ class VideoManager:
 
         return tv_show_result
 
-    def _video_info(self):
-        return Video.info(self.file_name)
+    def _video_info(self, trailer_key):
+        # Add the trailer to the torrent page's description
+        video_info = Video.info(self.file_name)
+        video_info.description+=f'[center][youtube]{trailer_key}[/youtube][/center]'
+        return video_info
+
 
     @staticmethod
     def torrent(content: Contents):
@@ -127,7 +131,7 @@ class VideoManager:
 
         # Create a new payload
         data = unit3d_up.payload(
-            tv_show=self.tv_show_result, video_info=self._video_info()
+            tv_show=self.tv_show_result, video_info=self._video_info(trailer_key=self.tv_show_result.trailer_key)
         )
 
         # Get a new tracker instance

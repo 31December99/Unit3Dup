@@ -17,18 +17,20 @@ class ImageUploader(ABC):
 
     @abstractmethod
     def get_endpoint(self):
-        return "https://api.imgbb.com/1/upload"
+        pass
 
     @abstractmethod
-    def get_params(self):
-        return {
-            "key": self.key,
-        }
+    def get_data(self):
+        pass
+
+    @abstractmethod
+    def get_field_name(self):
+        pass
 
     def upload(self):
-        params = self.get_params()
+        data = self.get_data()
         files = {
-            "image": (None, self.image),
+            self.get_field_name(): (None, self.image),
         }
 
         upload_n = 0
@@ -36,7 +38,7 @@ class ImageUploader(ABC):
             try:
                 upload_n += 1
                 response = requests.post(
-                    self.get_endpoint(), params=params, files=files, timeout=10
+                    self.get_endpoint(), data = data, files = files, timeout = 10
                 )
                 response.raise_for_status()
                 return response.json()
@@ -73,30 +75,48 @@ class ImageUploader(ABC):
             custom_console.bot_error_log(f"HTTPError received: {error}")
 
 
-class Freeimage(ImageUploader):
-
-    priority = config.FREE_IMAGE_PRIORITY
-
-    def get_endpoint(self) -> str:
-        return "https://freeimage.host/api/1/upload"
-
-    def get_params(self) -> dict:
-        return {
-            "key": self.key,
-            "format": "json",
-        }
-
-
 class ImgBB(ImageUploader):
 
     priority= config.IMGBB_PRIORITY
     def get_endpoint(self) -> str:
         return "https://api.imgbb.com/1/upload"
 
-    def get_params(self) -> dict:
+    def get_data(self) -> dict:
         return {
             "key": self.key,
         }
+
+    def get_field_name(self) -> str:
+        return 'image'
+
+class Freeimage(ImageUploader):
+
+    priority = config.FREE_IMAGE_PRIORITY
+    def get_endpoint(self) -> str:
+        return "https://freeimage.host/api/1/upload"
+
+    def get_data(self) -> dict:
+        return {
+            "key": self.key,
+            "format": "json",
+        }
+
+    def get_field_name(self) -> str:
+        return 'image'
+
+class LensDump(ImageUploader):
+
+    priority= config.LENSDUMP_PRIORITY
+    def get_endpoint(self) -> str:
+        return "https://lensdump.com/api/1/upload"
+
+    def get_data(self) -> dict:
+        return {
+            "key": self.key,
+        }
+
+    def get_field_name(self) -> str:
+        return 'source'
 
 
 class ImageUploaderFallback:
@@ -138,3 +158,7 @@ class ImageUploaderFallback:
 
         if uploader_host == "ImgBB":
             return response["data"]["display_url"]
+
+        if uploader_host == "LensDump":
+            return response['image']['url']
+
