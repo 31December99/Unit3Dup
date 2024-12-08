@@ -5,6 +5,7 @@ import json
 import time
 import requests
 
+from common.config import config
 from abc import ABC, abstractmethod
 from common.custom_console import custom_console
 
@@ -74,6 +75,8 @@ class ImageUploader(ABC):
 
 class Freeimage(ImageUploader):
 
+    priority = config.FREE_IMAGE_PRIORITY
+
     def get_endpoint(self) -> str:
         return "https://freeimage.host/api/1/upload"
 
@@ -86,6 +89,7 @@ class Freeimage(ImageUploader):
 
 class ImgBB(ImageUploader):
 
+    priority= config.IMGBB_PRIORITY
     def get_endpoint(self) -> str:
         return "https://api.imgbb.com/1/upload"
 
