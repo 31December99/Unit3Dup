@@ -26,3 +26,4 @@ class Results:
     date: str | None = None
     not_resources: bool = False
     keywords: bool = False
+    trailer_key: str | None = None
