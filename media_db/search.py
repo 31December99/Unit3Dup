@@ -38,6 +38,7 @@ class TvShow:
                 result = self.mytmdb.input_tmdb()
 
         if result:
+            result.trailer_key = self.trailer(result.video_id)
             backdrop_path = result.backdrop_path
             poster_path = result.poster_path
             overview = result.overview
@@ -59,6 +60,7 @@ class TvShow:
             custom_console.bot_log(f"[TMDB POSTER]............  {result.poster_path}")
             custom_console.bot_log(f"[TMDB BACKDROP]..........  {result.backdrop_path}")
             # custom_console.bot_log(f"[TMDB KEYWORDS]..........  {result.keywords}\n")
+            custom_console.bot_log(f"[TMDB TRAILER]...........  https://www.youtube.com/watch?v={result.trailer_key}\n")
 
             """
             # Print the list of search results
@@ -71,3 +73,16 @@ class TvShow:
         else:
             custom_console.bot_log(f"Non trovo un ID valido per {file_name}")
             sys.exit()
+
+
+    def trailer(self, video_id: int) -> str:
+        self.mytmdb.tmdb.language='it'
+        videos = self.mytmdb.tmdb.videos(video_id)
+        if not videos['results']:
+            self.mytmdb.tmdb.language = 'en'
+            videos = self.mytmdb.tmdb.videos(video_id)
+        trailer = next((video for video in videos['results'] if video['type'].lower() == 'trailer' and video['site'].lower() == 'youtube'), None)
+        if trailer:
+            return trailer['key']
+
+

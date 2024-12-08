@@ -9,6 +9,7 @@ from urllib.parse import urlparse
 from pathlib import Path
 
 service_filename = "Unit3Dbot_service.env"
+n_of_uploaders=3
 
 def create_default_env_file(path):
     default_content = """
@@ -20,9 +21,10 @@ ITT_APIKEY=
 # TMDB
 TMDB_APIKEY=
 
-# IMGBB;FREE_IMAGE
+# IMAGE UPLOADERS
 IMGBB_KEY=
 FREE_IMAGE_KEY=
+LENSDUMP_KEY=
 
 # QBITTORRENT CLIENT
 QBIT_USER=
@@ -32,9 +34,10 @@ QBIT_PORT=8080
 
 ############################################## USER PREFERENCES ##############################################
 
-# Image uploader priority. 1=first in list
-IMGBB_PRIORITY=1
-FREE_IMAGE_PRIORITY=2
+# Image uploader priority. 0=first in list
+IMGBB_PRIORITY=0
+FREE_IMAGE_PRIORITY=1
+LENSDUMP_PRIORITY=2
 
 # Search for possible candidates for duplicate files
 DUPLICATE_ON=False
@@ -113,6 +116,8 @@ class Config(BaseSettings):
     TMDB_APIKEY: str | None = Field(default=None, env="TMDB_APIKEY")
     IMGBB_KEY: str | None = Field(default=None, env="IMGBB_KEY")
     FREE_IMAGE_KEY: str | None = Field(default=None, env="FREE_IMAGE_KEY")
+    LENSDUMP_KEY: str | None = Field(default=None, env="LENSDUMP_KEY")
+
     PW_API_KEY: str | None = Field(default=None, env="PW_API_KEY")
     PW_URL: str = Field(default="http://localhost:9696/api/v1", env="PW_URL")
     FTPX_USER: str | None = Field(default=None, env="FTPX_USER")
@@ -129,8 +134,10 @@ class Config(BaseSettings):
     QBIT_PORT: str | None = Field(default="8080", env="QBIT_PORT")
 
     # USER PREFERENCES
+    IMGBB_PRIORITY: int = Field(default=0, env="IMGBB_PRIORITY")
     FREE_IMAGE_PRIORITY: int = Field(default=1, env="FREE_IMAGE_PRIORITY")
-    IMGBB_PRIORITY: int = Field(default=2, env="IMGBB_PRIORITY")
+    LENSDUMP_PRIORITY: int = Field(default=2, env="IMGBB_PRIORITY")
+
     DUPLICATE_ON: str = Field(default=False, env="DUPLICATE_ON")
     NUMBER_OF_SCREENSHOTS: int = Field(default=6, env="NUMBER_OF_SCREENSHOTS")
     COMPRESS_SCSHOT: int = Field(default=4, env="COMPRESS_SCSHOT")
@@ -218,6 +225,30 @@ class Config(BaseSettings):
             custom_console.bot_error_log("No FREE IMAGE API_KEY provided")
         return value
 
+    @field_validator("LENSDUMP_KEY")
+    def validate_lensdump_apikey(cls, value):
+        if not value:
+            custom_console.bot_error_log("No LENSDUMP API_KEY provided")
+        return value
+
+    @field_validator("FREE_IMAGE_PRIORITY")
+    def validate_free_image_priority(cls, value):
+        if not isinstance(value, int) or not (0 <= value <= n_of_uploaders):
+            return cls.model_fields["FREE_IMAGE_PRIORITY"].default
+        return value
+
+    @field_validator("IMGBB_PRIORITY")
+    def validate_imgbb_priority(cls, value):
+        if not isinstance(value, int) or not (0 <= value <= n_of_uploaders):
+            return cls.model_fields["IMGBB_PRIORITY"].default
+        return value
+
+    @field_validator("LENSDUMP_PRIORITY")
+    def validate_lensdump_priority(cls, value):
+        if not isinstance(value, int) or not (0 <= value <= n_of_uploaders):
+            return cls.model_fields["LENSDUMP_PRIORITY"].default
+        return value
+
     @field_validator("QBIT_USER")
     def validate_qbit_user(cls, value):
         if not value:
@@ -236,17 +267,6 @@ class Config(BaseSettings):
             custom_console.bot_error_log("No QBIT_PORT provided")
         return value
 
-    @field_validator("FREE_IMAGE_PRIORITY")
-    def validate_free_image_priority(cls, value):
-        if not isinstance(value, int) or not (1 <= value <= 2):
-            return cls.model_fields["FREE_IMAGE_PRIORITY"].default
-        return value
-
-    @field_validator("IMGBB_PRIORITY")
-    def validate_imgbb_priority(cls, value):
-        if not isinstance(value, int) or not (1 <= value <= 2):
-            return cls.model_fields["IMGBB_PRIORITY"].default
-        return value
 
     @field_validator("DUPLICATE_ON")
     def validate_duplicate_on(cls, value):
