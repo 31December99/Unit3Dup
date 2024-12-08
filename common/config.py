@@ -3,13 +3,12 @@
 import os
 from common.custom_console import custom_console
 from pydantic_settings import BaseSettings
-from pydantic import Field, field_validator, fields
+from pydantic import Field, field_validator
 from dotenv import load_dotenv
 from urllib.parse import urlparse
 from pathlib import Path
 
 service_filename = "Unit3Dbot_service.env"
-
 
 def create_default_env_file(path):
     default_content = """
@@ -18,8 +17,10 @@ def create_default_env_file(path):
 ITT_URL=https://itatorrents.xyz
 ITT_APIKEY=
 
-# TMDB;IMGBB;FREE_IMAGE
+# TMDB
 TMDB_APIKEY=
+
+# IMGBB;FREE_IMAGE
 IMGBB_KEY=
 FREE_IMAGE_KEY=
 
@@ -30,6 +31,10 @@ QBIT_URL=http://localhost
 QBIT_PORT=8080
 
 ############################################## USER PREFERENCES ##############################################
+
+# Image uploader priority. 1=first in list
+IMGBB_PRIORITY=1
+FREE_IMAGE_PRIORITY=2
 
 # Search for possible candidates for duplicate files
 DUPLICATE_ON=False
@@ -76,7 +81,6 @@ IGDB_ID_SECRET=
     with open(path, "w") as f:
         f.write(default_content.strip())
 
-
 # Define the path for the configuration file
 if os.name == "nt":  # If on Windows
     default_env_path = Path(os.getenv("LOCALAPPDATA", ".")) / f"{service_filename}"
@@ -99,7 +103,6 @@ if not torrent_archive_path.exists():
 
 # Load environment variables
 load_dotenv(dotenv_path=default_env_path)
-
 
 class Config(BaseSettings):
     # TRACKER
@@ -126,6 +129,8 @@ class Config(BaseSettings):
     QBIT_PORT: str | None = Field(default="8080", env="QBIT_PORT")
 
     # USER PREFERENCES
+    FREE_IMAGE_PRIORITY: int = Field(default=1, env="FREE_IMAGE_PRIORITY")
+    IMGBB_PRIORITY: int = Field(default=2, env="IMGBB_PRIORITY")
     DUPLICATE_ON: str = Field(default=False, env="DUPLICATE_ON")
     NUMBER_OF_SCREENSHOTS: int = Field(default=6, env="NUMBER_OF_SCREENSHOTS")
     COMPRESS_SCSHOT: int = Field(default=4, env="COMPRESS_SCSHOT")
@@ -169,7 +174,7 @@ class Config(BaseSettings):
     def validate_itt_url(cls, value):
         if not value:
             custom_console.bot_error_log("No ITT_URL provided")
-        return cls.validate_url(value, "ITT_URL", cls.__fields__)
+        return cls.validate_url(value, "ITT_URL", cls.model_fields)
 
     @field_validator("ITT_APIKEY")
     def validate_itt_apikey(cls, value):
@@ -181,13 +186,13 @@ class Config(BaseSettings):
     def validate_qbit_url(cls, value):
         if not value:
             custom_console.bot_error_log("No QBIT_URL provided")
-        return cls.validate_url(value, "QBIT_URL", cls.__fields__)
+        return cls.validate_url(value, "QBIT_URL", cls.model_fields)
 
     @field_validator("PW_URL")
     def validate_pw_url(cls, value):
         # if not value:
         # custom_console.bot_question_log("[Optional] No PW_URL provided\n")
-        return cls.validate_url(value, "PW_URL", cls.__fields__)
+        return cls.validate_url(value, "PW_URL", cls.model_fields)
 
     @field_validator("PW_API_KEY")
     def validate_pw_apikey(cls, value):
@@ -231,44 +236,56 @@ class Config(BaseSettings):
             custom_console.bot_error_log("No QBIT_PORT provided")
         return value
 
+    @field_validator("FREE_IMAGE_PRIORITY")
+    def validate_free_image_priority(cls, value):
+        if not isinstance(value, int) or not (1 <= value <= 2):
+            return cls.model_fields["FREE_IMAGE_PRIORITY"].default
+        return value
+
+    @field_validator("IMGBB_PRIORITY")
+    def validate_imgbb_priority(cls, value):
+        if not isinstance(value, int) or not (1 <= value <= 2):
+            return cls.model_fields["IMGBB_PRIORITY"].default
+        return value
+
     @field_validator("DUPLICATE_ON")
     def validate_duplicate_on(cls, value):
-        return cls.validate_boolean(value, "DUPLICATE_ON", cls.__fields__)
+        return cls.validate_boolean(value, "DUPLICATE_ON", cls.model_fields)
 
     @field_validator("NUMBER_OF_SCREENSHOTS")
     def validate_n_screenshot(cls, value):
         if not isinstance(value, int) or not (3 <= value <= 10):
-            return cls.__fields__["NUMBER_OF_SCREENSHOTS"].default
+            return cls.model_fields["NUMBER_OF_SCREENSHOTS"].default
         return value
 
     @field_validator("COMPRESS_SCSHOT")
     def validate_compress_sc_shot(cls, value):
         if not isinstance(value, int) or not (0 <= value <= 10):
-            return cls.__fields__["COMPRESS_SCSHOT"].default
+            return cls.model_fields["COMPRESS_SCSHOT"].default
         return value
 
     @field_validator("TORRENT_ARCHIVE")
     def validate_torrent_archive(cls, value):
         if not isinstance(value, str):
-            return cls.__fields__["TORRENT_ARCHIVE"].default
+            return cls.model_fields["TORRENT_ARCHIVE"].default
         return value
 
     @field_validator("TORRENT_COMMENT")
     def validate_torrent_comment(cls, value):
         if not isinstance(value, str):
-            return cls.__fields__["TORRENT_COMMENT"].default
+            return cls.model_fields["TORRENT_COMMENT"].default
         return value
 
     @field_validator("PREFERRED_LANG")
     def validate_preferred_lang(cls, value):
         if not isinstance(value, str):
-            return cls.__fields__["PREFERRED_LANG"].default
+            return cls.model_fields["PREFERRED_LANG"].default
         return value
 
     @field_validator("SIZE_TH")
     def validate_size_th(cls, value):
         if not isinstance(value, int) or value <= 0:
-            return cls.__fields__["SIZE_TH"].default
+            return cls.model_fields["SIZE_TH"].default
         return value
 
     @field_validator("FTPX_USER")
