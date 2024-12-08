@@ -85,6 +85,9 @@ class Video:
                 ImgBB(img_bytes, self.IMGBB_KEY),
             ]
 
+            # Sorting list based on priority
+            master_uploaders.sort(key=lambda uploader: uploader.priority)
+
             # for each on-line uploader
             for uploader in master_uploaders:
                 if not uploader.__class__.__name__ in offline_uploaders:
