@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from common.external_services.imageHost import ImgBB, Freeimage, ImageUploaderFallback
+from common.external_services.imageHost import ImgBB, Freeimage, LensDump, ImageUploaderFallback
 from common.mediainfo import MediaFile
 from common.config import config
 from common.frames import VideoFrame
@@ -22,6 +22,7 @@ class Video:
         # Host APi keys
         self.IMGBB_KEY = config.IMGBB_KEY
         self.FREE_IMAGE_KEY = config.FREE_IMAGE_KEY
+        self.LENSDUMP_KEY= config.LENSDUMP_KEY
 
         # File name
         self.file_name: str = file_name
@@ -83,6 +84,7 @@ class Video:
             master_uploaders = [
                 Freeimage(img_bytes, self.FREE_IMAGE_KEY),
                 ImgBB(img_bytes, self.IMGBB_KEY),
+                LensDump(img_bytes, self.LENSDUMP_KEY),
             ]
 
             # Sorting list based on priority
