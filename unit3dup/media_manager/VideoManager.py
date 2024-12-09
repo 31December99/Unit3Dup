@@ -106,7 +106,7 @@ class VideoManager:
     def _video_info(self, trailer_key):
         # Add the trailer to the torrent page's description
         video_info = Video.info(self.file_name)
-        video_info.description+=f'[center][youtube]{trailer_key}[/youtube][/center]'
+        video_info.description+=f"[spoiler=** Spoiler: WATCH THE TRAILER **][center][youtube]{trailer_key}[/youtube][/center][/spoiler]"
         return video_info
 
 
