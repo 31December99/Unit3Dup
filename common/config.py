@@ -136,7 +136,7 @@ class Config(BaseSettings):
     # USER PREFERENCES
     IMGBB_PRIORITY: int = Field(default=0, env="IMGBB_PRIORITY")
     FREE_IMAGE_PRIORITY: int = Field(default=1, env="FREE_IMAGE_PRIORITY")
-    LENSDUMP_PRIORITY: int = Field(default=2, env="IMGBB_PRIORITY")
+    LENSDUMP_PRIORITY: int = Field(default=2, env="LENSDUMP_PRIORITY")
 
     DUPLICATE_ON: str = Field(default=False, env="DUPLICATE_ON")
     NUMBER_OF_SCREENSHOTS: int = Field(default=6, env="NUMBER_OF_SCREENSHOTS")
