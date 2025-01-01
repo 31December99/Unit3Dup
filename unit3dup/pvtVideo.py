@@ -108,7 +108,7 @@ class Video:
                     custom_console.bot_log(img_url)
                     # Append the URL to new description
                     console_url.append(img_url)
-                    description += f"[url={img_url}][img=450]{img_url}[/img][/url]"
+                    description += f"[url={img_url}][img=650]{img_url}[/img][/url]"
                     # Got description for this screenshot
                     break
 
