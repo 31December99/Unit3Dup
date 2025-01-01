@@ -86,6 +86,8 @@ class VideoManager:
     @staticmethod
     def check_language(content: Contents) -> bool:
         if "not found" not in content.audio_languages:
+            if config.PREFERRED_LANG.lower()=='all':
+                return True
             if config.PREFERRED_LANG.lower():
                 if config.PREFERRED_LANG.lower() not in content.audio_languages:
                     return False
