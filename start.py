@@ -31,7 +31,7 @@ def main():
         pass
 
     # /// Test the torrent client
-    if cli.args.scan or cli.args.upload:
+    if cli.args.scan or cli.args.upload or cli.args.folder:
         test_client_torrent = Qbitt.is_online()
         if not test_client_torrent:
             exit(1)
