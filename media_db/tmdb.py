@@ -63,11 +63,16 @@ class MyTmdb:
             # Search the episode name in seasons details and remove it from the filename content
             details, result.keywords = self.keywords(result.video_id)
             if self.table == "Serie":
-                season_details = self.season.details(result.video_id, self.content.season)
-                episodes = season_details["episodes"]
-                for episode in episodes:
-                    if episode["episode_number"] == self.content.episode:
-                        self.episode_title = Manage_titles.clean(episode["name"])
+                # If the episode doesn't exist skip
+                try:
+                    season_details = self.season.details(result.video_id, self.content.season)
+                    episodes = season_details["episodes"]
+                    for episode in episodes:
+                        if episode["episode_number"] == self.content.episode:
+                            self.episode_title = Manage_titles.clean(episode["name"])
+                except tmdbv3api.exceptions.TMDbException:
+                    custom_console.bot_error_log(f"'Season {self.content.season}' not found in TMDB. "
+                                                 f"I can't remove the episode title Skipping.. ")
         return result
 
     def input_tmdb(self) -> Results:
