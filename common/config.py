@@ -60,8 +60,8 @@ TORRENT_ARCHIVE=.
 # Torrent file comment (max 100 chars)
 TORRENT_COMMENT=no_comment
 
-# Preferred language. Discard videos with a language different from preferred_lang (default=it)
-PREFERRED_LANG=it
+# Preferred language. Discard videos with a language different from preferred_lang (default=all)
+PREFERRED_LANG=all
 
 # Discard videos whose size deviates by more than the specified percentage (size_th) from the video in tracker
 SIZE_TH=100
@@ -134,7 +134,7 @@ def check_env_variables(path: Path):
         "FTPX_KEEP_ALIVE",
     ]
 
-    custom_console.panel_message("Checking configurantion file...")
+    custom_console.panel_message("Checking configuration file...")
     with open(path, "r+") as f:
         file = f.read()
         for option in required_vars:
@@ -204,7 +204,7 @@ class Config(BaseSettings):
                 elif normalized_value in {"false", "0", "no"}:
                     return False
             custom_console.bot_error_log(
-                f"-> not configured {field_name} {value} Using default: {default_value}"
+                f"-> not configured {field_name} '{value}' Using default: {default_value}"
             )
             return default_value
 
@@ -216,7 +216,7 @@ class Config(BaseSettings):
                 return int(value)
             except (ValueError, TypeError):
                 custom_console.bot_error_log(
-                    f"-> not configured {field_name} {value} Using default: {default_value}"
+                    f"-> not configured {field_name} '{value}' Using default: {default_value}"
                 )
                 return default_value
 
@@ -227,7 +227,7 @@ class Config(BaseSettings):
             if isinstance(value, str) and value.strip():
                 return value
             custom_console.bot_error_log(
-                f"-> not configured {field_name} {value}"
+                f"-> not configured {field_name} '{value}'"
             )
             return default_value
 
@@ -240,7 +240,7 @@ class Config(BaseSettings):
             parsed_url = urlparse(value)
             if not (parsed_url.scheme and parsed_url.netloc):
                 custom_console.bot_error_log(
-                    f"->  Invalid URL value for {field_name}: {value}. Using default: {default_value}"
+                    f"->  Invalid URL value for {field_name} '{value}' Using default: {default_value}"
                 )
                 return default_value
             return value
@@ -256,7 +256,7 @@ class Config(BaseSettings):
             if path.is_dir():
                 return str(path)
             custom_console.bot_error_log(
-                f"-> Invalid path for {field_name}: {value}. Using default: {default_value}"
+                f"-> Invalid path for {field_name} '{value}' Using default: {default_value}"
             )
             return default_value
 
@@ -279,7 +279,7 @@ class Config(BaseSettings):
         values["NUMBER_OF_SCREENSHOTS"] = validate_int(values.get("NUMBER_OF_SCREENSHOTS", 6), "NUMBER_OF_SCREENSHOTS", 6)
         values["COMPRESS_SCSHOT"] = validate_int(values.get("COMPRESS_SCSHOT", 4), "COMPRESS_SCSHOT", 4)
         values["RESIZE_SCSHOT"] = validate_boolean(values.get("RESIZE_SCSHOT", False), "RESIZE_SCSHOT", False)
-        values["PREFERRED_LANG"] = validate_str(values.get("PREFERRED_LANG", None), "PREFERRED_LANG", 'it')
+        values["PREFERRED_LANG"] = validate_str(values.get("PREFERRED_LANG", None), "PREFERRED_LANG", "all")
         values["SIZE_TH"] = validate_int(values.get("SIZE_TH", 100), "SIZE_TH", 100)
         values["TORRENT_COMMENT"] = validate_str(values.get("TORRENT_COMMENT", None), "TORRENT_COMMENT", "no_comment")
         values["TORRENT_ARCHIVE"] = validate_torrent_archive_path(values.get("TORRENT_ARCHIVE", None), "TORRENT_ARCHIVE", ".")
