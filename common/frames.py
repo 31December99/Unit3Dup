@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import random
 import subprocess
 import io
 from pathlib import Path
@@ -10,7 +9,7 @@ from common.config import config
 
 
 class VideoFrame:
-    def __init__(self, video_path: str, num_screenshots: int = 3):
+    def __init__(self, video_path: str, num_screenshots: int):
         """
         Initialize VideoFrame object
 
@@ -43,17 +42,18 @@ class VideoFrame:
 
         :param frame: The image to convert
         :return: Image in bytes
-        :compress_level: compressione level (0-9); 9=Max;  default=6
+        :compress_level: compressione level (0-9); 9=Max;  default=4 ; 0 = best
         """
-        resized_image = self.resize_image(frame)
+        image = self.resize_image(frame)
         buffered = io.BytesIO()
-        user_compress_level: int = config.COMPRESS_SCSHOT if 0 <= config.COMPRESS_SCSHOT <= 9 else 6
-        resized_image.save(
+        user_compress_level: int = config.COMPRESS_SCSHOT if 0 <= config.COMPRESS_SCSHOT <= 9 else 4
+        image.save(
             buffered, format="PNG", optimize=True, compress_level=user_compress_level
         )
         return buffered.getvalue()
 
-    def resize_image(self, image: Image, width: int = 450) -> Image:
+    @staticmethod
+    def resize_image(image: Image, width: int = 450) -> Image:
         """
         Resize the image while maintaining aspect ratio
 
@@ -71,17 +71,22 @@ class VideoFrame:
 
     def _extract(self):
         """
-        Extract frames from the video at random times
+        Extract frames from the video based on the number of screenshots
 
         :return: A list of frames
         """
         duration = self._get_video_duration()
         min_time = duration * 0.35
-        max_time = duration * 0.65
-        times = [
-            random.uniform(min_time, max_time) for _ in range(self.num_screenshots)
-        ]
-        return [self._extract_frame(time) for time in times]
+        max_time = duration * 0.85
+        interval = int(max_time - min_time)
+        duration_step = interval // self.num_screenshots
+        min_time = int(min_time)
+        max_time = int(max_time)
+        frames = [self._extract_frame(time) for time in range(min_time + duration_step, max_time, duration_step)]
+
+        if len(frames) < self.num_screenshots:
+            frames.append(self._extract_frame(max_time))
+        return frames
 
     def _get_video_duration(self) -> float:
         """
