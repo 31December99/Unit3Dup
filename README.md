@@ -155,7 +155,6 @@ let torrent_archive string empty or set your path if you want save torrent file 
     python3 start.py -sd (Standard denition torrent)
     python3 start.py -hs (High speed torrent)
     python3 start.py -pers (personalRelease torrent)
-
 ___
 
 
