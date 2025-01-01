@@ -67,7 +67,7 @@ PREFERRED_LANG=all
 
 # Discard videos whose size deviates by more than the specified percentage (size_th) from the video in tracker
 # delta(%) < SIZE_TH = duplicate
-SIZE_TH=100
+SIZE_TH=10
 
 #########################################
 ################  OPTIONAL  #############  
@@ -235,7 +235,7 @@ class Config(BaseSettings):
         values["COMPRESS_SCSHOT"] = validate_int(values.get("COMPRESS_SCSHOT", 4), "COMPRESS_SCSHOT", 4)
         values["RESIZE_SCSHOT"] = validate_boolean(values.get("RESIZE_SCSHOT", False), "RESIZE_SCSHOT", False)
         values["PREFERRED_LANG"] = validate_str(values.get("PREFERRED_LANG", None), "PREFERRED_LANG", "all")
-        values["SIZE_TH"] = validate_int(values.get("SIZE_TH", 100), "SIZE_TH", 100)
+        values["SIZE_TH"] = validate_int(values.get("SIZE_TH", 10), "SIZE_TH", 10)
         values["TORRENT_COMMENT"] = validate_str(values.get("TORRENT_COMMENT", None), "TORRENT_COMMENT", "no_comment")
         values["TORRENT_ARCHIVE"] = validate_torrent_archive_path(values.get("TORRENT_ARCHIVE", None), "TORRENT_ARCHIVE", ".")
         values["IMGBB_PRIORITY"] = validate_int(values.get("IMGBB_PRIORITY", 0), "IMGBB_PRIORITY", 0)
