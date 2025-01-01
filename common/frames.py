@@ -52,7 +52,7 @@ class VideoFrame:
         )
         return buffered.getvalue()
 
-    def resize_image(self, image: Image, width: int = 350) -> Image:
+    def resize_image(self, image: Image, width: int = 450) -> Image:
         """
         Resize the image while maintaining aspect ratio
 
