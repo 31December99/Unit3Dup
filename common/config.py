@@ -66,6 +66,7 @@ TORRENT_COMMENT=no_comment
 PREFERRED_LANG=all
 
 # Discard videos whose size deviates by more than the specified percentage (size_th) from the video in tracker
+# delta(%) < SIZE_TH = duplicate
 SIZE_TH=100
 
 #########################################
@@ -91,59 +92,6 @@ IGDB_ID_SECRET=secret
     with open(path, "w") as f:
         f.write(default_content.strip())
 
-
-def check_env_variables(path: Path):
-    """
-       Checks if all required environment variables are present in the configuration file
-       If any are missing it adds them with empty values
-
-       Parameters:
-       - path (Path): The path to the configuration file to be checked
-
-       """
-    required_vars = [
-        "ITT_URL",
-        "ITT_APIKEY",
-        "TMDB_APIKEY",
-        "IMGBB_KEY",
-        "FREE_IMAGE_KEY",
-        "LENSDUMP_KEY",
-        "PW_API_KEY",
-        "PW_URL",
-        "FTPX_USER",
-        "FTPX_PASS",
-        "FTPX_IP",
-        "FTPX_PORT",
-        "IGDB_CLIENT_ID",
-        "IGDB_ID_SECRET",
-        "QBIT_USER",
-        "QBIT_PASS",
-        "QBIT_URL",
-        "QBIT_PORT",
-        "IMGBB_PRIORITY",
-        "FREE_IMAGE_PRIORITY",
-        "LENSDUMP_PRIORITY",
-        "DUPLICATE_ON",
-        "NUMBER_OF_SCREENSHOTS",
-        "COMPRESS_SCSHOT",
-        "RESIZE_SCSHOT",
-        "TORRENT_ARCHIVE",
-        "TORRENT_COMMENT",
-        "PREFERRED_LANG",
-        "SIZE_TH",
-        "FTPX_LOCAL_PATH",
-        "FTPX_ROOT",
-        "FTPX_KEEP_ALIVE",
-    ]
-
-    custom_console.panel_message("Checking configuration file...")
-    with open(path, "r+") as f:
-        file = f.read()
-        for option in required_vars:
-            if option not in file:
-                f.write(f"{option}=\n")
-                custom_console.bot_log(f"New Option Added ! * {option} *")
-    print()
 
 class Config(BaseSettings):
     """
@@ -343,7 +291,6 @@ if not torrent_archive_path.exists():
 
 custom_console.panel_message("Checking configuration file...")
 custom_console.bot_question_log(f"Your configuration file path: * {default_env_path} *\n")
-# check_env_variables(path=default_env_path)
 load_dotenv(dotenv_path=default_env_path)
 
 config = Config()
