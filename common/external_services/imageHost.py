@@ -154,10 +154,10 @@ class ImageUploaderFallback:
     def result(response: dict, uploader_host: str) -> str:
 
         if uploader_host == "Freeimage":
-            return response["image"]["display_url"]
+            return response["image"]["image"]["url"]
 
         if uploader_host == "ImgBB":
-            return response["data"]["display_url"]
+            return response["data"]["image"]["url"]
 
         if uploader_host == "LensDump":
             return response['image']['url']
