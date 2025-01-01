@@ -32,8 +32,6 @@ ___
 This command allows you to create and upload torrent for movies and series
 and automatically upload and seed them.
 
-python3 start.py -u "/home/uploader/myvideos/movie1.mkv
-
 python3 start.py -u "/home/uploader/myvideos/S04E12.mkv
 
 ```
@@ -41,32 +39,20 @@ myvideos/
 ├── movie1.mkv
 ├── S04E12.mkv
 ```
+
+### Upload single folder '-f' command
+
+python3 start.py -f "/home/uploader/myvideos S01
+
+```
+myvideos S01/
+├── S01E01.mkv
+├── S01E02.mkv
+```
+
 ### Upload multi-files and then multi-torrents
 This command allows you to scan for movies and series and automatically upload and seed them.
 
-python3 start.py -scan "/home/uploader/myvideos
-```
-myvideos/
-├── movie1.mkv     
-├── S04E12.mkv     
-├── S01E01.mkv
-├── movie2.mkv
-├── S05E02.mkv
-```
-### Upload subfolders Movie and Serie
-- `python3 start.py -scan "/home/uploader/myvideos
-```
-myvideos/
-├── movie2/          
-│   └── movie2.mkv
-├── series1 S01/     
-│   ├── S01E01.mkv
-│   └── S01E02.mkv
-├── series2 S01E02/  
-│   └── S01E02.mkv 
-```
-
-### Upload subfolders and files Movie and Serie
 - `python3 start.py -scan "/home/uploader/myvideos
 
 ```
