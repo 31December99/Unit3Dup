@@ -49,7 +49,7 @@ class Files:
         self.episode: str = episode
         self.season: str = season
         self.tracker_name: str = tracker_name
-        self.path: str = path
+        self.path: str = os.path.normpath(path)
         self.movies: list = []
         self.series: list = []
         self.is_dir = os.path.isdir(self.path)
