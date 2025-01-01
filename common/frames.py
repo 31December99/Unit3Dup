@@ -60,10 +60,13 @@ class VideoFrame:
         :param width: The width to resize to
         :return: Resized image
         """
-        aspect_ratio = image.width / image.height
-        height = round(width / aspect_ratio)
-        resized_image = image.resize((width, height), Image.Resampling.LANCZOS)
-        return resized_image
+        if config.RESIZE_SCSHOT:
+            aspect_ratio = image.width / image.height
+            height = round(width / aspect_ratio)
+            resized_image = image.resize((width, height), Image.Resampling.LANCZOS)
+            return resized_image
+        else:
+            return image
 
     def _extract(self):
         """
