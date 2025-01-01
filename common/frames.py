@@ -47,8 +47,9 @@ class VideoFrame:
         """
         resized_image = self.resize_image(frame)
         buffered = io.BytesIO()
+        user_compress_level: int = config.COMPRESS_SCSHOT if 0 <= config.COMPRESS_SCSHOT <= 9 else 6
         resized_image.save(
-            buffered, format="PNG", optimize=True, compress_level=config.COMPRESS_SCSHOT
+            buffered, format="PNG", optimize=True, compress_level=user_compress_level
         )
         return buffered.getvalue()
 
