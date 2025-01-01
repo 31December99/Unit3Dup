@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 import os
+import sys
+
 from common.custom_console import custom_console
 from pydantic_settings import BaseSettings
 from pydantic import model_validator
@@ -206,6 +208,7 @@ class Config(BaseSettings):
             custom_console.bot_error_log(
                 f"-> not configured {field_name} '{value}' Using default: {default_value}"
             )
+            Config.wait_for_user_confirmation()
             return default_value
 
         def validate_int(value: int | str, field_name: str, default_value: int) -> int:
@@ -218,6 +221,7 @@ class Config(BaseSettings):
                 custom_console.bot_error_log(
                     f"-> not configured {field_name} '{value}' Using default: {default_value}"
                 )
+                Config.wait_for_user_confirmation()
                 return default_value
 
         def validate_str(value: str | None, field_name: str, default_value: str | None) -> str | None:
@@ -227,9 +231,11 @@ class Config(BaseSettings):
             if isinstance(value, str) and value.strip():
                 return value
             custom_console.bot_error_log(
-                f"-> not configured {field_name} '{value}'"
+                f"-> not configured {field_name} '{value}' Using default: {default_value}"
             )
+            Config.wait_for_user_confirmation()
             return default_value
+
 
         def validate_url(value: str, field_name: str, default_value: str) -> str:
             """
@@ -258,14 +264,15 @@ class Config(BaseSettings):
             custom_console.bot_error_log(
                 f"-> Invalid path for {field_name} '{value}' Using default: {default_value}"
             )
+            Config.wait_for_user_confirmation()
             return default_value
 
         #// Mandatory
         values["ITT_URL"] = validate_url(values.get("ITT_URL", "https://itatorrents.xyz"), "ITT_URL", "https://itatorrents.xyz")
         values["PW_URL"] = validate_url(values.get("PW_URL", "http://localhost:9696/api/v1"), "PW_URL", "http://localhost:9696/api/v1")
         values["QBIT_URL"] = validate_url(values.get("QBIT_URL", "http://127.0.0.1"), "QBIT_URL", "http://127.0.0.1")
-        values["QBIT_USER"] = validate_str(values.get("QBIT_USER", None), "QBIT_USER", None)
-        values["QBIT_PASS"] = validate_str(values.get("QBIT_PASS", None), "QBIT_PASS", None)
+        values["QBIT_USER"] = validate_str(values.get("QBIT_USER", None), "QBIT_USER", "admin")
+        values["QBIT_PASS"] = validate_str(values.get("QBIT_PASS", None), "QBIT_PASS", "")
         values["QBIT_URL"] = validate_url(values.get("QBIT_URL", "http://127.0.0.1"), "QBIT_URL", "http://127.0.0.1")
         values["QBIT_PORT"] = validate_str(values.get("QBIT_PORT", "8080"), "QBIT_PORT", "8080")
         values["ITT_APIKEY"] = validate_str(values.get("ITT_APIKEY", None), "ITT_APIKEY", None)
@@ -307,6 +314,17 @@ class Config(BaseSettings):
 
         return values
 
+    @staticmethod
+    def wait_for_user_confirmation():
+        # Wait for user confirmation in case of validation failure
+        try:
+            custom_console.bot_log(
+                "Press Enter to continue with the default value or Ctrl-C to exit and update your config file *.env")
+            input()
+        except KeyboardInterrupt:
+            custom_console.bot_log("\nOperation cancelled.Please update your config file")
+            sys.exit(0)
+
 if os.name == "nt":
     default_env_path: Path = Path(os.getenv("LOCALAPPDATA", ".")) / f"{service_filename}"
     torrent_archive_path: Path = Path(os.getenv("LOCALAPPDATA", ".")) / "torrent_archive"
@@ -323,8 +341,9 @@ if not torrent_archive_path.exists():
     print(f"Create default torrent archive path: {torrent_archive_path}")
     os.makedirs(torrent_archive_path, exist_ok=True)
 
-custom_console.bot_question_log(f"Default configuration path: {default_env_path}\n")
-check_env_variables(path=default_env_path)
+custom_console.panel_message("Checking configuration file...")
+custom_console.bot_question_log(f"Your configuration file path: * {default_env_path} *\n")
+# check_env_variables(path=default_env_path)
 load_dotenv(dotenv_path=default_env_path)
 
 config = Config()
