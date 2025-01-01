@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 import guessit
-
-from media_db.search import TvShow
 from common.utility.utility import Manage_titles, System
 from common.utility import title
 from common.constants import my_language
@@ -11,49 +9,6 @@ from common.custom_console import custom_console
 from unit3dup.torrent import Torrent
 from unit3dup.contents import Contents
 from unit3dup.media_manager.MediaInfoManager import MediaInfoManager
-
-
-class Series:
-    """
-    compare available episodes with local file
-    """
-
-    def __init__(self, raw_data: dict, season: int, episode: int):
-        # Tracker data from searching tmdb id
-        self.raw_data = raw_data
-        self.season = season
-        self.episode = episode
-
-    def video(self) -> bool:
-        for data in self.raw_data["data"]:
-            file_name = data["attributes"]["files"][0]["name"]
-            guess_filename = title.Guessit(file_name)
-            season = guess_filename.guessit_season
-            episode = guess_filename.guessit_episode
-            if self.season == season and self.episode == episode:
-                return True
-        return False
-
-
-class Movies:
-    """
-    compare available movie title with local file
-    """
-
-    def __init__(self, raw_data: dict, name: str):
-        # Tracker data from searching tmdb id
-        self.raw_data = raw_data
-        self.name = name
-
-    def video(self) -> bool:
-        # Compare title content vs title found on tracker
-        for data in self.raw_data["data"]:
-            file_name = data["attributes"]["files"][0]["name"]
-            guess_filename_tracker = title.Guessit(file_name).guessit_title
-            guess_filename_content = title.Guessit(self.name).guessit_title
-            if guess_filename_content.lower() == guess_filename_tracker.lower():
-                return True
-        return False
 
 
 class CompareTitles:
@@ -69,7 +24,18 @@ class CompareTitles:
             content_file.guessit_title, tracker_file.guessit_title
         )
 
-    def same_date(self):
+    def same_season(self) -> bool:
+
+        # Compare season and episode only if it is a serie
+        if self.content_file.guessit_season and  self.tracker_file.guessit_season:
+            same_season = self.content_file.guessit_season == self.tracker_file.guessit_season
+            same_episode = self.content_file.guessit_episode == self.tracker_file.guessit_episode
+            return same_season and same_episode
+        else:
+            return False
+
+
+    def same_date(self) -> bool:
         return (
             self.content_date == self.tracker_date
             or self.content_date is None
@@ -80,7 +46,7 @@ class CompareTitles:
         return True if self.ratio > 95 else False
 
     # not used
-    def is_best_resolution(self):
+    def is_best_resolution(self) -> bool:
         if self.tracker_file.screen_size:
             self.tracker_screen_size = int(
                 self.tracker_file.screen_size.lower().replace("p", "")
@@ -92,14 +58,7 @@ class CompareTitles:
         return False
 
     def process(self) -> bool:
-        # Same date, or both may be None
-        if self.same_date():
-            if self.is_greater95():
-                return True
-            else:
-                return False
-        else:
-            return False
+        return self.same_season() and self.same_date() and self.is_greater95()
 
 
 class Duplicate:
@@ -268,38 +227,4 @@ class Duplicate:
 
     @staticmethod
     def compare(value: guessit, content_file: guessit) -> bool:
-        name = value["name"]
-        already = CompareTitles(
-            tracker_file=title.Guessit(name), content_file=content_file
-        )
-        return already.process()
-
-    # not used
-    """
-    def search_by_tmdb(self, tmdb_id: int) -> bool:
-        # Search media by tmdb id on the tracker
-
-        # Request results from the video online database
-        # Get Season
-        season = self.guess_filename.guessit_season
-
-        # Get episode
-        episode = self.guess_filename.guessit_episode
-
-        # Search for local files in tmdb
-        my_tmdb = TvShow(self.content)
-
-        # Get Result
-        tv_show_result = my_tmdb.start(self.content.file_name)
-
-        # Request to tracker max 25 item result
-        raw_data = self.torrent_info.get_by_tmdb_id(tmdb_id=tmdb_id)
-
-        if self.content.category == self.serie_category:
-            series = Series(raw_data=raw_data, season=season, episode=episode)
-            return series.video()
-
-        if self.content.category == self.movie_category:
-            movies = Movies(raw_data=raw_data, name=self.content.name)
-            return movies.video()
-    """
+        return CompareTitles(tracker_file=title.Guessit(value["name"]), content_file=content_file).process()
