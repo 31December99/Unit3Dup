@@ -30,6 +30,9 @@ IMGBB_KEY=
 FREE_IMAGE_KEY=
 LENSDUMP_KEY=
 
+# TRAILERS
+YOUTUBE_KEY=
+
 # QBITTORRENT CLIENT
 QBIT_USER=
 QBIT_PASS=
@@ -41,6 +44,12 @@ QBIT_PORT=8080
 IMGBB_PRIORITY=0
 FREE_IMAGE_PRIORITY=1
 LENSDUMP_PRIORITY=2
+
+# Youtube channel Trailers FilmsNow it
+YOUTUBE_CHANNEL_ID=UCGCbxpnt25hWPFLSbvwfg_w
+
+# Use the YouTube Channel if it is enabled otherwise perform a global search
+YOUTUBE_CHANNEL_ENABLE=False
 
 # Search for possible candidates for duplicate files
 # True = enabled ; False = disabled
@@ -105,6 +114,7 @@ class Config(BaseSettings):
     IMGBB_KEY: str | None = None
     FREE_IMAGE_KEY: str | None = None
     LENSDUMP_KEY: str | None = None
+    YOUTUBE_KEY: str | None = None
 
     PW_API_KEY: str | None = None
     PW_URL: str = "http://localhost:9696/api/v1"
@@ -123,6 +133,9 @@ class Config(BaseSettings):
     IMGBB_PRIORITY: int = 0
     FREE_IMAGE_PRIORITY: int = 1
     LENSDUMP_PRIORITY: int = 2
+
+    YOUTUBE_CHANNEL_ID: str | None = None
+    YOUTUBE_CHANNEL_ENABLE: bool = False
 
     DUPLICATE_ON: bool = False
     NUMBER_OF_SCREENSHOTS: int = 6
@@ -228,6 +241,7 @@ class Config(BaseSettings):
         values["IMGBB_KEY"] = validate_str(values.get("IMGBB_KEY", None), "IMGBB_KEY", None)
         values["FREE_IMAGE_KEY"] = validate_str(values.get("FREE_IMAGE_KEY", None), "FREE_IMAGE_KEY", None)
         values["LENSDUMP_KEY"] = validate_str(values.get("LENSDUMP_KEY", None), "LENSDUMP_KEY", None)
+        values["YOUTUBE_KEY"] = validate_str(values.get("YOUTUBE_KEY", None), "YOUTUBE_KEY", None)
 
         #// Preferences
         values["DUPLICATE_ON"] = validate_boolean(values.get("DUPLICATE_ON", False), "DUPLICATE_ON", False)
@@ -241,6 +255,12 @@ class Config(BaseSettings):
         values["IMGBB_PRIORITY"] = validate_int(values.get("IMGBB_PRIORITY", 0), "IMGBB_PRIORITY", 0)
         values["FREE_IMAGE_PRIORITY"] = validate_int(values.get("FREE_IMAGE_PRIORITY", 1), "FREE_IMAGE_PRIORITY", 1)
         values["LENSDUMP_PRIORITY"] = validate_int(values.get("LENSDUMP_PRIORITY", 2), "LENSDUMP_PRIORITY", 2)
+
+        values["YOUTUBE_CHANNEL_ID"] = validate_str(values.get("YOUTUBE_CHANNEL_ID_IT", "UCGCbxpnt25hWPFLSbvwfg_w"),
+                                                       "YOUTUBE_CHANNEL_ID_IT", "UCGCbxpnt25hWPFLSbvwfg_w")
+
+        values["YOUTUBE_CHANNEL_ENABLE"] = validate_boolean(values.get("YOUTUBE_CHANNEL_ENABLE", False),
+                                                      "YOUTUBE_CHANNEL_ENABLE", False)
 
         #// Optional working in progress...
         values["PW_API_KEY"] = validate_str(values.get("PW_API_KEY", None), "PW_API_KEY", "no_key")
