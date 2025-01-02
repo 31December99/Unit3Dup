@@ -302,15 +302,16 @@ else:
 
 
 if not default_env_path.exists():
-    print(f"Create default configuration file: {default_env_path}")
+    print(f"Create default configuration file: {default_env_path}\n")
     create_default_env_file(default_env_path)
 
 if not torrent_archive_path.exists():
     print(f"Create default torrent archive path: {torrent_archive_path}")
     os.makedirs(torrent_archive_path, exist_ok=True)
 
-custom_console.panel_message("Checking configuration file...")
-custom_console.bot_question_log(f"Your configuration file path: * {default_env_path} *\n")
+# /// Display welcome message
+custom_console.welcome_message()
+custom_console.bot_question_log(f"Checking your configuration file.. * {default_env_path} *\n")
 load_dotenv(dotenv_path=default_env_path)
 
 config = Config()
