@@ -3,8 +3,11 @@ import sys
 
 from media_db import tmdb
 from common.utility import title
+from common.config import config
 from common.custom_console import custom_console
+from common.external_services.trailers.api import YtTrailer
 from unit3dup.contents import Contents
+
 
 
 class TvShow:
@@ -38,10 +41,14 @@ class TvShow:
                 result = self.mytmdb.input_tmdb()
 
         if result:
-            result.trailer_key = self.trailer(result.video_id)
+            # Get the trailer link from the tmdb database
+            result.trailer_key = self.trailer(video_id=result.video_id)
+            # Get the trailer link from YouTube
+            if not result.trailer_key:
+                result.trailer_key = self.youtube_trailer(media=_title)
+
             backdrop_path = result.backdrop_path
             poster_path = result.poster_path
-            overview = result.overview
             url_backdrop = (
                 f"https://www.themoviedb.org/t/p/original{backdrop_path}"
                 if backdrop_path
@@ -59,15 +66,7 @@ class TvShow:
             custom_console.bot_log(f"\n[TMDB ID]................  {result.video_id}")
             custom_console.bot_log(f"[TMDB POSTER]............  {result.poster_path}")
             custom_console.bot_log(f"[TMDB BACKDROP]..........  {result.backdrop_path}")
-            # custom_console.bot_log(f"[TMDB KEYWORDS]..........  {result.keywords}\n")
-            custom_console.bot_log(f"[TMDB TRAILER]...........  https://www.youtube.com/watch?v={result.trailer_key}\n")
-
-            """
-            # Print the list of search results
-            custom_console.bot_tmdb_table_log(
-                result=result, title=_title, media_info_language=self.content.audio_languages
-            )
-            """
+            custom_console.bot_log(f"[TRAILER]................  https://www.youtube.com/watch?v={result.trailer_key}\n")
 
             return result
         else:
@@ -81,8 +80,19 @@ class TvShow:
         if not videos['results']:
             self.mytmdb.tmdb.language = 'en'
             videos = self.mytmdb.tmdb.videos(video_id)
+
         trailer = next((video for video in videos['results'] if video['type'].lower() == 'trailer' and video['site'].lower() == 'youtube'), None)
         if trailer:
             return trailer['key']
 
+    @staticmethod
+    def youtube_trailer(media: str):
 
+        channel_id = None
+        if config.YOUTUBE_CHANNEL_ENABLE:
+            channel_id = config.YOUTUBE_CHANNEL_ID
+
+        yt_trailer = YtTrailer(media)
+        result = yt_trailer.get_trailer_link(channel_id)
+        if result:
+            return result[0].items[0].id.videoId
