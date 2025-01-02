@@ -26,6 +26,8 @@ class TvShow:
         self.mytmdb = tmdb.MyTmdb(table=show[category], content=content)
 
     def start(self, file_name: str):
+        custom_console.bot_question_log("TMDB searching. Please wait...\n")
+
         guess_filename = title.Guessit(file_name)
         _title = guess_filename.guessit_title
         _alternate_title = guess_filename.guessit_alternative
@@ -87,6 +89,8 @@ class TvShow:
 
     @staticmethod
     def youtube_trailer(media: str):
+
+        custom_console.bot_question_log("TMDB trailer not found. Try searching on YouTube...\n")
 
         channel_id = None
         if config.YOUTUBE_CHANNEL_ENABLE:
