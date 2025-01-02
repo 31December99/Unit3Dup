@@ -3,7 +3,7 @@
 import requests
 from .response import YouTubeSearchResponse, Thumbnails, Id, Item, PageInfo, Snippet
 from common.config import config
-
+from common.custom_console import custom_console
 
 class YtTrailer:
     url = 'https://www.googleapis.com/youtube/v3/search'
@@ -76,4 +76,6 @@ class YtTrailer:
             else:
                 return None
         else:
+            custom_console.wait_for_user_confirmation("No response from YouTube. Check your API_KEY\n"
+                                              "Press Enter to continue or Ctrl-C to exit")
             return None
