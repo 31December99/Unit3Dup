@@ -16,9 +16,6 @@ def main():
     """
     Main function to handle the command line interface (CLI)
     """
-    # /// Display welcome message
-    custom_console.welcome_message()
-
     # /// Initialize command line interface
     cli = CommandLine()
 
