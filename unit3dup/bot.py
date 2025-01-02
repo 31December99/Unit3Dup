@@ -48,7 +48,7 @@ class Bot:
         """
         Start the process
         """
-        custom_console.panel_message("Analyzing... Please wait")
+        custom_console.panel_message("Analyzing your media files... Please wait")
 
         # Get Files list with basic attributes
         # from the upload() or scan command()
