@@ -4,9 +4,9 @@ import argparse
 import os
 import time
 import shutil
+import multiprocessing
 
 from pathlib import Path
-from common.external_services.theMovieDB.tmdb_service import TmdbService
 from common.external_services.ftpx.core.models.list import FTPDirectory
 from unit3dup.media_manager.ContentManager import ContentManager
 from unit3dup.media_manager.TorrentManager import TorrentManager
@@ -75,11 +75,8 @@ class Bot:
 
         # Create a list of content objects for each file
         # Media > Files > Content
-        contents = [
-            content
-            for media in file_media_list
-            if (content := self.content_manager.get_media(media))
-        ]
+        with multiprocessing.Pool() as pool:
+            contents = pool.map(self.content_manager.get_media, file_media_list)
 
         # Print the list of files being processed
         custom_console.bot_process_table_log(contents)
