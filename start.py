@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 from rich.console import Console
-from common.custom_console import custom_console
 from common.command import CommandLine
 from common.clients.qbitt import Qbitt
 from common.config import config
