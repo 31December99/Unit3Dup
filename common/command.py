@@ -25,6 +25,8 @@ class CommandLine:
         parser.add_argument("-pw", "--pw", action="store_true", help="")
         parser.add_argument("-ftp", "--ftp", action="store_true", help="")
         parser.add_argument("-unrar", "--unrar", action="store_true", help="")
+        parser.add_argument("-watcher", "--watcher", type=str, help="Folder watcher")
+
 
         parser.add_argument(
             "-t", "--tracker", type=str, default="itt", help="Tracker Name"
