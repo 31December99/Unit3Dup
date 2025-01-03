@@ -55,6 +55,10 @@ YOUTUBE_CHANNEL_ENABLE=False
 # True = enabled ; False = disabled
 DUPLICATE_ON=False
 
+# Watch the folder and upload its contents at regular intervals (seconds)
+WATCHER_PATH=watcher_path
+WATCHER_INTERVAL=60
+
 # Number of screenshots we create
 NUMBER_OF_SCREENSHOTS=4
 
@@ -141,6 +145,9 @@ class Config(BaseSettings):
     NUMBER_OF_SCREENSHOTS: int = 6
     COMPRESS_SCSHOT: int = 4
     RESIZE_SCSHOT: bool = False
+
+    WATCHER_PATH: str | None = None
+    WATCHER_INTERVAL: int = 60
 
     TORRENT_ARCHIVE: str | None = None
     TORRENT_COMMENT: str | None = None
@@ -255,6 +262,8 @@ class Config(BaseSettings):
         values["IMGBB_PRIORITY"] = validate_int(values.get("IMGBB_PRIORITY", 0), "IMGBB_PRIORITY", 0)
         values["FREE_IMAGE_PRIORITY"] = validate_int(values.get("FREE_IMAGE_PRIORITY", 1), "FREE_IMAGE_PRIORITY", 1)
         values["LENSDUMP_PRIORITY"] = validate_int(values.get("LENSDUMP_PRIORITY", 2), "LENSDUMP_PRIORITY", 2)
+        values["WATCHER_PATH"] = validate_str(values.get("WATCHER_PATH", None), "WATCHER_PATH", "watcher_path")
+        values["WATCHER_INTERVAL"] = validate_int(values.get("WATCHER_INTERVAL", 60), "WATCHER_INTERVAL", 60)
 
         values["YOUTUBE_CHANNEL_ID"] = validate_str(values.get("YOUTUBE_CHANNEL_ID_IT", "UCGCbxpnt25hWPFLSbvwfg_w"),
                                                        "YOUTUBE_CHANNEL_ID_IT", "UCGCbxpnt25hWPFLSbvwfg_w")
