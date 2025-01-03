@@ -116,50 +116,58 @@ class Bot:
 
     def watcher(self, duration: int, watcher_path: str):
 
-        # Watchdog loop
-        while True:
-            start_time = time.perf_counter()
-            end_time = start_time + duration
+        try:
+            # Watchdog loop
+            while True:
+                start_time = time.perf_counter()
+                end_time = start_time + duration
 
-            # return if there are no file
-            if not os.path.exists(watcher_path) or not os.listdir(watcher_path):
-                return
+                # return if there are no file
+                if not os.path.exists(watcher_path):
+                    custom_console.bot_error_log("Watcher path does not exist\n")
+                    return
 
-            print()
-            # Counter
-            while time.perf_counter() < end_time:
-                remaining_time = end_time - time.perf_counter()
-                custom_console.bot_counter_log(f"WATCHDOG: {remaining_time:.1f} seconds")
-                time.sleep(0.01)
-            print()
+                print()
+                # Counter
+                while time.perf_counter() < end_time:
+                    remaining_time = end_time - time.perf_counter()
+                    custom_console.bot_counter_log(f"WATCHDOG: {remaining_time:.1f} seconds Ctrl-c to Exit")
+                    time.sleep(0.01)
+                print()
 
-            # Scan the source ( watcher_path) and move each file into the destination folder
-            for root, dirs, files in os.walk(watcher_path):
-                dest_root = Path(root.replace(watcher_path, self.path))
-                dest_root.mkdir(parents=True, exist_ok=True)
+                if not os.listdir(watcher_path):
+                    custom_console.bot_log("The are no files in the Watcher folder\n")
+                    continue
 
-                for file_name in files:
-                    src_file = Path(root) / file_name
-                    dest_file = dest_root / file_name
+                # Scan the source ( watcher_path) and move each file into the destination folder
+                for root, dirs, files in os.walk(watcher_path):
+                    dest_root = Path(root.replace(watcher_path, self.path))
+                    dest_root.mkdir(parents=True, exist_ok=True)
 
-                    # limits string too long
-                    limiter_src = '...' if len(str(src_file)) > 50 else ''
-                    limiter_dest = '...' if len(str(dest_file)) > 50 else ''
+                    for file_name in files:
+                        src_file = Path(root) / file_name
+                        dest_file = dest_root / file_name
 
-                    custom_console.bot_log(f"{str(src_file)[:50]}{limiter_src} -> from 'watch folder' to 'destination folder'"
-                                           f" -> {str(dest_file)[:50]}{limiter_dest}")
-                    shutil.move(str(src_file), str(dest_file))  # Sposta il file
+                        # limits string too long
+                        limiter_src = '...' if len(str(src_file)) > 50 else ''
+                        limiter_dest = '...' if len(str(dest_file)) > 50 else ''
 
-                if root != watcher_path and not os.listdir(root):
-                    try:
-                        os.rmdir(root)
-                    except OSError as e:
-                        custom_console.bot_error_log(e)
-                        exit()
+                        custom_console.bot_log(f"{str(src_file)[:50]}{limiter_src} -> from 'watch folder' to 'destination folder'"
+                                               f" -> {str(dest_file)[:50]}{limiter_dest}")
+                        shutil.move(str(src_file), str(dest_file))  # Move it to the destination folder (self.path)
 
-            # Start uploading process
-            print()
-            self.run()
+                    if root != watcher_path and not os.listdir(root):
+                        try:
+                            os.rmdir(root)
+                        except OSError as e:
+                            custom_console.bot_error_log(e)
+                            exit()
+
+                # Start uploading process
+                print()
+                self.run()
+        except KeyboardInterrupt:
+            custom_console.bot_log("Exiting...")
 
     def pw(self):
 
