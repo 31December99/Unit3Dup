@@ -2,7 +2,10 @@
 
 import argparse
 import os
+import time
+import shutil
 
+from pathlib import Path
 from common.external_services.theMovieDB.tmdb_service import TmdbService
 from common.external_services.ftpx.core.models.list import FTPDirectory
 from unit3dup.media_manager.ContentManager import ContentManager
@@ -110,6 +113,53 @@ class Bot:
 
         # Process them
         self.torrent_manager.process(contents)
+
+    def watcher(self, duration: int, watcher_path: str):
+
+        # Watchdog loop
+        while True:
+            start_time = time.perf_counter()
+            end_time = start_time + duration
+
+            # return if there are no file
+            if not os.path.exists(watcher_path) or not os.listdir(watcher_path):
+                return
+
+            print()
+            # Counter
+            while time.perf_counter() < end_time:
+                remaining_time = end_time - time.perf_counter()
+                custom_console.bot_counter_log(f"WATCHDOG: {remaining_time:.1f} seconds")
+                time.sleep(0.01)
+            print()
+
+            # Scan the source ( watcher_path) and move each file into the destination folder
+            for root, dirs, files in os.walk(watcher_path):
+                dest_root = Path(root.replace(watcher_path, self.path))
+                dest_root.mkdir(parents=True, exist_ok=True)
+
+                for file_name in files:
+                    src_file = Path(root) / file_name
+                    dest_file = dest_root / file_name
+
+                    # limits string too long
+                    limiter_src = '...' if len(str(src_file)) > 50 else ''
+                    limiter_dest = '...' if len(str(dest_file)) > 50 else ''
+
+                    custom_console.bot_log(f"{str(src_file)[:50]}{limiter_src} -> from 'watch folder' to 'destination folder'"
+                                           f" -> {str(dest_file)[:50]}{limiter_dest}")
+                    shutil.move(str(src_file), str(dest_file))  # Sposta il file
+
+                if root != watcher_path and not os.listdir(root):
+                    try:
+                        os.rmdir(root)
+                    except OSError as e:
+                        custom_console.bot_error_log(e)
+                        exit()
+
+            # Start uploading process
+            print()
+            self.run()
 
     def pw(self):
 
