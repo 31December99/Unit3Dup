@@ -58,6 +58,13 @@ def main():
         )
         bot.run()
 
+    # Watcher
+    if cli.args.watcher:
+        bot = Bot(
+            path=cli.args.watcher, tracker_name=cli.args.tracker, cli=cli.args, mode="auto"
+        )
+        bot.watcher(duration=config.WATCHER_INTERVAL, watcher_path=config.WATCHER_PATH)
+
     # Pw
     if cli.args.pw:
         bot = Bot(
