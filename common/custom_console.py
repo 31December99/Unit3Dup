@@ -103,6 +103,9 @@ class CustomConsole(Console):
     def bot_question_log(self, message: str):
         console.print(message, end="", style=self.question_msg_color)
 
+    def bot_counter_log(self, message: str):
+        console.print(message, end="\r", style=self.question_msg_color)
+
     @staticmethod
     def get_key_by_value(tracker_data, category, value):
         if category in tracker_data:
