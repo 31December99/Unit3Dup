@@ -146,10 +146,10 @@ class VideoFrame:
             result = subprocess.run(command, capture_output=True, check=True, timeout=20)
             return Image.open(io.BytesIO(result.stdout))
         except subprocess.CalledProcessError as e:
-            custom_console.bot_error_log(f"[FFmpeg] Error: Please verify if your file is corrupt")
+            custom_console.bot_error_log(f"[IMAGES] Error: Please verify if your file is corrupted")
             exit(1)
         except subprocess.TimeoutExpired:
-            custom_console.bot_error_log(f"[FFmpeg] Error: Time Out. Please verify if your file is corrupt")
+            custom_console.bot_error_log(f"[IMAGES] Error: Time Out. Please verify if your file is corrupted")
             exit(1)
         except FileNotFoundError:
             custom_console.bot_error_log(
@@ -157,4 +157,9 @@ class VideoFrame:
                 style="red bold",
             )
             exit(1)
+        except Image.UnidentifiedImageError as e:
+            custom_console.bot_error_log(f"[IMAGES] Error: {self.video_path}  Cannot identify image file. "
+                                         f"Please verify if your file is corrupted")
+            exit(1)
+
 
