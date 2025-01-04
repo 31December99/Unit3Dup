@@ -35,6 +35,7 @@ class Contents:
     episode_title: str = field(init=False)
     resolution: int = field(init=False)
     game_title: str
+    game_summary: str = field(init=False)
     game_crew: list
     game_tags: list
     season: str | None = None
