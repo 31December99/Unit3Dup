@@ -15,14 +15,24 @@ from common.config import config
 class VideoManager:
 
     def __init__(self, contents: list["Contents"], cli: argparse.Namespace):
-        self.tv_show_result = None
-        self._my_tmdb = None
-        self.file_name = None
+        """
+        Initialize the VideoManager with the given contents
+
+        Args:
+            contents (list): List of content media objects
+            cli (argparse.Namespace): user flag Command line
+        """
+
         self.contents = contents
         self.cli = cli
 
     def process(self) -> list["QBittorrent"] | None:
+        """
+           Process the video contents to filter duplicates and create torrents
 
+           Returns:
+               list: List of QBittorrent objects created for each content
+        """
         self.contents = [
             content for content in self.contents
             if not (
@@ -34,13 +44,13 @@ class VideoManager:
 
         qbittorrent_list = []
         for content in self.contents:
-            self.file_name = str(os.path.join(content.folder, content.file_name))
-            self.tv_show_result = self.tmdb(content=content)
+            file_name = str(os.path.join(content.folder, content.file_name))
+            tv_show_result = self.tmdb(content=content)
 
-            video_info = Video.info(self.file_name, trailer_key=self.tv_show_result.trailer_key)
+            video_info = Video.info(file_name, trailer_key=tv_show_result.trailer_key)
             # Tracker payload
             unit3d_up = UploadVideo(content)
-            data = unit3d_up.payload(tv_show=self.tv_show_result, video_info=video_info)
+            data = unit3d_up.payload(tv_show=tv_show_result, video_info=video_info)
 
             # Torrent creation
             torrent_response = self.torrent(content=content)
@@ -63,7 +73,15 @@ class VideoManager:
 
 
     def torrent_file_exists(self, content: Contents) -> bool:
-        """Look for an existing torrent file"""
+        """
+        Check if a torrent file for the given content already exists
+
+        Args:
+            content (Contents): The content object
+
+        Returns:
+            bool: True if the torrent file exists otherwise False
+        """
 
         base_name = os.path.basename(content.torrent_path)
 
@@ -80,6 +98,15 @@ class VideoManager:
 
     @staticmethod
     def is_preferred_language(content: Contents) -> bool:
+        """
+           Compare preferred language with the audio language
+
+           Args:
+               content (Contents): The content object media
+
+           Returns:
+               return boolean
+           """
         preferred_lang = config.PREFERRED_LANG.lower()
 
         if "not found" in content.audio_languages:
@@ -93,25 +120,55 @@ class VideoManager:
         )
         return False
 
-    def tmdb(self, content: Contents):
+    @staticmethod
+    def tmdb(content: Contents):
+        """
+           Search for TMDB ID amd remove the episode title from the main title
+
+           Args:
+               content (Contents): The content object media
+
+           Returns:
+               tmdb results
+        """
+
         # Search for a title (Movie or Season) and return the episode title
-        self._my_tmdb = TvShow(content)
-        tv_show_result = self._my_tmdb.start(content.file_name)
+        my_tmdb = TvShow(content)
+        tv_show_result = my_tmdb.start(content.file_name)
 
         # Remove episode title from display_name if it exists
-        if not content.episode_title and self._my_tmdb.episode_title:
-            content.display_name = content.display_name.replace(self._my_tmdb.episode_title, '')
-
+        if not content.episode_title and my_tmdb.episode_title:
+            content.display_name = content.display_name.replace(my_tmdb.episode_title, '')
         return tv_show_result
 
     @staticmethod
-    def torrent(content: Contents):
+    def torrent(content: Contents)-> Mytorrent:
+        """
+           Create the file torrent
+
+           Args:
+               content (Contents): The content object media
+
+           Returns:
+               my_torrent object
+        """
+
         my_torrent = Mytorrent(contents=content, meta=content.metainfo)
         my_torrent.hash()
         return my_torrent if my_torrent.write() else None
 
     @staticmethod
     def is_duplicate(content: Contents) -> bool:
+        """
+           Search for a duplicate. Delta = config.SIZE_TH
+
+           Args:
+               content (Contents): The content object media
+
+           Returns:
+               my_torrent object
+        """
+
         duplicate = Duplicate(content=content)
         if duplicate.process():
             custom_console.bot_error_log(
