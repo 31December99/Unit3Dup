@@ -100,4 +100,5 @@ class TvShow:
         yt_trailer = YtTrailer(media)
         result = yt_trailer.get_trailer_link(channel_id)
         if result:
+            custom_console.bot_question_log("Found !\n")
             return result[0].items[0].id.videoId
