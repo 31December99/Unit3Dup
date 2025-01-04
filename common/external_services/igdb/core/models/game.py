@@ -7,3 +7,4 @@ from dataclasses import dataclass
 class Game:
     id: int
     name: str
+    summary: str
