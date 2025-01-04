@@ -50,6 +50,9 @@ class TorrentManager:
 
         # Build the torrent file and upload each video to the tracker
         if videos:
+            custom_console.rule()
+            if config.DUPLICATE_ON:
+                custom_console.bot_log("Searching for duplicate.Please wait..")
             video_manager = VideoManager(contents=videos, cli=self.cli)
             video_process_results = video_manager.process()
 

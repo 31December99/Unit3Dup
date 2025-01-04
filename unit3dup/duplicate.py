@@ -121,31 +121,29 @@ class Duplicate:
         # Flag for the search results
         already_present = False
 
-        # Start message prints the size of the user file
-        custom_console.panel_message(
-            f"Searching for duplicate {self.content.torrent_path} [{self.content_size} GB]"
-        )
-
         # Compare and return a result
         for t_data in tracker_search["data"]:
             already_present = self._process_tracker_data(t_data)
 
         # if a result is found ask the user
         if already_present:
+            # Start message prints the size of the user file
             while 1:
                 custom_console.bot_question_log(
                     "\nPress (C) to continue, (S) to SKIP.. (Q) Quit - "
                 )
                 user_answer = input()
+
+                # Exit
+                if "q" == user_answer.lower():
+                    exit(1)
+
                 # Choice to continue
                 if "c" == user_answer.lower():
                     return False
                 # Skip this media
                 if "s" == user_answer.lower():
                     return True
-                # Exit
-                if "q" == user_answer.lower():
-                    exit(1)
 
     def _calculate_threshold(self, size: int) -> int:
         # Size in GB
@@ -219,6 +217,10 @@ class Duplicate:
                         value=tracker_value, content_file=self.guess_filename
                     )
                     if already:
+                        custom_console.panel_message(
+                            f"Found duplicate {self.content.torrent_path} [{self.content_size} GB]"
+                        )
+
                         self._print_output(value=tracker_value, delta_size=delta_size)
                         self.flag_already = True
 

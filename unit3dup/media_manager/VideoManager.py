@@ -12,7 +12,6 @@ from unit3dup.pvtVideo import Video
 from media_db.search import TvShow
 from common.config import config
 
-
 class VideoManager:
 
     def __init__(self, contents: list["Contents"], cli: argparse.Namespace):
@@ -22,50 +21,46 @@ class VideoManager:
         self.contents = contents
         self.cli = cli
 
-    def process(self) -> list["QBittorrent"]:
-        custom_console.rule()
+    def process(self) -> list["QBittorrent"] | None:
+
+        self.contents = [
+            content for content in self.contents
+            if not (
+                    self.torrent_file_exists(content=content) or
+                    not self.is_preferred_language(content=content) or
+                    (self.cli.duplicate or config.DUPLICATE_ON) and self.is_duplicate(content=content)
+            )
+        ]
 
         qbittorrent_list = []
         for content in self.contents:
             self.file_name = str(os.path.join(content.folder, content.file_name))
-            self._my_tmdb = TvShow(content)
+            self.tv_show_result = self.tmdb(content=content)
 
-            # Look for an existing torrent file before to start
-            if self.torrent_file_exists(content=content):
-                continue
+            video_info = Video.info(self.file_name, trailer_key=self.tv_show_result.trailer_key)
+            # Tracker payload
+            unit3d_up = UploadVideo(content)
+            data = unit3d_up.payload(tv_show=self.tv_show_result, video_info=video_info)
 
-            # Verify if your preferred lang is in your media being uploaded
-            preferred_lang = self.check_language(content=content)
-            if not preferred_lang:
-                custom_console.bot_error_log(
-                    "[Languages] ** Your preferred lang is not in your media being uploaded"
-                    ", skipping ! **"
-                )
-                continue
-
-            # Check for duplicate video. Search in the tracker e compare with your video
-            if self.cli.duplicate or config.DUPLICATE_ON:
-                results = self.check_duplicate(content=content)
-                if results:
-                    custom_console.bot_error_log(
-                        f"\n*** User chose to skip '{content.file_name}' ***\n"
-                    )
-                    continue
-
+            # Torrent creation
             torrent_response = self.torrent(content=content)
-            if not self.cli.torrent and torrent_response:
-                tracker_response = self.upload(content=content)
-            else:
-                tracker_response = None
 
-            data_for_torrent_client = QBittorrent(
-                tracker_response=tracker_response,
-                torrent_response=torrent_response,
-                content=content,
-            )
-            qbittorrent_list.append(data_for_torrent_client)
+            # Get a new tracker instance
+            tracker = unit3d_up.tracker(data=data)
+
+            # Upload
+            tracker_response = unit3d_up.send(tracker=tracker)
+
+            if not self.cli.torrent and torrent_response:
+                qbittorrent_list.append(
+                    QBittorrent(
+                    tracker_response=tracker_response,
+                    torrent_response=torrent_response,
+                    content=content
+                ))
 
         return qbittorrent_list
+
 
     def torrent_file_exists(self, content: Contents) -> bool:
         """Look for an existing torrent file"""
@@ -84,33 +79,30 @@ class VideoManager:
             return True
 
     @staticmethod
-    def check_language(content: Contents) -> bool:
-        if "not found" not in content.audio_languages:
-            if config.PREFERRED_LANG.lower()=='all':
-                return True
-            if config.PREFERRED_LANG.lower():
-                if config.PREFERRED_LANG.lower() not in content.audio_languages:
-                    return False
-        return True
+    def is_preferred_language(content: Contents) -> bool:
+        preferred_lang = config.PREFERRED_LANG.lower()
+
+        if "not found" in content.audio_languages:
+            return True
+
+        if preferred_lang == 'all' or preferred_lang in content.audio_languages:
+            return True
+
+        custom_console.bot_error_log(
+            "[Languages] ** Your preferred lang is not in your media being uploaded, skipping ! **"
+        )
+        return False
 
     def tmdb(self, content: Contents):
-        # Search for a title ( Movie or Season) and return the episode title
+        # Search for a title (Movie or Season) and return the episode title
+        self._my_tmdb = TvShow(content)
         tv_show_result = self._my_tmdb.start(content.file_name)
 
-        # if it's a season and the episode title is available
-        # remove the episode title from the display_name
-        if not content.episode_title:
-            if self._my_tmdb.episode_title:
-                content.display_name = content.display_name.replace(self._my_tmdb.episode_title, '')
+        # Remove episode title from display_name if it exists
+        if not content.episode_title and self._my_tmdb.episode_title:
+            content.display_name = content.display_name.replace(self._my_tmdb.episode_title, '')
 
         return tv_show_result
-
-    def _video_info(self, trailer_key):
-        # Add the trailer to the torrent page's description
-        video_info = Video.info(self.file_name)
-        video_info.description+=f"[b][spoiler=Spoiler: PLAY TRAILER][center][youtube]{trailer_key}[/youtube][/center][/spoiler][/b]"
-        return video_info
-
 
     @staticmethod
     def torrent(content: Contents):
@@ -118,26 +110,11 @@ class VideoManager:
         my_torrent.hash()
         return my_torrent if my_torrent.write() else None
 
-    def check_duplicate(self, content: Contents):
-        self.tv_show_result = self.tmdb(content=content)
+    @staticmethod
+    def is_duplicate(content: Contents) -> bool:
         duplicate = Duplicate(content=content)
-        return duplicate.process()
-
-    def upload(self, content: Contents):
-
-        # Search for TMDB ID if there is no previous result from duplicate
-        if not config.DUPLICATE_ON:
-            self.tv_show_result = self.tmdb(content=content)
-
-        unit3d_up = UploadVideo(content)
-
-        # Create a new payload
-        data = unit3d_up.payload(
-            tv_show=self.tv_show_result, video_info=self._video_info(trailer_key=self.tv_show_result.trailer_key)
-        )
-
-        # Get a new tracker instance
-        tracker = unit3d_up.tracker(data=data)
-
-        # Send the payload
-        return unit3d_up.send(tracker=tracker)
+        if duplicate.process():
+            custom_console.bot_error_log(
+                f"\n*** User chose to skip '{content.file_name}' ***\n"
+            )
+            return True

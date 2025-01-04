@@ -17,7 +17,7 @@ class Video:
     - Determine if the video is standard definition (SD) or not
     """
 
-    def __init__(self, file_name: str):
+    def __init__(self, file_name: str, trailer_key = None):
 
         # Host APi keys
         self.IMGBB_KEY = config.IMGBB_KEY
@@ -26,6 +26,9 @@ class Video:
 
         # File name
         self.file_name: str = file_name
+
+        # YouTube trailer key
+        self.trailer_key: int = trailer_key
 
         # Screenshots samples
         samples_n: int = config.NUMBER_OF_SCREENSHOTS if 2 <= config.NUMBER_OF_SCREENSHOTS <= 10 else 4
@@ -43,12 +46,12 @@ class Video:
         self.mediainfo: str = ''
 
     @classmethod
-    def info(cls, file_name: str):
+    def info(cls, file_name: str, trailer_key = None):
         """
         Class method to create a new Video object from a file
         """
         # Create a new instance of the class
-        video_instance = cls(file_name)
+        video_instance = cls(file_name, trailer_key)
 
         # Call build_info
         video_instance._build_info()
@@ -60,11 +63,14 @@ class Video:
         """ Build the info to send to the tracker"""
 
         # Return a list of frames and the hd info
+        custom_console.bot_log(f"\n[GENERATING IMAGES..] [HD {'ON' if self.is_hd == 0 else 'OFF'}]")
         extracted_frames, is_hd = self.video_frames.create()
         self.is_hd = is_hd
 
         # Create a new description
         self.description = self._description(extracted_frames=extracted_frames)
+        self.description += (f"[b][spoiler=Spoiler: PLAY TRAILER][center][youtube]"
+                                   f"{self.trailer_key}[/youtube][/center][/spoiler][/b]")
 
         # Create a new mediainfo object
         self.mediainfo = self._mediainfo()
@@ -76,7 +82,6 @@ class Video:
 
     def _description(self, extracted_frames: list) -> str:
         """Generate a description with image URLs uploaded to ImgBB"""
-        custom_console.bot_log(f"\n[GENERATING IMAGES..] [HD {'ON' if self.is_hd == 0 else 'OFF'}]")
         description = "[center]\n"
         console_url = []
         for img_bytes in extracted_frames:
