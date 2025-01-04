@@ -61,8 +61,9 @@ class Bot:
         )
         file_media_list = self.content_manager.get_files()
 
+        # -u requires a single file
         if not file_media_list:
-            custom_console.bot_error_log("There are no files to process")
+            custom_console.bot_error_log("There are no Media to process")
             return
 
         # Decompress .rar files if the flags are set
@@ -77,6 +78,10 @@ class Bot:
         # Media > Files > Content
         with multiprocessing.Pool() as pool:
             contents = pool.map(self.content_manager.get_media, file_media_list)
+
+        # -f requires at least one file
+        if not contents[0]:
+            custom_console.bot_error_log(f"There are no Files to process. Try using -scan")
 
         # Print the list of files being processed
         custom_console.bot_process_table_log(contents)
