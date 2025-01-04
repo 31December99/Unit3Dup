@@ -59,6 +59,11 @@ YOUTUBE_CHANNEL_ENABLE=False
 # True = enabled ; False = disabled
 DUPLICATE_ON=False
 
+
+# Discard videos whose size deviates by more than the specified percentage (size_th) from the video in tracker
+# delta(%) < SIZE_TH = duplicate
+SIZE_TH=10
+
 # Watch the folder and upload its contents at regular intervals (seconds)
 WATCHER_PATH=watcher_path
 WATCHER_INTERVAL=60
@@ -81,10 +86,6 @@ TORRENT_COMMENT=no_comment
 
 # Preferred language. Discard videos with a language different from preferred_lang (default=all)
 PREFERRED_LANG=all
-
-# Discard videos whose size deviates by more than the specified percentage (size_th) from the video in tracker
-# delta(%) < SIZE_TH = duplicate
-SIZE_TH=10
 
 #########################################
 ################  OPTIONAL  #############  
