@@ -38,8 +38,8 @@ class UploadBot(ABC):
             return tracker_response_body["data"]
         else:
             message = json.loads(tracker_response.text)["data"]
-            custom_console.bot_error_log(
-                f"\nIt was not possible to upload the media. Tracker message: '{message}'\n\n"
+            custom_console.bot_error_log( f"\nIt was not possible to upload the media: "
+                                          f"'{message['info_hash'][0].upper()}'\n\n"
             )
         return tracker_response
 
