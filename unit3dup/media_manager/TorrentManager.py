@@ -38,6 +38,7 @@ class TorrentManager:
 
         # Build the torrent file and upload each game to the tracker
         if games:
+            custom_console.rule()
             game_manager = GameManager(contents=games, cli=self.cli)
             game_process_results = game_manager.process()
 
@@ -62,6 +63,7 @@ class TorrentManager:
         ]
 
         if doc:
+            custom_console.rule()
             docu_manager = DocuManager(contents=doc, cli=self.cli)
             docu_process_results = docu_manager.process()
 
