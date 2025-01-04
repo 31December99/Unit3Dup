@@ -33,6 +33,10 @@ LENSDUMP_KEY=
 # TRAILERS
 YOUTUBE_KEY=no_apikey
 
+# IGDB
+IGDB_CLIENT_ID=client_id
+IGDB_ID_SECRET=secret
+
 # QBITTORRENT CLIENT
 QBIT_USER=
 QBIT_PASS=
@@ -97,10 +101,6 @@ FTPX_PORT=2121
 FTPX_LOCAL_PATH=.
 FTPX_ROOT=.
 FTPX_KEEP_ALIVE=False
-
-# IGDB
-IGDB_CLIENT_ID=client_id
-IGDB_ID_SECRET=secret
     """
     with open(path, "w") as f:
         f.write(default_content.strip())
