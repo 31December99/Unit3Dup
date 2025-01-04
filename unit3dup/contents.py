@@ -194,9 +194,11 @@ class Media:
         if self.crew or self.game_tags:
             media_type = game_category
 
+        """
         custom_console.bot_log(
             f"Categories: {media_type} GameTags: {self.game_tags}  Crew: {self.crew}"
         )
+        """
         return media_type
 
     @property

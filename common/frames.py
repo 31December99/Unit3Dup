@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import multiprocessing
+
 import subprocess
 import io
 from pathlib import Path
@@ -82,9 +82,7 @@ class VideoFrame:
         duration_step = interval // self.num_screenshots
         min_time = int(min_time)
         max_time = int(max_time)
-
-        with multiprocessing.Pool() as pool:
-             frames = pool.map(self._extract_frame, range(min_time + duration_step, max_time, duration_step))
+        frames = [self._extract_frame(time) for time in range(min_time + duration_step, max_time, duration_step)]
 
         if len(frames) < self.num_screenshots:
             frames.append(self._extract_frame(max_time))

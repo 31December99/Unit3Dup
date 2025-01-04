@@ -15,8 +15,6 @@ class Torrent:
             base_url=config.ITT_URL, api_token=config.ITT_APIKEY, pass_key=""
         )
 
-        print()
-
     def get_unique_id(self, media_info: str) -> str:
         # Divido per campi
         raw_media = media_info.split("\r")

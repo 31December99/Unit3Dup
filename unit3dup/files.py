@@ -61,7 +61,7 @@ class Files:
         Verify if name is part of torrent pack folder
         """
         if not self.is_dir:
-            custom_console.bot_log(f"'Process Files...' <{self.path}>")
+            # custom_console.bot_log(f"'Process Files...' <{self.path}>")
             # Check for valid extension
             process = (
                 self.process_file() if Manage_titles.filter_ext(self.path) else False
