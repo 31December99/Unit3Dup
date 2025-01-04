@@ -140,7 +140,7 @@ class UploadGame(UploadBot):
             category=self.content.category,
             standard=0,
             media_info="",
-            description=self.content.doc_description,
+            description=igdb.description,
             igdb=igdb.id,
         )
 
