@@ -1,17 +1,17 @@
 ## Unit3D_uploader
 Unit3D platform uploader (Python >=3.10)
 
-## Torrent Generator and Uploader
+## Auto Torrent Generator and Uploader
 
-This Python script generates and uploads torrents based on input provided for movies or TV series.
+This Python script generates and uploads torrents based on input provided for movies or TV series and Games.
 
 It performs the following tasks:
 
 - Scan subfolders
 - Compiles various metadata information to create a torrent.
 - Extracts a series of screenshots directly from the video.
-- Generates meta-info derived from the video.
-- Searches for the corresponding ID on TMDB (The Movie Database).
+- Generates meta-info derived from the video or Game.
+- Searches for the corresponding ID on TMDB and IGDB.
 - Uploads the content to the UNIT3D Next Generation tracker platform.
 - Seeding in qbittorrent
 
@@ -113,8 +113,6 @@ Make sure to configure the necessary API keys and authentication credentials in 
 - torrent_archive =''
 - preferred_lang=en
 - size_th=100
-
-let torrent_archive string empty or set your path if you want save torrent file inside
 
 ### Custom tracker .env file Example (itt.env):
 - BASE_URL=https://...
