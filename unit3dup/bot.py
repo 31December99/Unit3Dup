@@ -79,9 +79,13 @@ class Bot:
         with multiprocessing.Pool() as pool:
             contents = pool.map(self.content_manager.get_media, file_media_list)
 
+        # Skip empty folder
+        contents = [content for content in contents if content is not None]
+
         # -f requires at least one file
-        if not contents[0]:
+        if not contents:
             custom_console.bot_error_log(f"There are no Files to process. Try using -scan")
+            exit(1)
 
         # Print the list of files being processed
         custom_console.bot_process_table_log(contents)
