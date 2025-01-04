@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import argparse
+import os
 
 from common.external_services.igdb.core.igdb_api import IGdbServiceApi
 from common.external_services.igdb.core.models.game import Game
@@ -22,78 +23,62 @@ class GameManager:
         self.ig_db_data: list["Game"] = []
 
     def process(self) -> list["QBittorrent"]:
-        custom_console.rule()
-        if IGdbServiceApi.cls_login():
-            custom_console.bot_log("IGDB Login successful!")
-            ig_dbapi = IGdbServiceApi()
-        else:
-            custom_console.bot_error_log(
-                "IGDB Login failed. Please check your credentials"
-            )
+
+        ig_dbapi = IGdbServiceApi()
+        login = ig_dbapi.cls_login()
+        if not login:
             exit(1)
+
+        self.contents = [
+            content for content in self.contents
+            if not (
+                    self.torrent_file_exists(content=content) or
+                    (self.cli.duplicate or config.DUPLICATE_ON) and self.is_duplicate(content=content)
+            )
+        ]
 
         qbittorrent_list = []
-        result = 0
         for content in self.contents:
-            # Look for the IGDB ID #todo if it does not exist, report it at the end of the process
-            game_data_results = ig_dbapi.request(
-                title=content.game_title, platform=content.game_tags
-            )
+            # Look for the IGDB ID
+            game_data_results = ig_dbapi.request(title=content.game_title, platform=content.game_tags)
 
-            # Print the results and ask the user for their choice
-            if len(game_data_results) > 1:
-                result = self.select_result(results=game_data_results)
+            # Tracker payload
+            unit3d_up = UploadGame(content)
+            data = unit3d_up.payload(igdb=game_data_results)
 
-            # Check for duplicate game result. Search in the tracker e compare with your game title
-            if self.cli.duplicate or config.DUPLICATE_ON:
-                results = self.check_duplicate(content=content)
-                if results:
-                    custom_console.bot_error_log(
-                        f"\n*** User chose to skip '{content.file_name}' ***\n"
-                    )
-                    continue
-
-            # Hash
+            # Torrent creation
             torrent_response = self.torrent(content=content)
 
+            # Get a new tracker instance
+            tracker = unit3d_up.tracker(data=data)
+
+            # Upload
+            tracker_response = unit3d_up.send(tracker=tracker)
+
             if not self.cli.torrent and torrent_response:
-                # Upload only if it is after the torrent was created
-                tracker_response = self.upload(content=content, ig_db_data=game_data_results[result])
-            else:
-                tracker_response = None
-
-            data_for_torrent_client = QBittorrent(
-                tracker_response=tracker_response,
-                torrent_response=torrent_response,
-                content=content,
-            )
-            qbittorrent_list.append(data_for_torrent_client)
-
+                qbittorrent_list.append(
+                    QBittorrent(
+                        tracker_response=tracker_response,
+                        torrent_response=torrent_response,
+                        content=content
+                    ))
         return qbittorrent_list
 
-    # Ask user to choice a result
-    def select_result(self, results: list["Game"]) -> None | int:
+    def torrent_file_exists(self, content: Contents) -> bool:
+        """Look for an existing torrent file"""
 
-        # Print the results
-        custom_console.bot_log("\nResults:")
-        if results:
-            for index, result in enumerate(results):
-                custom_console.bot_log(f"{index} {result}")
+        base_name = os.path.basename(content.torrent_path)
 
-            while 1:
-                result = self.input_manager()
-                if result is not None and 0 <= result < len(results):
-                    custom_console.bot_log(f"Selected: {results[result]}")
-                    return result
+        if config.TORRENT_ARCHIVE:
+            this_path = os.path.join(config.TORRENT_ARCHIVE, f"{base_name}.torrent")
+        else:
+            this_path = f"{content.torrent_path}.torrent"
 
-    @staticmethod
-    def input_manager() -> int | None:
-        custom_console.print("\nChoice a result to send to the tracker (Q=exit) ", end='', style='violet bold')
-        user_choice = input()
-        if user_choice.upper() == "Q":
-            exit(1)
-        if user_choice.isdigit():
-            return int(user_choice)
+        if os.path.exists(this_path):
+            custom_console.bot_question_log(
+                f"** {self.__class__.__name__} **: This File already exists {this_path}\n"
+            )
+            return True
 
     @staticmethod
     def torrent(content: Contents):
@@ -102,22 +87,11 @@ class GameManager:
         return my_torrent if my_torrent.write() else None
 
     @staticmethod
-    def check_duplicate(content: Contents):
+    def is_duplicate(content: Contents) -> bool:
         duplicate = Duplicate(content=content)
-        return duplicate.process()
+        if duplicate.process():
+            custom_console.bot_error_log(
+                f"\n*** User chose to skip '{content.file_name}' ***\n"
+            )
+            return True
 
-    @staticmethod
-    def upload(content: Contents, ig_db_data: Game):
-        unit3d_up = UploadGame(content)
-
-        # Create a new payload
-        if not ig_db_data:
-            custom_console.bot_error_log("IGDB ID non trovato")
-            exit(1)
-        data = unit3d_up.payload(igdb=ig_db_data)
-
-        # Get a new tracker instance
-        tracker = unit3d_up.tracker(data=data)
-
-        # Send the payload
-        return unit3d_up.send(tracker=tracker)
