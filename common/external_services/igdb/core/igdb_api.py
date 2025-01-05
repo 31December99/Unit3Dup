@@ -52,6 +52,13 @@ class IGdbServiceApi:
             cls.expires = authentication["expires_in"]
             cls.token_type = authentication["token_type"]
             custom_console.bot_log("IGDB Login successful!")
+
+            cls.header_access = {
+                "Client-ID": config.IGDB_CLIENT_ID,
+                "Authorization": f"Bearer {cls.access_token}",
+                "Content-Type": "application/json",
+            }
+
             return True
         else:
             custom_console.bot_error_log("Failed to authenticate with IGDB.\n")
@@ -114,26 +121,34 @@ class IGdbServiceApi:
         user_select = self.select_result(results=finale_result) if len(finale_result) > 1 else 0
         return finale_result[user_select]
 
-    def _query(self, title: str, platform_name: str) -> list["Game"]:
-        header_access = {
-            "Client-ID": config.IGDB_CLIENT_ID,
-            "Authorization": f"Bearer {self.access_token}",
-            "Content-Type": "application/json",
-        }
+    def get_videos_id(self, videos_id: list)-> list:
+        build_request = urljoin(base_request_url, "game_videos")
 
+        trailer_id_list = []
+        for video_id in videos_id:
+            query = f"fields checksum,game,name,video_id; where id = {video_id};"
+            response = self.http_client.get_url(build_request, get_method=False, headers=self.header_access, data=query)
+            if response.status_code == 200:
+                media_info = response.json()
+                if media_info:
+                   trailer_id_list.append(media_info[0]['video_id'])
+
+        return trailer_id_list
+
+    def _query(self, title: str, platform_name: str) -> list["Game"]:
         try:
             # Filter by category to include main games, DLCs, remakes, remasters, expansions, and expanded games
             category_filter = "category = (0, 1, 2, 8, 9, 10)"
             if platform_name:
-                query = f'fields id,name,summary; search "{title}"; where platforms = ({platform_name}) & {category_filter};'
+                query = f'fields id,name,summary,videos; search "{title}"; where platforms = ({platform_name}) & {category_filter};'
             else:
-                query = f'fields id,name,summary; search "{title}"; where {category_filter};'
+                query = f'fields id,name,summary,videos; search "{title}"; where {category_filter};'
 
             build_request = urljoin(base_request_url, "games")
             # custom_console.bot_log(f"IGDB Query: '{query}'") Debug
 
             response = self.http_client.get_url(
-                build_request, get_method=False, headers=header_access, data=query
+                build_request, get_method=False, headers=self.header_access, data=query
             )
 
             if response.status_code != 200:
