@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
+import time
+
 import requests
 
 from common.custom_console import custom_console
@@ -20,7 +22,7 @@ class Myhttp:
         self.tracker_announce_url = urljoin(self.base_url, f"announce/{pass_key}")
 
         self.headers = {
-            "User-Agent": "Test/0.0 (Linux 5.10.0-23-amd64)",
+            "User-Agent": "Unit3D-up/0.0 (Linux 5.10.0-23-amd64)",
             "Accept": "application/json",
         }
         self.params = {
@@ -38,7 +40,7 @@ class Myhttp:
             "imdb": "0",  # no ancora implementato
             "tvdb": "0",  # no ancora implementato
             "mal": "0",  # no ancora implementato
-            "igdb": "0",  # no ancora implementato
+            "igdb": "0",
             "anonymous": "0",
             "stream": "0",
             "sd": "0",
@@ -49,7 +51,7 @@ class Myhttp:
             "free": 0,
             "doubleup": 0,
             "sticky": 0,
-            "torrent-cover": "",
+            "torrent-cover": "",  # no ancora implementato
         }
 
     def _post(self, files: str, data: dict, params: dict):
@@ -61,24 +63,30 @@ class Myhttp:
 
 class Tracker(Myhttp):
 
-    def _get(self, params: dict) -> requests:
-        try:
-            response = requests.get(
-                url=self.filter_url, headers=self.headers, params=params
-            )
-            response.raise_for_status()
-            return response.json()
-        except requests.exceptions.HTTPError as e:
-            custom_console.bot_error_log(
-                f"[Tracker] HTTP Error {e.response.status_code}. Check your configuration file *.env or verify if the tracker is online")
-            exit(1)
 
-        except requests.exceptions.ConnectionError:
-            custom_console.bot_error_log(
-                f"[Tracker] Connection error. Please check your configuration data "
-                f" or verify if the tracker is online",
-            )
-            exit(1)
+    def _get(self, params: dict) -> requests:
+        while True:
+            try:
+                response = requests.get(
+                    url=self.filter_url, headers=self.headers, params=params
+                )
+                response.raise_for_status()
+                return response.json()
+            except requests.exceptions.HTTPError as e:
+                if e.response.status_code == 429:
+                    custom_console.bot_error_log(f"[Tracker] HTTP Error {e.response.status_code} Rate limit (wait for 60 secs)...")
+                    time.sleep(60)
+                else:
+                    custom_console.bot_error_log(
+                        f"[Tracker] HTTP Error {e.response.status_code}. Check your configuration file *.env"
+                        f" or verify if the tracker is online")
+
+            except requests.exceptions.ConnectionError:
+                custom_console.bot_error_log(
+                    f"[Tracker] Connection error. Please check your configuration data "
+                    f" or verify if the tracker is online",
+                )
+                exit(1)
 
     def _post(self, file: dict, data: dict, params: dict):
         return requests.post(
