@@ -68,7 +68,7 @@ class Igdb:
         if not videos_id:
             return "\nNo trailers available.\n"
 
-        trailer_id_list = self.ig_dbapi.get_media_url(videos_id)
+        trailer_id_list = self.ig_dbapi.get_videos_id(videos_id)
 
         bbcode = "[b]Game Trailers:[/b]\n"
         for video_id in trailer_id_list:

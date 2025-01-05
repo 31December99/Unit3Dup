@@ -68,11 +68,11 @@ class Tracker(Myhttp):
             )
             response.raise_for_status()
             return response.json()
-        except requests.exceptions.HTTPError:
+        except requests.exceptions.HTTPError as e:
             custom_console.bot_error_log(
-                f"[Tracker] HTTP Error. Check your configuration file *.env or verify if the tracker is online")
-
+                f"[Tracker] HTTP Error {e.response.status_code}. Check your configuration file *.env or verify if the tracker is online")
             exit(1)
+
         except requests.exceptions.ConnectionError:
             custom_console.bot_error_log(
                 f"[Tracker] Connection error. Please check your configuration data "
