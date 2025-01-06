@@ -139,7 +139,7 @@ class IGDBClient:
         return self.igdb.request(query=f'fields id,name,summary,videos,url; where id = {igdb_id};',endpoint="games")
 
 
-    def game(self, game_title: str, platform_list = None):
+    def game(self, game_title: str, platform_list = None)-> Game | None:
 
         igdb_results=[]
         # Try searching with the specified platform
@@ -149,34 +149,29 @@ class IGDBClient:
                 platform = platform_id.get(tag.upper(), None)
                 if platform:
                     igdb_results = self.search(title=game_title, platform_name=platform)
-                # print(f"With Platform:{igdb_results}")
 
         if not igdb_results:
             # Try without the platform
             igdb_results = self.search_no_platform(title=game_title)
-            # print(f"No Platform :{igdb_results}")
 
         if not igdb_results:
             # Try a broader search...
             split_title = game_title.split()
             igdb_results = self.search_no_platform(title=split_title[0]) if len(split_title) > 1 else []
-            """
-            for item in igdb_results:
-                print(f"Broader :{item['name']}")
-            """
 
         # Choice similar if list is greater than one
         igdb_results = (self.similar(igdb_results=igdb_results, game_title=game_title)
                         if len(igdb_results) > 1 else igdb_results)
 
-
+        if not igdb_results:
+            return
         # Show the results to user
         self.viewer.view_results(igdb_results=self.viewer.to_game(igdb_results))
         while True:
             # ask user to choice
             user_choice = self.viewer.select_result(igdb_results)
             # User chooses to provide a personal IGDB ID
-            if user_choice > len(igdb_results):
+            if user_choice >= len(igdb_results):
                user_result = self.search_by_id(igdb_id=user_choice)
                if user_result:
                    # Only one game was chosen from the menù
