@@ -140,8 +140,8 @@ class UploadGame(UploadBot):
             category=self.content.category,
             standard=0,
             media_info="",
-            description=igdb.description,
-            igdb=igdb.id,
+            description=igdb.description if igdb else "Sorry, there is no description",
+            igdb=igdb.id if igdb else 1, # need zero not one
         )
 
     def tracker(self, data: payload) -> pvtTracker:
