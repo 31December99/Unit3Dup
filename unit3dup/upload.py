@@ -2,7 +2,7 @@ import json
 import os
 import requests
 
-from common.external_services.igdb.core.models.game import Game
+from common.external_services.igdb.core.models.search import Game
 from unit3dup import pvtTracker, payload, contents
 from common.trackers.trackers import ITTData
 from common.custom_console import custom_console
@@ -39,7 +39,7 @@ class UploadBot(ABC):
         else:
             message = json.loads(tracker_response.text)["data"]
             custom_console.bot_error_log( f"\nIt was not possible to upload the media: "
-                                          f"'{message['info_hash'][0].upper()}'\n\n"
+                                          f"'{message}'\n\n"
             )
         return tracker_response
 
