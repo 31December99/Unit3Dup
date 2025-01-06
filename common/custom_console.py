@@ -100,6 +100,9 @@ class CustomConsole(Console):
     def bot_error_log(self, message: str):
         console.log(message, style=self.error_color)
 
+    def bot_input_log(self, message: str):
+        console.print(message, end="", style=self.normal_color)
+
     def bot_question_log(self, message: str):
         console.print(message, end="", style=self.question_msg_color)
 
