@@ -2,7 +2,7 @@
 import argparse
 import os
 
-from common.external_services.igdb.myigdb import Igdb
+from common.external_services.igdb.client import IGDBClient
 from unit3dup.media_manager.models.qbitt import QBittorrent
 from common.custom_console import custom_console
 from unit3dup.pvtTorrent import Mytorrent
@@ -10,6 +10,7 @@ from unit3dup.duplicate import Duplicate
 from unit3dup.contents import Contents
 from unit3dup.upload import UploadGame
 from common.config import config
+
 
 
 class GameManager:
@@ -24,7 +25,7 @@ class GameManager:
         """
         self.contents = contents
         self.cli = cli
-        self.ig_dbapi = Igdb()
+        self.igdb = IGDBClient()
 
     def process(self) -> list["QBittorrent"]:
         """
@@ -33,7 +34,7 @@ class GameManager:
         Returns:
             list: List of QBittorrent objects created for each content
         """
-        login = self.ig_dbapi.login()
+        login = self.igdb.connect()
         if not login:
             exit(1)
 
@@ -49,7 +50,7 @@ class GameManager:
         qbittorrent_list = []
         for content in self.contents:
             # Search for the game on IGDB using the content's title and platform tags
-            game_data_results = self.ig_dbapi.search(title=content.game_title, platform=content.game_tags)
+            game_data_results = self.igdb.game(game_title=content.game_title , platform_list=content.game_tags)
 
             # Prepare the upload game data with the search results
             unit3d_up = UploadGame(content)
