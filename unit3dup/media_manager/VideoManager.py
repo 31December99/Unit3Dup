@@ -33,41 +33,39 @@ class VideoManager:
            Returns:
                list: List of QBittorrent objects created for each content
         """
-        self.contents = [
-            content for content in self.contents
-            if not (
-                    self.torrent_file_exists(content=content) or
-                    not self.is_preferred_language(content=content) or
-                    (self.cli.duplicate or config.DUPLICATE_ON) and self.is_duplicate(content=content)
-            )
-        ]
-
         qbittorrent_list = []
         for content in self.contents:
-            file_name = str(os.path.join(content.folder, content.file_name))
-            tv_show_result = self.tmdb(content=content)
 
-            video_info = Video.info(file_name, trailer_key=tv_show_result.trailer_key)
-            # Tracker payload
-            unit3d_up = UploadVideo(content)
-            data = unit3d_up.payload(tv_show=tv_show_result, video_info=video_info)
+            if not (
+                self.torrent_file_exists(content=content) or
+                not self.is_preferred_language(content=content) or
+                (self.cli.duplicate or config.DUPLICATE_ON) and self.is_duplicate(content=content)
+            ):
 
-            # Torrent creation
-            torrent_response = self.torrent(content=content)
+                file_name = str(os.path.join(content.folder, content.file_name))
+                tv_show_result = self.tmdb(content=content)
 
-            # Get a new tracker instance
-            tracker = unit3d_up.tracker(data=data)
+                video_info = Video.info(file_name, trailer_key=tv_show_result.trailer_key)
+                # Tracker payload
+                unit3d_up = UploadVideo(content)
+                data = unit3d_up.payload(tv_show=tv_show_result, video_info=video_info)
 
-            # Upload
-            tracker_response = unit3d_up.send(tracker=tracker)
+                # Torrent creation
+                torrent_response = self.torrent(content=content)
 
-            if not self.cli.torrent and torrent_response:
-                qbittorrent_list.append(
-                    QBittorrent(
-                    tracker_response=tracker_response,
-                    torrent_response=torrent_response,
-                    content=content
-                ))
+                # Get a new tracker instance
+                tracker = unit3d_up.tracker(data=data)
+
+                # Upload
+                tracker_response = unit3d_up.send(tracker=tracker)
+
+                if not self.cli.torrent and torrent_response:
+                    qbittorrent_list.append(
+                        QBittorrent(
+                        tracker_response=tracker_response,
+                        torrent_response=torrent_response,
+                        content=content
+                    ))
 
         return qbittorrent_list
 
