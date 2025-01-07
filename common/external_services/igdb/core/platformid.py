@@ -14,6 +14,7 @@ platform_id = {
     "XBO": 49,  # Xbox One
     "MOB": 55,  # Mobile
     "NSW": 130,  # Nintendo Switch
+    "NINTENDO": 130,
     "STEAM": 92,  # SteamOS
     "OCULUS": 162,  # Oculus VR
     "STEAMVR": 163,  # SteamVR
