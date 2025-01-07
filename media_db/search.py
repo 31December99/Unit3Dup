@@ -26,7 +26,6 @@ class TvShow:
         self.mytmdb = tmdb.MyTmdb(table=show[category], content=content)
 
     def start(self, file_name: str):
-        custom_console.rule()
         custom_console.bot_question_log(f"Processing '{file_name}'. Please wait...\n")
 
         guess_filename = title.Guessit(file_name)
