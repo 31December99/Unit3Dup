@@ -38,40 +38,44 @@ class GameManager:
         if not login:
             exit(1)
 
-        # Filter contents based on existing torrents or duplicates
-        self.contents = [
-            content for content in self.contents
+        qbittorrent_list = []
+        for content in self.contents:
+
+            # Filter contents based on existing torrents or duplicates
             if not (
                 self.torrent_file_exists(content=content) or
                 (self.cli.duplicate or config.DUPLICATE_ON) and self.is_duplicate(content=content)
-            )
-        ]
+            ):
 
-        qbittorrent_list = []
-        for content in self.contents:
-            # Search for the game on IGDB using the content's title and platform tags
-            game_data_results = self.igdb.game(game_title=content.game_title , platform_list=content.game_tags)
+                print(content.game_tags)
+                # Search for the game on IGDB using the content's title and platform tags
+                game_data_results = self.igdb.game(game_title=content.game_title , platform_list=content.game_tags)
 
-            # Prepare the upload game data with the search results
-            unit3d_up = UploadGame(content)
-            data = unit3d_up.payload(igdb=game_data_results)
+                # Skip the upload if there is no valid IGDB
+                if not game_data_results:
+                    continue
 
-            # Create the torrent file for the content
-            torrent_response = self.torrent(content=content)
 
-            # Get the tracker instance to send the upload request
-            tracker = unit3d_up.tracker(data=data)
+                # Prepare the upload game data with the search results
+                unit3d_up = UploadGame(content)
+                data = unit3d_up.payload(igdb=game_data_results)
 
-            # Send the upload request to the tracker
-            tracker_response = unit3d_up.send(tracker=tracker)
+                # Create the torrent file for the content
+                torrent_response = self.torrent(content=content)
 
-            if not self.cli.torrent and torrent_response:
-                qbittorrent_list.append(
-                    QBittorrent(
-                        tracker_response=tracker_response,
-                        torrent_response=torrent_response,
-                        content=content
-                    ))
+                # Get the tracker instance to send the upload request
+                tracker = unit3d_up.tracker(data=data)
+
+                # Send the upload request to the tracker
+                tracker_response = unit3d_up.send(tracker=tracker)
+
+                if not self.cli.torrent and torrent_response:
+                    qbittorrent_list.append(
+                        QBittorrent(
+                            tracker_response=tracker_response,
+                            torrent_response=torrent_response,
+                            content=content
+                        ))
         return qbittorrent_list
 
     def torrent_file_exists(self, content: Contents) -> bool:
