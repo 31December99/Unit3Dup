@@ -17,6 +17,7 @@ class Data:
     description: str
     myguess: title.Guessit = field(init=False)
     igdb: int
+    platform: str
 
     def __post_init__(self):
         self.name = utility.Manage_titles.clean(self.name)
