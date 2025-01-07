@@ -261,6 +261,7 @@ platform_patterns = [
     "XONE",
     "MACOS",
     "VC",
+    "NINTENDO",
 ]
 suffixes = [
     "update",
