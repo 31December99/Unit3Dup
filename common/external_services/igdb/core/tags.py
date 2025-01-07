@@ -245,6 +245,7 @@ crew_patterns = [
 platform_patterns = [
     "LIN",
     "PC",
+    "WINDOWS",
     "PS4",
     "PS5",
     "XBX",
