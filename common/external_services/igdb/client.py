@@ -148,9 +148,13 @@ class IGDBClient:
             # Show results if there are any
             if igdb_results:
                 self.viewer.view_results(igdb_results=self.viewer.to_game(igdb_results))
+                # Show the game title at the bottom of the table
+                custom_console.bot_log(f"--- '{game_title.upper()}' ---")
                 # ask user to choice
                 user_choice = self.viewer.select_result(igdb_results)
             else:
+                # Show the game title
+                custom_console.bot_log(f"--- '{game_title.upper()}' ---")
                 # If there are no results , ask user to enter an ID or to continue without IGDB description
                 user_choice = self.viewer.input_manager(f"'{game_title}' Sorry, no results were found. "
                                                         f"Please enter your IGDB ID (Q=exit, S=skip) ")
@@ -185,7 +189,6 @@ class IGDBClient:
 
     def game(self, game_title: str, platform_list = None)-> Game | None:
 
-        custom_console.bot_log(f"--- '{game_title.upper()}' ---")
         igdb_results=[]
         # Try searching with the specified platform
         if platform_list:
