@@ -2,6 +2,7 @@ platform_id = {
     "LIN": 3,  # Linux
     "LINUX": 3,  # Linux
     "PC": 6,  # PC (Microsoft Windows)
+    "WINDOWS": 6,
     "XBX": 11,  # Xbox
     "PS4": 48,  # PlayStation 4
     "PSN": 45,  # PlayStation Network
