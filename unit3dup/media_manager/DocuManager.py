@@ -18,8 +18,6 @@ class DocuManager:
         self.cli = cli
 
     def process(self) -> list["QBittorrent"]:
-        custom_console.rule()
-
         qbittorrent_list = []
         for content in self.contents:
             self.file_name = str(os.path.join(content.folder, content.file_name))

@@ -46,8 +46,6 @@ class GameManager:
                 self.torrent_file_exists(content=content) or
                 (self.cli.duplicate or config.DUPLICATE_ON) and self.is_duplicate(content=content)
             ):
-
-                print(content.game_tags)
                 # Search for the game on IGDB using the content's title and platform tags
                 game_data_results = self.igdb.game(game_title=content.game_title , platform_list=content.game_tags)
 

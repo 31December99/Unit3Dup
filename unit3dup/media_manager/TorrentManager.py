@@ -30,6 +30,7 @@ class TorrentManager:
         game_process_results: list["QBittorrent"] = []
         video_process_results: list["QBittorrent"] = []
         docu_process_results: list["QBittorrent"] = []
+        custom_console.rule()
 
         # // GAME
         games = [
@@ -38,7 +39,6 @@ class TorrentManager:
 
         # Build the torrent file and upload each game to the tracker
         if games:
-            custom_console.rule()
             game_manager = GameManager(contents=games, cli=self.cli)
             game_process_results = game_manager.process()
 
@@ -51,7 +51,6 @@ class TorrentManager:
 
         # Build the torrent file and upload each video to the tracker
         if videos:
-            custom_console.rule()
             if config.DUPLICATE_ON:
                 custom_console.bot_log("Searching for duplicate.Please wait..")
             video_manager = VideoManager(contents=videos, cli=self.cli)
@@ -63,7 +62,6 @@ class TorrentManager:
         ]
 
         if doc:
-            custom_console.rule()
             docu_manager = DocuManager(contents=doc, cli=self.cli)
             docu_process_results = docu_manager.process()
 

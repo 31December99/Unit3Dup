@@ -36,6 +36,7 @@ class VideoManager:
         qbittorrent_list = []
         for content in self.contents:
 
+            # Filter contents based on existing torrents or duplicates
             if not (
                 self.torrent_file_exists(content=content) or
                 not self.is_preferred_language(content=content) or
