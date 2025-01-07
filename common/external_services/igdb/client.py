@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-import pprint
-
 from thefuzz import fuzz
 from rich.align import Align
 from rich.table import Table
@@ -53,14 +51,15 @@ class IGDBViewer:
             ]
 
 
-
-    def select_result(self, results: list) -> int:
+    def select_result(self, results: list) -> int | None:
         # Build a menù and ask user to choice a result
-        custom_console.bot_log("\nResults:")
         if results:
             while True:
                 result = self.input_manager("\nChoice a result to send to the tracker"
-                                            " or digit your IGDB number (Q=exit) ")
+                                            " or digit your IGDB number (Q=exit, S=skip) ")
+                # If no IGDB is entered continue without the IGDB description
+                if result is None:
+                    return
                 # Range between first and last result
                 if 0 <= result < len(results):
                     custom_console.bot_log(f"Selected: {result}")
@@ -70,12 +69,14 @@ class IGDBViewer:
                     return result
 
     @staticmethod
-    def input_manager(input_message: str) -> int:
+    def input_manager(input_message: str) -> int | None:
         while True:
             custom_console.print(input_message, end='', style='violet bold')
             user_choice = input()
             if user_choice.upper() == "Q":
                 exit(1)
+            if user_choice.upper() == "S":
+                return
             if user_choice.isdigit():
                 user_choice = int(user_choice)
                 if user_choice < 999999:
@@ -113,7 +114,10 @@ class IGDBClient:
     def game_description(self, mygame: Game)-> Game:
 
         trailers_id = self.trailers(mygame.videos)
-        bbcode = mygame.summary
+        if mygame.summary:
+            bbcode = mygame.summary
+        else:
+            bbcode = ''
         bbcode += "\n\n[b]Game Trailers:[/b]\n"
 
         if trailers_id:
@@ -139,8 +143,49 @@ class IGDBClient:
         return self.igdb.request(query=f'fields id,name,summary,videos,url; where id = {igdb_id};',endpoint="games")
 
 
+    def user_enter_igdb(self,igdb_results: list, game_title: str)-> Game | None:
+        while True:
+            # Show results if there are any
+            if igdb_results:
+                self.viewer.view_results(igdb_results=self.viewer.to_game(igdb_results))
+                # ask user to choice
+                user_choice = self.viewer.select_result(igdb_results)
+            else:
+                # If there are no results , ask user to enter an ID or to continue without IGDB description
+                user_choice = self.viewer.input_manager(f"'{game_title}' Sorry, no results were found. "
+                                                        f"Please enter your IGDB ID (Q=exit, S=skip) ")
+
+            # If no IGDB is entered continue without the IGDB description
+            if user_choice is None:
+                return
+            # User chooses to provide a personal IGDB ID
+            if user_choice >= len(igdb_results):
+                user_result = self.search_by_id(igdb_id=user_choice)
+                if user_result:
+                   # Only one game was chosen from the menù
+                   mygame =  self.viewer.to_game(user_result)
+                   # Add a description
+                   mygame = self.game_description(mygame=mygame[0])
+                   custom_console.bot_log(" - IGDB Found -")
+                   # Show the results
+                   self.viewer.view_results(igdb_results=[mygame])
+                   custom_console.bot_input_log("Press a button to continue..")
+                   input()
+                   return mygame
+                else:
+                   # Wrong IGDB ID
+                   custom_console.bot_question_log("* IGDB Not found * Re-try\n")
+            else:
+                # User makes their choices
+                mygame = self.viewer.to_game(igdb_results)
+                # Add a description
+                mygame = self.game_description(mygame=mygame[0])
+                return mygame
+
+
     def game(self, game_title: str, platform_list = None)-> Game | None:
 
+        custom_console.bot_log(f"--- '{game_title.upper()}' ---")
         igdb_results=[]
         # Try searching with the specified platform
         if platform_list:
@@ -163,35 +208,8 @@ class IGDBClient:
         igdb_results = (self.similar(igdb_results=igdb_results, game_title=game_title)
                         if len(igdb_results) > 1 else igdb_results)
 
-        if not igdb_results:
-            return
-        # Show the results to user
-        self.viewer.view_results(igdb_results=self.viewer.to_game(igdb_results))
-        while True:
-            # ask user to choice
-            user_choice = self.viewer.select_result(igdb_results)
-            # User chooses to provide a personal IGDB ID
-            if user_choice >= len(igdb_results):
-               user_result = self.search_by_id(igdb_id=user_choice)
-               if user_result:
-                   # Only one game was chosen from the menù
-                   mygame =  self.viewer.to_game(user_result)
-                   # Add a description
-                   mygame = self.game_description(mygame=mygame[0])
-                   custom_console.bot_log(" - IGDB Found -")
-                   self.viewer.view_results(igdb_results=[mygame])
-                   custom_console.bot_input_log("Press a button to continue..")
-                   input()
-                   return mygame
-               else:
-                   # Wrong IGDB ID
-                   custom_console.bot_question_log("* IGDB Not found * Re-try\n")
-            else:
-                # User makes their choices
-                mygame = self.viewer.to_game(igdb_results)
-                # Add a description
-                mygame = self.game_description(mygame=mygame[0])
-                return mygame
+        # Show the results and ask the user to choose an IGDB ID in case there are multiple options or no results
+        return self.user_enter_igdb(igdb_results=igdb_results, game_title=game_title)
 
 
     @staticmethod
