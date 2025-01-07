@@ -144,7 +144,7 @@ class UploadGame(UploadBot):
             media_info="",
             description=igdb.description if igdb else "Sorry, there is no valid IGDB",
             igdb=igdb.id if igdb else 1, # need zero not one
-            platform=self.content.game_tags
+            platform=self.content.game_tags[0].lower() # Only one type_id is accepted
         )
 
     def tracker(self, data: payload) -> pvtTracker:
@@ -155,9 +155,7 @@ class UploadGame(UploadBot):
         tracker.data["tmdb"] = 0
         tracker.data["category_id"] = data.category
         tracker.data["description"] = data.description
-        # Only one type_id is accepted
-        tracker.data["type_id"] = self.tracker_data.filter_type((data.platform[0]))\
-            if data.platform else self.tracker_data.filter_type('invalid')
+        tracker.data["type_id"] = self.tracker_data.type_id.get(data.platform,self.tracker_data.filter_type('invalid'))
         tracker.data["resolution_id"] = ""
         tracker.data["igdb"] = data.igdb
         return tracker
