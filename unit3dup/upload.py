@@ -64,6 +64,7 @@ class UploadDocument(UploadBot):
             media_info="",
             description=self.content.doc_description,
             igdb=0,  # not used
+            platform="",
         )
 
     def tracker(self, data: payload) -> pvtTracker:
@@ -97,6 +98,7 @@ class UploadVideo(UploadBot):
                 description=video_info.description,
                 standard=video_info.is_hd,
                 igdb=0,  # not used
+                platform="",
             )
         else:
             custom_console.bot_error_log(
@@ -140,8 +142,9 @@ class UploadGame(UploadBot):
             category=self.content.category,
             standard=0,
             media_info="",
-            description=igdb.description if igdb else "Sorry, there is no description",
+            description=igdb.description if igdb else "Sorry, there is no valid IGDB",
             igdb=igdb.id if igdb else 1, # need zero not one
+            platform=self.content.game_tags
         )
 
     def tracker(self, data: payload) -> pvtTracker:
@@ -152,7 +155,9 @@ class UploadGame(UploadBot):
         tracker.data["tmdb"] = 0
         tracker.data["category_id"] = data.category
         tracker.data["description"] = data.description
-        tracker.data["type_id"] = self.tracker_data.filter_type(data.file_name)
+        # Only one type_id is accepted
+        tracker.data["type_id"] = self.tracker_data.filter_type((data.platform[0]))\
+            if data.platform else self.tracker_data.filter_type('invalid')
         tracker.data["resolution_id"] = ""
         tracker.data["igdb"] = data.igdb
         return tracker
