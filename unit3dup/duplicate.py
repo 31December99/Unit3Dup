@@ -35,16 +35,6 @@ class CompareTitles:
             return False
 
 
-    def same_date(self) -> bool:
-        return (
-            self.content_date == self.tracker_date
-            or self.content_date is None
-            or self.tracker_date is None
-        )
-
-    def is_greater95(self) -> bool:
-        return True if self.ratio > 95 else False
-
     # not used
     def is_best_resolution(self) -> bool:
         if self.tracker_file.screen_size:
@@ -58,7 +48,7 @@ class CompareTitles:
         return False
 
     def process(self) -> bool:
-        return self.same_season() and self.same_date() and self.is_greater95()
+        return self.same_season()
 
 
 class Duplicate:
@@ -212,6 +202,20 @@ class Duplicate:
                     if delta_size > config.SIZE_TH:
                         # Not a duplicate
                         continue
+
+                    # TH_SIZE = 100 %
+                    # UserFile(GB) - TrackerFile(GB) / max(UserFile,TrackerFile) = DeltaSize  > TH_SIZE ?
+                    #   25.72      -   2.29          /           25.72           =   91.1%    > 100%    NO (duplicate)
+                    #   25.72      -   11.26         /           25.72           =   56.4%    > 100%    NO (duplicate)
+                    #   25.72      -   1.78          /           25.72           =   93.1%    > 100%    NO (duplicate)
+                    # ->>>>>>> Non supera la differenza (Th_size) da noi impostata - è un duplicate
+
+                    # TH_SIZE = 0 %
+                    # UserFile(GB) - TrackerFile(GB) / max(UserFile,TrackerFile) = DeltaSize   > TH_SIZE ?
+                    #   25.72      -   2.29          /           25.72           =   91.1 %    > 0%     SI (no duplicate)
+                    #   25.72      -   11.26         /           25.72           =   56.4%     > 0%     SI (no duplicate)
+                    #   25.72      -   1.78          /           25.72           =   93.1 %    > 0%     SI (no duplicate)
+                    # ->>>>>>> Supera la differenza (Th_size) da noi impostata - Non è un duplicate
 
                     already = self.compare(
                         value=tracker_value, content_file=self.guess_filename
