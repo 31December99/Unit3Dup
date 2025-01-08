@@ -45,7 +45,7 @@ class IGDBViewer:
                     name=game_data.get('name'),
                     summary=game_data.get('summary'),
                     videos=game_data.get('videos', []),
-                    url=game_data.get('url','N'),
+                    url=game_data.get('url','there is no page url for this game'),
                 )
                 for game_data in results
             ]
