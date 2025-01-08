@@ -52,9 +52,9 @@ class ImageUploader(ABC):
                 break
 
             except json.decoder.JSONDecodeError as e:
-                custom_console.bot_log(f"[{self.__class__.__name__}] JSONDecodeError: {e}")
-                break
-
+                custom_console.bot_log(f"[{self.__class__.__name__}] JSONDecodeError:"
+                       f" Connection issue. Please check your connection")
+                exit()
             except requests.exceptions.Timeout:
                 custom_console.bot_log(
                     f"[{self.__class__.__name__}] We did not receive a response from the server"
