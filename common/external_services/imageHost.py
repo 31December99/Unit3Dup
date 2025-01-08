@@ -47,13 +47,18 @@ class ImageUploader(ABC):
                 self.handle_http_error(e, upload_n)
                 time.sleep(1)
 
+            except requests.exceptions.ConnectionError as e:
+                custom_console.bot_log(f"[{self.__class__.__name__}] JSONDecodeError: {e}")
+                break
+
             except json.decoder.JSONDecodeError as e:
-                custom_console.bot_log(f"[Imagehost] JSONDecodeError: {e}")
+                custom_console.bot_log(f"[{self.__class__.__name__}] JSONDecodeError: {e}")
                 break
 
             except requests.exceptions.Timeout:
                 custom_console.bot_log(
-                    "'[Timeout]' We did not receive a response from the server within the 10 second limit"
+                    f"[{self.__class__.__name__}] We did not receive a response from the server"
+                    f" within the 10 second limit"
                 )
                 break
 
