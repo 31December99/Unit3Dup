@@ -27,12 +27,14 @@ class CompareTitles:
     def same_season(self) -> bool:
 
         # Compare season and episode only if it is a serie
+        # Return true if they have at least the same season and episode
         if self.content_file.guessit_season and  self.tracker_file.guessit_season:
             same_season = self.content_file.guessit_season == self.tracker_file.guessit_season
             same_episode = self.content_file.guessit_episode == self.tracker_file.guessit_episode
             return same_season and same_episode
         else:
-            return False
+            # always return true if it's a movie
+            return True
 
 
     # not used
@@ -101,6 +103,8 @@ class Duplicate:
         self.DELTA_SIZE_WIDTH = 2
 
     def process(self) -> bool:
+        custom_console.bot_log(f"* '{self.guess_filename.guessit_title.upper()}' - Size({self.content_size}GB) -"
+                               f" => delta < {self.size_threshold}% = Duplicate *\n")
         return self.search()
 
     def search(self) -> bool:
@@ -123,6 +127,7 @@ class Duplicate:
                     "\nPress (C) to continue, (S) to SKIP.. (Q) Quit - "
                 )
                 user_answer = input()
+                custom_console.rule()
 
                 # Exit
                 if "q" == user_answer.lower():
@@ -217,14 +222,8 @@ class Duplicate:
                     #   25.72      -   1.78          /           25.72           =   93.1 %    > 0%     SI (no duplicate)
                     # ->>>>>>> Supera la differenza (Th_size) da noi impostata - Non è un duplicate
 
-                    already = self.compare(
-                        value=tracker_value, content_file=self.guess_filename
-                    )
-                    if already:
-                        custom_console.panel_message(
-                            f"Found duplicate {self.content.torrent_path} [{self.content_size} GB]"
-                        )
-
+                    # compare the seasons if it is a serie
+                    if self.compare(value=tracker_value, content_file=self.guess_filename):
                         self._print_output(value=tracker_value, delta_size=delta_size)
                         self.flag_already = True
 
