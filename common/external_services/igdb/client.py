@@ -187,32 +187,30 @@ class IGDBClient:
                 return mygame
 
 
+    def broader(self, game_title: str)-> list:
+        # Try to search with the first words of the title
+        split_title = game_title.split()
+        build_title = ''
+        for piece in split_title:
+            build_title+= ' ' + piece
+            igdb_results = self.search_no_platform(title=build_title)
+            if igdb_results:
+                similar_results = (self.similar(igdb_results=igdb_results, game_title=game_title)
+                                if len(igdb_results) > 1 else igdb_results)
+                if similar_results:
+                    return similar_results
+        return []
+
     def game(self, game_title: str, platform_list = None)-> Game | None:
-
-        igdb_results=[]
-        # Try searching with the specified platform
-        if platform_list:
-            # Get the platform ID
-            for tag in platform_list:
-                platform = platform_id.get(tag.upper(), None)
-                if platform:
-                    igdb_results = self.search(title=game_title, platform_name=platform)
-
-        if not igdb_results:
-            # Try without the platform
-            igdb_results = self.search_no_platform(title=game_title)
-
-        if not igdb_results:
-            # Try a broader search...
-            split_title = game_title.split()
-            igdb_results = self.search_no_platform(title=split_title[0]) if len(split_title) > 1 else []
+        # Try a broader search...
+        igdb_results = self.broader(game_title=game_title)
 
         # Choice similar if list is greater than one
-        igdb_results = (self.similar(igdb_results=igdb_results, game_title=game_title)
+        similar_results = (self.similar(igdb_results=igdb_results, game_title=game_title)
                         if len(igdb_results) > 1 else igdb_results)
 
         # Show the results and ask the user to choose an IGDB ID in case there are multiple options or no results
-        return self.user_enter_igdb(igdb_results=igdb_results, game_title=game_title)
+        return self.user_enter_igdb(igdb_results=similar_results, game_title=game_title)
 
 
     @staticmethod
