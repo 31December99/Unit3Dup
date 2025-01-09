@@ -130,6 +130,15 @@ class filterAPI(Tracker):
         self.params["perPage"] = perPage
         return self._get(params=self.params)
 
+    def igdb(self, igdb_id: int, perPage: int = None) -> requests:
+        """
+        self.params["igdbId"] = igdb_id
+        self.params["perPage"] = perPage
+        return self._get(params=self.params)
+        """
+        print("The tracker has not implemented it yet")
+        exit()
+
     def tvdb(self, tvdb_id: int, perPage: int = None) -> requests:
         self.params["tvdbId"] = tvdb_id
         self.params["perPage"] = perPage
@@ -305,6 +314,9 @@ class Unit3d(filterAPI, Torrents, Uploader):
 
     def get_imdb(self, imdb_id: int, perPage: int = None) -> requests:
         return self.imdb(imdb_id=imdb_id, perPage=perPage)
+
+    def get_igdb(self, igdb_id: int, perPage: int = None) -> requests:
+        return self.igdb(igdb_id=igdb_id, perPage=perPage)
 
     def get_mal(self, mal_id: int, perPage: int = None) -> requests:
         return self.mal(mal_id=mal_id, perPage=perPage)
