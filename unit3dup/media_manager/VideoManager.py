@@ -171,6 +171,6 @@ class VideoManager:
         duplicate = Duplicate(content=content)
         if duplicate.process():
             custom_console.bot_error_log(
-                f"\n*** User chose to skip '{content.file_name}' ***\n"
+                f"\n*** User chose to skip '{content.display_name}' ***\n"
             )
             return True
