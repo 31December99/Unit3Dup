@@ -63,7 +63,7 @@ class Duplicate:
         # Class to get info about a torrent
         self.torrent_info = Torrent()
 
-        # Load the constants tracker
+        # Load the constant tracker
         tracker_data = ITTData.load_from_module()
 
         # Category Movie
@@ -119,7 +119,7 @@ class Duplicate:
         for t_data in tracker_search["data"]:
             already_present = self._process_tracker_data(t_data)
 
-        # if a result is found ask the user
+        # if a result is found, ask the user
         if already_present:
             # Start message prints the size of the user file
             while 1:
@@ -171,7 +171,7 @@ class Duplicate:
         formatted_igdb_id = f"{igdb_id:>{self.IGDB_ID_WIDTH}}"
         formatted_size = f"{size:>{self.SIZE_WIDTH}.2f} GB"
         formatted_name = f"{name:<{self.NAME_WIDTH}}"
-        formatted_resolution = f"{resolution:<{self.RESOLUTION_WIDTH}}"
+        formatted_resolution = f"{resolution:<{self.RESOLUTION_WIDTH}}" if self.category != self.game_category else ''
         formatted_info_hash = f"{info_hash:<{self.INFO_HASH_WIDTH}}"
         formatted_size_th = f"{delta_size:<{self.DELTA_SIZE_WIDTH}}"
 
@@ -208,19 +208,19 @@ class Duplicate:
                         # Not a duplicate
                         continue
 
-                    # TH_SIZE = 100 %
-                    # UserFile(GB) - TrackerFile(GB) / max(UserFile,TrackerFile) = DeltaSize  > TH_SIZE ?
-                    #   25.72      -   2.29          /           25.72           =   91.1%    > 100%    NO (duplicate)
-                    #   25.72      -   11.26         /           25.72           =   56.4%    > 100%    NO (duplicate)
-                    #   25.72      -   1.78          /           25.72           =   93.1%    > 100%    NO (duplicate)
-                    # ->>>>>>> Non supera la differenza (Th_size) da noi impostata - è un duplicate
+                # TH_SIZE = 100 %
+                # UserFile(GB) - TrackerFile(GB) / max(UserFile,TrackerFile) = DeltaSize  > TH_SIZE ?
+                #   25.72      -   2.29          /           25.72           =   91.1%    > 100%    NO (duplicate)
+                #   25.72      -   11.26         /           25.72           =   56.4%    > 100%    NO (duplicate)
+                #   25.72      -   1.78          /           25.72           =   93.1%    > 100%    NO (duplicate)
+                # ->>>>>>> Non supera la differenza (Th_size) da noi impostata - è un duplicate
 
-                    # TH_SIZE = 0 %
-                    # UserFile(GB) - TrackerFile(GB) / max(UserFile,TrackerFile) = DeltaSize   > TH_SIZE ?
-                    #   25.72      -   2.29          /           25.72           =   91.1 %    > 0%     SI (no duplicate)
-                    #   25.72      -   11.26         /           25.72           =   56.4%     > 0%     SI (no duplicate)
-                    #   25.72      -   1.78          /           25.72           =   93.1 %    > 0%     SI (no duplicate)
-                    # ->>>>>>> Supera la differenza (Th_size) da noi impostata - Non è un duplicate
+                # TH_SIZE = 0 %
+                # UserFile(GB) - TrackerFile(GB) / max(UserFile,TrackerFile) = DeltaSize   > TH_SIZE ?
+                #   25.72      -   2.29          /           25.72           =   91.1 %    > 0%     SI (no duplicate)
+                #   25.72      -   11.26         /           25.72           =   56.4%     > 0%     SI (no duplicate)
+                #   25.72      -   1.78          /           25.72           =   93.1 %    > 0%     SI (no duplicate)
+                # ->>>>>>> Supera la differenza (Th_size) da noi impostata - Non è un duplicate
 
                     # compare the seasons if it is a serie
                     if self.compare(value=tracker_value, content_file=self.guess_filename):
