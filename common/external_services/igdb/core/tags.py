@@ -264,7 +264,7 @@ platform_patterns = [
     "VC",
     "NINTENDO",
 ]
-suffixes = [
+additions = [
     "update",
     "build",
     "patch",
@@ -279,34 +279,3 @@ suffixes = [
     "season",
     "episode",
 ]
-
-
-"""
-suffixes = [
-    "Complete Edition",
-    "Game of the Year Edition",
-    "Deluxe Edition",
-    "DLC",
-    "Expansion Pack",
-    "Definitive Edition",
-    "Remastered",
-    "Ultimate Edition",
-    "Collector's Edition",
-    "for nintendo switch",
-    "update",
-    "build",
-    "patch",
-    "version",
-    "v",
-    "remaster",
-    "repack",
-    "complete",
-    "edition",
-    "ultimate",
-    "definitive",
-    "remake",
-    "season",
-    "episode",
-]
-
-"""
