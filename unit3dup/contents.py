@@ -5,7 +5,7 @@ import re
 
 from common.external_services.igdb.core.tags import (
     crew_patterns,
-    suffixes,
+    additions,
     platform_patterns,
 )
 
@@ -194,12 +194,6 @@ class Media:
             media_type = movie_category
         if self.crew or self.game_tags:
             media_type = game_category
-
-        """
-        custom_console.bot_log(
-            f"Categories: {media_type} GameTags: {self.game_tags}  Crew: {self.crew}"
-        )
-        """
         return media_type
 
     @property
@@ -211,16 +205,15 @@ class Media:
         # Basename of the content path
         self.filename_sanitized = self.filename
 
-        # Remove each prefix from the string
+        # Remove each addition from the string
         #
-        """
-            Many suffixes are part of the title
+        # Many additions are part of the title
             
-        for suffix in suffixes:
+        for addition in additions:
             self.filename_sanitized = re.sub(
-                rf"\b{suffix}\b", "", self.filename_sanitized
+                rf"\b{addition}\b", "", self.filename_sanitized
             )
-        """
+
 
         # Remove v version
         self.filename_sanitized = re.sub(
