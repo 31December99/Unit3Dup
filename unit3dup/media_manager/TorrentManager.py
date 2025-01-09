@@ -39,6 +39,7 @@ class TorrentManager:
 
         # Build the torrent file and upload each game to the tracker
         if games:
+            custom_console.bot_log("Searching for duplicate.Please wait..")
             game_manager = GameManager(contents=games, cli=self.cli)
             game_process_results = game_manager.process()
 
