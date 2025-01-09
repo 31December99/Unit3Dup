@@ -81,11 +81,11 @@ class Duplicate:
         # the user torrent title
         self.guess_filename = title.Guessit(self.content.display_name)
 
-        # Size of the user's content
-        self.content_size = System.get_size(content.torrent_path)
-
         # convert the user preferred language to iso
         self.preferred_lang = my_language(config.PREFERRED_LANG)
+
+        # Size of the user's content
+        self.content_size = System.get_size(content.torrent_path)
 
         # Determine how much differs from the user's media size
         self.size_threshold = config.SIZE_TH
@@ -139,7 +139,8 @@ class Duplicate:
                 # Skip this media
                 if "s" == user_answer.lower():
                     return True
-
+        else:
+            return False
     def _calculate_threshold(self, size: int) -> int:
         # Size in GB
         # Skip duplicate check if the size is out of the threshold
@@ -159,11 +160,7 @@ class Duplicate:
 
         if self.category != self.game_category:
             mediainfo_manager = MediaInfoManager(media_info_output=value)
-            languages = (
-                mediainfo_manager.languages.upper()
-                if mediainfo_manager.languages
-                else "N/A"
-            )
+            languages = mediainfo_manager.languages.upper()
         else:
             languages = "[n/a]"
 
@@ -171,7 +168,7 @@ class Duplicate:
         formatted_igdb_id = f"{igdb_id:>{self.IGDB_ID_WIDTH}}"
         formatted_size = f"{size:>{self.SIZE_WIDTH}.2f} GB"
         formatted_name = f"{name:<{self.NAME_WIDTH}}"
-        formatted_resolution = f"{resolution:<{self.RESOLUTION_WIDTH}}" if self.category != self.game_category else ''
+        formatted_resolution = f"{resolution:<{self.RESOLUTION_WIDTH}}" if resolution else ''
         formatted_info_hash = f"{info_hash:<{self.INFO_HASH_WIDTH}}"
         formatted_size_th = f"{delta_size:<{self.DELTA_SIZE_WIDTH}}"
 
