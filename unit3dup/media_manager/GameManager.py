@@ -42,38 +42,34 @@ class GameManager:
         for content in self.contents:
 
             # Filter contents based on existing torrents or duplicates
-            if not (
-                self.torrent_file_exists(content=content) or
-                (self.cli.duplicate or config.DUPLICATE_ON) and self.is_duplicate(content=content)
-            ):
+            if not self.torrent_file_exists(content=content):
                 # Search for the game on IGDB using the content's title and platform tags
                 game_data_results = self.igdb.game(game_title=content.game_title , platform_list=content.game_tags)
-
                 # Skip the upload if there is no valid IGDB
                 if not game_data_results:
                     continue
 
+                if (self.cli.duplicate or config.DUPLICATE_ON) and not self.is_duplicate(content=content):
+                    # Prepare the upload game data with the search results
+                    unit3d_up = UploadGame(content)
+                    data = unit3d_up.payload(igdb=game_data_results)
 
-                # Prepare the upload game data with the search results
-                unit3d_up = UploadGame(content)
-                data = unit3d_up.payload(igdb=game_data_results)
+                    # Create the torrent file for the content
+                    torrent_response = self.torrent(content=content)
 
-                # Create the torrent file for the content
-                torrent_response = self.torrent(content=content)
+                    # Get the tracker instance to send the upload request
+                    tracker = unit3d_up.tracker(data=data)
 
-                # Get the tracker instance to send the upload request
-                tracker = unit3d_up.tracker(data=data)
+                    # Send the upload request to the tracker
+                    tracker_response = unit3d_up.send(tracker=tracker)
 
-                # Send the upload request to the tracker
-                tracker_response = unit3d_up.send(tracker=tracker)
-
-                if not self.cli.torrent and torrent_response:
-                    qbittorrent_list.append(
-                        QBittorrent(
-                            tracker_response=tracker_response,
-                            torrent_response=torrent_response,
-                            content=content
-                        ))
+                    if not self.cli.torrent and torrent_response:
+                        qbittorrent_list.append(
+                            QBittorrent(
+                                tracker_response=tracker_response,
+                                torrent_response=torrent_response,
+                                content=content
+                            ))
         return qbittorrent_list
 
     def torrent_file_exists(self, content: Contents) -> bool:
@@ -98,6 +94,7 @@ class GameManager:
                 f"** {self.__class__.__name__} **: This File already exists {this_path}\n"
             )
             return True
+        return False
 
     @staticmethod
     def torrent(content: Contents) -> Mytorrent:
