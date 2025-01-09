@@ -69,6 +69,9 @@ class Torrent:
     def get_by_imdb_id(self, imdb_id: int) -> requests:
         return self.tracker.get_imdb(imdb_id=imdb_id, perPage=self.perPage)
 
+    def get_by_igdb_id(self, imdb_id: int) -> requests:
+        return self.tracker.get_igdb(igdb_id=imdb_id, perPage=self.perPage)
+
     def get_by_tvdb_id(self, tvdb_id: int) -> requests:
         return self.tracker.get_tvdb(tvdb_id=tvdb_id, perPage=self.perPage)
 
@@ -169,7 +172,7 @@ class View(Torrent):
         data = [item for item in tracker_data["data"]]
         for item in data:
             custom_console.bot_log(
-                f"[{str(item['attributes']['release_year'])}] - {item['attributes']['name']}"
+                f"\nTMDB '{item['attributes']['tmdb_id']}' - [{str(item['attributes']['release_year'])}] - {item['attributes']['name']}"
             )
 
     def page_view(self, tracker_data: dict, tracker: pvtTracker, info=False):
