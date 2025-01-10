@@ -2,10 +2,10 @@
 from thefuzz import fuzz
 from rich.align import Align
 from rich.table import Table
-from common.external_services.igdb.core.api import IGDBapi
-from common.external_services.igdb.core.platformid import platform_id
 from common.external_services.igdb.core.models.search import Game
+from common.external_services.igdb.core.api import IGDBapi
 from common.custom_console import custom_console
+from unit3dup.contents import Contents
 
 
 class IGDBViewer:
@@ -22,7 +22,6 @@ class IGDBViewer:
         table.add_column("Index", style="violet", header_style="bold violet", justify="center")
         table.add_column("IGDB ID", style="blue", header_style="blue", justify="center")
         table.add_column("NAME", style="violet", header_style="violet")
-        table.add_column("SUMMARY", style="blue", header_style="blue")
 
         # Printa a table to present the results
         for index, result in enumerate(igdb_results):
@@ -30,7 +29,6 @@ class IGDBViewer:
                 str(index),
                 str(result.id),
                 f"{result.name} {result.url}",
-                result.summary,
             )
 
         custom_console.bot_log(Align.center(table))
@@ -143,20 +141,20 @@ class IGDBClient:
         return self.igdb.request(query=f'fields id,name,summary,videos,url; where id = {igdb_id};',endpoint="games")
 
 
-    def user_enter_igdb(self,igdb_results: list, game_title: str)-> Game | None:
+    def user_enter_igdb(self,igdb_results: list, content: Contents, candidate: str)-> Game | None:
         while True:
             # Show results if there are any
             if igdb_results:
                 self.viewer.view_results(igdb_results=self.viewer.to_game(igdb_results))
                 # Show the game title at the bottom of the table
-                custom_console.bot_log(f"--- '{game_title.upper()}' ---")
+                custom_console.bot_log(f"-> '{content.display_name.upper()}' -> possible match: '{candidate}'")
                 # ask user to choice
                 user_choice = self.viewer.select_result(igdb_results)
             else:
                 # Show the game title
-                custom_console.bot_log(f"--- '{game_title.upper()}' ---")
-                # If there are no results , ask user to enter an ID or to continue without IGDB description
-                user_choice = self.viewer.input_manager(f"'{game_title}' Sorry, no results were found. "
+                custom_console.bot_log(f"-* '{content.display_name.upper()}' *-")
+                # If there are no results, ask user to enter an ID or to continue without IGDB description
+                user_choice = self.viewer.input_manager(f"'{content.folder}' Sorry, no results were found. "
                                                         f"Please enter your IGDB ID (Q=exit, S=skip) ")
 
             # If no IGDB is entered continue without the IGDB description
@@ -187,30 +185,46 @@ class IGDBClient:
                 return mygame
 
 
-    def broader(self, game_title: str)-> list:
+    def broader(self, game_title: str)-> (list, str):
+        # The title has been previously cleaned, but there are some words that
+        # I can't tell if they are part of the original title
         # Try to search with the first words of the title
         split_title = game_title.split()
+
+        # contains the title string step by step, where in each iteration a substring is added
         build_title = ''
+
+        # 'candidates'...It's the last item in the list among those that have similarity > x%
+        candidates = []
+        # get similar results by searching 'build_title' and comparing the results with 'game_title'
+        similar_results = []
+
+        # iterate  each piece of title
         for piece in split_title:
+            # building title step by step
             build_title+= ' ' + piece
+            #get results from the searching of build_title
             igdb_results = self.search_no_platform(title=build_title)
             if igdb_results:
+                # compare the results with game_title
                 similar_results = (self.similar(igdb_results=igdb_results, game_title=game_title)
                                 if len(igdb_results) > 1 else igdb_results)
+                # Only those with a ratio greater than 85 are added to the list
                 if similar_results:
-                    return similar_results
-        return []
+                    ratio = fuzz.WRatio(build_title.lower().strip(), similar_results[0]['name'].lower().strip())
+                    if ratio >= 85:
+                        candidates.append(similar_results[0]['name'])
 
-    def game(self, game_title: str, platform_list = None)-> Game | None:
+        # Return the last best similar results and the last item of the candidates[], which is the best candidate......
+        return similar_results, candidates[-1] if candidates else []
+
+
+    def game(self, content: Contents)-> Game | None:
         # Try a broader search...
-        igdb_results = self.broader(game_title=game_title)
-
-        # Choice similar if list is greater than one
-        similar_results = (self.similar(igdb_results=igdb_results, game_title=game_title)
-                        if len(igdb_results) > 1 else igdb_results)
+        igdb_results, candidate = self.broader(game_title=content.game_title)
 
         # Show the results and ask the user to choose an IGDB ID in case there are multiple options or no results
-        return self.user_enter_igdb(igdb_results=similar_results, game_title=game_title)
+        return self.user_enter_igdb(igdb_results=igdb_results, content=content, candidate=candidate)
 
 
     @staticmethod
@@ -219,6 +233,7 @@ class IGDBClient:
         game_title_start_word = game_title.split()[0].lower()
         threshold = 80
         while True:
+             # jaro !
             jaro = [
                 game
                 for game in igdb_results
