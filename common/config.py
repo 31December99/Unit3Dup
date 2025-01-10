@@ -88,6 +88,9 @@ TORRENT_COMMENT=no_comment
 # Preferred language. Discard videos with a language different from preferred_lang (default=all)
 PREFERRED_LANG=all
 
+# Hide your nickname (only the nick name)
+ANON=False
+
 #########################################
 ################  OPTIONAL  #############  
 #########################################
@@ -147,6 +150,7 @@ class Config(BaseSettings):
     NUMBER_OF_SCREENSHOTS: int = 6
     COMPRESS_SCSHOT: int = 4
     RESIZE_SCSHOT: bool = False
+    ANON: bool = False
 
     WATCHER_PATH: str | None = None
     WATCHER_INTERVAL: int = 60
@@ -259,6 +263,8 @@ class Config(BaseSettings):
         values["RESIZE_SCSHOT"] = validate_boolean(values.get("RESIZE_SCSHOT", False), "RESIZE_SCSHOT", False)
         values["PREFERRED_LANG"] = validate_str(values.get("PREFERRED_LANG", None), "PREFERRED_LANG", "all")
         values["SIZE_TH"] = validate_int(values.get("SIZE_TH", 10), "SIZE_TH", 10)
+        values["ANON"] = validate_boolean(values.get("ANON", False), "ANON", False)
+
         values["TORRENT_COMMENT"] = validate_str(values.get("TORRENT_COMMENT", None), "TORRENT_COMMENT", "no_comment")
         values["TORRENT_ARCHIVE"] = validate_torrent_archive_path(values.get("TORRENT_ARCHIVE", None), "TORRENT_ARCHIVE", ".")
         values["IMGBB_PRIORITY"] = validate_int(values.get("IMGBB_PRIORITY", 0), "IMGBB_PRIORITY", 0)

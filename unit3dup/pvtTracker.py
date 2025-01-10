@@ -41,7 +41,7 @@ class Myhttp:
             "tvdb": "0",  # no ancora implementato
             "mal": "0",  # no ancora implementato
             "igdb": "0",
-            "anonymous": "0",
+            "anonymous": int(config.ANON),
             "stream": "0",
             "sd": "0",
             "keywords": "",
