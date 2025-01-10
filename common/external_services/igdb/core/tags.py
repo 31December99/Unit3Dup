@@ -278,4 +278,6 @@ additions = [
     "remake",
     "season",
     "episode",
+    "dlc",
+    "pack",
 ]
