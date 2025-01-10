@@ -87,12 +87,6 @@ class Qbitt:
                 self.qb.download_from_file(
                     file_buffer=self.torrent_file, savepath=self.torrent.mytorr.location
                 )
-        time.sleep(1)
-        # Get a torrent list
-        self.torrents = self.qb.torrents()
-        # Search for your torrent
-        self.qbit(self.torrents)
-
 
     def download(self, tracker_torrent_url: requests) -> typing.IO:
         # Archive the torrent file if torrent_archive is set
@@ -110,22 +104,3 @@ class Qbitt:
         # Ready for seeding
         return open(full_path_archive, "rb")
 
-    def qbit(self, torrents: list) -> bool:
-        for torrent in torrents:
-            if torrent["name"] == self.torrent.mytorr.name:
-                infohash = torrent["hash"]
-                # Location del torrent
-                self.qb.recheck(infohash_list=infohash)
-                custom_console.bot_log(f"\n[TORRENT INFOHASH]............  {infohash}")
-                custom_console.bot_log(
-                    f"[FILES LOCATION]..............  {self.torrent.mytorr.location}"
-                )
-                custom_console.bot_log(
-                    f"[TORRENT NAME]................  {self.torrent.mytorr.name}.torrent"
-                )
-                custom_console.rule()
-                return True
-        custom_console.bot_error_log(
-            f"I didn't find any torrents in the list matching yours {self.torrent.mytorr.name}"
-        )
-        return False
