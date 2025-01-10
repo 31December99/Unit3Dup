@@ -44,7 +44,7 @@ class GameManager:
             # Filter contents based on existing torrents or duplicates
             if not self.torrent_file_exists(content=content):
                 # Search for the game on IGDB using the content's title and platform tags
-                game_data_results = self.igdb.game(game_title=content.game_title , platform_list=content.game_tags)
+                game_data_results = self.igdb.game(content=content)
                 # Skip the upload if there is no valid IGDB
                 if not game_data_results:
                     continue
