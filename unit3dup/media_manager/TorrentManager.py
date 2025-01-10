@@ -66,6 +66,9 @@ class TorrentManager:
             docu_manager = DocuManager(contents=doc, cli=self.cli)
             docu_process_results = docu_manager.process()
 
+        if game_process_results or video_process_results or docu_process_results:
+            custom_console.panel_message("\nSending torrents to the client... Please wait")
+
         # // QBITTORRENT
         if game_process_results:
             # Seeds if -torrent is off
@@ -84,8 +87,6 @@ class TorrentManager:
 
     @staticmethod
     def send_to_qbittorrent(qbittorrent_list: list["QBittorrent"]) -> None:
-
-        custom_console.panel_message("\nSending torrents to the client... Please wait")
         for qbittorrent_file in qbittorrent_list:
             if qbittorrent_file.tracker_response:
                 qb = Qbitt.connect(

@@ -129,7 +129,6 @@ class Duplicate:
                     "\nPress (C) to continue, (S) to SKIP.. (Q) Quit - "
                 )
                 user_answer = input()
-                custom_console.rule()
 
                 # Exit
                 if "q" == user_answer.lower():
