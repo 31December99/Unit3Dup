@@ -90,9 +90,10 @@ class VideoManager:
             this_path = f"{content.torrent_path}.torrent"
 
         if os.path.exists(this_path):
-            custom_console.bot_question_log(
+            custom_console.bot_warning_log(
                 f"** {self.__class__.__name__} **: This File already exists {this_path}\n"
             )
+            custom_console.rule()
             return True
 
     @staticmethod
@@ -173,4 +174,5 @@ class VideoManager:
             custom_console.bot_error_log(
                 f"\n*** User chose to skip '{content.display_name}' ***\n"
             )
+            custom_console.rule()
             return True
