@@ -64,7 +64,8 @@ DUPLICATE_ON=False
 # delta(%) < SIZE_TH = duplicate
 SIZE_TH=10
 
-# Watch the folder and upload its contents at regular intervals (seconds)
+# Watch the folder watcher_path at regular intervals (watcher_interval)
+# and move its contents to user_path and then upload it
 WATCHER_PATH=watcher_path
 WATCHER_INTERVAL=60
 

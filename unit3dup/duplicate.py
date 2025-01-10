@@ -4,6 +4,7 @@ from common.utility.utility import Manage_titles, System
 from common.utility import title
 from common.constants import my_language
 from common.trackers.trackers import ITTData
+from common.trackers.itt import itt_data
 from common.config import config
 from common.custom_console import custom_console
 from unit3dup.torrent import Torrent
@@ -103,8 +104,9 @@ class Duplicate:
         self.DELTA_SIZE_WIDTH = 2
 
     def process(self) -> bool:
-        custom_console.bot_log(f"* '{self.guess_filename.guessit_title.upper()}' - Size({self.content_size}GB) -"
-                               f" => delta < {self.size_threshold}% = Duplicate *\n")
+        custom_console.bot_log(f"* '{self.content.display_name.upper()}' - Size({self.content_size}GB) -"
+                               f" {[self.get_resolution_by_name(self.content.resolution)]}"
+                               f" {self.content.audio_languages} - size_th ={self.size_threshold}% *\n")
         return self.search()
 
     def search(self) -> bool:
@@ -141,6 +143,11 @@ class Duplicate:
                     return True
         else:
             return False
+
+    @staticmethod
+    def get_resolution_by_name(res_id: int)-> str:
+        return next((key for key, value in itt_data['RESOLUTION'].items() if value == res_id), None)
+
     def _calculate_threshold(self, size: int) -> int:
         # Size in GB
         # Skip duplicate check if the size is out of the threshold
@@ -176,7 +183,7 @@ class Duplicate:
             output = (
                 f"[TMDB-ID {formatted_tmdb_id}] "
                 f"[{formatted_size} delta={formatted_size_th}%] "
-                f"'[HASH {formatted_info_hash}]' "
+                #f"'[HASH {formatted_info_hash}]' "
                 f"[{formatted_resolution}]' "
                 f"{formatted_name},"
                 f"[{languages}]'"
@@ -185,7 +192,7 @@ class Duplicate:
             output = (
                 f"[IGDB-ID {formatted_igdb_id}] "
                 f"[{formatted_size} delta={formatted_size_th}%] "
-                f"'[HASH {formatted_info_hash}]' "
+                #f"'[HASH {formatted_info_hash}]' "
                 f"{formatted_name},"
             )
 
