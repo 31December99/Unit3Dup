@@ -15,15 +15,16 @@ from common.custom_console import custom_console
 class Qbitt:
 
     def __init__(
-        self, tracker_data_response: str, torrent: Mytorrent, contents: Contents
+        self, tracker_data_response: str, torrent: Mytorrent, content: Contents
     ):
         self.torrent = torrent
-        self.torrent_path = contents.torrent_path
+        self.torrent_path = content.torrent_path
         self.torrent_file = None
         self.torrents = None
         self.torrent_archive = config.TORRENT_ARCHIVE
         self.tracker_data_response = tracker_data_response
         self.qb = None
+        self.content = content
 
     @classmethod
     def _check_connection(cls) -> typing.Optional[Client]:
@@ -71,17 +72,27 @@ class Qbitt:
     def send_to_client(self):
         download_torrent_dal_tracker = requests.get(self.tracker_data_response)
 
-        if download_torrent_dal_tracker.status_code == 200:
-            self.torrent_file = self.download(download_torrent_dal_tracker)
+        # Reuse torrent file
+        if not self.torrent:
+            full_path_archive = os.path.join(self.torrent_archive, f"{os.path.basename(self.torrent_path)}.torrent")
             self.qb.login(username=config.QBIT_USER, password=config.QBIT_PASS)
             self.qb.download_from_file(
-                file_buffer=self.torrent_file, savepath=self.torrent.mytorr.location
+                file_buffer=open(full_path_archive, "rb"), savepath=os.path.dirname(self.torrent_path)
             )
-            time.sleep(3)
-            # Get a torrent list
-            self.torrents = self.qb.torrents()
-            # Search for your torrent
-            self.qbit(self.torrents)
+        else:
+            # Use the new one
+            if download_torrent_dal_tracker.status_code == 200:
+                self.torrent_file = self.download(download_torrent_dal_tracker)
+                self.qb.login(username=config.QBIT_USER, password=config.QBIT_PASS)
+                self.qb.download_from_file(
+                    file_buffer=self.torrent_file, savepath=self.torrent.mytorr.location
+                )
+        time.sleep(1)
+        # Get a torrent list
+        self.torrents = self.qb.torrents()
+        # Search for your torrent
+        self.qbit(self.torrents)
+
 
     def download(self, tracker_torrent_url: requests) -> typing.IO:
         # Archive the torrent file if torrent_archive is set
@@ -112,6 +123,7 @@ class Qbitt:
                 custom_console.bot_log(
                     f"[TORRENT NAME]................  {self.torrent.mytorr.name}.torrent"
                 )
+                custom_console.rule()
                 return True
         custom_console.bot_error_log(
             f"I didn't find any torrents in the list matching yours {self.torrent.mytorr.name}"

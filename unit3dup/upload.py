@@ -41,6 +41,7 @@ class UploadBot(ABC):
             custom_console.bot_error_log( f"\nIt was not possible to upload the media: "
                                           f"'{message}'\n\n"
             )
+        custom_console.rule()
         return tracker_response
 
     @abstractmethod

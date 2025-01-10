@@ -37,10 +37,9 @@ class VideoManager:
         for content in self.contents:
 
             # Filter contents based on existing torrents or duplicates
-            if not (
-                self.torrent_file_exists(content=content) or
-                not self.is_preferred_language(content=content) or
-                (self.cli.duplicate or config.DUPLICATE_ON) and self.is_duplicate(content=content)
+            if (
+                self.is_preferred_language(content=content) or
+                (self.cli.duplicate or config.DUPLICATE_ON) and not self.is_duplicate(content=content)
             ):
 
                 file_name = str(os.path.join(content.folder, content.file_name))
@@ -52,7 +51,10 @@ class VideoManager:
                 data = unit3d_up.payload(tv_show=tv_show_result, video_info=video_info)
 
                 # Torrent creation
-                torrent_response = self.torrent(content=content)
+                if not self.torrent_file_exists(content=content):
+                    torrent_response = self.torrent(content=content)
+                else:
+                    torrent_response = None
 
                 # Get a new tracker instance
                 tracker = unit3d_up.tracker(data=data)
@@ -60,7 +62,7 @@ class VideoManager:
                 # Upload
                 tracker_response = unit3d_up.send(tracker=tracker)
 
-                if not self.cli.torrent and torrent_response:
+                if not self.cli.torrent:
                     qbittorrent_list.append(
                         QBittorrent(
                         tracker_response=tracker_response,
@@ -93,7 +95,6 @@ class VideoManager:
             custom_console.bot_warning_log(
                 f"** {self.__class__.__name__} **: This File already exists {this_path}\n"
             )
-            custom_console.rule()
             return True
 
     @staticmethod
