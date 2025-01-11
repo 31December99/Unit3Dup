@@ -35,6 +35,7 @@ class UploadBot(ABC):
             custom_console.bot_log(
                 f"\n[TRACKER RESPONSE]............  {tracker_response_body['message'].upper()}\n\n"
             )
+            custom_console.rule()
             return tracker_response_body["data"]
         else:
             message = json.loads(tracker_response.text)["data"]

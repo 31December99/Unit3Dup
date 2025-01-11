@@ -20,5 +20,5 @@ class Data:
     platform: str
 
     def __post_init__(self):
-        self.name = utility.Manage_titles.clean(self.name)
+        self.name = utility.ManageTitles.clean(self.name)
         self.myguess = title.Guessit(self.file_name)  #.guessit_title
