@@ -112,17 +112,19 @@ class System:
     """
 
     @staticmethod
-    def get_size(folder_path: str) -> float:
+    def get_size(folder_path: str) -> (float, str):
         """
-        Returns the size of a folder or file in GB
+        Returns the size of a folder or file in GB or MB
         """
         if os.path.isfile(folder_path):
-            return round(os.path.getsize(folder_path) / (1024**3), 2)
+            total_size = os.path.getsize(folder_path)
         else:
             total_size = 0
-            for dirpath, _, filenames in os.walk(folder_path):
+            for dir_path, _, filenames in os.walk(folder_path):
                 for file in filenames:
-                    file_path = os.path.join(dirpath, file)
+                    file_path = os.path.join(dir_path, file)
                     if not os.path.islink(file_path):
                         total_size += os.path.getsize(file_path)
-            return round(total_size / (1024**3), 2)
+
+        return (round(total_size / (1024 ** 3), 2), 'GB') if total_size > 1024 ** 3\
+            else (round(total_size / (1024 ** 2), 2), 'MB')
