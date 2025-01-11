@@ -10,7 +10,6 @@ from common.config import config
 
 
 class Myhttp:
-
     def __init__(self, base_url: str, api_token: str, pass_key: str):
         self.base_url = base_url
         self.api_token = api_token
@@ -62,8 +61,6 @@ class Myhttp:
 
 
 class Tracker(Myhttp):
-
-
     def _get(self, params: dict) -> requests:
         while True:
             try:
@@ -80,6 +77,7 @@ class Tracker(Myhttp):
                     custom_console.bot_error_log(
                         f"[Tracker] HTTP Error {e.response.status_code}. Check your configuration file *.env"
                         f" or verify if the tracker is online")
+                    exit(1)
 
             except requests.exceptions.ConnectionError:
                 custom_console.bot_error_log(
