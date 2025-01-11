@@ -76,6 +76,9 @@ class Duplicate:
         # Category Game
         self.game_category = tracker_data.category.get("game")
 
+        # Category Doc
+        self.docu_category = tracker_data.category.get("edicola")
+
         # Category that comes for the User's media
         self.category = content.category
 
@@ -86,7 +89,7 @@ class Duplicate:
         self.preferred_lang = my_language(config.PREFERRED_LANG)
 
         # Size of the user's content
-        self.content_size = System.get_size(content.torrent_path)
+        self.content_size, self.size_unit = System.get_size(content.torrent_path)
 
         # Determine how much differs from the user's media size
         self.size_threshold = config.SIZE_TH
@@ -104,8 +107,10 @@ class Duplicate:
         self.DELTA_SIZE_WIDTH = 2
 
     def process(self) -> bool:
-        custom_console.bot_log(f"* '{self.content.display_name.upper()}' - Size({self.content_size}GB)")
-        if self.category != self.game_category:
+        custom_console.bot_log(f"* '{self.content.display_name.upper()}'"
+                                     f" - Size({self.content_size} {self.size_unit})")
+
+        if self.category != self.game_category and self.category!= self.docu_category:
             custom_console.bot_input_log(f" - {[self.get_resolution_by_name(self.content.resolution)]} "
                                          f"{self.content.audio_languages} - size_th ={self.size_threshold}% *\n")
         return self.search()
@@ -151,7 +156,7 @@ class Duplicate:
     def _calculate_threshold(self, size: int) -> int:
         # Size in GB
         # Skip duplicate check if the size is out of the threshold
-        size = round(size / (1024**3), 2)
+        size = round(size / (1024**3), 2) if self.size_unit=='GB' else round(size / (1024**2), 2)
         return round(abs(self.content_size - size) / max(self.content_size, size) * 100)
 
     def _print_output(self, value: dict, delta_size: int):
