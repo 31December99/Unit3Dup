@@ -4,7 +4,7 @@ import os
 import re
 
 from common.custom_console import custom_console
-from common.utility.utility import Manage_titles
+from common.utility.utility import ManageTitles
 from common.trackers.trackers import ITTData
 from unit3dup.contents import Contents
 from common.mediainfo import MediaFile
@@ -64,7 +64,7 @@ class Files:
             # custom_console.bot_log(f"'Process Files...' <{self.path}>")
             # Check for valid extension
             process = (
-                self.process_file() if Manage_titles.filter_ext(self.path) else False
+                self.process_file() if ManageTitles.filter_ext(self.path) else False
             )
         else:
             # custom_console.bot_log(f"'Process Folder...' <{self.path}>")
@@ -111,7 +111,7 @@ class Files:
         # Contains the display_name, which is the name shown on the tracker page list
         # or on the tracker page
         self.display_name, ext = os.path.splitext(self.file_name)
-        self.display_name = Manage_titles.clean(self.display_name)
+        self.display_name = ManageTitles.clean(self.display_name)
 
         # Contains the path of the folder passed from the CLI command
         self.torrent_path = os.path.join(self.folder, self.file_name)
@@ -126,7 +126,7 @@ class Files:
         ###
         # Field description inside the torrent page for documents. not yet implemented
         self.doc_description = self.file_name
-        media_docu_type = Manage_titles.media_docu_type(self.file_name)
+        media_docu_type = ManageTitles.media_docu_type(self.file_name)
         # If this is a document it becomes a document category
         if media_docu_type:
             # overwrite media_type # todo: 'cover image' not yet implemented
@@ -165,7 +165,7 @@ class Files:
 
         # Contains the display_name, which is the name shown on the tracker page list
         # or on the tracker page
-        self.display_name = Manage_titles.clean(os.path.basename(self.path))
+        self.display_name = ManageTitles.clean(os.path.basename(self.path))
 
         # Contains the path of the folder passed from the CLI command
         self.torrent_path = self.folder
@@ -176,7 +176,7 @@ class Files:
         ###
         # Field description inside the torrent page for documents. not yet implemented
         self.doc_description = "\n".join(files_list)
-        media_docu_type = Manage_titles.media_docu_type(self.file_name)
+        media_docu_type = ManageTitles.media_docu_type(self.file_name)
         # If there is a document in the folder it becomes a document folder
         if media_docu_type:
             # overwrite media_type # todo: 'cover image' not yet implemented
@@ -204,7 +204,7 @@ class Files:
         Add every video file to the list
         """
         return [
-            file for file in os.listdir(self.path) if Manage_titles.filter_ext(file)
+            file for file in os.listdir(self.path) if ManageTitles.filter_ext(file)
         ]
 
     def list_game_files(self) -> list:

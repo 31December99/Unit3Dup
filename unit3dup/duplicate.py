@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import guessit
-from common.utility.utility import Manage_titles, System
+from common.utility.utility import ManageTitles, System
 from common.utility import title
 from common.constants import my_language
 from common.trackers.trackers import ITTData
@@ -21,7 +21,7 @@ class CompareTitles:
         self.content_file = content_file
         self.tracker_date = tracker_file.guessit_year
         self.content_date = content_file.guessit_year
-        self.ratio = Manage_titles.fuzzyit(
+        self.ratio = ManageTitles.fuzzyit(
             content_file.guessit_title, tracker_file.guessit_title
         )
 
@@ -104,9 +104,10 @@ class Duplicate:
         self.DELTA_SIZE_WIDTH = 2
 
     def process(self) -> bool:
-        custom_console.bot_log(f"* '{self.content.display_name.upper()}' - Size({self.content_size}GB) -"
-                               f" {[self.get_resolution_by_name(self.content.resolution)]}"
-                               f" {self.content.audio_languages} - size_th ={self.size_threshold}% *\n")
+        custom_console.bot_log(f"* '{self.content.display_name.upper()}' - Size({self.content_size}GB)")
+        if self.category != self.game_category:
+            custom_console.bot_input_log(f" - {[self.get_resolution_by_name(self.content.resolution)]} "
+                                         f"{self.content.audio_languages} - size_th ={self.size_threshold}% *\n")
         return self.search()
 
     def search(self) -> bool:

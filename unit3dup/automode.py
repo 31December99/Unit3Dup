@@ -2,7 +2,7 @@
 
 import os
 from unit3dup.contents import Media
-from common.utility.utility import Manage_titles
+from common.utility.utility import ManageTitles
 from common.custom_console import custom_console
 
 
@@ -76,7 +76,7 @@ class Auto:
                     files_path = [
                         os.path.join(self.path, file)
                         for file in files
-                        if Manage_titles.filter_ext(file)
+                        if ManageTitles.filter_ext(file)
                     ]
                 # Get the subfolders path from the self.path
                 if sub_dirs:
@@ -126,5 +126,5 @@ class Auto:
             list: A list of video files in the directory that match the video file extensions
         """
         return [
-            file for file in os.listdir(manual_path) if Manage_titles.filter_ext(file)
+            file for file in os.listdir(manual_path) if ManageTitles.filter_ext(file)
         ]
