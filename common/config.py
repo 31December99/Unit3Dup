@@ -49,8 +49,8 @@ IMGBB_PRIORITY=0
 FREE_IMAGE_PRIORITY=1
 LENSDUMP_PRIORITY=2
 
-# Youtube channel Trailers FilmsNow it
-YOUTUBE_CHANNEL_ID=UCGCbxpnt25hWPFLSbvwfg_w
+# Youtube favorite channel Trailers FilmsNow it
+YOUTUBE_FAV_CHANNEL_ID=UCGCbxpnt25hWPFLSbvwfg_w
 
 # Use the YouTube Channel if it is enabled otherwise perform a global search
 YOUTUBE_CHANNEL_ENABLE=False
@@ -146,7 +146,7 @@ class Config(BaseSettings):
     FREE_IMAGE_PRIORITY: int = 1
     LENSDUMP_PRIORITY: int = 2
 
-    YOUTUBE_CHANNEL_ID: str | None = None
+    YOUTUBE_FAV_CHANNEL_ID: str | None = None
     YOUTUBE_CHANNEL_ENABLE: bool = False
 
     DUPLICATE_ON: bool = False
@@ -279,8 +279,8 @@ class Config(BaseSettings):
         values["WATCHER_PATH"] = validate_str(values.get("WATCHER_PATH", None), "WATCHER_PATH", "watcher_path")
         values["WATCHER_INTERVAL"] = validate_int(values.get("WATCHER_INTERVAL", 60), "WATCHER_INTERVAL", 60)
 
-        values["YOUTUBE_CHANNEL_ID"] = validate_str(values.get("YOUTUBE_CHANNEL_ID_IT", "UCGCbxpnt25hWPFLSbvwfg_w"),
-                                                       "YOUTUBE_CHANNEL_ID_IT", "UCGCbxpnt25hWPFLSbvwfg_w")
+        values["YOUTUBE_FAV_CHANNEL_ID"] = validate_str(values.get("YOUTUBE_FAV_CHANNEL_ID", "UCGCbxpnt25hWPFLSbvwfg_w"),
+                                                       "YOUTUBE_FAV_CHANNEL_ID", "UCGCbxpnt25hWPFLSbvwfg_w")
 
         values["YOUTUBE_CHANNEL_ENABLE"] = validate_boolean(values.get("YOUTUBE_CHANNEL_ENABLE", False),
                                                       "YOUTUBE_CHANNEL_ENABLE", False)
