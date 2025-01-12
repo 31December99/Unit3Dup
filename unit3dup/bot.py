@@ -14,6 +14,7 @@ from common.external_services.Pw.pw_service import PwService
 from common.external_services.ftpx.core.menu import Menu
 from common.external_services.ftpx.client import Client
 from common.custom_console import custom_console
+from unit3dup.contents import Contents
 from common.extractor import Extractor
 
 
@@ -46,6 +47,24 @@ class Bot:
         # Bot Manager
         self.torrent_manager = TorrentManager(cli=self.cli)
 
+    def get_media_multi(self, file_media: list) -> list['Contents'] | None:
+        contents = None
+        try:
+            with multiprocessing.Pool(processes=4) as pool:
+                contents = pool.map(self.content_manager.get_media, file_media)
+        except KeyboardInterrupt:
+            # Try to clean...
+            custom_console.bot_error_log("Interrupted by the user. Exiting...")
+            pool.terminate()
+            pool.join()
+            custom_console.bot_warning_log("Processes ended")
+        except Exception as e:
+            custom_console.bot_error_log(f"Error: {e}. Please report it")
+            pool.terminate()
+            pool.join()
+        finally:
+            return contents
+
     def run(self) -> None:
         """
         Start the process of analyzing and processing media files.
@@ -76,8 +95,10 @@ class Bot:
 
         # Create a list of content objects for each file
         # Media > Files > Content
-        with multiprocessing.Pool() as pool:
-            contents = pool.map(self.content_manager.get_media, file_media_list)
+        contents = self.get_media_multi(file_media=file_media_list)
+        # we got an handled exception
+        if contents is None:
+            exit(1)
 
         # Skip empty folder
         contents = [content for content in contents if content is not None]
