@@ -19,11 +19,12 @@ class YtTrailer:
             'maxResults': 3,
         }
 
-    def get_trailer_link(self, channel_id: str) -> list[YouTubeSearchResponse] | None:
+    def get_trailer_link(self) -> list[YouTubeSearchResponse] | None:
 
-        # Use channel if the flag is True
+        # Use a favorite channel if the flag is True
+        # Otherwise use a global YouTube search
         if config.YOUTUBE_CHANNEL_ENABLE:
-            self.params['channelId'] = channel_id
+            self.params['channelId'] = config.YOUTUBE_FAV_CHANNEL_ID
 
         response = requests.get(self.url, params=self.params)
 

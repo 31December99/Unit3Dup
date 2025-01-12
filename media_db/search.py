@@ -3,7 +3,6 @@ import sys
 
 from media_db import tmdb
 from common.utility import title
-from common.config import config
 from common.custom_console import custom_console
 from common.external_services.trailers.api import YtTrailer
 from unit3dup.contents import Contents
@@ -92,12 +91,10 @@ class TvShow:
 
         custom_console.bot_question_log("TMDB trailer not found. Try searching on YouTube...\n")
 
-        channel_id = None
-        if config.YOUTUBE_CHANNEL_ENABLE:
-            channel_id = config.YOUTUBE_CHANNEL_ID
-
         yt_trailer = YtTrailer(media)
-        result = yt_trailer.get_trailer_link(channel_id)
+        result = yt_trailer.get_trailer_link()
         if result:
             custom_console.bot_question_log("Found !\n")
+            # choose the first in the list
+            # todo compare against the media title especially for the favorite channel
             return result[0].items[0].id.videoId
