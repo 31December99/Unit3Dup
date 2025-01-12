@@ -12,7 +12,7 @@ class Auto:
     """
 
     def __init__(
-            self, path: str, tracker_name=None, mode="auto"
+            self, path: str, tracker_name=None, mode="auto", force_media_type = None
     ):  # todo: select the tracker (tracker_name)
         """
         Initialize the Auto instance with path, tracker configuration, and mode.
@@ -28,6 +28,8 @@ class Auto:
         self.path = path
         self.is_dir = os.path.isdir(self.path)
         self.auto = mode
+        self.force_media_type = force_media_type
+
 
     def upload(self):
         """
@@ -100,6 +102,7 @@ class Auto:
         return Media(
             folder=self.path,
             subfolder=subdir,
+            force_media_type=self.force_media_type
         )
 
     def depth_walker(self, path) -> int:
