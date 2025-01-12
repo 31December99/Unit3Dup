@@ -6,10 +6,11 @@ from unit3dup.automode import Auto
 
 
 class ContentManager:
-    def __init__(self, path: str, tracker_name: str, mode: str):
+    def __init__(self, path: str, tracker_name: str, mode: str, force_media_type = None):
         self.path = path
         self.tracker_name = tracker_name
         self.mode = mode
+        self.force_media_type = force_media_type
 
     def get_files(self) -> List:
         # Create a list of file objects (Media) based on the commands from the CLI user
@@ -17,11 +18,11 @@ class ContentManager:
         return self.manual(self.mode) if self.mode in ["man", "folder"] else self.auto()
 
     def manual(self, mode: str) -> List:
-        auto = Auto(path=self.path, mode=mode, tracker_name=self.tracker_name)
+        auto = Auto(path=self.path, mode=mode, tracker_name=self.tracker_name, force_media_type=self.force_media_type)
         return auto.upload()
 
     def auto(self) -> List:
-        auto = Auto(path=self.path, tracker_name=self.tracker_name)
+        auto = Auto(path=self.path, tracker_name=self.tracker_name, force_media_type=self.force_media_type)
         return auto.scan()
 
     def get_media(self, item) -> Optional:

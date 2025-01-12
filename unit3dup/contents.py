@@ -127,6 +127,7 @@ class Media:
 
     folder: str
     subfolder: str
+    force_media_type: str
 
     @property
     def filename(self):
@@ -189,12 +190,15 @@ class Media:
         serie_category = tracker_data.category.get("tvshow")
         game_category = tracker_data.category.get("game")
 
-        if self.guess_filename.guessit_season:
-            media_type = serie_category
+        if self.force_media_type:
+            media_type = self.force_media_type
         else:
-            media_type = movie_category
-        if self.crew or self.game_tags:
-            media_type = game_category
+            if self.guess_filename.guessit_season:
+                media_type = serie_category
+            else:
+                media_type = movie_category
+            if self.crew or self.game_tags:
+                media_type = game_category
         return media_type
 
     @property

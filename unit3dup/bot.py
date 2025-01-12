@@ -7,15 +7,17 @@ import shutil
 import multiprocessing
 
 from pathlib import Path
-from common.external_services.ftpx.core.models.list import FTPDirectory
 from unit3dup.media_manager.ContentManager import ContentManager
 from unit3dup.media_manager.TorrentManager import TorrentManager
+from unit3dup.contents import Contents
+from common.external_services.ftpx.core.models.list import FTPDirectory
 from common.external_services.Pw.pw_service import PwService
 from common.external_services.ftpx.core.menu import Menu
 from common.external_services.ftpx.client import Client
 from common.custom_console import custom_console
-from unit3dup.contents import Contents
 from common.extractor import Extractor
+
+
 
 
 class Bot:
@@ -65,7 +67,7 @@ class Bot:
         finally:
             return contents
 
-    def run(self) -> None:
+    def run(self, force_media_type: int) -> None:
         """
         Start the process of analyzing and processing media files.
 
@@ -76,7 +78,7 @@ class Bot:
 
         # Get a Files list with basic attributes and create a content object for each
         self.content_manager = ContentManager(
-            path=self.path, tracker_name=self.tracker_name, mode=self.mode
+            path=self.path, tracker_name=self.tracker_name, mode=self.mode, force_media_type=force_media_type
         )
         file_media_list = self.content_manager.get_files()
 

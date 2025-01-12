@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from rich.console import Console
+from common.trackers.trackers import ITTData
 from common.command import CommandLine
 from common.clients.qbitt import Qbitt
 from common.config import config
@@ -18,6 +19,9 @@ def main():
     # /// Initialize command line interface
     cli = CommandLine()
 
+    # Load the tracker data from the dictionary
+    tracker_data = ITTData.load_from_module()
+
     # /// Test the Tracker (always)
     tracker = pvtTracker.Unit3d(
         base_url=config.ITT_URL, api_token=config.ITT_APIKEY, pass_key=""
@@ -33,12 +37,21 @@ def main():
             exit(1)
 
     # \\\ Commands options  \\\
+    force_media = None
+    if cli.args.game:
+        force_media = tracker_data.category.get("game")
+    if cli.args.movie:
+        force_media = tracker_data.category.get("movie")
+    if cli.args.serie:
+        force_media = tracker_data.category.get("tvshow")
+
+
     # Manual upload mode
     if cli.args.upload:
         bot = Bot(
             path=cli.args.upload, tracker_name=cli.args.tracker, cli=cli.args
         )
-        bot.run()
+        bot.run(force_media_type=force_media)
 
     # Manual folder mode
     if cli.args.folder:
@@ -48,14 +61,14 @@ def main():
             cli=cli.args,
             mode="folder",
         )
-        bot.run()
+        bot.run(force_media_type=force_media)
 
     # Auto mode
     if cli.args.scan and not cli.args.ftp:
         bot = Bot(
             path=cli.args.scan, tracker_name=cli.args.tracker, cli=cli.args, mode="auto"
         )
-        bot.run()
+        bot.run(force_media_type=force_media)
 
     # Watcher
     if cli.args.watcher:
@@ -64,7 +77,9 @@ def main():
         )
         bot.watcher(duration=config.WATCHER_INTERVAL, watcher_path=config.WATCHER_PATH)
 
+
     # Pw
+    """
     if cli.args.pw:
         bot = Bot(
             path=cli.args.pw,
@@ -72,7 +87,7 @@ def main():
             cli=cli.args,
         )
         bot.pw()
-
+    """
     # ftp and upload
     if cli.args.ftp:
         bot = Bot(
