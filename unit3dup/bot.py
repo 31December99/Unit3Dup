@@ -55,7 +55,7 @@ class Bot:
         """
         custom_console.panel_message("Analyzing your media files... Please wait")
 
-        # Get Files list with basic attributes and create a content object for each
+        # Get a Files list with basic attributes and create a content object for each
         self.content_manager = ContentManager(
             path=self.path, tracker_name=self.tracker_name, mode=self.mode
         )
