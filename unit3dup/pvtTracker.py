@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
+import io
 import os
 import time
-
 import requests
 
-from common.custom_console import custom_console
 from urllib.parse import urljoin
+from common.custom_console import custom_console
 from common.config import config
-
 
 class Myhttp:
     def __init__(self, base_url: str, api_token: str, pass_key: str):
@@ -87,13 +86,25 @@ class Tracker(Myhttp):
                 exit(1)
 
     def _post(self, file: dict, data: dict, params: dict):
-        return requests.post(
-            url=self.upload_url,
-            files=file,
-            data=data,
-            headers=self.headers,
-            params=params,
-        )
+        with open(file['torrent'], "rb") as torrent:
+
+            # // Send content and mime type
+            file_ = {
+                "torrent": ("filename.torrent", torrent, "application/octet-stream"),
+            }
+
+            # // Send nfo
+            if file.get('nfo', None):
+                file_.update({"nfo": ("filename.nfo", file['nfo'], "text/plain")})
+
+            return requests.post(
+                url=self.upload_url,
+                files=file_,
+                data=data,
+                headers=self.headers,
+                params=params,
+            )
+
 
     def _fetch_all(self, params: dict) -> requests:
         return requests.get(
@@ -291,16 +302,46 @@ class Torrents(Tracker):
 
 
 class Uploader(Tracker):
-    def upload_t(self, data: dict, torrent_path: str) -> requests:
+    def upload_t(self, data: dict, torrent_path: str, nfo_path = None) -> requests:
         if not config.TORRENT_ARCHIVE:
             full_path = f"{torrent_path}.torrent"
         else:
             torrent_file_name = os.path.basename(torrent_path)
             full_path = os.path.join(config.TORRENT_ARCHIVE, f"{torrent_file_name}.torrent")
 
-        with open(full_path, "rb") as torrent:
-            file_torrent = {"torrent": torrent}
-            return self._post(file=file_torrent, data=data, params=self.params)
+        file_torrent = {"torrent": full_path}
+        if nfo_path:
+            file_torrent.update({"nfo": self.encode_utf8(file_path=nfo_path)})
+
+        return self._post(file=file_torrent, data=data, params=self.params)
+
+    @staticmethod
+    def encode_utf8(file_path:str) -> bytes | io.BytesIO:
+        """
+        Try to decode the nfo file
+        """
+        encodings = ['utf-8', 'iso-8859-1', 'windows-1252', 'latin1']
+        decoded_content = None
+
+        # Trey to open and decode
+        with open(file_path, 'rb') as f:
+            raw_data = f.read()
+
+        for encoding in encodings:
+            try:
+                decoded_content = raw_data.decode(encoding)
+                break # OK
+            except (UnicodeDecodeError, TypeError):
+                continue # try next
+
+        # Success. Return the contents in bytes
+        if decoded_content is not None:
+            return decoded_content.encode('utf-8')
+        else:
+            error_message = "Error: Unable to read the NFO file !"
+            # Prepare a message of type File to post to the tracker
+            return io.BytesIO(error_message.encode('utf-8'))
+
 
 
 class Unit3d(filterAPI, Torrents, Uploader):

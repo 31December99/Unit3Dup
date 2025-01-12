@@ -38,6 +38,7 @@ class Contents:
     game_summary: str = field(init=False)
     game_crew: list
     game_tags: list
+    game_nfo: str
     season: str | None = None
     episode: str | None = None
     screen_size: str | None = None
