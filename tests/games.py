@@ -840,5 +840,3 @@ for title in game_titles:
     )
     with open(file_path, "w") as f:
         f.write(file_content)
-
-print("Finish")
