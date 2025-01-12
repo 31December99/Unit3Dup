@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
-import os.path
+import diskcache
 import subprocess
 import io
-import diskcache
+
 from pathlib import Path
 from PIL import Image
-from common.custom_console import custom_console
+
 from common.config import config, default_env_path_cache
+from common.custom_console import custom_console
 
 
 class VideoFrame:
@@ -48,7 +49,7 @@ class VideoFrame:
 
         :param frame: The image to convert
         :return: Image in bytes
-        :compress_level: compressione level (0-9); 9=Max;  default=4 ; 0 = best
+        :compress_level: compressione level (0-9); 9=Max; default=4 ; 0 = best
         """
         image = self.resize_image(frame)
         buffered = io.BytesIO()
@@ -86,6 +87,7 @@ class VideoFrame:
         if self.tmdb_id in self.cache:
             custom_console.bot_warning_log("Using cached Screenshot !")
             try:
+                # Save frame to cache
                 return self.cache[self.tmdb_id]
             except KeyError:
                 custom_console.bot_error_log("Cached frame not found or cache file corrupted")
@@ -105,6 +107,7 @@ class VideoFrame:
 
         # Save frame to cache
         self.cache[self.tmdb_id] = frames
+        custom_console.bot_log("Images cached.Starting image host upload..")
         return frames
 
     def _get_video_duration(self) -> float:
@@ -139,7 +142,7 @@ class VideoFrame:
             exit(1)
         return duration
 
-    def _extract_frame(self, time: float) -> Image:
+    def _extract_frame(self, time_: float) -> Image:
         """
         Extract a single frame from the video at the specified time.
 
@@ -150,7 +153,7 @@ class VideoFrame:
         command = [
             "ffmpeg",
             "-ss",
-            str(time),
+            str(time_),
             "-i",
             str(self.video_path),
             "-vframes",
@@ -172,9 +175,7 @@ class VideoFrame:
             exit(1)
         except FileNotFoundError:
             custom_console.bot_error_log(
-                "[FFMPEG not found] - Install ffmpeg or check your system path",
-                style="red bold",
-            )
+                "[FFMPEG not found] - Install ffmpeg or check your system path")
             exit(1)
         except Image.UnidentifiedImageError as e:
             custom_console.bot_error_log(f"[IMAGES] Error: {self.video_path}  Cannot identify image file. "
