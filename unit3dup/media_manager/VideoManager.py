@@ -41,15 +41,15 @@ class VideoManager:
             ):
 
                 # Search for the TMDB ID
-                tv_show_result = UserContent.tmdb(content=content)
+                tmdb_result = UserContent.tmdb(content=content)
 
                 # Create a description
                 file_name = str(os.path.join(content.folder, content.file_name))
-                video_info = Video.info(file_name, trailer_key=tv_show_result.trailer_key)
+                video_info = Video.info(file_name, tmdb_id=tmdb_result.video_id, trailer_key=tmdb_result.trailer_key)
 
                 # Tracker payload
                 unit3d_up = UploadVideo(content)
-                data = unit3d_up.payload(tv_show=tv_show_result, video_info=video_info)
+                data = unit3d_up.payload(tv_show=tmdb_result, video_info=video_info)
 
                 # Torrent creation
                 if not UserContent.torrent_file_exists(content=content, class_name=self.__class__.__name__):

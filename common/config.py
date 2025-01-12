@@ -313,9 +313,11 @@ class Config(BaseSettings):
 if os.name == "nt":
     default_env_path: Path = Path(os.getenv("LOCALAPPDATA", ".")) / f"{service_filename}"
     torrent_archive_path: Path = Path(os.getenv("LOCALAPPDATA", ".")) / "torrent_archive"
+    default_env_path_cache: Path = Path(os.getenv("LOCALAPPDATA", ".")) / f"Unit3Dup_cache"
 else:
     default_env_path: Path = Path.home() / f"{service_filename}"
     torrent_archive_path: Path = Path.home() / "torrent_archive"
+    default_env_path_cache: Path = Path.home() / "Unit3Dup_cache"
 
 
 if not default_env_path.exists():
@@ -325,6 +327,11 @@ if not default_env_path.exists():
 if not torrent_archive_path.exists():
     print(f"Create default torrent archive path: {torrent_archive_path}")
     os.makedirs(torrent_archive_path, exist_ok=True)
+
+if not default_env_path_cache.exists():
+    print(f"Create default cache path: {default_env_path_cache}")
+    os.makedirs(default_env_path_cache, exist_ok=True)
+
 
 # /// Display welcome message
 custom_console.welcome_message()

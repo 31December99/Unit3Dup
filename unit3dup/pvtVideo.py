@@ -17,7 +17,7 @@ class Video:
     - Determine if the video is standard definition (SD) or not
     """
 
-    def __init__(self, file_name: str, trailer_key = None):
+    def __init__(self, file_name: str,  tmdb_id: int, trailer_key = None):
 
         # Host APi keys
         self.IMGBB_KEY = config.IMGBB_KEY
@@ -34,7 +34,7 @@ class Video:
         samples_n: int = config.NUMBER_OF_SCREENSHOTS if 2 <= config.NUMBER_OF_SCREENSHOTS <= 10 else 4
 
         # New object frame
-        self.video_frames: VideoFrame = VideoFrame(self.file_name, num_screenshots=samples_n)
+        self.video_frames: VideoFrame = VideoFrame(self.file_name, num_screenshots=samples_n, tmdb_id=tmdb_id)
 
         # Is_hd
         self.is_hd: int = 0
@@ -45,13 +45,16 @@ class Video:
         # Description
         self.mediainfo: str = ''
 
+        # For frame caching
+        self.tmdb_id = tmdb_id
+
     @classmethod
-    def info(cls, file_name: str, trailer_key = None):
+    def info(cls, file_name: str, tmdb_id: int, trailer_key = None):
         """
         Class method to create a new Video object from a file
         """
         # Create a new instance of the class
-        video_instance = cls(file_name, trailer_key)
+        video_instance = cls(file_name, tmdb_id, trailer_key)
 
         # Call build_info
         video_instance._build_info()

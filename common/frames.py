@@ -1,15 +1,16 @@
 # -*- coding: utf-8 -*-
-
+import os.path
 import subprocess
 import io
+import diskcache
 from pathlib import Path
 from PIL import Image
 from common.custom_console import custom_console
-from common.config import config
+from common.config import config, default_env_path_cache
 
 
 class VideoFrame:
-    def __init__(self, video_path: str, num_screenshots: int):
+    def __init__(self, video_path: str, num_screenshots: int, tmdb_id: int):
         """
         Initialize VideoFrame object
 
@@ -17,7 +18,12 @@ class VideoFrame:
         :param num_screenshots: Number of screenshots to take
         """
         self.video_path = Path(video_path)
+        # Number of screenshots based on the user's preferences
         self.num_screenshots = num_screenshots
+        # frame cache
+        self.cache = diskcache.Cache(str(default_env_path_cache))
+        # For frame caching
+        self.tmdb_id = tmdb_id
 
     def create(self):
         """
@@ -75,6 +81,16 @@ class VideoFrame:
 
         :return: A list of frames
         """
+
+        # Read from the cache before generating new screenshots
+        if self.tmdb_id in self.cache:
+            custom_console.bot_warning_log("Using cached Screenshot !")
+            try:
+                return self.cache[self.tmdb_id]
+            except KeyError:
+                custom_console.bot_error_log("Cached frame not found or cache file corrupted")
+                custom_console.bot_error_log("Proceed to extract the screenshot again. Please wait..")
+
         duration = self._get_video_duration()
         min_time = duration * 0.35
         max_time = duration * 0.85
@@ -86,6 +102,9 @@ class VideoFrame:
 
         if len(frames) < self.num_screenshots:
             frames.append(self._extract_frame(max_time))
+
+        # Save frame to cache
+        self.cache[self.tmdb_id] = frames
         return frames
 
     def _get_video_duration(self) -> float:
