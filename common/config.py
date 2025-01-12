@@ -91,6 +91,9 @@ PREFERRED_LANG=all
 # Hide your nickname (only the nick name)
 ANON=False
 
+# Active the cache for the screenshots
+CACHE_SCR=False
+
 #########################################
 ################  OPTIONAL  #############  
 #########################################
@@ -151,6 +154,8 @@ class Config(BaseSettings):
     COMPRESS_SCSHOT: int = 4
     RESIZE_SCSHOT: bool = False
     ANON: bool = False
+    CACHE_SCR: bool = False
+
 
     WATCHER_PATH: str | None = None
     WATCHER_INTERVAL: int = 60
@@ -264,6 +269,7 @@ class Config(BaseSettings):
         values["PREFERRED_LANG"] = validate_str(values.get("PREFERRED_LANG", None), "PREFERRED_LANG", "all")
         values["SIZE_TH"] = validate_int(values.get("SIZE_TH", 10), "SIZE_TH", 10)
         values["ANON"] = validate_boolean(values.get("ANON", False), "ANON", False)
+        values["CACHE_SCR"] = validate_boolean(values.get("CACHE_SCR", False), "CACHE_SCR", False)
 
         values["TORRENT_COMMENT"] = validate_str(values.get("TORRENT_COMMENT", None), "TORRENT_COMMENT", "no_comment")
         values["TORRENT_ARCHIVE"] = validate_torrent_archive_path(values.get("TORRENT_ARCHIVE", None), "TORRENT_ARCHIVE", ".")

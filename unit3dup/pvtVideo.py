@@ -87,6 +87,8 @@ class Video:
         """Generate a description with image URLs uploaded to ImgBB"""
         description = "[center]\n"
         console_url = []
+
+        custom_console.bot_log("Starting image upload..")
         for img_bytes in extracted_frames:
 
             master_uploaders = [
