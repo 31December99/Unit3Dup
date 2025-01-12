@@ -24,9 +24,9 @@ class UploadBot(ABC):
         self.API_TOKEN = config.ITT_APIKEY
         self.BASE_URL = config.ITT_URL
 
-    def send(self, tracker: pvtTracker) -> requests:
+    def send(self, tracker: pvtTracker, nfo_path = None) -> requests:
         tracker_response = tracker.upload_t(
-            data=tracker.data, torrent_path=self.torrent_path
+            data=tracker.data, torrent_path=self.torrent_path, nfo_path=nfo_path
         )
 
         if tracker_response.status_code == 200:

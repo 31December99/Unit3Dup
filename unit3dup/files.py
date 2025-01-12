@@ -46,6 +46,7 @@ class Files:
         self.game_title: str = game_title
         self.game_crew: list = game_crew
         self.game_tags: list = game_tags
+        self.game_nfo: str = ''
         self.episode: str = episode
         self.season: str = season
         self.tracker_name: str = tracker_name
@@ -94,6 +95,7 @@ class Files:
                 game_title=self.game_title,
                 game_crew=self.game_crew,
                 game_tags=self.game_tags,
+                game_nfo=self.game_nfo,
                 screen_size=self.screen_size
             )
             if process
@@ -192,6 +194,11 @@ class Files:
             self.meta_info_list.append({"length": size, "path": [file]})
             # Sum size for each file
             total_size += size
+            # intercept nfo file
+            if file.lower().endswith(".nfo"):
+                self.game_nfo = os.path.join(self.folder, file)
+
+
 
         # Get the total size
         self.size = total_size

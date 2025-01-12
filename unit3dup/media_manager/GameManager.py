@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import argparse
-import os
 
 from unit3dup.media_manager.models.qbitt import QBittorrent
 from unit3dup.contents import Contents
@@ -62,7 +61,7 @@ class GameManager:
                 tracker = unit3d_up.tracker(data=data)
 
                 # Send the upload request to the tracker
-                tracker_response = unit3d_up.send(tracker=tracker)
+                tracker_response = unit3d_up.send(tracker=tracker, nfo_path=content.game_nfo)
 
                 qbittorrent_list.append(
                     QBittorrent(
