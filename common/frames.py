@@ -83,15 +83,17 @@ class VideoFrame:
         :return: A list of frames
         """
 
-        # Read from the cache before generating new screenshots
-        if self.tmdb_id in self.cache:
-            custom_console.bot_warning_log("Using cached Screenshot !")
-            try:
-                # Save frame to cache
-                return self.cache[self.tmdb_id]
-            except KeyError:
-                custom_console.bot_error_log("Cached frame not found or cache file corrupted")
-                custom_console.bot_error_log("Proceed to extract the screenshot again. Please wait..")
+        # Cache for screenshot enabled
+        if config.CACHE_SCR:
+            # Read from the cache before generating new screenshots
+            if self.tmdb_id in self.cache:
+                custom_console.bot_warning_log("Using cached Screenshot !")
+                try:
+                    # Return frames from the cache
+                    return self.cache[self.tmdb_id]
+                except KeyError:
+                    custom_console.bot_error_log("Cached frame not found or cache file corrupted")
+                    custom_console.bot_error_log("Proceed to extract the screenshot again. Please wait..")
 
         duration = self._get_video_duration()
         min_time = duration * 0.35
@@ -106,8 +108,9 @@ class VideoFrame:
             frames.append(self._extract_frame(max_time))
 
         # Save frame to cache
-        self.cache[self.tmdb_id] = frames
-        custom_console.bot_log("Images cached.Starting image host upload..")
+        if config.CACHE_SCR:
+            self.cache[self.tmdb_id] = frames
+            custom_console.bot_warning_log("Images cached")
         return frames
 
     def _get_video_duration(self) -> float:
