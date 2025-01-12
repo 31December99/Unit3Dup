@@ -62,7 +62,7 @@ class Bot:
         file_media_list = self.content_manager.get_files()
 
         # -u requires a single file
-        if not file_media_list:
+        if not file_media_list or not os.path.exists(self.path):
             custom_console.bot_error_log("There are no Media to process")
             return
 
