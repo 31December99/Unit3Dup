@@ -39,7 +39,7 @@ class UserContent:
 
         if os.path.exists(this_path):
             custom_console.bot_warning_log(
-                f"** {class_name} **: This File already exists {this_path}\n"
+                f"** {class_name} **: Reusing the existing torrent file! {this_path}\n"
             )
             return True
 
