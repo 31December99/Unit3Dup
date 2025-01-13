@@ -68,6 +68,7 @@ class Video:
         # Return a list of frames and the hd info
         custom_console.bot_log(f"\n[GENERATING IMAGES..] [HD {'ON' if self.is_hd == 0 else 'OFF'}]")
         extracted_frames, is_hd = self.video_frames.create()
+        custom_console.bot_log("Done.")
         self.is_hd = is_hd
 
         # Create a new description

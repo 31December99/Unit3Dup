@@ -52,7 +52,7 @@ LENSDUMP_PRIORITY=2
 # Youtube favorite channel Trailers FilmsNow it
 YOUTUBE_FAV_CHANNEL_ID=UCGCbxpnt25hWPFLSbvwfg_w
 
-# Use the YouTube Channel if it is enabled otherwise perform a global search
+# Use the YouTube favorite Channel if it is enabled otherwise perform a global search
 YOUTUBE_CHANNEL_ENABLE=False
 
 # Search for possible candidates for duplicate files
