@@ -340,9 +340,6 @@ if not default_env_path_cache.exists():
     os.makedirs(default_env_path_cache, exist_ok=True)
 
 
-# /// Display welcome message
-custom_console.welcome_message()
-custom_console.bot_question_log(f"Checking your configuration file.. * {default_env_path} *\n")
-load_dotenv(dotenv_path=default_env_path)
 
+load_dotenv(dotenv_path=default_env_path)
 config = Config()
