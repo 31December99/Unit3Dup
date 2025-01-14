@@ -8,6 +8,8 @@ from common.config import config
 from unit3dup.bot import Bot
 from unit3dup import pvtTracker
 from unit3dup.torrent import View
+from common.custom_console import custom_console
+
 
 console = Console(log_path=False)
 
@@ -16,6 +18,9 @@ def main():
     """
     Main function to handle the command line interface (CLI)
     """
+    custom_console.welcome_message()
+    custom_console.bot_question_log(f"Checking your configuration file.. \n")
+
     # /// Initialize command line interface
     cli = CommandLine()
 

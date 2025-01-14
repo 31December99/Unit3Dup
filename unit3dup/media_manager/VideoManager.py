@@ -69,7 +69,8 @@ class VideoManager:
                         torrent_response=torrent_response,
                         content=content
                     ))
-            return qbittorrent_list
+        # // end content
+        return qbittorrent_list
 
 
 
