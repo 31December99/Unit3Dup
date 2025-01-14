@@ -317,6 +317,7 @@ class Config(BaseSettings):
             sys.exit(0)
 
 if os.name == "nt":
+    # C:\Users\user\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_\LocalCache\Local
     default_env_path: Path = Path(os.getenv("LOCALAPPDATA", ".")) / f"{service_filename}"
     torrent_archive_path: Path = Path(os.getenv("LOCALAPPDATA", ".")) / "torrent_archive"
     default_env_path_cache: Path = Path(os.getenv("LOCALAPPDATA", ".")) / f"Unit3Dup_cache"
