@@ -107,12 +107,14 @@ class Duplicate:
         self.DELTA_SIZE_WIDTH = 2
 
     def process(self) -> bool:
-        custom_console.bot_log(f"* '{self.content.display_name.upper()}'"
-                                     f" - Size({self.content_size} {self.size_unit})")
+        custom_console.bot_log(f"' {self.content.display_name.upper()} '\nSize({self.content_size} {self.size_unit}) "
+                               f"size_th={self.size_threshold}%")
 
-        if self.category != self.game_category and self.category!= self.docu_category:
-            custom_console.bot_input_log(f" - {[self.get_resolution_by_name(self.content.resolution)]} "
-                                         f"{self.content.audio_languages} - size_th ={self.size_threshold}% *\n")
+        if self.category != self.game_category and self.category != self.docu_category:
+            custom_console.bot_log(f"Audio({'-'.join(self.content.audio_languages).upper().strip()}) "
+                                   f"Resolution({self.get_resolution_by_name(self.content.resolution)})\n")
+
+
         return self.search()
 
     def search(self) -> bool:
@@ -163,7 +165,6 @@ class Duplicate:
 
         name = value["name"]
         resolution = value.get("resolution", "[n/a]")
-        info_hash = value.get("info_hash", 0)
         size = value.get("size", 0)
         # Convert to GB
         size = round(size / (1024 ** 3), 2)
@@ -181,14 +182,12 @@ class Duplicate:
         formatted_size = f"{size:>{self.SIZE_WIDTH}.2f} GB"
         formatted_name = f"{name:<{self.NAME_WIDTH}}"
         formatted_resolution = f"{resolution:<{self.RESOLUTION_WIDTH}}" if resolution else ''
-        formatted_info_hash = f"{info_hash:<{self.INFO_HASH_WIDTH}}"
         formatted_size_th = f"{delta_size:<{self.DELTA_SIZE_WIDTH}}"
 
         if tmdb_id != 0:
             output = (
                 f"[TMDB-ID {formatted_tmdb_id}] "
                 f"[{formatted_size} delta={formatted_size_th}%] "
-                #f"'[HASH {formatted_info_hash}]' "
                 f"[{formatted_resolution}]' "
                 f"{formatted_name},"
                 f"[{languages}]'"
@@ -197,7 +196,6 @@ class Duplicate:
             output = (
                 f"[IGDB-ID {formatted_igdb_id}] "
                 f"[{formatted_size} delta={formatted_size_th}%] "
-                #f"'[HASH {formatted_info_hash}]' "
                 f"{formatted_name},"
             )
 
