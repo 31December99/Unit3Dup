@@ -37,38 +37,39 @@ class VideoManager:
             # Filter contents based on existing torrents or duplicates
             if (
                 UserContent.is_preferred_language(content=content) or
-                (self.cli.duplicate or config.DUPLICATE_ON) and not UserContent.is_duplicate(content=content)
+                (self.cli.duplicate or config.DUPLICATE_ON)
             ):
 
-                # Search for the TMDB ID
-                tmdb_result = UserContent.tmdb(content=content)
+                if not UserContent.is_duplicate(content=content):
+                    # Search for the TMDB ID
+                    tmdb_result = UserContent.tmdb(content=content)
 
-                # Create a description
-                file_name = str(os.path.join(content.folder, content.file_name))
-                video_info = Video.info(file_name, tmdb_id=tmdb_result.video_id, trailer_key=tmdb_result.trailer_key)
+                    # Create a description
+                    file_name = str(os.path.join(content.folder, content.file_name))
+                    video_info = Video.info(file_name, tmdb_id=tmdb_result.video_id, trailer_key=tmdb_result.trailer_key)
 
-                # Tracker payload
-                unit3d_up = UploadVideo(content)
-                data = unit3d_up.payload(tv_show=tmdb_result, video_info=video_info)
+                    # Tracker payload
+                    unit3d_up = UploadVideo(content)
+                    data = unit3d_up.payload(tv_show=tmdb_result, video_info=video_info)
 
-                # Torrent creation
-                if not UserContent.torrent_file_exists(content=content, class_name=self.__class__.__name__):
-                    torrent_response = UserContent.torrent(content=content)
-                else:
-                    torrent_response = None
+                    # Torrent creation
+                    if not UserContent.torrent_file_exists(content=content, class_name=self.__class__.__name__):
+                        torrent_response = UserContent.torrent(content=content)
+                    else:
+                        torrent_response = None
 
-                # Get a new tracker instance
-                tracker = unit3d_up.tracker(data=data)
+                    # Get a new tracker instance
+                    tracker = unit3d_up.tracker(data=data)
 
-                # Upload
-                tracker_response = unit3d_up.send(tracker=tracker)
+                    # Upload
+                    tracker_response = unit3d_up.send(tracker=tracker)
 
-                qbittorrent_list.append(
-                    QBittorrent(
-                        tracker_response=tracker_response,
-                        torrent_response=torrent_response,
-                        content=content
-                    ))
+                    qbittorrent_list.append(
+                        QBittorrent(
+                            tracker_response=tracker_response,
+                            torrent_response=torrent_response,
+                            content=content
+                        ))
         # // end content
         return qbittorrent_list
 
