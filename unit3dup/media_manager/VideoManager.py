@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import argparse
 import os
+import diskcache
 
 from unit3dup.media_manager.models.qbitt import QBittorrent
 from unit3dup.upload import UploadVideo
@@ -8,7 +9,8 @@ from unit3dup.contents import Contents
 from unit3dup.pvtVideo import Video
 
 from common.utility.contents import UserContent
-from common.config import config
+from common.config import config, default_env_path_cache
+from common.custom_console import custom_console
 
 class VideoManager:
 
@@ -23,6 +25,9 @@ class VideoManager:
 
         self.contents = contents
         self.cli = cli
+
+        # description cache
+        self.cache = diskcache.Cache(str(default_env_path_cache))
 
     def process(self) -> list["QBittorrent"] | None:
         """
@@ -44,9 +49,15 @@ class VideoManager:
                     # Search for the TMDB ID
                     tmdb_result = UserContent.tmdb(content=content)
 
-                    # Create a description
-                    file_name = str(os.path.join(content.folder, content.file_name))
-                    video_info = Video.info(file_name, tmdb_id=tmdb_result.video_id, trailer_key=tmdb_result.trailer_key)
+                    # if the cache description is enabled
+                    video_info = self.load_cache(index_=tmdb_result.video_id)
+                    # if there is no available cached description
+                    if not video_info:
+                        # get a new description if cache is disabled
+                        file_name = str(os.path.join(content.folder, content.file_name))
+                        video_info = Video.info(file_name, tmdb_id=tmdb_result.video_id, trailer_key=tmdb_result.trailer_key)
+                    # cache it if cache is enabled
+                    self.cache_it(index_=tmdb_result.video_id, data=video_info )
 
                     # Tracker payload
                     unit3d_up = UploadVideo(content)
@@ -74,4 +85,24 @@ class VideoManager:
         return qbittorrent_list
 
 
+    def cache_it(self, index_: int, data: Video)-> bool:
+        if config.CACHE_SCR:
+            # cache only if it's a new description
+            if index_ not in self.cache:
+                self.cache[index_] = data.description
+                custom_console.bot_warning_log("Cached !")
+                return True
+        return False
 
+    def load_cache(self, index_: int)-> Video:
+            # if Cache is enabled
+            if config.CACHE_SCR:
+                # if a description is found
+                if index_ in self.cache:
+                    custom_console.bot_warning_log(f"** {self.__class__.__name__} **: Using cached Description !")
+                    try:
+                        # Return frames from the cache
+                        return self.cache[index_]
+                    except KeyError:
+                        custom_console.bot_error_log("Cached frame not found or cache file corrupted")
+                        custom_console.bot_error_log("Proceed to extract the screenshot again. Please wait..")
