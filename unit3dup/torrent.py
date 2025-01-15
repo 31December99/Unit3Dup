@@ -171,12 +171,19 @@ class View(Torrent):
                 f" -> {item['attributes']['name']}"
             )
 
-    def print_normal(self, tracker_data: dict):
+    @staticmethod
+    def print_normal(tracker_data: dict):
         data = [item for item in tracker_data["data"]]
+
         for item in data:
-            custom_console.bot_log(
-                f"\nTMDB '{item['attributes']['tmdb_id']}' - [{str(item['attributes']['release_year'])}] - {item['attributes']['name']}"
-            )
+            if item['attributes']['tmdb_id'] != 0:
+                media = f"TMDB: {item['attributes']['tmdb_id']} {str(item['attributes']['release_year'])}"
+            else:
+                media = f"IGDB: {item['attributes']['igdb_id']}"
+
+            custom_console.bot_log(f"\n {media} - {item['attributes']['name']}")
+
+
 
     def page_view(self, tracker_data: dict, tracker: pvtTracker, info=False):
 
