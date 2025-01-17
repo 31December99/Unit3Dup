@@ -126,6 +126,8 @@ class UserContent:
             )
             custom_console.rule()
             return True
+        else:
+            return False
 
     @staticmethod
     def send_to_qbittorrent(qbittorrent_list: list["QBittorrent"]) -> None:
