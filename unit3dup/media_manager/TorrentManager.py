@@ -11,7 +11,7 @@ from common.custom_console import custom_console
 from common.utility.contents import UserContent
 from common.trackers.trackers import ITTData
 from common.constants import my_language
-from common.config import config
+from unit3dup import config
 
 
 class TorrentManager:

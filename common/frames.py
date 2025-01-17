@@ -6,7 +6,7 @@ from pathlib import Path
 from PIL import Image
 
 from common.custom_console import custom_console
-from common.config import config
+from common import config
 
 
 class VideoFrame:

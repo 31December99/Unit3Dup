@@ -2,6 +2,7 @@
 
 import os
 import sys
+from functools import cache
 
 from common.custom_console import custom_console
 from pydantic_settings import BaseSettings
@@ -114,6 +115,7 @@ FTPX_KEEP_ALIVE=False
         f.write(default_content.strip())
 
 
+
 class Config(BaseSettings):
     """
     Class to manage the configuration and validation of environment vvariables
@@ -168,6 +170,42 @@ class Config(BaseSettings):
     FTPX_LOCAL_PATH: str | None = None
     FTPX_ROOT: str = "."
     FTPX_KEEP_ALIVE: bool = False
+
+    if os.name == "nt":
+        # C:\Users\user\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_\LocalCache\Local
+        default_env_path: Path = Path(os.getenv("LOCALAPPDATA", ".")) / f"{service_filename}"
+        torrent_archive_path: Path = Path(os.getenv("LOCALAPPDATA", ".")) / "torrent_archive"
+        default_env_path_cache: Path = Path(os.getenv("LOCALAPPDATA", ".")) / f"Unit3Dup_cache"
+    else:
+        default_env_path: Path = Path.home() / f"{service_filename}"
+        torrent_archive_path: Path = Path.home() / "torrent_archive"
+        default_env_path_cache: Path = Path.home() / "Unit3Dup_cache"
+
+    if not default_env_path.exists():
+        print(f"Create default configuration file: {default_env_path}\n")
+        create_default_env_file(default_env_path)
+
+    if not torrent_archive_path.exists():
+        print(f"Create default torrent archive path: {torrent_archive_path}")
+        os.makedirs(torrent_archive_path, exist_ok=True)
+
+    if not default_env_path_cache.exists():
+        print(f"Create default cache path: {default_env_path_cache}")
+        os.makedirs(default_env_path_cache, exist_ok=True)
+
+    load_dotenv(dotenv_path=default_env_path)
+
+
+    @staticmethod
+    def wait_for_user_confirmation():
+        # Wait for user confirmation in case of validation failure
+        try:
+            custom_console.bot_log(
+                "Press Enter to continue with the default value or Ctrl-C to exit and update your config file *.env")
+            input()
+        except KeyboardInterrupt:
+            custom_console.bot_log("\nOperation cancelled.Please update your config file")
+            sys.exit(0)
 
     @model_validator(mode='before')
     def validate_fields(cls, values: dict) -> dict:
@@ -301,45 +339,12 @@ class Config(BaseSettings):
 
         values["IGDB_CLIENT_ID"] = validate_str(values.get("IGDB_CLIENT_ID", None), "IGDB_CLIENT_ID", "client_id")
         values["IGDB_ID_SECRET"] = validate_str(values.get("IGDB_ID_SECRET", None), "IGDB_ID_SECRET", "secret")
-
-
         return values
 
-    @staticmethod
-    def wait_for_user_confirmation():
-        # Wait for user confirmation in case of validation failure
-        try:
-            custom_console.bot_log(
-                "Press Enter to continue with the default value or Ctrl-C to exit and update your config file *.env")
-            input()
-        except KeyboardInterrupt:
-            custom_console.bot_log("\nOperation cancelled.Please update your config file")
-            sys.exit(0)
 
-if os.name == "nt":
-    # C:\Users\user\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_\LocalCache\Local
-    default_env_path: Path = Path(os.getenv("LOCALAPPDATA", ".")) / f"{service_filename}"
-    torrent_archive_path: Path = Path(os.getenv("LOCALAPPDATA", ".")) / "torrent_archive"
-    default_env_path_cache: Path = Path(os.getenv("LOCALAPPDATA", ".")) / f"Unit3Dup_cache"
-else:
-    default_env_path: Path = Path.home() / f"{service_filename}"
-    torrent_archive_path: Path = Path.home() / "torrent_archive"
-    default_env_path_cache: Path = Path.home() / "Unit3Dup_cache"
+@cache
+def load_config():
+    config = Config()
+    return config
 
 
-if not default_env_path.exists():
-    print(f"Create default configuration file: {default_env_path}\n")
-    create_default_env_file(default_env_path)
-
-if not torrent_archive_path.exists():
-    print(f"Create default torrent archive path: {torrent_archive_path}")
-    os.makedirs(torrent_archive_path, exist_ok=True)
-
-if not default_env_path_cache.exists():
-    print(f"Create default cache path: {default_env_path_cache}")
-    os.makedirs(default_env_path_cache, exist_ok=True)
-
-
-
-load_dotenv(dotenv_path=default_env_path)
-config = Config()

@@ -6,7 +6,7 @@ import requests
 
 from urllib.parse import urljoin
 from common.custom_console import custom_console
-from common.config import config
+from unit3dup import config
 
 class Myhttp:
     def __init__(self, base_url: str, api_token: str, pass_key: str):

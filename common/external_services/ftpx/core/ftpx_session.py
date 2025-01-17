@@ -5,7 +5,7 @@ import time
 from rich.progress import Progress
 from ftplib import FTP_TLS, all_errors
 from common.custom_console import custom_console
-from common.config import config
+from common import config
 
 
 class FtpXCmds(FTP_TLS):

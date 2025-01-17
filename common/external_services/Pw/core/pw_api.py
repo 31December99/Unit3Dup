@@ -8,7 +8,7 @@ from common.external_services.Pw.core.models.search import Search
 from common.external_services.sessions.session import MyHttp
 from common.external_services.sessions.agents import Agent
 from common.custom_console import custom_console
-from common.config import config
+from common import config
 
 
 class PwAPI(MyHttp):

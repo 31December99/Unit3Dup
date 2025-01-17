@@ -2,7 +2,7 @@
 
 from common.external_services.imageHost import ImgBB, Freeimage, LensDump, ImageUploaderFallback
 from common.mediainfo import MediaFile
-from common.config import config
+from unit3dup import config
 from common.frames import VideoFrame
 from common.custom_console import custom_console
 

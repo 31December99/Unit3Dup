@@ -5,7 +5,7 @@ import os
 import torf
 from tqdm import tqdm
 from common.custom_console import custom_console
-from common.config import config
+from unit3dup import config
 from unit3dup.contents import Contents
 
 

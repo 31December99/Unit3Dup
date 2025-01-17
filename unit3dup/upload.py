@@ -7,7 +7,7 @@ from unit3dup import pvtTracker, payload, contents
 from common.trackers.trackers import ITTData
 from common.custom_console import custom_console
 from abc import ABC, abstractmethod
-from common.config import config
+from unit3dup import config
 
 
 class UploadBot(ABC):
