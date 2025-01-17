@@ -5,11 +5,12 @@ from unit3dup.media_manager.models.qbitt import QBittorrent
 from unit3dup.pvtTorrent import Mytorrent
 from unit3dup.duplicate import Duplicate
 from unit3dup.contents import Contents
-from media_db.search import TvShow
+from unit3dup import config
 
+from media_db.search import TvShow
 from common.custom_console import custom_console
 from common.clients.qbitt import Qbitt
-from common.config import config
+
 
 
 

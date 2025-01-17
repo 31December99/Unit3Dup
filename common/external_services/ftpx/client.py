@@ -4,7 +4,7 @@ import os
 from common.external_services.ftpx.core.models.list import FTPDirectory
 from common.external_services.ftpx.core.ftpx_service import FtpX
 from common.custom_console import custom_console
-from common.config import config
+from common import config
 from rich.prompt import Prompt
 from rich.table import Table
 from rich.text import Text

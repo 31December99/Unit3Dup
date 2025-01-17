@@ -7,7 +7,7 @@ from unit3dup.upload import UploadDocument
 from unit3dup.contents import Contents
 
 from common.utility.contents import UserContent
-from common.config import config
+from unit3dup import config
 
 class DocuManager:
 

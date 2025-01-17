@@ -48,7 +48,7 @@ class ManageTitles:
         video_ext = [
             ".mp4", ".mkv", ".avi", ".mov", ".wmv", ".flv", ".webm", ".3gp", ".ogg", 
             ".mpg", ".mpeg", ".m4v", ".rm", ".rmvb", ".vob", ".ts", ".m2ts", ".divx", 
-            ".asf", ".swf", ".ogv", ".drc", ".m3u8", ".pdf"
+            ".asf", ".swf", ".ogv", ".drc", ".m3u8", ".pdf", ".epub"
         ]
         return os.path.splitext(file)[1].lower() in video_ext
 
@@ -69,7 +69,10 @@ class ManageTitles:
         Returns document type based on file extension
         """
         ext = os.path.splitext(file_name)[1].lower()
-        type_ = {".pdf": "edicola"}
+        type_ = {
+            ".pdf": "edicola",
+            ".epub": "edicola",
+            }
         return type_.get(ext, None)
 
     @staticmethod

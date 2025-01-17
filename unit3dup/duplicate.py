@@ -5,12 +5,11 @@ from common.utility import title
 from common.constants import my_language
 from common.trackers.trackers import ITTData
 from common.trackers.itt import itt_data
-from common.config import config
 from common.custom_console import custom_console
-from unit3dup.torrent import Torrent
-from unit3dup.contents import Contents
 from unit3dup.media_manager.MediaInfoManager import MediaInfoManager
-
+from unit3dup.contents import Contents
+from unit3dup.torrent import Torrent
+from unit3dup import config
 
 class CompareTitles:
 

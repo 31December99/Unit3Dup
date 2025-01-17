@@ -6,7 +6,7 @@ import requests
 import qbittorrent
 
 from qbittorrent import Client
-from common.config import config
+from common import config
 from unit3dup.pvtTorrent import Mytorrent
 from unit3dup.contents import Contents
 from common.custom_console import custom_console

@@ -9,7 +9,7 @@ from unit3dup.contents import Contents
 from unit3dup.pvtVideo import Video
 
 from common.utility.contents import UserContent
-from common.config import config, default_env_path_cache
+from unit3dup import config
 from common.custom_console import custom_console
 
 class VideoManager:
@@ -27,7 +27,7 @@ class VideoManager:
         self.cli = cli
 
         # description cache
-        self.cache = diskcache.Cache(str(default_env_path_cache))
+        self.cache = diskcache.Cache(str(config.default_env_path_cache))
 
     def process(self) -> list["QBittorrent"] | None:
         """
