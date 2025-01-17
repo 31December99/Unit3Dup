@@ -38,49 +38,48 @@ class VideoManager:
         """
         qbittorrent_list = []
         for content in self.contents:
-
             # Filter contents based on existing torrents or duplicates
-            if (
-                UserContent.is_preferred_language(content=content) or
-                (self.cli.duplicate or config.DUPLICATE_ON)
-            ):
+            if UserContent.is_preferred_language(content=content):
 
-                if not UserContent.is_duplicate(content=content):
-                    # Search for the TMDB ID
-                    tmdb_result = UserContent.tmdb(content=content)
+                # Skip if it is a duplicate
+                if self.cli.duplicate or config.DUPLICATE_ON and UserContent.is_duplicate(content=content):
+                    continue
 
-                    # if the cache description is enabled
-                    video_info = self.load_cache(index_=tmdb_result.video_id)
-                    # if there is no available cached description
-                    if not video_info:
-                        # get a new description if cache is disabled
-                        file_name = str(os.path.join(content.folder, content.file_name))
-                        video_info = Video.info(file_name, tmdb_id=tmdb_result.video_id, trailer_key=tmdb_result.trailer_key)
-                    # cache it if cache is enabled
-                    self.cache_it(index_=tmdb_result.video_id, data=video_info )
+                # Search for the TMDB ID
+                tmdb_result = UserContent.tmdb(content=content)
 
-                    # Tracker payload
-                    unit3d_up = UploadVideo(content)
-                    data = unit3d_up.payload(tv_show=tmdb_result, video_info=video_info)
+                # if the cache description is enabled
+                video_info = self.load_cache(index_=tmdb_result.video_id)
+                # if there is no available cached description
+                if not video_info:
+                    # get a new description if cache is disabled
+                    file_name = str(os.path.join(content.folder, content.file_name))
+                    video_info = Video.info(file_name, tmdb_id=tmdb_result.video_id, trailer_key=tmdb_result.trailer_key)
+                # cache it if cache is enabled
+                self.cache_it(index_=tmdb_result.video_id, data=video_info )
 
-                    # Torrent creation
-                    if not UserContent.torrent_file_exists(content=content, class_name=self.__class__.__name__):
-                        torrent_response = UserContent.torrent(content=content)
-                    else:
-                        torrent_response = None
+                # Tracker payload
+                unit3d_up = UploadVideo(content)
+                data = unit3d_up.payload(tv_show=tmdb_result, video_info=video_info)
 
-                    # Get a new tracker instance
-                    tracker = unit3d_up.tracker(data=data)
+                # Torrent creation
+                if not UserContent.torrent_file_exists(content=content, class_name=self.__class__.__name__):
+                    torrent_response = UserContent.torrent(content=content)
+                else:
+                    torrent_response = None
 
-                    # Upload
-                    tracker_response = unit3d_up.send(tracker=tracker)
+                # Get a new tracker instance
+                tracker = unit3d_up.tracker(data=data)
 
-                    qbittorrent_list.append(
-                        QBittorrent(
-                            tracker_response=tracker_response,
-                            torrent_response=torrent_response,
-                            content=content
-                        ))
+                # Upload
+                tracker_response = unit3d_up.send(tracker=tracker)
+
+                qbittorrent_list.append(
+                    QBittorrent(
+                        tracker_response=tracker_response,
+                        torrent_response=torrent_response,
+                        content=content
+                    ))
         # // end content
         return qbittorrent_list
 

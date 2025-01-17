@@ -28,7 +28,7 @@ class CompareTitles:
 
         # Compare season and episode only if it is a serie
         # Return true if they have at least the same season and episode
-        if self.content_file.guessit_season and  self.tracker_file.guessit_season:
+        if self.content_file.guessit_season and self.tracker_file.guessit_season:
             same_season = self.content_file.guessit_season == self.tracker_file.guessit_season
             same_episode = self.content_file.guessit_episode == self.tracker_file.guessit_episode
             return same_season and same_episode
@@ -106,13 +106,17 @@ class Duplicate:
         self.DELTA_SIZE_WIDTH = 2
 
     def process(self) -> bool:
-        custom_console.bot_log(f"' {self.content.display_name.upper()} '\nSize({self.content_size} {self.size_unit}) "
-                               f"size_th={self.size_threshold}%")
 
-        if self.category != self.game_category and self.category != self.docu_category:
-            custom_console.bot_log(f"Audio({'-'.join(self.content.audio_languages).upper().strip()}) "
-                                   f"Resolution({self.get_resolution_by_name(self.content.resolution)})\n")
+        if self.category in {self.movie_category, self.serie_category}:
+            audio = f"Audio: {','.join(self.content.audio_languages).upper()}"
+            resolution = self.get_resolution_by_num(self.content.resolution)
+            media = f"[{audio + ' - ' + resolution}]"
+        else:
+            media = ""
 
+        custom_console.bot_log(f"-> {self.content.display_name.upper()} - "
+                               f"Size {self.content_size} {self.size_unit} "
+                               f"{media} size_th={self.size_threshold}%\n")
 
         return self.search()
 
@@ -130,7 +134,6 @@ class Duplicate:
 
         # if a result is found, ask the user
         if already_present:
-            # Start message prints the size of the user file
             while 1:
                 custom_console.bot_question_log(
                     "\nPress (C) to continue, (S) to SKIP.. (Q) Quit - "
@@ -151,13 +154,13 @@ class Duplicate:
             return False
 
     @staticmethod
-    def get_resolution_by_name(res_id: int)-> str:
+    def get_resolution_by_num(res_id: int) -> str:
         return next((key for key, value in itt_data['RESOLUTION'].items() if value == res_id), None)
 
     def _calculate_threshold(self, size: int) -> int:
         # Size in GB
         # Skip duplicate check if the size is out of the threshold
-        size = round(size / (1024**3), 2) if self.size_unit=='GB' else round(size / (1024**2), 2)
+        size = round(size / (1024 ** 3), 2) if self.size_unit == 'GB' else round(size / (1024 ** 2), 2)
         return round(abs(self.content_size - size) / max(self.content_size, size) * 100)
 
     def _print_output(self, value: dict, delta_size: int):
@@ -204,9 +207,9 @@ class Duplicate:
         for key, tracker_value in data_from_the_tracker.items():
             if "attributes" in key:
                 if (
-                    tracker_value["category_id"] == self.movie_category
-                    or tracker_value["category_id"] == self.serie_category
-                    or tracker_value["category_id"] == self.game_category
+                        tracker_value["category_id"] == self.movie_category
+                        or tracker_value["category_id"] == self.serie_category
+                        or tracker_value["category_id"] == self.game_category
                 ):
 
                     delta_size = self._calculate_threshold(size=tracker_value["size"])
@@ -214,19 +217,19 @@ class Duplicate:
                         # Not a duplicate
                         continue
 
-                # TH_SIZE = 100 %
-                # UserFile(GB) - TrackerFile(GB) / max(UserFile,TrackerFile) = DeltaSize  > TH_SIZE ?
-                #   25.72      -   2.29          /           25.72           =   91.1%    > 100%    NO (duplicate)
-                #   25.72      -   11.26         /           25.72           =   56.4%    > 100%    NO (duplicate)
-                #   25.72      -   1.78          /           25.72           =   93.1%    > 100%    NO (duplicate)
-                # ->>>>>>> Non supera la differenza (Th_size) da noi impostata - è un duplicate
+                    # TH_SIZE = 100 %
+                    # UserFile(GB) - TrackerFile(GB) / max(UserFile,TrackerFile) = DeltaSize  > TH_SIZE ?
+                    #   25.72      -   2.29          /           25.72           =   91.1%    > 100%    NO (duplicate)
+                    #   25.72      -   11.26         /           25.72           =   56.4%    > 100%    NO (duplicate)
+                    #   25.72      -   1.78          /           25.72           =   93.1%    > 100%    NO (duplicate)
+                    # ->>>>>>> Non supera la differenza (Th_size) da noi impostata - è un duplicate
 
-                # TH_SIZE = 0 %
-                # UserFile(GB) - TrackerFile(GB) / max(UserFile,TrackerFile) = DeltaSize   > TH_SIZE ?
-                #   25.72      -   2.29          /           25.72           =   91.1 %    > 0%     SI (no duplicate)
-                #   25.72      -   11.26         /           25.72           =   56.4%     > 0%     SI (no duplicate)
-                #   25.72      -   1.78          /           25.72           =   93.1 %    > 0%     SI (no duplicate)
-                # ->>>>>>> Supera la differenza (Th_size) da noi impostata - Non è un duplicate
+                    # TH_SIZE = 0 %
+                    # UserFile(GB) - TrackerFile(GB) / max(UserFile,TrackerFile) = DeltaSize   > TH_SIZE ?
+                    #   25.72      -   2.29          /           25.72           =   91.1 %    > 0%     SI (no duplicate)
+                    #   25.72      -   11.26         /           25.72           =   56.4%     > 0%     SI (no duplicate)
+                    #   25.72      -   1.78          /           25.72           =   93.1 %    > 0%     SI (no duplicate)
+                    # ->>>>>>> Supera la differenza (Th_size) da noi impostata - Non è un duplicate
 
                     # compare the seasons if it is a serie
                     if self.compare(value=tracker_value, content_file=self.guess_filename):
