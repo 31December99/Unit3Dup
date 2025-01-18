@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 import re
+import os
 
 from pymediainfo import MediaInfo
-
 
 class MediaFile:
     """
@@ -10,7 +10,14 @@ class MediaFile:
     """
     def __init__(self, file_path):
         self.file_path = file_path
-        self.media_info = MediaInfo.parse(self.file_path)
+
+        try:
+            self.media_info = MediaInfo.parse(self.file_path)
+        except OSError as e:
+            if os.name != 'nt':
+                print(f"{e} Try to install: sudo apt-get install -y libmediainfo-dev")
+            exit(1)
+
 
     @property
     def general_track(self):
