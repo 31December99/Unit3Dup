@@ -116,7 +116,7 @@ class Bot:
         # Process the contents (files)
         self.torrent_manager.process(contents)
 
-    def watcher(self, duration: int, watcher_path: str):
+    def watcher(self, duration: int, watcher_path: str, force_media_type: int):
         """
         Monitors the watcher path for new files, moves them to the destination folder,
         then uploads them to the tracker
@@ -141,7 +141,7 @@ class Bot:
                 while time.perf_counter() < end_time:
                     remaining_time = end_time - time.perf_counter()
                     custom_console.bot_counter_log(
-                        f"WATCHDOG: {remaining_time:.1f} seconds Ctrl-c to Exit"
+                        f"WATCHDOG: {remaining_time:.1f} seconds Ctrl-c to Exit "
                     )
                     time.sleep(0.01)
                 print()
@@ -180,7 +180,7 @@ class Bot:
 
                 # Start uploading
                 print()
-                self.run()
+                self.run(force_media_type=force_media_type)
 
         except KeyboardInterrupt:
             custom_console.bot_log("Exiting...")
