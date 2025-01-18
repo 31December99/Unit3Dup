@@ -50,16 +50,16 @@ class TorrentManager:
             content for content in contents if content.category == self.docu_category
         ]
 
+        if config.DUPLICATE_ON:
+            custom_console.bot_log("'[ACTIVE]' Searching for duplicate")
+
         # Build the torrent file and upload each GAME to the tracker
         if games:
-            custom_console.bot_log("Searching for duplicate.Please wait..")
             game_manager = GameManager(contents=games, cli=self.cli)
             game_process_results = game_manager.process()
 
         # Build the torrent file and upload each VIDEO to the tracker
         if videos:
-            if config.DUPLICATE_ON:
-                custom_console.bot_log("Searching for duplicate.Please wait..")
             video_manager = VideoManager(contents=videos, cli=self.cli)
             video_process_results = video_manager.process()
 

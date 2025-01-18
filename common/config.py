@@ -65,7 +65,7 @@ DUPLICATE_ON=False
 # delta(%) < SIZE_TH = duplicate
 SIZE_TH=10
 
-# Watch the folder watcher_path at regular intervals (watcher_interval)
+# Watch the folder watcher_path at regular intervals (watcher_interval seconds) 
 # and move its contents to user_path and then upload it
 WATCHER_PATH=watcher_path
 WATCHER_INTERVAL=60
@@ -243,7 +243,7 @@ class Config(BaseSettings):
 
         def validate_str(value: str | None, field_name: str, default_value: str | None) -> str | None:
             """
-            Validates strinng
+            Validates string
             """
             if isinstance(value, str) and value.strip():
                 return value

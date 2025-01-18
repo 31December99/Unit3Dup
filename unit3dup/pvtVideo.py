@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import diskcache
 
 from common.external_services.imageHost import ImgBB, Freeimage, LensDump, ImageUploaderFallback
 from common.mediainfo import MediaFile
@@ -48,36 +49,45 @@ class Video:
         # For frame caching
         self.tmdb_id = tmdb_id
 
-    @classmethod
-    def info(cls, file_name: str, tmdb_id: int, trailer_key = None):
-        """
-        Class method to create a new Video object from a file
-        """
-        # Create a new instance of the class
-        video_instance = cls(file_name, tmdb_id, trailer_key)
+        # description cache
+        self.cache = diskcache.Cache(str(config.default_env_path_cache))
 
-        # Call build_info
-        video_instance._build_info()
+    def build_info(self):
+        """Build the information to send to the tracker"""
 
-        # Return a new instance
-        return video_instance
+        # If cache is enabled and the video is already cached
+        if config.CACHE_SCR:
+            description = self.load_cache(self.tmdb_id)
+            if isinstance(description, dict):
+                self.description = description['description']
+                self.is_hd = description['is_hd']
+                if not self.description:
+                    custom_console.bot_warning_log(f""
+                                                   f"[{self.__class__.__name__}] The description in the cache is empty")
+        else:
+            self.description = None
 
-    def _build_info(self):
-        """ Build the info to send to the tracker"""
+        if not self.description:
+            # If there is no cache available
+            custom_console.bot_log(f"\n[GENERATING IMAGES..] [HD {'ON' if self.is_hd == 0 else 'OFF'}]")
+            extracted_frames, is_hd = self.video_frames.create()
+            custom_console.bot_log("Done.")
+            # Create a new description
+            self.description = self._description(extracted_frames=extracted_frames)
+            self.description += (f"[b][spoiler=Spoiler: PLAY TRAILER][center][youtube]"
+                                 f"{self.trailer_key}[/youtube][/center][/spoiler][/b]")
+            self.is_hd = is_hd
 
-        # Return a list of frames and the hd info
-        custom_console.bot_log(f"\n[GENERATING IMAGES..] [HD {'ON' if self.is_hd == 0 else 'OFF'}]")
-        extracted_frames, is_hd = self.video_frames.create()
-        custom_console.bot_log("Done.")
-        self.is_hd = is_hd
 
-        # Create a new description
-        self.description = self._description(extracted_frames=extracted_frames)
-        self.description += (f"[b][spoiler=Spoiler: PLAY TRAILER][center][youtube]"
-                                   f"{self.trailer_key}[/youtube][/center][/spoiler][/b]")
+        # Write the new description to the cache
+        if config.CACHE_SCR:
+            self.cache[self.tmdb_id] = {'description' : self.description, 'is_hd' : self.is_hd}
+            custom_console.bot_warning_log("Cached!")
 
-        # Create a new mediainfo object
+
+        # Create a new media info object
         self.mediainfo = self._mediainfo()
+
 
     def _mediainfo(self) -> str:
         """Return media info as a string."""
@@ -126,3 +136,23 @@ class Video:
         # Append the new URL to the description string
         description += "\n[/center]"
         return description
+
+    def load_cache(self, index_: int):
+
+        # Check if the item is in the cache
+        if index_ not in self.cache:
+            return False
+
+        custom_console.bot_warning_log(f"** {self.__class__.__name__} **: Using cached Description!")
+
+        try:
+            # Try to get the video from the cache
+            video = self.cache[index_]
+        except KeyError:
+            # Handle the case where the video is missing or the cache is corrupted
+            custom_console.bot_error_log("Cached frame not found or cache file corrupted")
+            custom_console.bot_error_log("Proceed to extract the screenshot again. Please wait..")
+            return False
+
+        # // OK
+        return video
