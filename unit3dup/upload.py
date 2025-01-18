@@ -3,7 +3,7 @@ import os
 import requests
 
 from common.external_services.igdb.core.models.search import Game
-from unit3dup import pvtTracker, payload, contents
+from unit3dup import pvtVideo, pvtTracker, payload, contents
 from common.trackers.trackers import ITTData
 from common.custom_console import custom_console
 from abc import ABC, abstractmethod
@@ -88,7 +88,7 @@ class UploadVideo(UploadBot):
         super().__init__(content)
         self.tracker_data = ITTData.load_from_module()
 
-    def payload(self, tv_show: list, video_info: pvtTracker):
+    def payload(self, tv_show: list, video_info: pvtVideo):
         if video_info:
             return payload.Data(
                 metainfo=self.metainfo,

@@ -21,8 +21,9 @@ class GameManager:
             contents (list): List of content media objects
             cli (argparse.Namespace): user flag Command line
         """
-        self.contents = contents
-        self.cli = cli
+        self.torrent_found: bool = False
+        self.contents: list['Contents'] = contents
+        self.cli: argparse = cli
         self.igdb = IGDBClient()
 
     def process(self) -> list["QBittorrent"]:
@@ -39,6 +40,15 @@ class GameManager:
         qbittorrent_list = []
         for content in self.contents:
 
+            # Torrent creation
+            if not UserContent.torrent_file_exists(content=content, class_name=self.__class__.__name__):
+                self.torrent_found = False
+            else:
+                # Skip if the watcher is active
+                if self.cli.watcher:
+                    continue
+                self.torrent_found = True
+
             # Search for the game on IGDB using the content's title and platform tags
             game_data_results = self.igdb.game(content=content)
 
@@ -50,15 +60,15 @@ class GameManager:
             if (self.cli.duplicate or config.DUPLICATE_ON) and UserContent.is_duplicate(content=content):
                 continue
 
-            # Prepare the upload game data with the search results
-            unit3d_up = UploadGame(content)
-            data = unit3d_up.payload(igdb=game_data_results)
-
-            # Create the torrent file for the content
-            if not UserContent.torrent_file_exists(content=content, class_name=self.__class__.__name__):
+            # Does not create the torrent if the torrent was found earlier
+            if not self.torrent_found:
                 torrent_response = UserContent.torrent(content=content)
             else:
                 torrent_response = None
+
+            # Prepare the upload game data with the search results
+            unit3d_up = UploadGame(content)
+            data = unit3d_up.payload(igdb=game_data_results)
 
             # Get the tracker instance to send the upload request
             tracker = unit3d_up.tracker(data=data)
