@@ -50,25 +50,34 @@ IMGBB_PRIORITY=0
 FREE_IMAGE_PRIORITY=1
 LENSDUMP_PRIORITY=2
 
-# Youtube favorite channel Trailers FilmsNow it
+# ------------------------------------------------------------------------------------------------------------
+
+# Youtube favorite channel Trailers i.e : FilmsNow it
 YOUTUBE_FAV_CHANNEL_ID=UCGCbxpnt25hWPFLSbvwfg_w
 
-# Use the YouTube favorite Channel if it is enabled otherwise perform a global search
+# Enable to use the YouTube favorite Channel otherwise perform a global search
 YOUTUBE_CHANNEL_ENABLE=False
 
+# ------------------------------------------------------------------------------------------------------------
+
 # Search for possible candidates for duplicate files
-# True = enabled ; False = disabled
 DUPLICATE_ON=False
 
+# auto Skip duplicates if founds
+SKIP_DUPLICATE=False
 
 # Discard videos whose size deviates by more than the specified percentage (size_th) from the video in tracker
 # delta(%) < SIZE_TH = duplicate
-SIZE_TH=10
+SIZE_TH=50
+
+# ------------------------------------------------------------------------------------------------------------
 
 # Watch the folder watcher_path at regular intervals (watcher_interval seconds) 
-# and move its contents to user_path and then upload it
 WATCHER_PATH=watcher_path
+# and move its contents to user_path and then upload it
 WATCHER_INTERVAL=60
+
+# ------------------------------------------------------------------------------------------------------------
 
 # Number of screenshots we create
 NUMBER_OF_SCREENSHOTS=4
@@ -77,8 +86,9 @@ NUMBER_OF_SCREENSHOTS=4
 COMPRESS_SCSHOT=4
 
 # Resize image before sending to image hosting 
-# True = Resize ; False = No resize
 RESIZE_SCSHOT=False
+
+# ------------------------------------------------------------------------------------------------------------
 
 # Path for each torrent file created
 TORRENT_ARCHIVE=.
@@ -86,19 +96,27 @@ TORRENT_ARCHIVE=.
 # Torrent file comment (max 100 chars)
 TORRENT_COMMENT=no_comment
 
+# ------------------------------------------------------------------------------------------------------------
+
 # Preferred language. Discard videos with a language different from preferred_lang (default=all)
 PREFERRED_LANG=all
+
+# ------------------------------------------------------------------------------------------------------------
 
 # Hide your nickname (only the nick name)
 ANON=False
 
+# ------------------------------------------------------------------------------------------------------------
+
 # Active the cache for the screenshots
 CACHE_SCR=False
+
+# ------------------------------------------------------------------------------------------------------------
 
 #########################################
 ################  OPTIONAL  #############  
 #########################################
-# PW
+# PW - not implemented yet -
 PW_API_KEY=no_key
 PW_URL=http://localhost:9696/api/v1
 
@@ -152,6 +170,7 @@ class Config(BaseSettings):
     YOUTUBE_CHANNEL_ENABLE: bool = False
 
     DUPLICATE_ON: bool = False
+    SKIP_DUPLICATE: bool = False
     NUMBER_OF_SCREENSHOTS: int = 6
     COMPRESS_SCSHOT: int = 4
     RESIZE_SCSHOT: bool = False
@@ -182,7 +201,7 @@ class Config(BaseSettings):
         default_env_path_cache: Path = Path.home() / "Unit3Dup_cache"
 
     if not default_env_path.exists():
-        print(f"Create default configuration file: {default_env_path}\n")
+        print(f"Create default configuration file: {default_env_path}")
         create_default_env_file(default_env_path)
 
     if not torrent_archive_path.exists():
@@ -301,6 +320,7 @@ class Config(BaseSettings):
 
         #// Preferences
         values["DUPLICATE_ON"] = validate_boolean(values.get("DUPLICATE_ON", False), "DUPLICATE_ON", False)
+        values["SKIP_DUPLICATE"] = validate_boolean(values.get("SKIP_DUPLICATE", False), "SKIP_DUPLICATE", False)
         values["NUMBER_OF_SCREENSHOTS"] = validate_int(values.get("NUMBER_OF_SCREENSHOTS", 6), "NUMBER_OF_SCREENSHOTS", 6)
         values["COMPRESS_SCSHOT"] = validate_int(values.get("COMPRESS_SCSHOT", 4), "COMPRESS_SCSHOT", 4)
         values["RESIZE_SCSHOT"] = validate_boolean(values.get("RESIZE_SCSHOT", False), "RESIZE_SCSHOT", False)

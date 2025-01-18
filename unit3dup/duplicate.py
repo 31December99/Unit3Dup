@@ -132,26 +132,29 @@ class Duplicate:
         for t_data in tracker_search["data"]:
             already_present = self._process_tracker_data(t_data)
 
-        # if a result is found, ask the user
-        if already_present:
-            while 1:
-                custom_console.bot_question_log(
-                    "\nPress (C) to continue, (S) to SKIP.. (Q) Quit - "
-                )
-                user_answer = input()
+        # if a result is found, ask the user or autoskip
+            if already_present:
+                if not config.SKIP_DUPLICATE:
+                    while True:
+                        custom_console.bot_question_log(
+                            "\nPress (C) to continue, (S) to SKIP.. (Q) Quit - "
+                        )
+                        user_answer = input()
 
-                # Exit
-                if "q" == user_answer.lower():
-                    exit(1)
+                        # Exit
+                        if "q" == user_answer.lower():
+                            exit(1)
 
-                # Choice to continue
-                if "c" == user_answer.lower():
-                    return False
-                # Skip this media
-                if "s" == user_answer.lower():
+                        # Choice to continue
+                        if "c" == user_answer.lower():
+                            return False
+                        # Skip this media
+                        if "s" == user_answer.lower():
+                            return True
+                else: # if skip_duplicate is on -> autoskip
                     return True
-        else:
-            return False
+            else:
+                return False
 
     @staticmethod
     def get_resolution_by_num(res_id: int) -> str:
