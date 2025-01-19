@@ -82,7 +82,6 @@ class Video:
         # Write the new description to the cache
         if config.CACHE_SCR:
             self.cache[self.tmdb_id] = {'description' : self.description, 'is_hd' : self.is_hd}
-            custom_console.bot_warning_log("Cached!")
 
 
         # Create a new media info object
