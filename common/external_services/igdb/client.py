@@ -220,6 +220,7 @@ class IGDBClient:
 
 
     def game(self, content: Contents)-> Game | None:
+        custom_console.bot_question_log(f"Contacting host for GAME ID. Please wait...\n")
         # Try a broader search...
         igdb_results, candidate = self.broader(game_title=content.game_title)
 
