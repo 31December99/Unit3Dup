@@ -24,7 +24,7 @@ class UploadBot(ABC):
         self.API_TOKEN = config.ITT_APIKEY
         self.BASE_URL = config.ITT_URL
 
-    def send(self, tracker: pvtTracker, nfo_path = None) -> requests:
+    def send(self, tracker: pvtTracker, nfo_path = None) -> (requests, dict):
         tracker_response = tracker.upload_t(
             data=tracker.data, torrent_path=self.torrent_path, nfo_path=nfo_path
         )
@@ -36,14 +36,14 @@ class UploadBot(ABC):
                 f"\n[TRACKER RESPONSE]............  {tracker_response_body['message'].upper()}\n\n"
             )
             custom_console.rule()
-            return tracker_response_body["data"]
+            return tracker_response_body["data"],{}
         else:
-            message = json.loads(tracker_response.text)["data"]
+            error_message = json.loads(tracker_response.text)["data"]
             custom_console.bot_error_log( f"\nIt was not possible to upload the media: "
-                                          f"'{message}'\n\n"
+                                          f"'{error_message}'\n\n"
             )
         custom_console.rule()
-        return tracker_response
+        return tracker_response, error_message
 
     @abstractmethod
     def payload(self, **kwargs):
