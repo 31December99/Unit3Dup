@@ -6,8 +6,8 @@ from common.custom_console import custom_console
 from common.utility.utility import ManageTitles
 from tmdbv3api import TMDb, Movie, TV, Season
 from unit3dup.contents import Contents
-from media_db.results import Results
-from media_db import config
+from common.media_db.results import Results
+from common.media_db import config
 from unidecode import unidecode
 from thefuzz import fuzz
 
