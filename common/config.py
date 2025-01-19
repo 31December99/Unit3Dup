@@ -11,6 +11,8 @@ from dotenv import load_dotenv
 from urllib.parse import urlparse
 from pathlib import Path
 
+from common.utility.utility import ManageTitles
+
 service_filename = "Unit3Dbot_service.env"
 
 def create_default_env_file(path: Path):
@@ -75,6 +77,8 @@ SIZE_TH=50
 # Watch the folder watcher_path at regular intervals (watcher_interval seconds) 
 WATCHER_PATH=watcher_path
 # and move its contents to user_path and then upload it
+# es: python start.py -watcher "C:\watcher_destination_folder" 
+# It will move media from the 'watcher_path' to the 'watcher_destination_folder' and upload the 'watcher_destination_folder'
 WATCHER_INTERVAL=60
 
 # ------------------------------------------------------------------------------------------------------------
@@ -82,7 +86,7 @@ WATCHER_INTERVAL=60
 # Number of screenshots we create
 NUMBER_OF_SCREENSHOTS=4
 
-# Level of compression for screenshot (quality) 0 = Best quality
+# Level of compression for screenshot 0-9 (quality) 0 = Best quality
 COMPRESS_SCSHOT=4
 
 # Resize image before sending to image hosting 
@@ -99,6 +103,7 @@ TORRENT_COMMENT=no_comment
 # ------------------------------------------------------------------------------------------------------------
 
 # Preferred language. Discard videos with a language different from preferred_lang (default=all)
+# [ "ENG", "USA","ITA", "DEU", "FRA",  "GBR", "ESP", "JPN", "BRA", "RUS", "CHN"]
 PREFERRED_LANG=all
 
 # ------------------------------------------------------------------------------------------------------------
@@ -272,6 +277,21 @@ class Config(BaseSettings):
             Config.wait_for_user_confirmation()
             return default_value
 
+        def validate_iso3166(value: str | None, field_name: str, default_value: str | None) -> str | None:
+            """
+            Validates string
+            """
+            if isinstance(value, str) and value.strip():
+                if ManageTitles.convert_iso(value):
+                    return value
+                if value.lower()=='all':
+                    return value
+            custom_console.bot_error_log(
+                f"-> not configured {field_name} '{value}' Using default: {default_value}"
+            )
+            Config.wait_for_user_confirmation()
+            return default_value
+
 
         def validate_url(value: str, field_name: str, default_value: str) -> str:
             """
@@ -324,7 +344,7 @@ class Config(BaseSettings):
         values["NUMBER_OF_SCREENSHOTS"] = validate_int(values.get("NUMBER_OF_SCREENSHOTS", 6), "NUMBER_OF_SCREENSHOTS", 6)
         values["COMPRESS_SCSHOT"] = validate_int(values.get("COMPRESS_SCSHOT", 4), "COMPRESS_SCSHOT", 4)
         values["RESIZE_SCSHOT"] = validate_boolean(values.get("RESIZE_SCSHOT", False), "RESIZE_SCSHOT", False)
-        values["PREFERRED_LANG"] = validate_str(values.get("PREFERRED_LANG", None), "PREFERRED_LANG", "all")
+        values["PREFERRED_LANG"] =  validate_iso3166(values.get("PREFERRED_LANG", None), "PREFERRED_LANG", "all")
         values["SIZE_TH"] = validate_int(values.get("SIZE_TH", 10), "SIZE_TH", 10)
         values["ANON"] = validate_boolean(values.get("ANON", False), "ANON", False)
         values["CACHE_SCR"] = validate_boolean(values.get("CACHE_SCR", False), "CACHE_SCR", False)
