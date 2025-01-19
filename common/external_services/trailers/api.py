@@ -3,7 +3,7 @@
 import requests
 from .response import YouTubeSearchResponse, Thumbnails, Id, Item, PageInfo, Snippet
 from common.custom_console import custom_console
-from common import config
+from common.external_services.trailers import config
 
 class YtTrailer:
     url = 'https://www.googleapis.com/youtube/v3/search'

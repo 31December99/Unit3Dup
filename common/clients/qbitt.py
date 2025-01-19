@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 import os
-import time
 import typing
 import requests
 import qbittorrent
 
 from qbittorrent import Client
-from common import config
+from common.clients import config
 from unit3dup.pvtTorrent import Mytorrent
 from unit3dup.contents import Contents
 from common.custom_console import custom_console

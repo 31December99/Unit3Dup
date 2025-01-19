@@ -6,9 +6,8 @@ from unit3dup.media_manager.VideoManager import VideoManager
 from unit3dup.media_manager.models.qbitt import QBittorrent
 from unit3dup.media_manager.GameManager import GameManager
 from unit3dup.media_manager.DocuManager import DocuManager
-
+from unit3dup.media_manager.utility import UserContent
 from common.custom_console import custom_console
-from common.utility.contents import UserContent
 from common.trackers.trackers import ITTData
 from common.constants import my_language
 from unit3dup import config

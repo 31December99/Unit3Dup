@@ -2,11 +2,13 @@
 import os
 
 from common.utility.utility import ManageTitles
+
+from unit3dup import config
 from unit3dup.media_manager.models.qbitt import QBittorrent
 from unit3dup.pvtTorrent import Mytorrent
 from unit3dup.duplicate import Duplicate
 from unit3dup.contents import Contents
-from unit3dup import config
+
 
 from common.media_db.search import TvShow
 from common.custom_console import custom_console

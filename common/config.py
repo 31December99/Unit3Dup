@@ -219,17 +219,11 @@ class Config(BaseSettings):
 
     load_dotenv(dotenv_path=default_env_path)
 
-
     @staticmethod
     def wait_for_user_confirmation():
         # Wait for user confirmation in case of validation failure
-        try:
-            custom_console.bot_log(
-                "Press Enter to continue with the default value or Ctrl-C to exit and update your config file *.env")
-            input()
-        except KeyboardInterrupt:
-            custom_console.bot_log("\nOperation cancelled.Please update your config file")
-            sys.exit(0)
+        custom_console.bot_log(f"Please update your config file *.env")
+        sys.exit(0)
 
     @model_validator(mode='before')
     def validate_fields(cls, values: dict) -> dict:
@@ -247,7 +241,7 @@ class Config(BaseSettings):
                 elif normalized_value in {"false", "0", "no"}:
                     return False
             custom_console.bot_error_log(
-                f"-> not configured {field_name} '{value}' Using default: {default_value}"
+                f"-> not configured {field_name} '{value}' Please use the default: {default_value}"
             )
             Config.wait_for_user_confirmation()
             return default_value
@@ -260,7 +254,7 @@ class Config(BaseSettings):
                 return int(value)
             except (ValueError, TypeError):
                 custom_console.bot_error_log(
-                    f"-> not configured {field_name} '{value}' Using default: {default_value}"
+                    f"-> not configured {field_name} '{value}' Please use the default: {default_value}"
                 )
                 Config.wait_for_user_confirmation()
                 return default_value
@@ -272,7 +266,7 @@ class Config(BaseSettings):
             if isinstance(value, str) and value.strip():
                 return value
             custom_console.bot_error_log(
-                f"-> not configured {field_name} '{value}' Using default: {default_value}"
+                f"-> not configured {field_name} '{value}' Please use the default: {default_value}"
             )
             Config.wait_for_user_confirmation()
             return default_value
@@ -287,7 +281,7 @@ class Config(BaseSettings):
                 if value.lower()=='all':
                     return value
             custom_console.bot_error_log(
-                f"-> not configured {field_name} '{value}' Using default: {default_value}"
+                f"-> not configured {field_name} '{value}' Please use the default: {default_value}"
             )
             Config.wait_for_user_confirmation()
             return default_value
@@ -302,7 +296,7 @@ class Config(BaseSettings):
             parsed_url = urlparse(value)
             if not (parsed_url.scheme and parsed_url.netloc):
                 custom_console.bot_error_log(
-                    f"->  Invalid URL value for {field_name} '{value}' Using default: {default_value}"
+                    f"->  Invalid URL value for {field_name} '{value}' Please use the default: {default_value}"
                 )
                 return default_value
             return value
@@ -318,7 +312,7 @@ class Config(BaseSettings):
             if path.is_dir():
                 return str(path)
             custom_console.bot_error_log(
-                f"-> Invalid path for {field_name} '{value}' Using default: {default_value}"
+                f"-> Invalid path for {field_name} '{value}' Please use the default: {default_value}"
             )
             Config.wait_for_user_confirmation()
             return default_value
