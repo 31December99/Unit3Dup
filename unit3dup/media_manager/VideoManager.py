@@ -41,7 +41,7 @@ class VideoManager:
                 if not UserContent.torrent_file_exists(content=content, class_name=self.__class__.__name__):
                     self.torrent_found = False
                 else:
-                    # Skip if the watcher is active
+                    # Torrent found, skip if the watcher is active
                     if self.cli.watcher:
                         continue
                     self.torrent_found = True
@@ -72,13 +72,14 @@ class VideoManager:
                 tracker = unit3d_up.tracker(data=data)
 
                 # Upload
-                tracker_response = unit3d_up.send(tracker=tracker)
+                tracker_response, tracker_message = unit3d_up.send(tracker=tracker)
 
                 qbittorrent_list.append(
                     QBittorrent(
                         tracker_response=tracker_response,
                         torrent_response=torrent_response,
-                        content=content
+                        content=content,
+                        tracker_message = tracker_message
                     ))
         # // end content
         return qbittorrent_list

@@ -28,30 +28,38 @@ class DocuManager:
             if not UserContent.torrent_file_exists(content=content, class_name=self.__class__.__name__):
                 self.torrent_found = False
             else:
-                # Skip if the watcher is active
+                # Torrent found, skip if the watcher is active
                 if self.cli.watcher:
                     continue
                 self.torrent_found = True
 
-            # Filter contents based on existing torrents or duplicates
-            if (self.cli.duplicate or config.DUPLICATE_ON) and not UserContent.is_duplicate(content=content):
+            # Skip if it is a duplicate
+            if (self.cli.duplicate or config.DUPLICATE_ON) and UserContent.is_duplicate(content=content):
+                continue
 
-                # Tracker payload
-                unit3d_up = UploadDocument(content)
-                data = unit3d_up.payload()
+            # Does not create the torrent if the torrent was found earlier
+            if not self.torrent_found:
+                torrent_response = UserContent.torrent(content=content)
+            else:
+                torrent_response = None
 
-                # Get a new tracker instance
-                tracker = unit3d_up.tracker(data=data)
+            # Tracker payload
+            unit3d_up = UploadDocument(content)
+            data = unit3d_up.payload()
 
-                # Upload
-                tracker_response = unit3d_up.send(tracker=tracker)
+            # Get a new tracker instance
+            tracker = unit3d_up.tracker(data=data)
 
-                if not self.cli.torrent:
-                    qbittorrent_list.append(
-                        QBittorrent(
-                            tracker_response=tracker_response,
-                            torrent_response=torrent_response,
-                            content=content
-                        ))
+            # Upload
+            tracker_response, tracker_message = unit3d_up.send(tracker=tracker)
+
+            if not self.cli.torrent:
+                qbittorrent_list.append(
+                    QBittorrent(
+                        tracker_response=tracker_response,
+                        torrent_response=torrent_response,
+                        content=content,
+                        tracker_message=tracker_message,
+                    ))
 
         return qbittorrent_list
