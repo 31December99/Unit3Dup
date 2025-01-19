@@ -2,12 +2,13 @@
 import argparse
 
 from unit3dup.media_manager.models.qbitt import QBittorrent
+from unit3dup.media_manager.utility import UserContent
 from unit3dup.contents import Contents
 from unit3dup.upload import UploadGame
 from unit3dup import config
 
 from common.external_services.igdb.client import IGDBClient
-from common.utility.contents import UserContent
+
 
 
 

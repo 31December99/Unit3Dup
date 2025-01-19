@@ -5,7 +5,7 @@ import json
 import time
 import requests
 
-from common import config
+from common.external_services import config
 from abc import ABC, abstractmethod
 from common.custom_console import custom_console
 
