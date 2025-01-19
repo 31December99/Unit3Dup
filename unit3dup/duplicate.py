@@ -106,9 +106,8 @@ class Duplicate:
         self.DELTA_SIZE_WIDTH = 2
 
     def process(self) -> bool:
-
         if self.category in {self.movie_category, self.serie_category}:
-            audio = f"Audio: {','.join(self.content.audio_languages).upper()}"
+            audio = f"Audio: {self.content.audio_languages}"
             resolution = self.get_resolution_by_num(self.content.resolution)
             media = f"[{audio + ' - ' + resolution}]"
         else:
@@ -117,16 +116,12 @@ class Duplicate:
         custom_console.bot_log(f"-> {self.content.display_name.upper()} - "
                                f"Size {self.content_size} {self.size_unit} "
                                f"{media} size_th={self.size_threshold}%\n")
-
         return self.search()
 
     def search(self) -> bool:
 
         # Search torrent by Name
         tracker_search = self.torrent_info.search(self.guess_filename.guessit_title)
-
-        # Flag for the search results
-        already_present = False
 
         # Compare and return a result
         for t_data in tracker_search["data"]:
