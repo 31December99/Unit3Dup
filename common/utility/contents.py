@@ -1,17 +1,16 @@
 # -*- coding: utf-8 -*-
 import os
 
+from common.utility.utility import ManageTitles
 from unit3dup.media_manager.models.qbitt import QBittorrent
 from unit3dup.pvtTorrent import Mytorrent
 from unit3dup.duplicate import Duplicate
 from unit3dup.contents import Contents
 from unit3dup import config
 
-from media_db.search import TvShow
+from common.media_db.search import TvShow
 from common.custom_console import custom_console
 from common.clients.qbitt import Qbitt
-
-
 
 
 class UserContent:
@@ -57,17 +56,23 @@ class UserContent:
            Returns:
                return boolean
            """
-        preferred_lang = config.PREFERRED_LANG.lower()
+        preferred_lang = config.PREFERRED_LANG.upper()
+        preferred_lang_to_iso = ManageTitles.convert_iso(preferred_lang)
 
-        if "not found" in content.audio_languages:
+        if "not found" in content.audio_languages: ##?
             return True
 
-        if preferred_lang == 'all' or preferred_lang in content.audio_languages:
+        if preferred_lang == 'ALL':
             return True
 
-        custom_console.bot_error_log(
-            "[Languages] ** Your preferred lang is not in your media being uploaded, skipping ! **"
+        if preferred_lang_to_iso in content.audio_languages:
+            return True
+
+        custom_console.bot_log(f"'{content.file_name}'")
+        custom_console.bot_warning_log(
+            "[UserContent] ** Your preferred lang is not in your media being uploaded, skipping ! **\n"
         )
+        custom_console.rule()
         return False
 
     @staticmethod
@@ -132,6 +137,7 @@ class UserContent:
     @staticmethod
     def send_to_qbittorrent(qbittorrent_list: list["QBittorrent"]) -> None:
         for qbittorrent_file in qbittorrent_list:
+
             if qbittorrent_file.tracker_response:
                 qb = Qbitt.connect(
                     tracker_data_response=qbittorrent_file.tracker_response,
@@ -140,3 +146,12 @@ class UserContent:
                 )
                 if qb:
                     qb.send_to_client()
+
+            # // Uploads failed
+            else:
+                custom_console.bot_log(f"[{qbittorrent_file.content.file_name}]")
+                # // print filename and reason
+                for k,v in qbittorrent_file.tracker_message.items():
+                    custom_console.bot_warning_log(f"-> {v[0]}")
+
+
