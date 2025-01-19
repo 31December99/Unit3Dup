@@ -12,3 +12,4 @@ class QBittorrent:
     tracker_response: str
     torrent_response: Mytorrent
     content: Contents
+    tracker_message: dict
