@@ -2,7 +2,7 @@
 
 from dataclasses import dataclass, field
 from common.utility import title, utility
-from media_db import results
+from common.media_db import results
 
 
 @dataclass
