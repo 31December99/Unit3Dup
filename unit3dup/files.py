@@ -160,14 +160,23 @@ class Files:
         # Contains the path of the folder passed from the CLI command
         self.folder = self.path
 
-        if self.category != self.tracker_data.category.get('game'):
-            # Description media_info inside the torrent page only for tv_show/movie categories
-            media_info = MediaFile(file_path=os.path.join(self.folder, self.file_name))
-            self.languages = media_info.available_languages
-
         # Contains the display_name, which is the name shown on the tracker page list
         # or on the tracker page
         self.display_name = ManageTitles.clean(os.path.basename(self.path))
+
+        if self.category != self.tracker_data.category.get('game'):
+            # Search for language in title string
+            filename_split = self.display_name.upper().split(" ")
+            for code in filename_split:
+                if converted_code:=ManageTitles.convert_iso(code):
+                    self.languages = converted_code
+                    break
+
+            # Give priority to the language in the title otherwise get it from the media info
+            if not self.languages:
+                # Description media_info inside the media/description for tv_show/movie categories
+                media_info = MediaFile(file_path=os.path.join(self.folder, self.file_name))
+                self.languages = media_info.available_languages
 
         # Contains the path of the folder passed from the CLI command
         self.torrent_path = self.folder
@@ -197,8 +206,6 @@ class Files:
             # intercept nfo file
             if file.lower().endswith(".nfo"):
                 self.game_nfo = os.path.join(self.folder, file)
-
-
 
         # Get the total size
         self.size = total_size

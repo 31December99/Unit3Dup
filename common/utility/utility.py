@@ -16,6 +16,38 @@ class ManageTitles:
         "\\", "&", "*", "$", "%", "#", "@", "_", "+"
     ]
 
+    # TAG Audio in title
+    iso_3166_alpha3= [ "ENG", "USA","ITA", "DEU",  "FRA",  "GBR", "ESP", "JPN", "BRA", "RUS", "CHN"]
+
+    # TAG Audio in title
+    iso_3166_alpha2_to_alpha3 = {
+        "EN": "ENG",  # exception
+        "US": "USA",
+        "IT": "ITA",
+        "DE": "DEU",
+        "FR": "FRA",
+        "GB": "GBR",
+        "ES": "ESP",
+        "JP": "JPN",
+        "BR": "BRA",
+        "RU": "RUS",
+        "CN": "CHN",
+    }
+
+    @staticmethod
+    def convert_iso(code):
+        """ Convert iso 2 to 3 """
+        code = code.upper()
+        if len(code) == 2:  # // alpha-2
+            return ManageTitles.iso_3166_alpha2_to_alpha3.get(code, None)
+        elif len(code) == 3:  # // alpha3
+            # return the same code provided it is an alpha3
+            if code in ManageTitles.iso_3166_alpha3:
+                return code
+        else:
+            return None
+
+
     @staticmethod
     def clean(filename: str) -> str:
         """
