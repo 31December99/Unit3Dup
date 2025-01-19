@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import sys
 
-from media_db import tmdb
+from common.media_db import tmdb
 from common.utility import title
 from common.custom_console import custom_console
 from common.external_services.trailers.api import YtTrailer
@@ -25,7 +25,7 @@ class TvShow:
         self.mytmdb = tmdb.MyTmdb(table=show[category], content=content)
 
     def start(self, file_name: str):
-        custom_console.bot_question_log(f"Processing '{file_name}'. Please wait...\n")
+        custom_console.bot_question_log(f"'{file_name}' - Contacting host for Video ID. Please wait...\n")
 
         guess_filename = title.Guessit(file_name)
         _title = guess_filename.guessit_title
