@@ -98,7 +98,7 @@ class Bot:
         # Create a list of content objects for each file
         # Media > Files > Content
         contents = self.get_media_multi(file_media=file_media_list)
-        # we got an handled exception
+        # we got a handled exception
         if contents is None:
             exit(1)
 
@@ -133,7 +133,7 @@ class Bot:
 
                 # Return if the watcher path doesn't exist
                 if not os.path.exists(watcher_path):
-                    custom_console.bot_error_log("Watcher path does not exist\n")
+                    custom_console.bot_error_log("Watcher path does not exist or is not configured\n")
                     return
 
                 print()
@@ -203,7 +203,7 @@ class Bot:
                 torrent_file = search[index]
                 custom_console.log(torrent_file)
 
-    def ftp(self):
+    def ftp(self, force_media_type: int):
         """
         Connects to a remote FTP server and interacts with files.
 
@@ -245,4 +245,4 @@ class Bot:
         if ftp_client.download_to_local_path:
             self.path = os.path.dirname(ftp_client.download_to_local_path)
             # Upload -f process
-            self.run()
+            self.run(force_media_type=force_media_type)
