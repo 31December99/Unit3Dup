@@ -100,7 +100,7 @@ def main():
         bot = Bot(
             path='', tracker_name=cli.args.tracker, cli=cli.args, mode="folder"
         )
-        bot.ftp()
+        bot.ftp(force_media_type=force_media)
 
     # Commands list: commands not necessary for upload but may be useful
     torrent_info = View()
