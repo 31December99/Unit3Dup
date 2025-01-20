@@ -93,17 +93,10 @@ class Auto:
 
         return [
             result
-            for media in files_path + subfolders_path
-            if (result := self.create_media_path(media)) is not None
+            for media_path in files_path + subfolders_path
+            if (result := Media(folder=self.path,subfolder=media_path,force_media_type=self.force_media_type)) is not None
         ]
 
-    def create_media_path(self, subdir: str) -> Media | None:
-
-        return Media(
-            folder=self.path,
-            subfolder=subdir,
-            force_media_type=self.force_media_type
-        )
 
     def depth_walker(self, path) -> int:
         """
