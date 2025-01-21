@@ -30,6 +30,7 @@ class TvShow:
         guess_filename = title.Guessit(file_name)
         _title = guess_filename.guessit_title
         _alternate_title = guess_filename.guessit_alternative
+        _year = guess_filename.guessit_year
         result = self.mytmdb.search(_title)
         # search episode title for the SxEx of the current content file_name or None if it's a movie
         self.episode_title = self.mytmdb.episode_title
@@ -64,6 +65,9 @@ class TvShow:
             )
             result.poster_path = url_poster
 
+            custom_console.bot_log(f"\n[TMDB TITLE].............  {_title}")
+            if _year:
+                custom_console.bot_log(f"[TMDB YEAR]..............  {_year}")
             custom_console.bot_log(f"\n[TMDB ID]................  {result.video_id}")
             custom_console.bot_log(f"[TMDB POSTER]............  {result.poster_path}")
             custom_console.bot_log(f"[TMDB BACKDROP]..........  {result.backdrop_path}")
