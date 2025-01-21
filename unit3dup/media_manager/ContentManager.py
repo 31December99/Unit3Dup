@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
+import multiprocessing
 
 from unit3dup.contents import Contents
 from unit3dup.contents import Media
 from unit3dup.automode import Auto
 from unit3dup.files import Files
-
-from multiprocessing import Pool
-
+from common.custom_console import custom_console
 
 class ContentManager:
     def __init__(self, path: str, tracker_name: str, mode: str, force_media_type=None):
@@ -22,36 +21,41 @@ class ContentManager:
         self.mode = mode
         self.force_media_type = force_media_type
 
-    def get_files(self) -> list['Media']:
+    def get_files(self) -> list['Contents']:
         """Based on selected mode"""
         if self.mode in ["man", "folder"]:
             # Manual call to load files from specified path
-            return self.manual(self.mode)
+            auto = Auto(path=self.path, mode=self.mode, tracker_name=self.tracker_name,force_media_type=self.force_media_type)
+            # run cli flag
+            file_list = auto.upload()
+            return self.process(file_list=file_list)
         else:
             # Automatic call to load files based on detected content..
-            return self.auto()
+            auto = Auto(path=self.path, tracker_name=self.tracker_name, force_media_type=self.force_media_type)
+            # run cli flag
+            file_list = auto.scan()
+            return self.process(file_list=file_list)
 
-    def manual(self, mode: str) -> list['Media']:
-        """Manual process """
-        auto = Auto(path=self.path, mode=mode, tracker_name=self.tracker_name, force_media_type=self.force_media_type)
-        file_list = auto.upload()
 
-        # Get content object for each file
-        with Pool(processes=4) as pool:
-            contents = pool.map(self.create_content_from_media, file_list)
+    def process(self, file_list: list['Media']) -> list['Contents']:
+        """ process media files and return 'contents' """
 
-        return contents
+        try:
+            with multiprocessing.Pool(processes=4) as pool:
+                contents = pool.map(self.create_content_from_media, file_list)
+        except KeyboardInterrupt:
+            # Try to clean...
+            custom_console.bot_error_log("Interrupted by the user. Exiting...")
+            pool.terminate()
+            pool.join()
+            custom_console.bot_warning_log("Processes ended")
+        except Exception as e:
+            custom_console.bot_error_log(f"Error: {e}. Please report it")
+            pool.terminate()
+            pool.join()
+        finally:
+            return contents
 
-    def auto(self) -> list['Media']:
-        """Automatic process"""
-        auto = Auto(path=self.path, tracker_name=self.tracker_name, force_media_type=self.force_media_type)
-        file_list = auto.scan()
-
-        # Get content object for each file
-        with Pool(processes=4) as pool:
-            contents = pool.map(self.create_content_from_media, file_list)
-
-        return contents
 
     def create_content_from_media(self, media: 'Media') -> Contents:
         """Creates a `Contents` object for each media item"""
