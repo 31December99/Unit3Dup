@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 
+from concurrent.futures import ThreadPoolExecutor
 from common.utility.utility import ManageTitles
 
 from unit3dup import config
@@ -8,7 +9,6 @@ from unit3dup.media_manager.models.qbitt import QBittorrent
 from unit3dup.pvtTorrent import Mytorrent
 from unit3dup.duplicate import Duplicate
 from unit3dup.contents import Contents
-
 
 from common.media_db.search import TvShow
 from common.custom_console import custom_console
@@ -136,24 +136,46 @@ class UserContent:
         else:
             return False
 
-    @staticmethod
-    def send_to_qbittorrent(qbittorrent_list: list["QBittorrent"]) -> None:
-        for qbittorrent_file in qbittorrent_list:
 
+    @staticmethod
+    def send_to_qbittorrent_worker(qbittorrent_file: QBittorrent):
+        """
+        worker: This function will handle sending a single torrent to qBittorrent
+
+        Args:
+            qbittorrent_file (QBittorrent): The object containing the torrent and other necessary info
+        """
+        try:
+            # Check if we have a valid response from the tracker
             if qbittorrent_file.tracker_response:
                 qb = Qbitt.connect(
                     tracker_data_response=qbittorrent_file.tracker_response,
                     torrent=qbittorrent_file.torrent_response,
                     contents=qbittorrent_file.content,
                 )
+                # connection successful
                 if qb:
                     qb.send_to_client()
-
-            # // Uploads failed
             else:
+                # invalid response
                 custom_console.bot_log(f"[{qbittorrent_file.content.file_name}]")
-                # // print filename and reason
-                for k,v in qbittorrent_file.tracker_message.items():
+                for k, v in qbittorrent_file.tracker_message.items():
                     custom_console.bot_warning_log(f"-> {v[0]}")
+        except Exception as e:
+            custom_console.bot_error_log(f"Error sending torrent {qbittorrent_file.content.file_name}: {str(e)}")
 
 
+    @staticmethod
+    def send_to_qbittorrent(qbittorrent_list: list[QBittorrent]) -> None:
+        """
+        Sends a list of torrents to qBittorrent using threads ( async later...)
+
+        Args:
+            qbittorrent_list (list[QBittorrent]): A list of QBittorrent objects to be sent to the client
+        """
+        with ThreadPoolExecutor(max_workers=20) as executor:
+            # Submit the torrents
+            futures = [executor.submit(UserContent.send_to_qbittorrent_worker, qb) for qb in qbittorrent_list]
+            # Wait for all threads to complete
+            for future in futures:
+                future.result()
