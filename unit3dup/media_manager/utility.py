@@ -158,9 +158,8 @@ class UserContent:
                     qb.send_to_client()
             else:
                 # invalid response
-                custom_console.bot_log(f"[{qbittorrent_file.content.file_name}]")
-                for k, v in qbittorrent_file.tracker_message.items():
-                    custom_console.bot_warning_log(f"-> {v[0]}")
+                custom_console.bot_log(f"[{qbittorrent_file.content.file_name}] ->"
+                                       f" {qbittorrent_file.tracker_message}")
         except Exception as e:
             custom_console.bot_error_log(f"Error sending torrent {qbittorrent_file.content.file_name}: {str(e)}")
 
