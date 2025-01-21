@@ -82,31 +82,35 @@ class MyTmdb:
         )
         results = Results()
         while True:
-            tmdb_id = input(f"> ")
-            if not tmdb_id.isdigit():
-                custom_console.bot_error_log(
-                    f"I do not recognize {tmdb_id} as a number. Please try again.."
-                )
-                continue
-            custom_console.bot_log(f"You have entered {tmdb_id}")
-            user_answ = input("Are you sure ? (y/n)> ")
-            keywords = ""
-            if "y" == user_answ.lower():
-                # Zero = No TMDB ID
-                if tmdb_id != "0":
-                    details, keywords = self.keywords(int(tmdb_id))
-                    # Keywords
-                    if keywords:
-                        results.keywords = keywords
-                    # If details then return the tmdb_id
-                    if details:
-                        results.poster_path = details["poster_path"]
-                        results.backdrop_path = details["backdrop_path"]
-                        results.video_id = tmdb_id
+            try:
+                tmdb_id = input(f"> ")
+                if not tmdb_id.isdigit():
+                    custom_console.bot_error_log(
+                        f"I do not recognize {tmdb_id} as a number. Please try again.."
+                    )
+                    continue
+                custom_console.bot_log(f"You have entered {tmdb_id}")
+                user_answ = input("Are you sure ? (y/n)> ")
+                keywords = ""
+                if "y" == user_answ.lower():
+                    # Zero = No TMDB ID
+                    if tmdb_id != "0":
+                        details, keywords = self.keywords(int(tmdb_id))
+                        # Keywords
+                        if keywords:
+                            results.keywords = keywords
+                        # If details then return the tmdb_id
+                        if details:
+                            results.poster_path = details["poster_path"]
+                            results.backdrop_path = details["backdrop_path"]
+                            results.video_id = tmdb_id
+                            return results
+                    else:
+                        results.video_id = 0
                         return results
-                else:
-                    results.video_id = 0
-                    return results
+            except KeyboardInterrupt:
+                custom_console.bot_log("Exiting...")
+                exit()
 
     def __requests(self):
         self.__result = self.tmdb.search(self.ext_title)
