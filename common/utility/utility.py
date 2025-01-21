@@ -80,7 +80,7 @@ class ManageTitles:
         video_ext = [
             ".mp4", ".mkv", ".avi", ".mov", ".wmv", ".flv", ".webm", ".3gp", ".ogg", 
             ".mpg", ".mpeg", ".m4v", ".rm", ".rmvb", ".vob", ".ts", ".m2ts", ".divx", 
-            ".asf", ".swf", ".ogv", ".drc", ".m3u8", ".pdf", ".epub"
+            ".asf", ".swf", ".ogv", ".drc", ".m3u8", ".pdf", ".epub", ".rar"
         ]
         return os.path.splitext(file)[1].lower() in video_ext
 

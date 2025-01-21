@@ -88,24 +88,12 @@ class Bot:
             custom_console.bot_error_log("There are no Media to process")
             return
 
-        #todo update for content ( file_media_list does not exist )
-        """
-        # Decompress .rar files if the flags are set
-        if self.cli.ftp or self.cli.unrar:
-            extractor = Extractor(media=file_media_list)
-            result = extractor.unrar()
-            if result is False:
-                custom_console.bot_error_log("Unrar Exit")
-                exit(1)
-        """
-
         # we got a handled exception
         if contents is None:
             exit(1)
 
         # Skip empty folder
         contents = [content for content in contents if content is not None]
-
 
         # -f requires at least one file
         if not contents:
@@ -126,6 +114,7 @@ class Bot:
         Args:
             duration (int): The time duration in seconds for the watchdog to wait before checking again
             watcher_path (str): The path to the folder being monitored for new files
+            force_media_type(int): The media type to use
         """
         try:
             # Watchdog loop
@@ -246,5 +235,13 @@ class Bot:
 
         if ftp_client.download_to_local_path:
             self.path = os.path.dirname(ftp_client.download_to_local_path)
+            self.mode = 'folder'
             # Upload -f process
+            # Decompress .rar files if the flags are set
+            extractor = Extractor(compressed_media__path=self.path)
+            result = extractor.unrar()
+            if result is False:
+                custom_console.bot_error_log("Unrar Exit")
+                exit(1)
+
             self.run(force_media_type=force_media_type)
