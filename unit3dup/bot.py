@@ -2,6 +2,7 @@
 
 import argparse
 import os
+import pprint
 import time
 import shutil
 import multiprocessing
@@ -80,13 +81,15 @@ class Bot:
         self.content_manager = ContentManager(
             path=self.path, tracker_name=self.tracker_name, mode=self.mode, force_media_type=force_media_type
         )
-        file_media_list = self.content_manager.get_files()
+        contents = self.content_manager.get_files()
 
         # -u requires a single file
-        if not file_media_list or not os.path.exists(self.path):
+        if not contents or not os.path.exists(self.path):
             custom_console.bot_error_log("There are no Media to process")
             return
 
+        #todo update for content ( file_media_list does not exist )
+        """
         # Decompress .rar files if the flags are set
         if self.cli.ftp or self.cli.unrar:
             extractor = Extractor(media=file_media_list)
@@ -94,16 +97,15 @@ class Bot:
             if result is False:
                 custom_console.bot_error_log("Unrar Exit")
                 exit(1)
+        """
 
-        # Create a list of content objects for each file
-        # Media > Files > Content
-        contents = self.get_media_multi(file_media=file_media_list)
         # we got a handled exception
         if contents is None:
             exit(1)
 
         # Skip empty folder
         contents = [content for content in contents if content is not None]
+
 
         # -f requires at least one file
         if not contents:
