@@ -2,7 +2,6 @@
 
 import argparse
 import os
-import pprint
 import time
 import shutil
 import multiprocessing
@@ -49,24 +48,6 @@ class Bot:
 
         # Bot Manager
         self.torrent_manager = TorrentManager(cli=self.cli)
-
-    def get_media_multi(self, file_media: list) -> list['Contents'] | None:
-        contents = None
-        try:
-            with multiprocessing.Pool(processes=4) as pool:
-                contents = pool.map(self.content_manager.get_media, file_media)
-        except KeyboardInterrupt:
-            # Try to clean...
-            custom_console.bot_error_log("Interrupted by the user. Exiting...")
-            pool.terminate()
-            pool.join()
-            custom_console.bot_warning_log("Processes ended")
-        except Exception as e:
-            custom_console.bot_error_log(f"Error: {e}. Please report it")
-            pool.terminate()
-            pool.join()
-        finally:
-            return contents
 
     def run(self, force_media_type: int) -> None:
         """
