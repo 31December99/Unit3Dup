@@ -22,7 +22,7 @@ class CommandLine:
         # Upload commands
         parser.add_argument("-u", "--upload", type=str, help="Upload Path")
         parser.add_argument("-f", "--folder", type=str, help="Upload single folder")
-        parser.add_argument("-pw", "--pw", action="store_true", help="")
+        parser.add_argument("-pw", "--pw", type=str, help="")
         parser.add_argument("-ftp", "--ftp", action="store_true", help="connect to ftpd")
         parser.add_argument("-watcher", "--watcher", type=str, help="start a watcher")
         parser.add_argument("-game", "--game", action="store_true", help="Force the game media type")

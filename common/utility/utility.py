@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 import os
 import re
+import unicodedata
+
 from datetime import datetime
 from thefuzz import fuzz
-
 
 class ManageTitles:
     """
@@ -114,7 +115,27 @@ class ManageTitles:
         """
         return fuzz.ratio(str1.lower(), str2.lower())
 
+    @staticmethod
+    def normalize_filename(filename):
+        # Remove spaces
+        filename = filename.strip()
 
+        # Remove invalid characters
+        filename = re.sub(r'[<>:"/\\|?*]', '_', filename)
+
+        # Normalize
+        filename = unicodedata.normalize('NFD', filename).encode('ascii', 'ignore').decode('ascii')
+
+        # Replace spaces with underscores
+        filename = filename.replace(' ', '_')
+
+        # Set file name length to 100 characters
+        filename = filename[:100]
+
+        # Remove periods or spaces at the end
+        filename = filename.rstrip('. ')
+
+        return filename
 class MyString:
     """
     Handles string operations like date parsing

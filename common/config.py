@@ -125,6 +125,12 @@ CACHE_SCR=False
 PW_API_KEY=no_key
 PW_URL=http://localhost:9696/api/v1
 
+# Torrent archive the pw
+PW_TORRENT_ARCHIVE=.
+
+# download folder for the pw
+PW_DOWNLOAD=.
+
 # FTPX 
 FTPX_USER=user
 FTPX_PASS=pass
@@ -155,6 +161,8 @@ class Config(BaseSettings):
 
     PW_API_KEY: str | None = None
     PW_URL: str = "http://localhost:9696/api/v1"
+    PW_TORRENT_ARCHIVE_PATH: str | None = None
+    PW_DOWNLOAD_PATH: str | None = None
     FTPX_USER: str | None = None
     FTPX_PASS: str | None = None
     FTPX_IP: str | None = None
@@ -200,21 +208,36 @@ class Config(BaseSettings):
         default_env_path: Path = Path(os.getenv("LOCALAPPDATA", ".")) / f"{service_filename}"
         torrent_archive_path: Path = Path(os.getenv("LOCALAPPDATA", ".")) / "torrent_archive"
         default_env_path_cache: Path = Path(os.getenv("LOCALAPPDATA", ".")) / f"Unit3Dup_cache"
+        PW_TORRENT_ARCHIVE_PATH: Path = Path(os.getenv("LOCALAPPDATA", ".")) / "pw_torrent_archive"
+        PW_DOWNLOAD_PATH: Path = Path(os.getenv("LOCALAPPDATA", ".")) / "pw_download"
+
     else:
         default_env_path: Path = Path.home() / f"{service_filename}"
         torrent_archive_path: Path = Path.home() / "torrent_archive"
         default_env_path_cache: Path = Path.home() / "Unit3Dup_cache"
+        PW_TORRENT_ARCHIVE_PATH: Path = Path.home() / "pw_torrent_archive"
+        PW_DOWNLOAD_PATH: Path = Path.home() /  "pw_download"
+
+
+    if not PW_TORRENT_ARCHIVE_PATH.exists():
+        print(f"Create default pw torrent archive path: {PW_TORRENT_ARCHIVE_PATH}")
+        os.makedirs(PW_TORRENT_ARCHIVE_PATH)
+
+    if not PW_DOWNLOAD_PATH.exists():
+        print(f"Create default pw download path: {PW_DOWNLOAD_PATH}")
+        os.makedirs(PW_DOWNLOAD_PATH)
+
 
     if not default_env_path.exists():
         print(f"Create default configuration file: {default_env_path}")
         create_default_env_file(default_env_path)
 
     if not torrent_archive_path.exists():
-        print(f"Create default torrent archive path: {torrent_archive_path}")
+        # print(f"Create default torrent archive path: {torrent_archive_path}")
         os.makedirs(torrent_archive_path, exist_ok=True)
 
     if not default_env_path_cache.exists():
-        print(f"Create default cache path: {default_env_path_cache}")
+        # print(f"Create default cache path: {default_env_path_cache}")
         os.makedirs(default_env_path_cache, exist_ok=True)
 
     load_dotenv(dotenv_path=default_env_path)
@@ -345,6 +368,8 @@ class Config(BaseSettings):
 
         values["TORRENT_COMMENT"] = validate_str(values.get("TORRENT_COMMENT", None), "TORRENT_COMMENT", "no_comment")
         values["TORRENT_ARCHIVE"] = validate_torrent_archive_path(values.get("TORRENT_ARCHIVE", None), "TORRENT_ARCHIVE", ".")
+        values["PW_TORRENT_ARCHIVE_PATH"] = validate_str(values.get("PW_TORRENT_ARCHIVE_PATH", None), "PW_TORRENT_ARCHIVE_PATH", '.')
+        values["PW_DOWNLOAD_PATH"] = validate_torrent_archive_path(values.get("PW_DOWNLOAD_PATH", None), "PW_DOWNLOAD_PATH", '.')
         values["IMGBB_PRIORITY"] = validate_int(values.get("IMGBB_PRIORITY", 0), "IMGBB_PRIORITY", 0)
         values["FREE_IMAGE_PRIORITY"] = validate_int(values.get("FREE_IMAGE_PRIORITY", 1), "FREE_IMAGE_PRIORITY", 1)
         values["LENSDUMP_PRIORITY"] = validate_int(values.get("LENSDUMP_PRIORITY", 2), "LENSDUMP_PRIORITY", 2)

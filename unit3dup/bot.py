@@ -4,20 +4,16 @@ import argparse
 import os
 import time
 import shutil
-import multiprocessing
 
-from pathlib import Path
 from unit3dup.media_manager.ContentManager import ContentManager
 from unit3dup.media_manager.TorrentManager import TorrentManager
-from unit3dup.contents import Contents
 from common.external_services.ftpx.core.models.list import FTPDirectory
-from common.external_services.Pw.pw_service import PwService
+from common.external_services.Pw.pw_manager import PwManager
 from common.external_services.ftpx.core.menu import Menu
 from common.external_services.ftpx.client import Client
 from common.custom_console import custom_console
 from common.extractor import Extractor
-
-
+from pathlib import Path
 
 
 class Bot:
@@ -48,6 +44,9 @@ class Bot:
 
         # Bot Manager
         self.torrent_manager = TorrentManager(cli=self.cli)
+
+        # Pw Manager
+        self.pw_manager = PwManager(cli=self.cli)
 
     def run(self, force_media_type: int) -> None:
         """
@@ -165,15 +164,9 @@ class Bot:
         a certain number of seeders
         """
         # PW service
-        pw_service = PwService()
-        custom_console.panel_message("Analyzing... Please wait")
+        self.pw_manager.process()
+        custom_console.panel_message("Searching... Please wait")
 
-        # Query the indexers for torrents related to "Maze runner"
-        search = pw_service.search(query="Maze runner")
-        for index, s in enumerate(search):
-            if s.seeders > 1:
-                torrent_file = search[index]
-                custom_console.log(torrent_file)
 
     def ftp(self, force_media_type: int):
         """

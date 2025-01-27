@@ -86,7 +86,6 @@ def main():
 
 
     # Pw
-    """
     if cli.args.pw:
         bot = Bot(
             path=cli.args.pw,
@@ -94,7 +93,8 @@ def main():
             cli=cli.args,
         )
         bot.pw()
-    """
+
+
     # ftp and upload
     if cli.args.ftp:
         bot = Bot(
