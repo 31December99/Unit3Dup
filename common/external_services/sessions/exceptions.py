@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import httpx
 from functools import wraps
 from typing import Callable, Any
 from common.custom_console import custom_console
@@ -11,6 +12,13 @@ class HttpError(Exception):
     def __init__(self, message: str):
         super().__init__(message)
         self.message = message
+
+
+# passare httpx anche agli altri
+class ConnectError(httpx.ConnectError, HttpError):
+    """Custom exception raised for connection errors."""
+    def __init__(self, message: str = "Connection error"):
+        super().__init__(message)
 
 
 class HttpAuthError(HttpError):
@@ -57,7 +65,6 @@ def exception_handler(log_errors: bool = True) -> Callable[..., Any]:
         def wrapper(*args: Any, **kwargs: Any) -> Any:
             try:
                 response = func(*args, **kwargs)
-
                 if response.status_code == 404:
                     raise HttpNotFoundError()
                 elif response.status_code == 401:
@@ -67,6 +74,10 @@ def exception_handler(log_errors: bool = True) -> Callable[..., Any]:
                 elif response.status_code >= 400:
                     raise HttpRequestError()
                 return response
+
+            except httpx.ConnectError as e:
+                if log_errors:
+                    custom_console.bot_error_log(f"Connection Error: {e}")
 
             except HttpAuthError as e:
                 if log_errors:
