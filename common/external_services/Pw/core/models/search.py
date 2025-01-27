@@ -32,3 +32,8 @@ class Search:
     tmdbId: int = 0
     tvMazeId: int = 0
     tvdbId: int = 0
+    files: int | None = None
+    grabs: int | None = None
+    posterUrl: str | None = None
+    infoHash: str | None = None
+
