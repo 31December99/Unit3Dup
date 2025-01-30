@@ -45,9 +45,6 @@ class Bot:
         # Bot Manager
         self.torrent_manager = TorrentManager(cli=self.cli)
 
-        # Pw Manager
-        self.pw_manager = PwManager(cli=self.cli)
-
     def run(self, force_media_type: int) -> None:
         """
         Start the process of analyzing and processing media files.
@@ -86,7 +83,7 @@ class Bot:
         # Process the contents (files)
         self.torrent_manager.process(contents)
 
-    def watcher(self, duration: int, watcher_path: str, force_media_type: int):
+    def watcher(self, duration: int, watcher_path: str,  destination_path: str , force_media_type: int):
         """
         Monitors the watcher path for new files, moves them to the destination folder,
         then uploads them to the tracker
@@ -95,7 +92,9 @@ class Bot:
             duration (int): The time duration in seconds for the watchdog to wait before checking again
             watcher_path (str): The path to the folder being monitored for new files
             force_media_type(int): The media type to use
+            destination_path: The destination path for the new files
         """
+        self.path = str(destination_path)
         try:
             # Watchdog loop
             while True:
@@ -164,7 +163,8 @@ class Bot:
         a certain number of seeders
         """
         # PW service
-        self.pw_manager.process()
+        pw_manager = PwManager(cli=self.cli)
+        pw_manager.process()
         custom_console.panel_message("Searching... Please wait")
 
 

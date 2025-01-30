@@ -24,7 +24,7 @@ class CommandLine:
         parser.add_argument("-f", "--folder", type=str, help="Upload single folder")
         parser.add_argument("-pw", "--pw", type=str, help="")
         parser.add_argument("-ftp", "--ftp", action="store_true", help="connect to ftpd")
-        parser.add_argument("-watcher", "--watcher", type=str, help="start a watcher")
+        parser.add_argument("-watcher", "--watcher", action="store_true", help="start a watcher")
         parser.add_argument("-game", "--game", action="store_true", help="Force the game media type")
         parser.add_argument("-movie", "--movie", action="store_true", help="Force the movie media type")
         parser.add_argument("-serie", "--serie", action="store_true", help="Force the serie media type")

@@ -75,11 +75,10 @@ SIZE_TH=50
 # ------------------------------------------------------------------------------------------------------------
 
 # Watch the folder watcher_path at regular intervals (watcher_interval seconds) 
-WATCHER_PATH=watcher_path
-# and move its contents to user_path and then upload it
-# es: python start.py -watcher "C:\watcher_destination_folder" 
-# It will move media from the 'watcher_path' to the 'watcher_destination_folder' and upload the 'watcher_destination_folder'
 WATCHER_INTERVAL=60
+# It will move media from the 'watcher_path' to the 'watcher_destination_path' and upload it'
+WATCHER_PATH=watcher_path
+WATCHER_DESTINATION_PATH=watcher_destination_path
 
 # ------------------------------------------------------------------------------------------------------------
 
@@ -192,6 +191,7 @@ class Config(BaseSettings):
 
 
     WATCHER_PATH: str | None = None
+    WATCHER_DESTINATION_PATH: str | None = None
     WATCHER_INTERVAL: int = 60
 
     TORRENT_ARCHIVE: str | None = None
@@ -210,6 +210,7 @@ class Config(BaseSettings):
         default_env_path_cache: Path = Path(os.getenv("LOCALAPPDATA", ".")) / f"Unit3Dup_cache"
         PW_TORRENT_ARCHIVE_PATH: Path = Path(os.getenv("LOCALAPPDATA", ".")) / "pw_torrent_archive"
         PW_DOWNLOAD_PATH: Path = Path(os.getenv("LOCALAPPDATA", ".")) / "pw_download"
+        WATCHER_DESTINATION_PATH: Path = Path(os.getenv("LOCALAPPDATA", ".")) / "watcher_destination_path"
 
     else:
         default_env_path: Path = Path.home() / f"{service_filename}"
@@ -217,7 +218,7 @@ class Config(BaseSettings):
         default_env_path_cache: Path = Path.home() / "Unit3Dup_cache"
         PW_TORRENT_ARCHIVE_PATH: Path = Path.home() / "pw_torrent_archive"
         PW_DOWNLOAD_PATH: Path = Path.home() /  "pw_download"
-
+        WATCHER_DESTINATION_PATH: Path = Path.home()  / "watcher_destination_path"
 
     if not PW_TORRENT_ARCHIVE_PATH.exists():
         print(f"Create default pw torrent archive path: {PW_TORRENT_ARCHIVE_PATH}")
@@ -227,6 +228,9 @@ class Config(BaseSettings):
         print(f"Create default pw download path: {PW_DOWNLOAD_PATH}")
         os.makedirs(PW_DOWNLOAD_PATH)
 
+    if not WATCHER_DESTINATION_PATH.exists():
+        print(f"Create default destination watcher path: {WATCHER_DESTINATION_PATH}")
+        os.makedirs(WATCHER_DESTINATION_PATH)
 
     if not default_env_path.exists():
         print(f"Create default configuration file: {default_env_path}")
@@ -370,6 +374,7 @@ class Config(BaseSettings):
         values["TORRENT_ARCHIVE"] = validate_torrent_archive_path(values.get("TORRENT_ARCHIVE", None), "TORRENT_ARCHIVE", ".")
         values["PW_TORRENT_ARCHIVE_PATH"] = validate_str(values.get("PW_TORRENT_ARCHIVE_PATH", None), "PW_TORRENT_ARCHIVE_PATH", '.')
         values["PW_DOWNLOAD_PATH"] = validate_torrent_archive_path(values.get("PW_DOWNLOAD_PATH", None), "PW_DOWNLOAD_PATH", '.')
+        values["WATCHER_DESTINATION_PATH"] = validate_torrent_archive_path(values.get("WATCHER_DESTINATION_PATH", None), "WATCHER_DESTINATION_PATH", '.')
         values["IMGBB_PRIORITY"] = validate_int(values.get("IMGBB_PRIORITY", 0), "IMGBB_PRIORITY", 0)
         values["FREE_IMAGE_PRIORITY"] = validate_int(values.get("FREE_IMAGE_PRIORITY", 1), "FREE_IMAGE_PRIORITY", 1)
         values["LENSDUMP_PRIORITY"] = validate_int(values.get("LENSDUMP_PRIORITY", 2), "LENSDUMP_PRIORITY", 2)
