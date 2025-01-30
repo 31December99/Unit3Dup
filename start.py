@@ -82,7 +82,9 @@ def main():
         bot = Bot(
             path=cli.args.watcher, tracker_name=cli.args.tracker, cli=cli.args, mode="auto"
         )
-        bot.watcher(duration=config.WATCHER_INTERVAL, watcher_path=config.WATCHER_PATH, force_media_type=force_media)
+
+        bot.watcher(duration=config.WATCHER_INTERVAL, watcher_path=config.WATCHER_PATH,
+                    destination_path = config.WATCHER_DESTINATION_PATH, force_media_type=force_media)
 
 
     # Pw
