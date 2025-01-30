@@ -2,7 +2,7 @@
 
 from dataclasses import dataclass, field
 from common.utility import title, utility
-from media_db import results
+from common.media_db import results
 
 
 @dataclass
@@ -17,7 +17,8 @@ class Data:
     description: str
     myguess: title.Guessit = field(init=False)
     igdb: int
+    platform: str
 
     def __post_init__(self):
-        self.name = utility.Manage_titles.clean(self.name)
+        self.name = utility.ManageTitles.clean(self.name)
         self.myguess = title.Guessit(self.file_name)  #.guessit_title

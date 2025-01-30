@@ -6,11 +6,11 @@ from unit3dup.media_manager.VideoManager import VideoManager
 from unit3dup.media_manager.models.qbitt import QBittorrent
 from unit3dup.media_manager.GameManager import GameManager
 from unit3dup.media_manager.DocuManager import DocuManager
+from unit3dup.media_manager.utility import UserContent
 from common.custom_console import custom_console
 from common.trackers.trackers import ITTData
 from common.constants import my_language
-from common.clients.qbitt import Qbitt
-from common.config import config
+from unit3dup import config
 
 
 class TorrentManager:
@@ -30,64 +30,57 @@ class TorrentManager:
         game_process_results: list["QBittorrent"] = []
         video_process_results: list["QBittorrent"] = []
         docu_process_results: list["QBittorrent"] = []
+        custom_console.rule()
 
-        # // GAME
+        # // Build a GAME list
         games = [
             content for content in contents if content.category == self.game_category
         ]
 
-        # Build the torrent file and upload each game to the tracker
-        if games:
-            game_manager = GameManager(contents=games, cli=self.cli)
-            game_process_results = game_manager.process()
-
-        # // VIDEO
+        # // Build a VIDEO list
         videos = [
             content
             for content in contents
             if content.category in {self.movie_category, self.serie_category}
         ]
 
-        # Build the torrent file and upload each video to the tracker
-        if videos:
-            video_manager = VideoManager(contents=videos, cli=self.cli)
-            video_process_results = video_manager.process()
-
-            # // Doc
+        # // Build a Doc list
         doc = [
             content for content in contents if content.category == self.docu_category
         ]
 
+        if config.DUPLICATE_ON:
+            custom_console.bot_log("'[ACTIVE]' Searching for duplicate")
+
+        # Build the torrent file and upload each GAME to the tracker
+        if games:
+            game_manager = GameManager(contents=games, cli=self.cli)
+            game_process_results = game_manager.process()
+
+        # Build the torrent file and upload each VIDEO to the tracker
+        if videos:
+            video_manager = VideoManager(contents=videos, cli=self.cli)
+            video_process_results = video_manager.process()
+
+        # Build the torrent file and upload each DOC to the tracker
         if doc:
             docu_manager = DocuManager(contents=doc, cli=self.cli)
             docu_process_results = docu_manager.process()
 
-        # // QBITTORRENT
+
+        if game_process_results or video_process_results or docu_process_results:
+            custom_console.panel_message("\nSending torrents to the client... Please wait")
+
+        # * QBITTORRENT *
+        # Send
         if game_process_results:
-            # Seeds if -torrent is off
             if not self.cli.torrent:
-                self.send_to_qbittorrent(game_process_results)
+                UserContent.send_to_qbittorrent(game_process_results)
 
         if video_process_results:
-            # Seeds if -torrent is off
             if not self.cli.torrent:
-                self.send_to_qbittorrent(video_process_results)
+                UserContent.send_to_qbittorrent(video_process_results)
 
         if docu_process_results:
-            # Seeds if -torrent is off
             if not self.cli.torrent:
-                self.send_to_qbittorrent(docu_process_results)
-
-    @staticmethod
-    def send_to_qbittorrent(qbittorrent_list: list["QBittorrent"]) -> None:
-
-        custom_console.panel_message("\nSending torrents to the client... Please wait")
-        for qbittorrent_file in qbittorrent_list:
-            if qbittorrent_file.tracker_response:
-                qb = Qbitt.connect(
-                    tracker_data_response=qbittorrent_file.tracker_response,
-                    torrent=qbittorrent_file.torrent_response,
-                    contents=qbittorrent_file.content,
-                )
-                if qb:
-                    qb.send_to_client()
+                UserContent.send_to_qbittorrent(docu_process_results)

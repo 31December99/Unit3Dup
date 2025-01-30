@@ -3,11 +3,11 @@ import sys
 import tmdbv3api.exceptions
 
 from common.custom_console import custom_console
-from common.utility.utility import Manage_titles
+from common.utility.utility import ManageTitles
 from tmdbv3api import TMDb, Movie, TV, Season
 from unit3dup.contents import Contents
-from media_db.results import Results
-from common.config import config
+from common.media_db.results import Results
+from common.media_db import config
 from unidecode import unidecode
 from thefuzz import fuzz
 
@@ -63,11 +63,16 @@ class MyTmdb:
             # Search the episode name in seasons details and remove it from the filename content
             details, result.keywords = self.keywords(result.video_id)
             if self.table == "Serie":
-                season_details = self.season.details(result.video_id, self.content.season)
-                episodes = season_details["episodes"]
-                for episode in episodes:
-                    if episode["episode_number"] == self.content.episode:
-                        self.episode_title = Manage_titles.clean(episode["name"])
+                # If the episode doesn't exist skip
+                try:
+                    season_details = self.season.details(result.video_id, self.content.season)
+                    episodes = season_details["episodes"]
+                    for episode in episodes:
+                        if episode["episode_number"] == self.content.episode:
+                            self.episode_title = ManageTitles.clean(episode["name"])
+                except tmdbv3api.exceptions.TMDbException:
+                    custom_console.bot_error_log(f"'Season {self.content.season}' not found in TMDB. "
+                                                 f"I can't remove the episode title Skipping.. ")
         return result
 
     def input_tmdb(self) -> Results:
@@ -77,31 +82,35 @@ class MyTmdb:
         )
         results = Results()
         while True:
-            tmdb_id = input(f"> ")
-            if not tmdb_id.isdigit():
-                custom_console.bot_error_log(
-                    f"I do not recognize {tmdb_id} as a number. Please try again.."
-                )
-                continue
-            custom_console.bot_log(f"You have entered {tmdb_id}")
-            user_answ = input("Are you sure ? (y/n)> ")
-            keywords = ""
-            if "y" == user_answ.lower():
-                # Zero = No TMDB ID
-                if tmdb_id != "0":
-                    details, keywords = self.keywords(int(tmdb_id))
-                    # Keywords
-                    if keywords:
-                        results.keywords = keywords
-                    # If details then return the tmdb_id
-                    if details:
-                        results.poster_path = details["poster_path"]
-                        results.backdrop_path = details["backdrop_path"]
-                        results.video_id = tmdb_id
+            try:
+                tmdb_id = input(f"> ")
+                if not tmdb_id.isdigit():
+                    custom_console.bot_error_log(
+                        f"I do not recognize {tmdb_id} as a number. Please try again.."
+                    )
+                    continue
+                custom_console.bot_log(f"You have entered {tmdb_id}")
+                user_answ = input("Are you sure ? (y/n)> ")
+                keywords = ""
+                if "y" == user_answ.lower():
+                    # Zero = No TMDB ID
+                    if tmdb_id != "0":
+                        details, keywords = self.keywords(int(tmdb_id))
+                        # Keywords
+                        if keywords:
+                            results.keywords = keywords
+                        # If details then return the tmdb_id
+                        if details:
+                            results.poster_path = details["poster_path"]
+                            results.backdrop_path = details["backdrop_path"]
+                            results.video_id = tmdb_id
+                            return results
+                    else:
+                        results.video_id = 0
                         return results
-                else:
-                    results.video_id = 0
-                    return results
+            except KeyboardInterrupt:
+                custom_console.bot_log("Exiting...")
+                exit()
 
     def __requests(self):
         self.__result = self.tmdb.search(self.ext_title)
@@ -182,10 +191,10 @@ class MyTmdb:
         for index, page in enumerate(self.__page):
             for iso in page.alternative:
                 results = iso[field]
-                ext_title = Manage_titles.clean(unidecode(self.ext_title))
+                ext_title = ManageTitles.clean(unidecode(self.ext_title))
                 if len(iso[field]) > 0:
                     for result in results:
-                        title = Manage_titles.clean(unidecode(result["title"]))
+                        title = ManageTitles.clean(unidecode(result["title"]))
                         # print(f"EXT_T: {ext_title} = ALTERNATIVE TITLE: {title}")
                         if ext_title == title:
                             return page
@@ -201,12 +210,12 @@ class MyTmdb:
         """
         # print(f".:: SEARCH_TITLES RESULT n°{len(self.__page)} ::.")
         for index, page in enumerate(self.__page):
-            original_title = Manage_titles.clean(
-                Manage_titles.accented_remove(page.original_title)
+            original_title = ManageTitles.clean(
+                ManageTitles.accented_remove(page.original_title)
             )
-            title = Manage_titles.clean(Manage_titles.accented_remove(page.title))
-            ext_title = Manage_titles.clean(
-                Manage_titles.accented_remove(self.ext_title)
+            title = ManageTitles.clean(ManageTitles.accented_remove(page.title))
+            ext_title = ManageTitles.clean(
+                ManageTitles.accented_remove(self.ext_title)
             )
             if original_title:
                 # print(f"EXT_T: {ext_title} = ORIGINAL TITLE: {original_title}")
@@ -239,11 +248,11 @@ class MyTmdb:
                     name = translation["data"].get("title", "")
                 else:
                     name = translation["data"].get("name", "")
-                name = Manage_titles.clean(unidecode(name)).lower()
-                tagline = Manage_titles.clean(
-                    Manage_titles.accented_remove(translation["data"]["tagline"])
+                name = ManageTitles.clean(unidecode(name)).lower()
+                tagline = ManageTitles.clean(
+                    ManageTitles.accented_remove(translation["data"]["tagline"])
                 ).lower()
-                ext_title = Manage_titles.clean(unidecode(self.ext_title))
+                ext_title = ManageTitles.clean(unidecode(self.ext_title))
 
                 name = name.replace("-", " ")
                 name = name.replace("–", " ")

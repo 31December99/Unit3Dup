@@ -2,7 +2,7 @@
 
 from .itt import itt_data
 from dataclasses import dataclass
-from common.utility.utility import Manage_titles
+from common.utility.utility import ManageTitles
 
 
 @dataclass
@@ -28,7 +28,7 @@ class ITTData:
 
     def filter_type(self, file_name: str) -> int:
 
-        file_name = Manage_titles.clean(file_name)
+        file_name = ManageTitles.clean(file_name)
         word_list = file_name.lower().strip().split(" ")
 
         # Caso 1: Cerca un TYPE_ID nel nome del file

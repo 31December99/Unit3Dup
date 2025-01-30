@@ -15,14 +15,9 @@ logging.getLogger("patool").setLevel(logging.ERROR)
 
 class Extractor:
 
-    def __init__(self, media: list["Media"]):
+    def __init__(self, compressed_media__path: str):
         # the Root folder
-        self.path = media[0].folder
-
-        self.subfolder = media[0].subfolder
-
-        # List of Media object
-        self.media_list = media
+        self.path = compressed_media__path
 
     def delete_old_rar(self, rar_volumes_list: list):
 
@@ -60,7 +55,7 @@ class Extractor:
                         if delete_choice.upper() == "N":
                             # Continue to next file
                             print("Your choice: No")
-                            break
+                            return
                         if delete_choice.upper() == "ALL":
                             # Remove each file without user confirm
                             print("Your choice: All")
@@ -91,7 +86,7 @@ class Extractor:
 
     def unrar(self) -> bool | None:
         # only -f option
-        if not os.path.isdir(self.subfolder):
+        if not os.path.isdir(self.path):
             return
 
         with Progress(
@@ -100,7 +95,7 @@ class Extractor:
             progress.add_task("Working...", total=100)
 
             # Get the list of *.rar files sorted
-            folder_list = self.list_rar_files(self.subfolder)
+            folder_list = self.list_rar_files(self.path)
 
             # Is not empty
             if folder_list:
@@ -111,17 +106,17 @@ class Extractor:
                 return None
 
             # Build the First Volume filename or use the only file present
-            first_part = os.path.join(self.path, self.subfolder, folder_list[0])
+            first_part = os.path.join(self.path, folder_list[0])
 
             # Run Extract
             try:
                 patoolib.extract_archive(
                     first_part,
-                    outdir=os.path.join(self.path, self.subfolder),
+                    outdir=self.path,
                     verbosity=-1,
                 )
             except patoolib.util.PatoolError as e:
-                custom_console.bot_error_log("\nError remove old file if necessary..")
+                custom_console.bot_error_log(f"{e}\nError remove old file if necessary..")
                 return False
             custom_console.bot_log("[is_rar] Decompression complete")
 

@@ -2,12 +2,12 @@ import json
 import os
 import requests
 
-from common.external_services.igdb.core.models.game import Game
-from unit3dup import pvtTracker, payload, contents
+from common.external_services.igdb.core.models.search import Game
+from unit3dup import pvtVideo, pvtTracker, payload, contents
 from common.trackers.trackers import ITTData
 from common.custom_console import custom_console
 from abc import ABC, abstractmethod
-from common.config import config
+from unit3dup import config
 
 
 class UploadBot(ABC):
@@ -24,24 +24,24 @@ class UploadBot(ABC):
         self.API_TOKEN = config.ITT_APIKEY
         self.BASE_URL = config.ITT_URL
 
-    def send(self, tracker: pvtTracker) -> requests:
+    def send(self, tracker: pvtTracker, nfo_path = None) -> (requests, dict):
         tracker_response = tracker.upload_t(
-            data=tracker.data, torrent_path=self.torrent_path
+            data=tracker.data, torrent_path=self.torrent_path, nfo_path=nfo_path
         )
 
         if tracker_response.status_code == 200:
             tracker_response_body = json.loads(tracker_response.text)
 
             custom_console.bot_log(
-                f"\n[TRACKER RESPONSE]............  {tracker_response_body['message'].upper()}"
+                f"\n[TRACKER RESPONSE]............  {tracker_response_body['message'].upper()}\n\n"
             )
-            return tracker_response_body["data"]
+            custom_console.rule()
+            return tracker_response_body["data"],{}
         else:
-            message = json.loads(tracker_response.text)["data"]
-            custom_console.bot_error_log(
-                f"It was not possible to upload the media. Tracker message: '{message}'"
-            )
-        return tracker_response
+            error_message = json.loads(tracker_response.text)["data"]
+
+        custom_console.rule()
+        return tracker_response, error_message
 
     @abstractmethod
     def payload(self, **kwargs):
@@ -64,6 +64,7 @@ class UploadDocument(UploadBot):
             media_info="",
             description=self.content.doc_description,
             igdb=0,  # not used
+            platform="",
         )
 
     def tracker(self, data: payload) -> pvtTracker:
@@ -85,7 +86,7 @@ class UploadVideo(UploadBot):
         super().__init__(content)
         self.tracker_data = ITTData.load_from_module()
 
-    def payload(self, tv_show: list, video_info: pvtTracker):
+    def payload(self, tv_show: list, video_info: pvtVideo):
         if video_info:
             return payload.Data(
                 metainfo=self.metainfo,
@@ -97,6 +98,7 @@ class UploadVideo(UploadBot):
                 description=video_info.description,
                 standard=video_info.is_hd,
                 igdb=0,  # not used
+                platform="",
             )
         else:
             custom_console.bot_error_log(
@@ -140,8 +142,9 @@ class UploadGame(UploadBot):
             category=self.content.category,
             standard=0,
             media_info="",
-            description=self.content.doc_description,
-            igdb=igdb.id,
+            description=igdb.description if igdb else "Sorry, there is no valid IGDB",
+            igdb=igdb.id if igdb else 1, # need zero not one
+            platform=self.content.game_tags[0].lower() if self.content.game_tags else '' # Only one type_id is accepted
         )
 
     def tracker(self, data: payload) -> pvtTracker:
@@ -152,7 +155,7 @@ class UploadGame(UploadBot):
         tracker.data["tmdb"] = 0
         tracker.data["category_id"] = data.category
         tracker.data["description"] = data.description
-        tracker.data["type_id"] = self.tracker_data.filter_type(data.file_name)
+        tracker.data["type_id"] = self.tracker_data.type_id.get(data.platform,self.tracker_data.filter_type('invalid'))
         tracker.data["resolution_id"] = ""
         tracker.data["igdb"] = data.igdb
         return tracker

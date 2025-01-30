@@ -1,16 +1,16 @@
 # -*- coding: utf-8 -*-
-
-import random
 import subprocess
 import io
+
 from pathlib import Path
 from PIL import Image
+
 from common.custom_console import custom_console
-from common.config import config
+from common import config
 
 
 class VideoFrame:
-    def __init__(self, video_path: str, num_screenshots: int = 3):
+    def __init__(self, video_path: str, num_screenshots: int, tmdb_id: int):
         """
         Initialize VideoFrame object
 
@@ -18,6 +18,7 @@ class VideoFrame:
         :param num_screenshots: Number of screenshots to take
         """
         self.video_path = Path(video_path)
+        # Number of screenshots based on the user's preferences
         self.num_screenshots = num_screenshots
 
     def create(self):
@@ -43,16 +44,18 @@ class VideoFrame:
 
         :param frame: The image to convert
         :return: Image in bytes
-        :compress_level: compressione level (0-9); 9=Max;  default=6
+        :compress_level: compressione level (0-9); 9=Max; default=4 ; 0 = best
         """
-        resized_image = self.resize_image(frame)
+        image = self.resize_image(frame)
         buffered = io.BytesIO()
-        resized_image.save(
-            buffered, format="PNG", optimize=True, compress_level=config.COMPRESS_SCSHOT
+        user_compress_level: int = config.COMPRESS_SCSHOT if 0 <= config.COMPRESS_SCSHOT <= 9 else 4
+        image.save(
+            buffered, format="PNG", optimize=True, compress_level=user_compress_level
         )
         return buffered.getvalue()
 
-    def resize_image(self, image: Image, width: int = 350) -> Image:
+    @staticmethod
+    def resize_image(image: Image, width: int = 450) -> Image:
         """
         Resize the image while maintaining aspect ratio
 
@@ -60,24 +63,32 @@ class VideoFrame:
         :param width: The width to resize to
         :return: Resized image
         """
-        aspect_ratio = image.width / image.height
-        height = round(width / aspect_ratio)
-        resized_image = image.resize((width, height), Image.Resampling.LANCZOS)
-        return resized_image
+        if config.RESIZE_SCSHOT:
+            aspect_ratio = image.width / image.height
+            height = round(width / aspect_ratio)
+            resized_image = image.resize((width, height), Image.Resampling.LANCZOS)
+            return resized_image
+        else:
+            return image
 
     def _extract(self):
         """
-        Extract frames from the video at random times
+        Extract frames from the video based on the number of screenshots
 
         :return: A list of frames
         """
         duration = self._get_video_duration()
         min_time = duration * 0.35
-        max_time = duration * 0.65
-        times = [
-            random.uniform(min_time, max_time) for _ in range(self.num_screenshots)
-        ]
-        return [self._extract_frame(time) for time in times]
+        max_time = duration * 0.85
+        interval = int(max_time - min_time)
+        duration_step = interval // self.num_screenshots
+        min_time = int(min_time)
+        max_time = int(max_time)
+        frames = [self._extract_frame(time) for time in range(min_time + duration_step, max_time, duration_step)]
+
+        if len(frames) < self.num_screenshots:
+            frames.append(self._extract_frame(max_time))
+        return frames
 
     def _get_video_duration(self) -> float:
         """
@@ -111,7 +122,7 @@ class VideoFrame:
             exit(1)
         return duration
 
-    def _extract_frame(self, time: float) -> Image:
+    def _extract_frame(self, time_: float) -> Image:
         """
         Extract a single frame from the video at the specified time.
 
@@ -122,7 +133,7 @@ class VideoFrame:
         command = [
             "ffmpeg",
             "-ss",
-            str(time),
+            str(time_),
             "-i",
             str(self.video_path),
             "-vframes",
@@ -137,15 +148,18 @@ class VideoFrame:
             result = subprocess.run(command, capture_output=True, check=True, timeout=20)
             return Image.open(io.BytesIO(result.stdout))
         except subprocess.CalledProcessError as e:
-            custom_console.bot_error_log(f"[FFmpeg] Error: Please verify if your file is corrupt")
+            custom_console.bot_error_log(f"[IMAGES] Error: Please verify if your file is corrupted")
             exit(1)
         except subprocess.TimeoutExpired:
-            custom_console.bot_error_log(f"[FFmpeg] Error: Time Out. Please verify if your file is corrupt")
+            custom_console.bot_error_log(f"[IMAGES] Error: Time Out. Please verify if your file is corrupted")
             exit(1)
         except FileNotFoundError:
             custom_console.bot_error_log(
-                "[FFMPEG not found] - Install ffmpeg or check your system path",
-                style="red bold",
-            )
+                "[FFMPEG not found] - Install ffmpeg or check your system path")
             exit(1)
+        except Image.UnidentifiedImageError as e:
+            custom_console.bot_error_log(f"[IMAGES] Error: {self.video_path}  Cannot identify image file. "
+                                         f"Please verify if your file is corrupted")
+            exit(1)
+
 

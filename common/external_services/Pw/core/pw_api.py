@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import os.path
 
 from common.external_services.Pw.core.models.torrent_client_config import (
     TorrentClientConfig,
@@ -8,7 +9,7 @@ from common.external_services.Pw.core.models.search import Search
 from common.external_services.sessions.session import MyHttp
 from common.external_services.sessions.agents import Agent
 from common.custom_console import custom_console
-from common.config import config
+from common import config
 
 
 class PwAPI(MyHttp):
@@ -47,6 +48,14 @@ class PwAPI(MyHttp):
         else:
             return []
 
+    def get_torrent_url(self, url: str, filename: str):
+
+        response = self.get_url(url=url)
+        if response.status_code == 200:
+            # Write the torrent to file
+            with open(os.path.join(config.PW_TORRENT_ARCHIVE_PATH,f"{filename}.torrent"), 'wb') as f:
+                f.write(response.content)
+
     def search(self, query: str) -> ["Search"]:
         """Get search queue."""
 
@@ -54,12 +63,12 @@ class PwAPI(MyHttp):
         url = f"{self.base_url}/search?"
 
         response = self.get_url(url=url, params=params)
-
-        if response.status_code == 200:
-            results_list = response.json()
-            return [Search(**result) for result in results_list]
-        else:
-            return []
+        if response:
+            if response.status_code == 200:
+                results_list = response.json()
+                return [Search(**result) for result in results_list]
+            else:
+                return []
 
     def get_torrent_client_ids(self) -> list["TorrentClientConfig"]:
         """Get a list of torrent client configurations"""
