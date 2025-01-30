@@ -45,7 +45,7 @@ class Bot:
         # Bot Manager
         self.torrent_manager = TorrentManager(cli=self.cli)
 
-    def run(self, force_media_type: int) -> None:
+    def run(self, force_media_type: int) -> bool:
         """
         Start the process of analyzing and processing media files.
 
@@ -63,7 +63,7 @@ class Bot:
         # -u requires a single file
         if not contents or not os.path.exists(self.path):
             custom_console.bot_error_log("There are no Media to process")
-            return
+            return False
 
         # we got a handled exception
         if contents is None:
@@ -82,8 +82,9 @@ class Bot:
 
         # Process the contents (files)
         self.torrent_manager.process(contents)
+        return True
 
-    def watcher(self, duration: int, watcher_path: str,  destination_path: str , force_media_type: int):
+    def watcher(self, duration: int, watcher_path: str,  destination_path: str , force_media_type: int)-> bool:
         """
         Monitors the watcher path for new files, moves them to the destination folder,
         then uploads them to the tracker
@@ -104,7 +105,7 @@ class Bot:
                 # Return if the watcher path doesn't exist
                 if not os.path.exists(watcher_path):
                     custom_console.bot_error_log("Watcher path does not exist or is not configured\n")
-                    return
+                    return False
 
                 print()
                 # Counter
@@ -154,8 +155,9 @@ class Bot:
 
         except KeyboardInterrupt:
             custom_console.bot_log("Exiting...")
+        return True
 
-    def pw(self):
+    def pw(self)-> bool:
         """
         Interacts with the PW service to search for torrent files
 
@@ -166,6 +168,7 @@ class Bot:
         pw_manager = PwManager(cli=self.cli)
         pw_manager.process()
         custom_console.panel_message("Searching... Please wait")
+        return True
 
 
     def ftp(self, force_media_type: int):
