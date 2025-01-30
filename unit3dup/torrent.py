@@ -3,8 +3,9 @@ import re
 import requests
 
 from unit3dup import pvtTracker
-from common.config import config
+from unit3dup import config
 from common.custom_console import custom_console
+from common.trackers.trackers import ITTData
 
 
 class Torrent:
@@ -14,8 +15,6 @@ class Torrent:
         self.tracker = pvtTracker.Unit3d(
             base_url=config.ITT_URL, api_token=config.ITT_APIKEY, pass_key=""
         )
-
-        print()
 
     def get_unique_id(self, media_info: str) -> str:
         # Divido per campi
@@ -54,12 +53,12 @@ class Torrent:
 
     def get_by_types(self, type_name: str) -> requests:
         return self.tracker.get_types(
-            type_id=config.tracker_values.type_id(type_name), perPage=self.perPage
+            type_id=type_name, perPage=self.perPage
         )
 
-    def get_by_res(self, res_name: str) -> requests:
+    def get_by_res(self, resolution_id: str) -> requests:
         return self.tracker.get_res(
-            res_id=config.tracker_values.res_id(res_name), perPage=self.perPage
+            res_id=resolution_id, perPage=self.perPage
         )
 
     def get_by_filename(self, file_name: str) -> requests:
@@ -70,6 +69,9 @@ class Torrent:
 
     def get_by_imdb_id(self, imdb_id: int) -> requests:
         return self.tracker.get_imdb(imdb_id=imdb_id, perPage=self.perPage)
+
+    def get_by_igdb_id(self, imdb_id: int) -> requests:
+        return self.tracker.get_igdb(igdb_id=imdb_id, perPage=self.perPage)
 
     def get_by_tvdb_id(self, tvdb_id: int) -> requests:
         return self.tracker.get_tvdb(tvdb_id=tvdb_id, perPage=self.perPage)
@@ -141,6 +143,8 @@ class View(Torrent):
             base_url=config.ITT_URL, api_token=config.ITT_APIKEY, pass_key=""
         )
 
+        # Load the constant tracker
+        self.tracker_data = ITTData.load_from_module()
         print()
 
     def get_unique_id(self, media_info: str) -> str:
@@ -167,12 +171,19 @@ class View(Torrent):
                 f" -> {item['attributes']['name']}"
             )
 
-    def print_normal(self, tracker_data: dict):
+    @staticmethod
+    def print_normal(tracker_data: dict):
         data = [item for item in tracker_data["data"]]
+
         for item in data:
-            custom_console.bot_log(
-                f"[{str(item['attributes']['release_year'])}] - {item['attributes']['name']}"
-            )
+            if item['attributes']['tmdb_id'] != 0:
+                media = f"TMDB: {item['attributes']['tmdb_id']} {str(item['attributes']['release_year'])}"
+            else:
+                media = f"IGDB: {item['attributes']['igdb_id']}"
+
+            custom_console.bot_log(f"\n {media} - {item['attributes']['name']}")
+
+
 
     def page_view(self, tracker_data: dict, tracker: pvtTracker, info=False):
 
@@ -249,8 +260,12 @@ class View(Torrent):
             self.page_view(tracker_data=tracker_data, tracker=self.tracker)
 
     def view_by_types(self, type_name: str):
+        if type_name not in self.tracker_data.type_id.keys():
+            custom_console.bot_error_log(f"Resolution not available for '{type_name}' try:")
+            custom_console.bot_warning_log(";".join(list(self.tracker_data.type_id.keys())[:-1]))
+            exit()
         tracker_data = self.get_by_types(
-            type_name=config.tracker_values.type_id(type_name)
+            type_name=str(self.tracker_data.type_id.get(type_name))
         )
         custom_console.bot_log(
             f"Types torrents.. Filter by the torrent's type.. '{type_name.upper()}'"
@@ -259,7 +274,12 @@ class View(Torrent):
             self.page_view(tracker_data=tracker_data, tracker=self.tracker)
 
     def view_by_res(self, res_name: str):
-        tracker_data = self.get_by_res(res_name=config.tracker_values.res_id(res_name))
+        if res_name not in self.tracker_data.resolution.keys():
+            custom_console.bot_error_log(f"Resolution not available for '{res_name}' try:")
+            custom_console.bot_warning_log(";".join(list(self.tracker_data.resolution.keys())[:-1]))
+            exit()
+        tracker_data = self.get_by_res(resolution_id=str(self.tracker_data.resolution.get(res_name)))
+
         custom_console.bot_log(
             f"Resolutions torrents.. Filter by the torrent's resolution.. '{res_name.upper()}'"
         )

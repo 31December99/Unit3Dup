@@ -5,7 +5,7 @@ import os
 import torf
 from tqdm import tqdm
 from common.custom_console import custom_console
-from common.config import config
+from unit3dup import config
 from unit3dup.contents import Contents
 
 
@@ -29,7 +29,7 @@ class Mytorrent:
         self.mytorr = torf.Torrent(path=contents.torrent_path)
         self.mytorr.comment = config.TORRENT_COMMENT
         self.mytorr.name = contents.name
-        self.mytorr.created_by = "Unit3d-Up"
+        self.mytorr.created_by = "https://github.com/31December99/Unit3Dup"
         self.mytorr.private = True
         self.mytorr.segments = 16 * 1024 * 1024
 

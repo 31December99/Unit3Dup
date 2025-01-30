@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
+import sys
 
 from rich.align import Align
 from rich.console import Console
@@ -77,7 +78,8 @@ class CustomConsole(Console):
 
     def welcome_message(self):
         title_panel = Panel(
-            Text(self.welcome_msg, style=self.welcome_msg_color, justify="center"),
+            Text(f"UNIT3Dup - An uploader for the Unit3D torrent tracker - {self.welcome_msg}",
+                 style=self.welcome_msg_color, justify="center"),
             border_style=self.welcome_msg_border_color,
             title_align="center",
         )
@@ -98,8 +100,17 @@ class CustomConsole(Console):
     def bot_error_log(self, message: str):
         console.log(message, style=self.error_color)
 
+    def bot_warning_log(self, message: str):
+        console.log(message, style=self.question_msg_color)
+
+    def bot_input_log(self, message: str):
+        console.print(message, end="", style=self.normal_color)
+
     def bot_question_log(self, message: str):
         console.print(message, end="", style=self.question_msg_color)
+
+    def bot_counter_log(self, message: str):
+        console.print(message, end="\r", style=self.question_msg_color)
 
     @staticmethod
     def get_key_by_value(tracker_data, category, value):
@@ -154,6 +165,16 @@ class CustomConsole(Console):
             result.backdrop_path,
         )
         console.print(Align.center(table))
+
+    @staticmethod
+    def wait_for_user_confirmation(message: str):
+        # Wait for user confirmation in case of validation failure
+        try:
+            custom_console.bot_error_log(message=message)
+            input()
+        except KeyboardInterrupt:
+            custom_console.bot_error_log("\nOperation cancelled.Please update your config file")
+            sys.exit(0)
 
 
 # Init custom Console

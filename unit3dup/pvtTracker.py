@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
+import io
 import os
+import time
 import requests
 
-from common.custom_console import custom_console
 from urllib.parse import urljoin
-from common.config import config
-
+from common.custom_console import custom_console
+from unit3dup import config
 
 class Myhttp:
-
     def __init__(self, base_url: str, api_token: str, pass_key: str):
         self.base_url = base_url
         self.api_token = api_token
@@ -20,7 +20,7 @@ class Myhttp:
         self.tracker_announce_url = urljoin(self.base_url, f"announce/{pass_key}")
 
         self.headers = {
-            "User-Agent": "Test/0.0 (Linux 5.10.0-23-amd64)",
+            "User-Agent": "Unit3D-up/0.0 (Linux 5.10.0-23-amd64)",
             "Accept": "application/json",
         }
         self.params = {
@@ -38,8 +38,8 @@ class Myhttp:
             "imdb": "0",  # no ancora implementato
             "tvdb": "0",  # no ancora implementato
             "mal": "0",  # no ancora implementato
-            "igdb": "0",  # no ancora implementato
-            "anonymous": "0",
+            "igdb": "0",
+            "anonymous": int(config.ANON),
             "stream": "0",
             "sd": "0",
             "keywords": "",
@@ -49,7 +49,7 @@ class Myhttp:
             "free": 0,
             "doubleup": 0,
             "sticky": 0,
-            "torrent-cover": "",
+            "torrent-cover": "",  # no ancora implementato
         }
 
     def _post(self, files: str, data: dict, params: dict):
@@ -60,34 +60,51 @@ class Myhttp:
 
 
 class Tracker(Myhttp):
-
     def _get(self, params: dict) -> requests:
-        try:
-            response = requests.get(
-                url=self.filter_url, headers=self.headers, params=params
-            )
-            response.raise_for_status()
-            return response.json()
-        except requests.exceptions.HTTPError:
-            custom_console.bot_error_log(
-                f"[Tracker] HTTP Error. Check your service.env data or verify if the tracker is online")
+        while True:
+            try:
+                response = requests.get(
+                    url=self.filter_url, headers=self.headers, params=params
+                )
+                response.raise_for_status()
+                return response.json()
+            except requests.exceptions.HTTPError as e:
+                if e.response.status_code == 429:
+                    custom_console.bot_error_log(f"[Tracker] HTTP Error {e.response.status_code} Rate limit (wait for 60 secs)...")
+                    time.sleep(60)
+                else:
+                    custom_console.bot_error_log(
+                        f"[Tracker] HTTP Error {e.response.status_code}. Check your configuration file *.env"
+                        f" or verify if the tracker is online")
+                    exit(1)
 
-            exit(1)
-        except requests.exceptions.ConnectionError:
-            custom_console.bot_error_log(
-                f"[Tracker] Connection error. Please check your configuration data "
-                f" or verify if the tracker is online",
-            )
-            exit(1)
+            except requests.exceptions.ConnectionError:
+                custom_console.bot_error_log(
+                    f"[Tracker] Connection error. Please check your configuration data "
+                    f"or verify if the tracker is online",
+                )
+                exit(1)
 
     def _post(self, file: dict, data: dict, params: dict):
-        return requests.post(
-            url=self.upload_url,
-            files=file,
-            data=data,
-            headers=self.headers,
-            params=params,
-        )
+        with open(file['torrent'], "rb") as torrent:
+
+            # // Send content and mime type
+            file_ = {
+                "torrent": ("filename.torrent", torrent, "application/octet-stream"),
+            }
+
+            # // Send nfo
+            if file.get('nfo', None):
+                file_.update({"nfo": ("filename.nfo", file['nfo'], "text/plain")})
+
+            return requests.post(
+                url=self.upload_url,
+                files=file_,
+                data=data,
+                headers=self.headers,
+                params=params,
+            )
+
 
     def _fetch_all(self, params: dict) -> requests:
         return requests.get(
@@ -121,6 +138,15 @@ class filterAPI(Tracker):
         self.params["imdbId"] = imdb_id
         self.params["perPage"] = perPage
         return self._get(params=self.params)
+
+    def igdb(self, igdb_id: int, perPage: int = None) -> requests:
+        """
+        self.params["igdbId"] = igdb_id
+        self.params["perPage"] = perPage
+        return self._get(params=self.params)
+        """
+        print("The tracker has not implemented it yet")
+        exit()
 
     def tvdb(self, tvdb_id: int, perPage: int = None) -> requests:
         self.params["tvdbId"] = tvdb_id
@@ -276,16 +302,46 @@ class Torrents(Tracker):
 
 
 class Uploader(Tracker):
-    def upload_t(self, data: dict, torrent_path: str) -> requests:
+    def upload_t(self, data: dict, torrent_path: str, nfo_path = None) -> requests:
         if not config.TORRENT_ARCHIVE:
             full_path = f"{torrent_path}.torrent"
         else:
             torrent_file_name = os.path.basename(torrent_path)
             full_path = os.path.join(config.TORRENT_ARCHIVE, f"{torrent_file_name}.torrent")
 
-        with open(full_path, "rb") as torrent:
-            file_torrent = {"torrent": torrent}
-            return self._post(file=file_torrent, data=data, params=self.params)
+        file_torrent = {"torrent": full_path}
+        if nfo_path:
+            file_torrent.update({"nfo": self.encode_utf8(file_path=nfo_path)})
+
+        return self._post(file=file_torrent, data=data, params=self.params)
+
+    @staticmethod
+    def encode_utf8(file_path:str) -> bytes | io.BytesIO:
+        """
+        Try to decode the nfo file
+        """
+        encodings = ['utf-8', 'iso-8859-1', 'windows-1252', 'latin1']
+        decoded_content = None
+
+        # Trey to open and decode
+        with open(file_path, 'rb') as f:
+            raw_data = f.read()
+
+        for encoding in encodings:
+            try:
+                decoded_content = raw_data.decode(encoding)
+                break # OK
+            except (UnicodeDecodeError, TypeError):
+                continue # try next
+
+        # Success. Return the contents in bytes
+        if decoded_content is not None:
+            return decoded_content.encode('utf-8')
+        else:
+            error_message = "Error: Unable to read the NFO file !"
+            # Prepare a message of type File to post to the tracker
+            return io.BytesIO(error_message.encode('utf-8'))
+
 
 
 class Unit3d(filterAPI, Torrents, Uploader):
@@ -297,6 +353,9 @@ class Unit3d(filterAPI, Torrents, Uploader):
 
     def get_imdb(self, imdb_id: int, perPage: int = None) -> requests:
         return self.imdb(imdb_id=imdb_id, perPage=perPage)
+
+    def get_igdb(self, igdb_id: int, perPage: int = None) -> requests:
+        return self.igdb(igdb_id=igdb_id, perPage=perPage)
 
     def get_mal(self, mal_id: int, perPage: int = None) -> requests:
         return self.mal(mal_id=mal_id, perPage=perPage)

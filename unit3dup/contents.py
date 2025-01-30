@@ -5,7 +5,7 @@ import re
 
 from common.external_services.igdb.core.tags import (
     crew_patterns,
-    suffixes,
+    additions,
     platform_patterns,
 )
 
@@ -35,8 +35,10 @@ class Contents:
     episode_title: str = field(init=False)
     resolution: int = field(init=False)
     game_title: str
+    game_summary: str = field(init=False)
     game_crew: list
     game_tags: list
+    game_nfo: str
     season: str | None = None
     episode: str | None = None
     screen_size: str | None = None
@@ -125,6 +127,7 @@ class Media:
 
     folder: str
     subfolder: str
+    force_media_type: str
 
     @property
     def filename(self):
@@ -187,16 +190,15 @@ class Media:
         serie_category = tracker_data.category.get("tvshow")
         game_category = tracker_data.category.get("game")
 
-        if self.guess_filename.guessit_season:
-            media_type = serie_category
+        if self.force_media_type:
+            media_type = self.force_media_type
         else:
-            media_type = movie_category
-        if self.crew or self.game_tags:
-            media_type = game_category
-
-        custom_console.bot_log(
-            f"Categories: {media_type} GameTags: {self.game_tags}  Crew: {self.crew}"
-        )
+            if self.guess_filename.guessit_season:
+                media_type = serie_category
+            else:
+                media_type = movie_category
+            if self.crew or self.game_tags:
+                media_type = game_category
         return media_type
 
     @property
@@ -208,16 +210,15 @@ class Media:
         # Basename of the content path
         self.filename_sanitized = self.filename
 
-        # Remove each prefix from the string
+        # Remove each addition from the string
         #
-        """
-            Many suffixes are part of the title
+        # Many additions are part of the title
             
-        for suffix in suffixes:
+        for addition in additions:
             self.filename_sanitized = re.sub(
-                rf"\b{suffix}\b", "", self.filename_sanitized
+                rf"\b{addition}\b", "", self.filename_sanitized
             )
-        """
+
 
         # Remove v version
         self.filename_sanitized = re.sub(

@@ -2,7 +2,7 @@
 
 import os
 from unit3dup.contents import Media
-from common.utility.utility import Manage_titles
+from common.utility.utility import ManageTitles
 from common.custom_console import custom_console
 
 
@@ -12,7 +12,7 @@ class Auto:
     """
 
     def __init__(
-            self, path: str, tracker_name=None, mode="auto"
+            self, path: str, tracker_name=None, mode="auto", force_media_type = None
     ):  # todo: select the tracker (tracker_name)
         """
         Initialize the Auto instance with path, tracker configuration, and mode.
@@ -28,6 +28,8 @@ class Auto:
         self.path = path
         self.is_dir = os.path.isdir(self.path)
         self.auto = mode
+        self.force_media_type = force_media_type
+
 
     def upload(self):
         """
@@ -76,7 +78,7 @@ class Auto:
                     files_path = [
                         os.path.join(self.path, file)
                         for file in files
-                        if Manage_titles.filter_ext(file)
+                        if ManageTitles.filter_ext(file)
                     ]
                 # Get the subfolders path from the self.path
                 if sub_dirs:
@@ -91,16 +93,10 @@ class Auto:
 
         return [
             result
-            for media in files_path + subfolders_path
-            if (result := self.create_media_path(media)) is not None
+            for media_path in files_path + subfolders_path
+            if (result := Media(folder=self.path,subfolder=media_path,force_media_type=self.force_media_type)) is not None
         ]
 
-    def create_media_path(self, subdir: str) -> Media | None:
-
-        return Media(
-            folder=self.path,
-            subfolder=subdir,
-        )
 
     def depth_walker(self, path) -> int:
         """
@@ -126,5 +122,5 @@ class Auto:
             list: A list of video files in the directory that match the video file extensions
         """
         return [
-            file for file in os.listdir(manual_path) if Manage_titles.filter_ext(file)
+            file for file in os.listdir(manual_path) if ManageTitles.filter_ext(file)
         ]

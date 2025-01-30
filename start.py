@@ -1,26 +1,33 @@
 # -*- coding: utf-8 -*-
 
 from rich.console import Console
-from common.custom_console import custom_console
+from common.trackers.trackers import ITTData
 from common.command import CommandLine
 from common.clients.qbitt import Qbitt
-from common.config import config
+from common.config import load_config
 from unit3dup.bot import Bot
 from unit3dup import pvtTracker
 from unit3dup.torrent import View
+from common.custom_console import custom_console
+
 
 console = Console(log_path=False)
-
 
 def main():
     """
     Main function to handle the command line interface (CLI)
     """
-    # /// Display welcome message
     custom_console.welcome_message()
+    custom_console.bot_question_log(f"Checking your configuration file.. \n")
+
+    # Load user configuration data
+    config = load_config()
 
     # /// Initialize command line interface
     cli = CommandLine()
+
+    # Load the tracker data from the dictionary
+    tracker_data = ITTData.load_from_module()
 
     # /// Test the Tracker (always)
     tracker = pvtTracker.Unit3d(
@@ -31,18 +38,27 @@ def main():
         pass
 
     # /// Test the torrent client
-    if cli.args.scan or cli.args.upload:
+    if cli.args.scan or cli.args.upload or cli.args.folder:
         test_client_torrent = Qbitt.is_online()
         if not test_client_torrent:
             exit(1)
 
     # \\\ Commands options  \\\
+    force_media = None
+    if cli.args.game:
+        force_media = tracker_data.category.get("game")
+    if cli.args.movie:
+        force_media = tracker_data.category.get("movie")
+    if cli.args.serie:
+        force_media = tracker_data.category.get("tvshow")
+
+
     # Manual upload mode
     if cli.args.upload:
         bot = Bot(
             path=cli.args.upload, tracker_name=cli.args.tracker, cli=cli.args
         )
-        bot.run()
+        bot.run(force_media_type=force_media)
 
     # Manual folder mode
     if cli.args.folder:
@@ -52,14 +68,24 @@ def main():
             cli=cli.args,
             mode="folder",
         )
-        bot.run()
+        bot.run(force_media_type=force_media)
 
     # Auto mode
     if cli.args.scan and not cli.args.ftp:
         bot = Bot(
             path=cli.args.scan, tracker_name=cli.args.tracker, cli=cli.args, mode="auto"
         )
-        bot.run()
+        bot.run(force_media_type=force_media)
+
+    # Watcher
+    if cli.args.watcher:
+        bot = Bot(
+            path=cli.args.watcher, tracker_name=cli.args.tracker, cli=cli.args, mode="auto"
+        )
+
+        bot.watcher(duration=config.WATCHER_INTERVAL, watcher_path=config.WATCHER_PATH,
+                    destination_path = config.WATCHER_DESTINATION_PATH, force_media_type=force_media)
+
 
     # Pw
     if cli.args.pw:
@@ -70,12 +96,13 @@ def main():
         )
         bot.pw()
 
+
     # ftp and upload
     if cli.args.ftp:
         bot = Bot(
             path='', tracker_name=cli.args.tracker, cli=cli.args, mode="folder"
         )
-        bot.ftp()
+        bot.ftp(force_media_type=force_media)
 
     # Commands list: commands not necessary for upload but may be useful
     torrent_info = View()

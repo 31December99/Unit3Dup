@@ -2,29 +2,33 @@
 
 import argparse
 import os
+import time
+import shutil
 
-from common.external_services.theMovieDB.tmdb_service import TmdbService
-from common.external_services.ftpx.core.models.list import FTPDirectory
 from unit3dup.media_manager.ContentManager import ContentManager
 from unit3dup.media_manager.TorrentManager import TorrentManager
-from common.external_services.Pw.pw_service import PwService
+from common.external_services.ftpx.core.models.list import FTPDirectory
+from common.external_services.Pw.pw_manager import PwManager
 from common.external_services.ftpx.core.menu import Menu
 from common.external_services.ftpx.client import Client
 from common.custom_console import custom_console
 from common.extractor import Extractor
+from pathlib import Path
 
 
 class Bot:
     """
-    A class to manage and execute media-related tasks including file processing,
-    torrent management, and interaction with the TMDB service
+    A Bot class that manages media files, including processing, torrent management,TMDB ,FTP
+
+    Methods:
+        run(): Starts the media processing and torrent handling tasks
+        watcher(duration: int, watcher_path: str): Monitors a folder for changes and processes files
+        ftp(): Connects to a remote FTP server and processes files
     """
 
-    def __init__(
-            self, path: str, tracker_name: str, cli: argparse.Namespace, mode="man"
-    ):
+    def __init__(self, path: str, tracker_name: str, cli: argparse.Namespace, mode="man"):
         """
-        Initialize the Bot instance with path, tracker name, command-line interface object, and mode
+        Initializes the Bot instance with path, tracker name, command-line interface object, and mode
 
         Args:
             path (str): The path to the directory or file to be managed
@@ -41,131 +45,137 @@ class Bot:
         # Bot Manager
         self.torrent_manager = TorrentManager(cli=self.cli)
 
-        # TMDB service
-        # self.tmdb_service = TmdbService()
-
-    def run(self) -> None:
+    def run(self, force_media_type: int) -> bool:
         """
-        Start the process
-        """
-        custom_console.panel_message("Analyzing... Please wait")
+        Start the process of analyzing and processing media files.
 
-        # Get Files list with basic attributes
-        # from the upload() or scan command()
-        # and create an object Media
-        # torrent_path
-        # media_type
-        # crew
-        # game_tags
-        # game_title
+        This method retrieves media files, decompresses any `.rar` files if needed,
+        and then processes the files using the TorrentManager
+        """
+        custom_console.panel_message("Analyzing your media files... Please wait")
+
+        # Get a Files list with basic attributes and create a content object for each
         self.content_manager = ContentManager(
-            path=self.path, tracker_name=self.tracker_name, mode=self.mode
+            path=self.path, tracker_name=self.tracker_name, mode=self.mode, force_media_type=force_media_type
         )
-        file_media_list = self.content_manager.get_files()
+        contents = self.content_manager.get_files()
 
-        if not file_media_list:
-            custom_console.bot_error_log("There are no files to process")
-            return
+        # -u requires a single file
+        if not contents or not os.path.exists(self.path):
+            custom_console.bot_error_log("There are no Media to process")
+            return False
 
-        # Decompress the rar files( only for ftp or -unrar flag)
-        if self.cli.ftp or self.cli.unrar:
-            extractor = Extractor(media=file_media_list)
-            result = extractor.unrar()
-            if result is False:
-                custom_console.bot_error_log("Unrar Exit")
-                exit(1)
+        # we got a handled exception
+        if contents is None:
+            exit(1)
 
-        # Create an object Files for each file from the files_list
-        # We need to prepare each file (Files class) to create a content object (Contents):
+        # Skip empty folder
+        contents = [content for content in contents if content is not None]
 
-        # file without folder
-        # file with folder
-        # folder with files
-        # tv show title string
-        # movie title string
-        # display_name for the tracker website string
-        # media_info json
-        # game by crew
-        # game title for query igdb
-        # game tags (platform) for query igdb
-        # document
-        # doc description
-        # torrent package
-        # torrent name
-        # torrent file name
-        # torrent meta_file
-        # torrent size (field)
-        # audio languages
+        # -f requires at least one file
+        if not contents:
+            custom_console.bot_error_log(f"There are no Files to process. Try using -scan")
+            exit(1)
 
-        # Media > Files > Content
-        contents = [
-            content
-            for media in file_media_list
-            if (content := self.content_manager.get_media(media))
-        ]
-
-        # Print the list of selected files being processed
-        # the contents objects
+        # Print the list of files being processed
         custom_console.bot_process_table_log(contents)
 
-        # Process them
+        # Process the contents (files)
         self.torrent_manager.process(contents)
+        return True
 
-    def pw(self):
+    def watcher(self, duration: int, watcher_path: str,  destination_path: str , force_media_type: int)-> bool:
+        """
+        Monitors the watcher path for new files, moves them to the destination folder,
+        then uploads them to the tracker
 
+        Args:
+            duration (int): The time duration in seconds for the watchdog to wait before checking again
+            watcher_path (str): The path to the folder being monitored for new files
+            force_media_type(int): The media type to use
+            destination_path: The destination path for the new files
+        """
+        self.path = str(destination_path)
+        try:
+            # Watchdog loop
+            while True:
+                start_time = time.perf_counter()
+                end_time = start_time + duration
+
+                # Return if the watcher path doesn't exist
+                if not os.path.exists(watcher_path):
+                    custom_console.bot_error_log("Watcher path does not exist or is not configured\n")
+                    return False
+
+                print()
+                # Counter
+                while time.perf_counter() < end_time:
+                    remaining_time = end_time - time.perf_counter()
+                    custom_console.bot_counter_log(
+                        f"WATCHDOG: {remaining_time:.1f} seconds Ctrl-c to Exit "
+                    )
+                    time.sleep(0.01)
+                print()
+
+                # Skip if there are no files in the watcher folder
+                if not os.listdir(watcher_path):
+                    custom_console.bot_log("The are no files in the Watcher folder\n")
+                    continue
+
+                # Scan the source and move each file to the destination folder
+                for root, dirs, files in os.walk(watcher_path):
+                    dest_root = Path(root.replace(watcher_path, self.path))
+                    dest_root.mkdir(parents=True, exist_ok=True)
+
+                    for file_name in files:
+                        src_file = Path(root) / file_name
+                        dest_file = dest_root / file_name
+
+                        # Limit the length of file paths printed
+                        limiter_src = '...' if len(str(src_file)) > 50 else ''
+                        limiter_dest = '...' if len(str(dest_file)) > 50 else ''
+
+                        custom_console.bot_log(
+                            f"{str(src_file)[:50]}{limiter_src} -> from 'watch folder' to 'destination folder'"
+                            f" -> {str(dest_file)[:50]}{limiter_dest}"
+                        )
+                        shutil.move(str(src_file), str(dest_file))  # Move file to destination
+
+                    # Remove empty directories
+                    if root != watcher_path and not os.listdir(root):
+                        try:
+                            os.rmdir(root)
+                        except OSError as e:
+                            custom_console.bot_error_log(e)
+                            exit()
+
+                # Start uploading
+                print()
+                self.run(force_media_type=force_media_type)
+
+        except KeyboardInterrupt:
+            custom_console.bot_log("Exiting...")
+        return True
+
+    def pw(self)-> bool:
+        """
+        Interacts with the PW service to search for torrent files
+
+        This method performs a search query and logs the results for torrents with
+        a certain number of seeders
+        """
         # PW service
-        pw_service = PwService()
-        custom_console.panel_message("Analyzing... Please wait")
-        # Examples Test
+        pw_manager = PwManager(cli=self.cli)
+        pw_manager.process()
+        custom_console.panel_message("Searching... Please wait")
+        return True
 
+
+    def ftp(self, force_media_type: int):
         """
-        # Now Playing by country
-        releases_latest = self.tmdb_service.latest_movie_by_country(country_code="IT")
-        custom_console.log(releases_latest)
-        custom_console.rule()
+        Connects to a remote FTP server and interacts with files.
 
-        # Alternative title for a movie
-        alternative_title = self.tmdb_service.movie_alternative_title(movie_id=533535)
-        custom_console.log(alternative_title)
-        custom_console.rule()
-
-        # Search for a movie title
-        search_movie = self.tmdb_service.search_movies(query="Blade Runner 2049")
-        custom_console.log(search_movie)
-        custom_console.rule()
-
-        # On The Air by country
-        tv_shows = self.tmdb_service.latest_show_by_country(country_code="IT")
-        custom_console.log(tv_shows)
-        custom_console.rule()
-
-        # Tv Show Details by ID
-        tv_show_details = self.tmdb_service.tv_show_details(tv_show_id=84773)
-        custom_console.log(tv_show_details)
-        custom_console.rule()
-
-        # Search for a tv show title
-        search_tv_show = self.tmdb_service.search_tv_show(
-            query="Il Signore degli Anelli: Gli Anelli del Potere"
-        )
-        custom_console.log(search_tv_show)
-        custom_console.rule()
-
-        # Get PW indexers
-        indexers = self.pw_service.get_indexers()
-        custom_console.log(indexers)
-        """
-
-        # Query the indexers
-        search = pw_service.search(query="Maze runner")
-        for index, s in enumerate(search):
-            if s.seeders > 1:
-                torrent_file = search[index]
-                custom_console.log(torrent_file)
-
-    def ftp(self):
-        """
-        Controller
+        This method handles FTP connection, navigation, and file download from the remote server
         """
         custom_console.bot_question_log("\nConnecting to the remote FTP...\n")
 
@@ -178,9 +188,8 @@ class Bot:
         page = ftp_client.home_page()
         menu.show(table=page)
 
-        while 1:
+        while True:
             user_option = ftp_client.user_input()
-            # return a table(page) or a selected folder (FTPDirectory)
             page = ftp_client.input_manager(user_option)
             if page == 0:
                 ftp_client.quit()
@@ -188,10 +197,9 @@ class Bot:
             if not page:
                 continue
 
-            # Display the page as FtpDirectory (user choice)
+            # Display selected folder or file
             if isinstance(page, FTPDirectory):
                 ftp_directory_name = page.name
-                # Change the path based on the user choice
                 if page.type == "Folder":
                     page = ftp_client.change_path(selected_folder=ftp_directory_name)
                     menu.show(table=page)
@@ -199,11 +207,18 @@ class Bot:
                     ftp_client.select_file(one_file_selected=page)
                 continue
 
-            # Display the page as table
+            # Show page as table
             menu.show(table=page)
 
         if ftp_client.download_to_local_path:
-            # Get only the folder part for the scanning process
             self.path = os.path.dirname(ftp_client.download_to_local_path)
+            self.mode = 'folder'
             # Upload -f process
-            self.run()
+            # Decompress .rar files if the flags are set
+            extractor = Extractor(compressed_media__path=self.path)
+            result = extractor.unrar()
+            if result is False:
+                custom_console.bot_error_log("Unrar Exit")
+                exit(1)
+
+            self.run(force_media_type=force_media_type)

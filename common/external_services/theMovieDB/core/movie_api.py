@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import pprint
 
-from common.config import config
+from common.external_services.theMovieDB.core import config
 from common.external_services.sessions.session import MyHttp
 from common.external_services.sessions.agents import Agent
 from common.external_services.theMovieDB.core.models.movie.nowplaying import NowPlaying

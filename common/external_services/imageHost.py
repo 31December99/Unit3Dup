@@ -5,7 +5,7 @@ import json
 import time
 import requests
 
-from common.config import config
+from common.external_services import config
 from abc import ABC, abstractmethod
 from common.custom_console import custom_console
 
@@ -47,13 +47,18 @@ class ImageUploader(ABC):
                 self.handle_http_error(e, upload_n)
                 time.sleep(1)
 
-            except json.decoder.JSONDecodeError as e:
-                custom_console.bot_log(f"[Imagehost] JSONDecodeError: {e}")
+            except requests.exceptions.ConnectionError as e:
+                custom_console.bot_log(f"[{self.__class__.__name__}] JSONDecodeError: {e}")
                 break
 
+            except json.decoder.JSONDecodeError as e:
+                custom_console.bot_log(f"[{self.__class__.__name__}] JSONDecodeError:"
+                       f" Connection issue. Please check your connection")
+                exit()
             except requests.exceptions.Timeout:
                 custom_console.bot_log(
-                    "'[Timeout]' We did not receive a response from the server within the 10 second limit"
+                    f"[{self.__class__.__name__}] We did not receive a response from the server"
+                    f" within the 10 second limit"
                 )
                 break
 
@@ -154,10 +159,10 @@ class ImageUploaderFallback:
     def result(response: dict, uploader_host: str) -> str:
 
         if uploader_host == "Freeimage":
-            return response["image"]["display_url"]
+            return response["image"]["image"]["url"]
 
         if uploader_host == "ImgBB":
-            return response["data"]["display_url"]
+            return response["data"]["image"]["url"]
 
         if uploader_host == "LensDump":
             return response['image']['url']

@@ -1,17 +1,17 @@
 ## Unit3D_uploader
 Unit3D platform uploader (Python >=3.10)
 
-## Torrent Generator and Uploader
+## Auto Torrent Generator and Uploader
 
-This Python script generates and uploads torrents based on input provided for movies or TV series.
+This Python script generates and uploads torrents based on input provided for movies or TV series and Games.
 
 It performs the following tasks:
 
 - Scan subfolders
 - Compiles various metadata information to create a torrent.
 - Extracts a series of screenshots directly from the video.
-- Generates meta-info derived from the video.
-- Searches for the corresponding ID on TMDB (The Movie Database).
+- Generates meta-info derived from the video or Game.
+- Searches for the corresponding ID on TMDB and IGDB.
 - Uploads the content to the UNIT3D Next Generation tracker platform.
 - Seeding in qbittorrent
 
@@ -25,14 +25,12 @@ You can help improve this project or just hang out with us on
 Thank you
 
 ___
-## Use 'py' for windows , 'python3' for linux os
+## Use 'py', 'python' for windows , 'python3' for linux os
 ___
 
 ### Upload single episode or movie '-u' command
 This command allows you to create and upload torrent for movies and series
 and automatically upload and seed them.
-
-python3 start.py -u "/home/uploader/myvideos/movie1.mkv
 
 python3 start.py -u "/home/uploader/myvideos/S04E12.mkv
 
@@ -41,32 +39,20 @@ myvideos/
 ├── movie1.mkv
 ├── S04E12.mkv
 ```
+
+### Upload single folder '-f' command
+
+python3 start.py -f "/home/uploader/myvideos S01
+
+```
+myvideos S01/
+├── S01E01.mkv
+├── S01E02.mkv
+```
+
 ### Upload multi-files and then multi-torrents
 This command allows you to scan for movies and series and automatically upload and seed them.
 
-python3 start.py -scan "/home/uploader/myvideos
-```
-myvideos/
-├── movie1.mkv     
-├── S04E12.mkv     
-├── S01E01.mkv
-├── movie2.mkv
-├── S05E02.mkv
-```
-### Upload subfolders Movie and Serie
-- `python3 start.py -scan "/home/uploader/myvideos
-```
-myvideos/
-├── movie2/          
-│   └── movie2.mkv
-├── series1 S01/     
-│   ├── S01E01.mkv
-│   └── S01E02.mkv
-├── series2 S01E02/  
-│   └── S01E02.mkv 
-```
-
-### Upload subfolders and files Movie and Serie
 - `python3 start.py -scan "/home/uploader/myvideos
 
 ```
@@ -94,10 +80,11 @@ PATH environment user variable
 ## Bot Installation
 
 1. Download the updater (zip) [Download autoupdate.py](https://gist.github.com/31December99/8e51466feb9df1606fd4199141ac54bb)
-2. run python3 autoupdate.py
-3. run pip install -r requirements.txt
-4. START the bot in order to create the service.env file
-5. **Complete the service.env file.
+2. pip install requests
+3. python autoupdate.py
+4. pip install -r requirements.txt
+5. START the bot in order to create the service.env file
+6. **Complete the service.env file.
    The fields marked as optional are not required and are not essential for uploading media to the tracker**
 ## ! Note regarding the service.env file !
    The service.env file is located in the home directory on Linux
@@ -127,8 +114,6 @@ Make sure to configure the necessary API keys and authentication credentials in 
 - torrent_archive =''
 - preferred_lang=en
 - size_th=100
-
-let torrent_archive string empty or set your path if you want save torrent file inside
 
 ### Custom tracker .env file Example (itt.env):
 - BASE_URL=https://...
@@ -169,7 +154,6 @@ let torrent_archive string empty or set your path if you want save torrent file 
     python3 start.py -sd (Standard denition torrent)
     python3 start.py -hs (High speed torrent)
     python3 start.py -pers (personalRelease torrent)
-
 ___
 
 

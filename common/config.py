@@ -1,17 +1,24 @@
 # -*- coding: utf-8 -*-
 
 import os
+import sys
+from functools import cache
+
 from common.custom_console import custom_console
 from pydantic_settings import BaseSettings
-from pydantic import Field, field_validator
+from pydantic import model_validator
 from dotenv import load_dotenv
 from urllib.parse import urlparse
 from pathlib import Path
 
-service_filename = "Unit3Dbot_service.env"
-n_of_uploaders=3
+from common.utility.utility import ManageTitles
 
-def create_default_env_file(path):
+service_filename = "Unit3Dbot_service.env"
+
+def create_default_env_file(path: Path):
+    """
+    Creates a default configuration file if it doesn't already exist
+    """
     default_content = """
 ################################################## CONFIG ###################################################
 # TRACKER
@@ -26,6 +33,13 @@ IMGBB_KEY=
 FREE_IMAGE_KEY=
 LENSDUMP_KEY=
 
+# TRAILERS
+YOUTUBE_KEY=no_apikey
+
+# IGDB
+IGDB_CLIENT_ID=client_id
+IGDB_ID_SECRET=secret
+
 # QBITTORRENT CLIENT
 QBIT_USER=
 QBIT_PASS=
@@ -33,328 +47,368 @@ QBIT_URL=http://localhost
 QBIT_PORT=8080
 
 ############################################## USER PREFERENCES ##############################################
-
 # Image uploader priority. 0=first in list
 IMGBB_PRIORITY=0
 FREE_IMAGE_PRIORITY=1
 LENSDUMP_PRIORITY=2
 
+# ------------------------------------------------------------------------------------------------------------
+
+# Youtube favorite channel Trailers i.e : FilmsNow it
+YOUTUBE_FAV_CHANNEL_ID=UCGCbxpnt25hWPFLSbvwfg_w
+
+# Enable to use the YouTube favorite Channel otherwise perform a global search
+YOUTUBE_CHANNEL_ENABLE=False
+
+# ------------------------------------------------------------------------------------------------------------
+
 # Search for possible candidates for duplicate files
 DUPLICATE_ON=False
 
-# Number of screenshots we create
-NUMBER_OF_SCREENSHOTS=6
-
-# Level of compression for screenshot (quality) 0 = Best quality
-COMPRESS_SCSHOT=4
-
-# Path for each torrent file created
-TORRENT_ARCHIVE=
-
-# Torrent file comment (max 100 chars)
-TORRENT_COMMENT=
-
-# Preferred language. Discard videos with a language different from preferred_lang
-PREFERRED_LANG=
+# auto Skip duplicates if founds
+SKIP_DUPLICATE=False
 
 # Discard videos whose size deviates by more than the specified percentage (size_th) from the video in tracker
-SIZE_TH=100
+# delta(%) < SIZE_TH = duplicate
+SIZE_TH=50
 
+# ------------------------------------------------------------------------------------------------------------
 
-##############################################################################################################
+# Watch the folder watcher_path at regular intervals (watcher_interval seconds) 
+WATCHER_INTERVAL=60
+# It will move media from the 'watcher_path' to the 'watcher_destination_path' and upload it'
+WATCHER_PATH=watcher_path
+WATCHER_DESTINATION_PATH=watcher_destination_path
+
+# ------------------------------------------------------------------------------------------------------------
+
+# Number of screenshots we create
+NUMBER_OF_SCREENSHOTS=4
+
+# Level of compression for screenshot 0-9 (quality) 0 = Best quality
+COMPRESS_SCSHOT=4
+
+# Resize image before sending to image hosting 
+RESIZE_SCSHOT=False
+
+# ------------------------------------------------------------------------------------------------------------
+
+# Path for each torrent file created
+TORRENT_ARCHIVE=.
+
+# Torrent file comment (max 100 chars)
+TORRENT_COMMENT=no_comment
+
+# ------------------------------------------------------------------------------------------------------------
+
+# Preferred language. Discard videos with a language different from preferred_lang (default=all)
+# [ "ENG", "USA","ITA", "DEU", "FRA",  "GBR", "ESP", "JPN", "BRA", "RUS", "CHN"]
+PREFERRED_LANG=all
+
+# ------------------------------------------------------------------------------------------------------------
+
+# Hide your nickname (only the nick name)
+ANON=False
+
+# ------------------------------------------------------------------------------------------------------------
+
+# Active the cache for the screenshots
+CACHE_SCR=False
+
+# ------------------------------------------------------------------------------------------------------------
+
+#########################################
 ################  OPTIONAL  #############  
 #########################################
-# PW
-PW_API_KEY=
+# PW - not implemented yet -
+PW_API_KEY=no_key
 PW_URL=http://localhost:9696/api/v1
 
-# FTPX 
-FTPX_USER=
-FTPX_PASS=
-FTPX_IP=
-FTPX_PORT=2121
-FTPX_LOCAL_PATH= 
-FTPX_ROOT=
-FTPX_KEEP_ALIVE=False
+# Torrent archive the pw
+PW_TORRENT_ARCHIVE=.
 
-# IGDB
-IGDB_CLIENT_ID=
-IGDB_ID_SECRET=
-"""
+# download folder for the pw
+PW_DOWNLOAD=.
+
+# FTPX 
+FTPX_USER=user
+FTPX_PASS=pass
+FTPX_IP=127.0.0.1
+FTPX_PORT=2121
+FTPX_LOCAL_PATH=.
+FTPX_ROOT=.
+FTPX_KEEP_ALIVE=False
+    """
     with open(path, "w") as f:
         f.write(default_content.strip())
 
-# Define the path for the configuration file
-if os.name == "nt":  # If on Windows
-    default_env_path = Path(os.getenv("LOCALAPPDATA", ".")) / f"{service_filename}"
-    torrent_archive_path = Path(os.getenv("LOCALAPPDATA", ".")) / "torrent_archive"
-else:  # If on Linux/macOS
-    default_env_path = Path.home() / f"{service_filename}"
-    torrent_archive_path = Path.home() / "torrent_archive"
 
-custom_console.bot_question_log(f"Default configuration path: {default_env_path}\n")
-
-# Create the configuration file if it does not exist
-if not default_env_path.exists():
-    print(f"Create default configuration file: {default_env_path}")
-    create_default_env_file(default_env_path)
-
-# Create the directory for the torrent archive if it does not exist
-if not torrent_archive_path.exists():
-    print(f"Create default torrent archive path: {torrent_archive_path}")
-    os.makedirs(torrent_archive_path, exist_ok=True)
-
-# Load environment variables
-load_dotenv(dotenv_path=default_env_path)
 
 class Config(BaseSettings):
-    # TRACKER
-    ITT_APIKEY: str | None = Field(default=None, env="ITT_APIKEY")
-    ITT_URL: str = Field(default="https://itatorrents.xyz", env="ITT_URL")
+    """
+    Class to manage the configuration and validation of environment vvariables
+    """
 
-    # EXTERNAL SERVICE
-    TMDB_APIKEY: str | None = Field(default=None, env="TMDB_APIKEY")
-    IMGBB_KEY: str | None = Field(default=None, env="IMGBB_KEY")
-    FREE_IMAGE_KEY: str | None = Field(default=None, env="FREE_IMAGE_KEY")
-    LENSDUMP_KEY: str | None = Field(default=None, env="LENSDUMP_KEY")
+    ITT_URL: str = "https://itatorrents.xyz"
+    ITT_APIKEY: str | None = None
 
-    PW_API_KEY: str | None = Field(default=None, env="PW_API_KEY")
-    PW_URL: str = Field(default="http://localhost:9696/api/v1", env="PW_URL")
-    FTPX_USER: str | None = Field(default=None, env="FTPX_USER")
-    FTPX_PASS: str | None = Field(default=None, env="FTPX_PASS")
-    FTPX_IP: str | None = Field(default=None, env="FTPX_IP")
-    FTPX_PORT: str | None = Field(default="2121", env="FTPX_PORT")
-    IGDB_CLIENT_ID: str | None = Field(default=None, env="IGDB_CLIENT_ID")
-    IGDB_ID_SECRET: str | None = Field(default=None, env="IGDB_ID_SECRET")
+    TMDB_APIKEY: str | None = None
+    IMGBB_KEY: str | None = None
+    FREE_IMAGE_KEY: str | None = None
+    LENSDUMP_KEY: str | None = None
+    YOUTUBE_KEY: str | None = None
 
-    # TORRENT CLIENT
-    QBIT_USER: str | None = Field(default=None, env="QBIT_USER")
-    QBIT_PASS: str | None = Field(default=None, env="QBIT_PASS")
-    QBIT_URL: str = Field(default="http://127.0.0.1", env="QBIT_URL")
-    QBIT_PORT: str | None = Field(default="8080", env="QBIT_PORT")
+    PW_API_KEY: str | None = None
+    PW_URL: str = "http://localhost:9696/api/v1"
+    PW_TORRENT_ARCHIVE_PATH: str | None = None
+    PW_DOWNLOAD_PATH: str | None = None
+    FTPX_USER: str | None = None
+    FTPX_PASS: str | None = None
+    FTPX_IP: str | None = None
+    FTPX_PORT: str = "2121"
+    IGDB_CLIENT_ID: str | None = None
+    IGDB_ID_SECRET: str | None = None
 
-    # USER PREFERENCES
-    IMGBB_PRIORITY: int = Field(default=0, env="IMGBB_PRIORITY")
-    FREE_IMAGE_PRIORITY: int = Field(default=1, env="FREE_IMAGE_PRIORITY")
-    LENSDUMP_PRIORITY: int = Field(default=2, env="LENSDUMP_PRIORITY")
+    QBIT_USER: str | None = None
+    QBIT_PASS: str | None = None
+    QBIT_URL: str = "http://127.0.0.1"
+    QBIT_PORT: str = "8080"
 
-    DUPLICATE_ON: str = Field(default=False, env="DUPLICATE_ON")
-    NUMBER_OF_SCREENSHOTS: int = Field(default=6, env="NUMBER_OF_SCREENSHOTS")
-    COMPRESS_SCSHOT: int = Field(default=4, env="COMPRESS_SCSHOT")
-    TORRENT_ARCHIVE: str | None = Field(default=None, env="TORRENT_ARCHIVE")
-    TORRENT_COMMENT: str | None = Field(default=None, env="TORRENT_COMMENT")
-    PREFERRED_LANG: str | None = Field(default=None, env="PREFERRED_LANG")
-    SIZE_TH: int = Field(default=100, env="SIZE_TH")
-    FTPX_LOCAL_PATH: str | None = Field(default=None, env="FTPX_LOCAL_PATH")
-    FTPX_ROOT: str | None = Field(default=".", env="FTPX_ROOT")
-    FTPX_KEEP_ALIVE: bool | None = Field(default=False, env="FTPX_KEEP_ALIVE")
+    IMGBB_PRIORITY: int = 0
+    FREE_IMAGE_PRIORITY: int = 1
+    LENSDUMP_PRIORITY: int = 2
 
-    def __init__(self, **values: any):
-        super().__init__(**values)
+    YOUTUBE_FAV_CHANNEL_ID: str | None = None
+    YOUTUBE_CHANNEL_ENABLE: bool = False
+
+    DUPLICATE_ON: bool = False
+    SKIP_DUPLICATE: bool = False
+    NUMBER_OF_SCREENSHOTS: int = 6
+    COMPRESS_SCSHOT: int = 4
+    RESIZE_SCSHOT: bool = False
+    ANON: bool = False
+    CACHE_SCR: bool = False
+
+
+    WATCHER_PATH: str | None = None
+    WATCHER_DESTINATION_PATH: str | None = None
+    WATCHER_INTERVAL: int = 60
+
+    TORRENT_ARCHIVE: str | None = None
+    TORRENT_COMMENT: str | None = None
+    PREFERRED_LANG: str | None = None
+    SIZE_TH: int = 100
+
+    FTPX_LOCAL_PATH: str | None = None
+    FTPX_ROOT: str = "."
+    FTPX_KEEP_ALIVE: bool = False
+
+    if os.name == "nt":
+        # C:\Users\user\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_\LocalCache\Local
+        default_env_path: Path = Path(os.getenv("LOCALAPPDATA", ".")) / f"{service_filename}"
+        torrent_archive_path: Path = Path(os.getenv("LOCALAPPDATA", ".")) / "torrent_archive"
+        default_env_path_cache: Path = Path(os.getenv("LOCALAPPDATA", ".")) / f"Unit3Dup_cache"
+        PW_TORRENT_ARCHIVE_PATH: Path = Path(os.getenv("LOCALAPPDATA", ".")) / "pw_torrent_archive"
+        PW_DOWNLOAD_PATH: Path = Path(os.getenv("LOCALAPPDATA", ".")) / "pw_download"
+        WATCHER_DESTINATION_PATH: Path = Path(os.getenv("LOCALAPPDATA", ".")) / "watcher_destination_path"
+
+    else:
+        default_env_path: Path = Path.home() / f"{service_filename}"
+        torrent_archive_path: Path = Path.home() / "torrent_archive"
+        default_env_path_cache: Path = Path.home() / "Unit3Dup_cache"
+        PW_TORRENT_ARCHIVE_PATH: Path = Path.home() / "pw_torrent_archive"
+        PW_DOWNLOAD_PATH: Path = Path.home() /  "pw_download"
+        WATCHER_DESTINATION_PATH: Path = Path.home()  / "watcher_destination_path"
+
+    if not PW_TORRENT_ARCHIVE_PATH.exists():
+        print(f"Create default pw torrent archive path: {PW_TORRENT_ARCHIVE_PATH}")
+        os.makedirs(PW_TORRENT_ARCHIVE_PATH)
+
+    if not PW_DOWNLOAD_PATH.exists():
+        print(f"Create default pw download path: {PW_DOWNLOAD_PATH}")
+        os.makedirs(PW_DOWNLOAD_PATH)
+
+    if not WATCHER_DESTINATION_PATH.exists():
+        print(f"Create default destination watcher path: {WATCHER_DESTINATION_PATH}")
+        os.makedirs(WATCHER_DESTINATION_PATH)
+
+    if not default_env_path.exists():
+        print(f"Create default configuration file: {default_env_path}")
+        create_default_env_file(default_env_path)
+
+    if not torrent_archive_path.exists():
+        # print(f"Create default torrent archive path: {torrent_archive_path}")
+        os.makedirs(torrent_archive_path, exist_ok=True)
+
+    if not default_env_path_cache.exists():
+        # print(f"Create default cache path: {default_env_path_cache}")
+        os.makedirs(default_env_path_cache, exist_ok=True)
+
+    load_dotenv(dotenv_path=default_env_path)
 
     @staticmethod
-    def validate_url(value: str | None, field: str, fields: dict) -> str:
-        if not value:
-            return fields[field].default
-        parsed_url = urlparse(value)
-        if not (parsed_url.scheme and parsed_url.netloc):
+    def wait_for_user_confirmation():
+        # Wait for user confirmation in case of validation failure
+        custom_console.bot_log(f"Please update your config file *.env")
+        sys.exit(0)
+
+    @model_validator(mode='before')
+    def validate_fields(cls, values: dict) -> dict:
+        """
+        Validates
+        """
+        def validate_boolean(value: bool | str, field_name: str, default_value: bool) -> bool:
+            """
+            Validates boolean
+            """
+            if isinstance(value, str):
+                normalized_value = value.strip().lower()
+                if normalized_value in {"true", "1", "yes"}:
+                    return True
+                elif normalized_value in {"false", "0", "no"}:
+                    return False
             custom_console.bot_error_log(
-                f"{value} is an invalid URL. Using default: {fields[field].default}"
+                f"-> not configured {field_name} '{value}' Please use the default: {default_value}"
             )
-            return fields[field].default
-        return value
+            Config.wait_for_user_confirmation()
+            return default_value
 
-    @staticmethod
-    def validate_boolean(value: any, field: str, fields: dict) -> bool:
-        if isinstance(value, str):
-            lowered_value = value.lower()
-            if lowered_value in ["true", "1", "yes"]:
-                return True
-            elif lowered_value in ["false", "0", "no"]:
-                return False
-        custom_console.bot_error_log(
-            f"{value} is not a valid boolean for {field}. Using default: {fields[field].default}"
-        )
-        return fields[field].default
+        def validate_int(value: int | str, field_name: str, default_value: int) -> int:
+            """
+            Validates integer
+            """
+            try:
+                return int(value)
+            except (ValueError, TypeError):
+                custom_console.bot_error_log(
+                    f"-> not configured {field_name} '{value}' Please use the default: {default_value}"
+                )
+                Config.wait_for_user_confirmation()
+                return default_value
 
-    @field_validator("ITT_URL")
-    def validate_itt_url(cls, value):
-        if not value:
-            custom_console.bot_error_log("No ITT_URL provided")
-        return cls.validate_url(value, "ITT_URL", cls.model_fields)
+        def validate_str(value: str | None, field_name: str, default_value: str | None) -> str | None:
+            """
+            Validates string
+            """
+            if isinstance(value, str) and value.strip():
+                return value
+            custom_console.bot_error_log(
+                f"-> not configured {field_name} '{value}' Please use the default: {default_value}"
+            )
+            Config.wait_for_user_confirmation()
+            return default_value
 
-    @field_validator("ITT_APIKEY")
-    def validate_itt_apikey(cls, value):
-        if not value:
-            custom_console.bot_error_log("No ITT_APIKEY provided")
-        return value
-
-    @field_validator("QBIT_URL")
-    def validate_qbit_url(cls, value):
-        if not value:
-            custom_console.bot_error_log("No QBIT_URL provided")
-        return cls.validate_url(value, "QBIT_URL", cls.model_fields)
-
-    @field_validator("PW_URL")
-    def validate_pw_url(cls, value):
-        # if not value:
-        # custom_console.bot_question_log("[Optional] No PW_URL provided\n")
-        return cls.validate_url(value, "PW_URL", cls.model_fields)
-
-    @field_validator("PW_API_KEY")
-    def validate_pw_apikey(cls, value):
-        # if not value:
-        # custom_console.bot_question_log("[Optional] No PW_API_KEY provided\n")
-        return value
-
-    @field_validator("TMDB_APIKEY")
-    def validate_tmdb_apikey(cls, value):
-        if not value:
-            custom_console.bot_error_log("No TMDB API_KEY provided")
-        return value
-
-    @field_validator("IMGBB_KEY")
-    def validate_imgbb_apikey(cls, value):
-        if not value:
-            custom_console.bot_error_log("No IMGBB API_KEY provided")
-        return value
-
-    @field_validator("FREE_IMAGE_KEY")
-    def validate_freeimage_apikey(cls, value):
-        if not value:
-            custom_console.bot_error_log("No FREE IMAGE API_KEY provided")
-        return value
-
-    @field_validator("LENSDUMP_KEY")
-    def validate_lensdump_apikey(cls, value):
-        if not value:
-            custom_console.bot_error_log("No LENSDUMP API_KEY provided")
-        return value
-
-    @field_validator("FREE_IMAGE_PRIORITY")
-    def validate_free_image_priority(cls, value):
-        if not isinstance(value, int) or not (0 <= value <= n_of_uploaders):
-            return cls.model_fields["FREE_IMAGE_PRIORITY"].default
-        return value
-
-    @field_validator("IMGBB_PRIORITY")
-    def validate_imgbb_priority(cls, value):
-        if not isinstance(value, int) or not (0 <= value <= n_of_uploaders):
-            return cls.model_fields["IMGBB_PRIORITY"].default
-        return value
-
-    @field_validator("LENSDUMP_PRIORITY")
-    def validate_lensdump_priority(cls, value):
-        if not isinstance(value, int) or not (0 <= value <= n_of_uploaders):
-            return cls.model_fields["LENSDUMP_PRIORITY"].default
-        return value
-
-    @field_validator("QBIT_USER")
-    def validate_qbit_user(cls, value):
-        if not value:
-            custom_console.bot_error_log("No QBIT_USER provided")
-        return value
-
-    @field_validator("QBIT_PASS")
-    def validate_qbit_pass(cls, value):
-        if not value:
-            custom_console.bot_error_log("No QBIT_PASS provided")
-        return value
-
-    @field_validator("QBIT_PORT")
-    def validate_qbit_port(cls, value):
-        if not value:
-            custom_console.bot_error_log("No QBIT_PORT provided")
-        return value
+        def validate_iso3166(value: str | None, field_name: str, default_value: str | None) -> str | None:
+            """
+            Validates string
+            """
+            if isinstance(value, str) and value.strip():
+                if ManageTitles.convert_iso(value):
+                    return value
+                if value.lower()=='all':
+                    return value
+            custom_console.bot_error_log(
+                f"-> not configured {field_name} '{value}' Please use the default: {default_value}"
+            )
+            Config.wait_for_user_confirmation()
+            return default_value
 
 
-    @field_validator("DUPLICATE_ON")
-    def validate_duplicate_on(cls, value):
-        return cls.validate_boolean(value, "DUPLICATE_ON", cls.model_fields)
-
-    @field_validator("NUMBER_OF_SCREENSHOTS")
-    def validate_n_screenshot(cls, value):
-        if not isinstance(value, int) or not (3 <= value <= 10):
-            return cls.model_fields["NUMBER_OF_SCREENSHOTS"].default
-        return value
-
-    @field_validator("COMPRESS_SCSHOT")
-    def validate_compress_sc_shot(cls, value):
-        if not isinstance(value, int) or not (0 <= value <= 10):
-            return cls.model_fields["COMPRESS_SCSHOT"].default
-        return value
-
-    @field_validator("TORRENT_ARCHIVE")
-    def validate_torrent_archive(cls, value):
-        if not isinstance(value, str):
-            return cls.model_fields["TORRENT_ARCHIVE"].default
-        return value
-
-    @field_validator("TORRENT_COMMENT")
-    def validate_torrent_comment(cls, value):
-        if not isinstance(value, str):
-            return cls.model_fields["TORRENT_COMMENT"].default
-        return value
-
-    @field_validator("PREFERRED_LANG")
-    def validate_preferred_lang(cls, value):
-        if not isinstance(value, str):
-            return cls.model_fields["PREFERRED_LANG"].default
-        return value
-
-    @field_validator("SIZE_TH")
-    def validate_size_th(cls, value):
-        if not isinstance(value, int) or value <= 0:
-            return cls.model_fields["SIZE_TH"].default
-        return value
-
-    @field_validator("FTPX_USER")
-    def validate_ftpx_user(cls, value):
-        # if not value:
-        # custom_console.bot_question_log("[Optional] No FTPX_USER provided\n")
-        return value
-
-    @field_validator("FTPX_PASS")
-    def validate_ftpx_pass(cls, value):
-        # if not value:
-        # custom_console.bot_question_log("[Optional] No FTPX_PASS provided\n")
-        return value
-
-    @field_validator("FTPX_IP")
-    def validate_ftpx_ip(cls, value):
-        # if not value:
-        # custom_console.bot_question_log("[Optional] No FTPX_IP provided\n")
-        return value
-
-    @field_validator("FTPX_PORT")
-    def validate_ftpx_port(cls, value):
-        # if not value:
-        # custom_console.bot_question_log("[Optional] No FTPX_PORT provided\n")
-        return value
-
-    @field_validator("FTPX_LOCAL_PATH")
-    def validate_ftpx_local_path(cls, value):
-        # if not value:
-        # custom_console.bot_question_log("[Optional] No FTPX_LOCAL_PATH provided\n")
-        return value
-
-    @field_validator("FTPX_ROOT")
-    def validate_ftpx_root(cls, value):
-        # if not value:
-        # custom_console.bot_question_log("[Optional] No FTPX_ROOT folder provided\n")
-        return value
-
-    @field_validator("IGDB_CLIENT_ID")
-    def validate_igdb_client_id(cls, value):
-        # if not value:
-        # custom_console.bot_question_log("[Optional] No IGDB_CLIENT_ID provided\n")
-        return value
-
-    @field_validator("IGDB_ID_SECRET")
-    def validate_igdb_id_secret(cls, value):
-        # if not value:
-        # custom_console.bot_question_log("[Optional] No IGDB_ID_SECRET provided\n")
-        return value
+        def validate_url(value: str, field_name: str, default_value: str) -> str:
+            """
+            Validates URL
+            """
+            if not value:
+                return default_value
+            parsed_url = urlparse(value)
+            if not (parsed_url.scheme and parsed_url.netloc):
+                custom_console.bot_error_log(
+                    f"->  Invalid URL value for {field_name} '{value}' Please use the default: {default_value}"
+                )
+                return default_value
+            return value
 
 
-config = Config()
+        def validate_torrent_archive_path(value: str | None, field_name: str, default_value: str | None) -> str | None:
+            """
+            Validates path
+            """
+            if value is None or not isinstance(value, str) or not value.strip():
+                return default_value
+            path = Path(value).expanduser()
+            if path.is_dir():
+                return str(path)
+            custom_console.bot_error_log(
+                f"-> Invalid path for {field_name} '{value}' Please use the default: {default_value}"
+            )
+            Config.wait_for_user_confirmation()
+            return default_value
+
+        #// Mandatory
+        values["ITT_URL"] = validate_url(values.get("ITT_URL", "https://itatorrents.xyz"), "ITT_URL", "https://itatorrents.xyz")
+        values["PW_URL"] = validate_url(values.get("PW_URL", "http://localhost:9696/api/v1"), "PW_URL", "http://localhost:9696/api/v1")
+        values["QBIT_URL"] = validate_url(values.get("QBIT_URL", "http://127.0.0.1"), "QBIT_URL", "http://127.0.0.1")
+        values["QBIT_USER"] = validate_str(values.get("QBIT_USER", None), "QBIT_USER", "admin")
+        values["QBIT_PASS"] = validate_str(values.get("QBIT_PASS", None), "QBIT_PASS", "")
+        values["QBIT_URL"] = validate_url(values.get("QBIT_URL", "http://127.0.0.1"), "QBIT_URL", "http://127.0.0.1")
+        values["QBIT_PORT"] = validate_str(values.get("QBIT_PORT", "8080"), "QBIT_PORT", "8080")
+        values["ITT_APIKEY"] = validate_str(values.get("ITT_APIKEY", None), "ITT_APIKEY", None)
+        values["TMDB_APIKEY"] = validate_str(values.get("TMDB_APIKEY", None), "TMDB_APIKEY", None)
+        values["IMGBB_KEY"] = validate_str(values.get("IMGBB_KEY", None), "IMGBB_KEY", None)
+        values["FREE_IMAGE_KEY"] = validate_str(values.get("FREE_IMAGE_KEY", None), "FREE_IMAGE_KEY", None)
+        values["LENSDUMP_KEY"] = validate_str(values.get("LENSDUMP_KEY", None), "LENSDUMP_KEY", None)
+        values["YOUTUBE_KEY"] = validate_str(values.get("YOUTUBE_KEY", None), "YOUTUBE_KEY", None)
+
+        #// Preferences
+        values["DUPLICATE_ON"] = validate_boolean(values.get("DUPLICATE_ON", False), "DUPLICATE_ON", False)
+        values["SKIP_DUPLICATE"] = validate_boolean(values.get("SKIP_DUPLICATE", False), "SKIP_DUPLICATE", False)
+        values["NUMBER_OF_SCREENSHOTS"] = validate_int(values.get("NUMBER_OF_SCREENSHOTS", 6), "NUMBER_OF_SCREENSHOTS", 6)
+        values["COMPRESS_SCSHOT"] = validate_int(values.get("COMPRESS_SCSHOT", 4), "COMPRESS_SCSHOT", 4)
+        values["RESIZE_SCSHOT"] = validate_boolean(values.get("RESIZE_SCSHOT", False), "RESIZE_SCSHOT", False)
+        values["PREFERRED_LANG"] =  validate_iso3166(values.get("PREFERRED_LANG", None), "PREFERRED_LANG", "all")
+        values["SIZE_TH"] = validate_int(values.get("SIZE_TH", 10), "SIZE_TH", 10)
+        values["ANON"] = validate_boolean(values.get("ANON", False), "ANON", False)
+        values["CACHE_SCR"] = validate_boolean(values.get("CACHE_SCR", False), "CACHE_SCR", False)
+
+        values["TORRENT_COMMENT"] = validate_str(values.get("TORRENT_COMMENT", None), "TORRENT_COMMENT", "no_comment")
+        values["TORRENT_ARCHIVE"] = validate_torrent_archive_path(values.get("TORRENT_ARCHIVE", None), "TORRENT_ARCHIVE", ".")
+        values["PW_TORRENT_ARCHIVE_PATH"] = validate_str(values.get("PW_TORRENT_ARCHIVE_PATH", None), "PW_TORRENT_ARCHIVE_PATH", '.')
+        values["PW_DOWNLOAD_PATH"] = validate_torrent_archive_path(values.get("PW_DOWNLOAD_PATH", None), "PW_DOWNLOAD_PATH", '.')
+        values["WATCHER_DESTINATION_PATH"] = validate_torrent_archive_path(values.get("WATCHER_DESTINATION_PATH", None), "WATCHER_DESTINATION_PATH", '.')
+        values["IMGBB_PRIORITY"] = validate_int(values.get("IMGBB_PRIORITY", 0), "IMGBB_PRIORITY", 0)
+        values["FREE_IMAGE_PRIORITY"] = validate_int(values.get("FREE_IMAGE_PRIORITY", 1), "FREE_IMAGE_PRIORITY", 1)
+        values["LENSDUMP_PRIORITY"] = validate_int(values.get("LENSDUMP_PRIORITY", 2), "LENSDUMP_PRIORITY", 2)
+        values["WATCHER_PATH"] = validate_str(values.get("WATCHER_PATH", None), "WATCHER_PATH", "watcher_path")
+        values["WATCHER_INTERVAL"] = validate_int(values.get("WATCHER_INTERVAL", 60), "WATCHER_INTERVAL", 60)
+
+        values["YOUTUBE_FAV_CHANNEL_ID"] = validate_str(values.get("YOUTUBE_FAV_CHANNEL_ID", "UCGCbxpnt25hWPFLSbvwfg_w"),
+                                                       "YOUTUBE_FAV_CHANNEL_ID", "UCGCbxpnt25hWPFLSbvwfg_w")
+
+        values["YOUTUBE_CHANNEL_ENABLE"] = validate_boolean(values.get("YOUTUBE_CHANNEL_ENABLE", False),
+                                                      "YOUTUBE_CHANNEL_ENABLE", False)
+
+        #// Optional working in progress...
+        values["PW_API_KEY"] = validate_str(values.get("PW_API_KEY", None), "PW_API_KEY", "no_key")
+        values["PW_URL"] = validate_url(values.get("PW_URL", "http://localhost:9696/api/v1"), "PW_URL",
+                                        "http://localhost:9696/api/v1")
+
+        #// Optional
+        values["FTPX_USER"] = validate_str(values.get("FTPX_USER", None), "FTPX_USER", "user")
+        values["FTPX_PASS"] = validate_str(values.get("FTPX_PASS", None), "FTPX_PASS", "pass")
+        values["FTPX_IP"] = validate_str(values.get("FTPX_IP", None), "FTPX_IP", "127.0.0.1")
+        values["FTPX_PORT"] = validate_str(values.get("FTPX_PORT", "2121"), "FTPX_PORT", "2121")
+        values["FTPX_LOCAL_PATH"] = validate_str(values.get("FTPX_LOCAL_PATH", None), "FTPX_LOCAL_PATH", ".")
+        values["FTPX_ROOT"] = validate_str(values.get("FTPX_ROOT", "."), "FTPX_ROOT", ".")
+        values["FTPX_KEEP_ALIVE"] = validate_boolean(values.get("FTPX_KEEP_ALIVE", False), "FTPX_KEEP_ALIVE", False)
+
+        values["IGDB_CLIENT_ID"] = validate_str(values.get("IGDB_CLIENT_ID", None), "IGDB_CLIENT_ID", "client_id")
+        values["IGDB_ID_SECRET"] = validate_str(values.get("IGDB_ID_SECRET", None), "IGDB_ID_SECRET", "secret")
+        return values
+
+
+@cache
+def load_config():
+    config = Config()
+    return config
+
+
