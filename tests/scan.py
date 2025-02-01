@@ -1,4 +1,8 @@
+# -*- coding: utf-8 -*-
+
 import argparse
+import os
+
 import pytest
 
 from common.custom_console import custom_console
@@ -23,11 +27,10 @@ force_media = None # tracker_data.category.get("game")
 custom_console.bot_warning_log("Pytest")
 
 # Path samples
-paths_to_test = [
-    r"",
-    r"",
-    r"",
-]
+test_folder = "C:\\watcher_destination_folder"
+files_list = os.listdir(test_folder)
+paths_to_test = [os.path.join(test_folder, file) for file in files_list]
+
 
 # Parametrized !
 @pytest.mark.parametrize("test_path", paths_to_test)
