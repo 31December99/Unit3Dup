@@ -171,7 +171,7 @@ class CustomConsole(Console):
         # Wait for user confirmation in case of validation failure
         try:
             custom_console.bot_error_log(message=message)
-            input()
+            input("> ")
         except KeyboardInterrupt:
             custom_console.bot_error_log("\nOperation cancelled.Please update your config file")
             sys.exit(0)

@@ -35,7 +35,8 @@ class Contents:
     episode_title: str = field(init=False)
     resolution: int = field(init=False)
     game_title: str
-    game_summary: str = field(init=False)
+    guess_title: str
+    game_summary: str = field(init=False, default="")
     game_crew: list
     game_tags: list
     game_nfo: str
@@ -136,6 +137,10 @@ class Media:
     @property
     def guess_filename(self):
         return title.Guessit(self.filename_sanitized)
+
+    @property
+    def guess_title(self):
+        return title.Guessit(self.filename_sanitized).guessit_title
 
     @property
     def guess_season(self):
