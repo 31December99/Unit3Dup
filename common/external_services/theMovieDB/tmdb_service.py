@@ -1,12 +1,16 @@
 # -*- coding: utf-8 -*-
-import pprint
 
+from common.external_services.theMovieDB.core.models.movie.nowplaying import  NowPlayingByCountry
+from common.external_services.theMovieDB.core.models.tvshow.on_the_air import OnTheAir
+from common.external_services.theMovieDB.core.models.multi import Movie,TVShow
 from common.external_services.theMovieDB.core.tvshow_api import TmdbTvShowApi
 from common.external_services.theMovieDB.core.movie_api import TmdbMovieApi
-from common.external_services.theMovieDB.core.models.tvshow.on_the_air import OnTheAir
-from common.external_services.theMovieDB.core.models.movie.nowplaying import (
-    NowPlayingByCountry,
-)
+from common.external_services.theMovieDB.core.multi_api import TmdbMultiApi
+from common.external_services.trailers.api import YtTrailer
+from common.custom_console import custom_console
+from common.utility.utility import ManageTitles
+from unit3dup.contents import Contents
+
 
 
 class TmdbService:
@@ -14,6 +18,7 @@ class TmdbService:
     def __init__(self):
         self.movie_api = TmdbMovieApi()
         self.tv_show_api = TmdbTvShowApi()
+        self.multi_api = TmdbMultiApi()
 
     # The latest in country
     def latest_movie_by_country(self, country_code: str) -> list:
@@ -94,4 +99,74 @@ class TmdbService:
 
     def search_tv_show(self, query: str):
         return self.tv_show_api.search_tv_shows(query=query)
+
+    def keywords(self, title: str, video_id: int, category: str) -> str | None:
+        keywords  = self.multi_api.keywords(query=title, video_id=video_id, category=category)
+
+        keywords_list = []
+        if category == "movie":
+         keywords_list = keywords.get("keywords", [])
+
+        if category == "serie":
+         keywords_list = keywords.get("results", [])
+
+        if keywords_list:
+           return ",".join([key["name"] for key in keywords_list])
+
+
+    def search(self, query: Contents)-> Movie | TVShow | None:
+
+        # Content -> search response attribute
+        show = {
+            1: "movie",
+            2: "tv",
+        }
+
+        # TMDB Multi request
+        results = self.multi_api.multi(query=query.guess_title, category = query.category)
+
+        # Based on category , compare query title with result title
+        for result in results:
+            if ManageTitles.fuzzyit(str1=result.get_title(), str2=query.guess_title) > 95:
+
+                # Search the trailer code
+                result.trailer_code = self.trailer(title=query.guess_title, video_id=result.get_id(),
+                                            category=show[query.category])
+
+                result.keywords = self.keywords(title=query.guess_title, video_id=result.get_id(),
+                                             category=show[query.category])
+                return result
+
+
+        #input("Press Enter to continue... NON TROVATO")
+
+
+
+    def trailer(self, title: str, video_id: int, category: str)-> str | None:
+        # Query videos endpoint
+        videos = self.multi_api.videos(query=title, video_id=video_id, category=category)
+
+        # Get the youtube trailer code from the result if it exists
+        trailer = next((video for video in videos['results'] if video['type'].lower() == 'trailer'
+                        and video['site'].lower() == 'youtube'), None)
+        if trailer:
+            return trailer['key']
+        else:
+            return self.youtube_trailer(query=title)
+
+    @staticmethod
+    def youtube_trailer(query: str):
+
+        # Search trailer on youtube
+        custom_console.bot_question_log("TMDB trailer not found. Try searching on YouTube...\n")
+
+        yt_trailer = YtTrailer(query)
+        result = yt_trailer.get_trailer_link()
+        if result:
+            custom_console.bot_question_log("Found !\n")
+            # choose the first in the list
+            # todo compare against the media title especially for the favorite channel
+            return result[0].items[0].id.videoId
+
+
 
