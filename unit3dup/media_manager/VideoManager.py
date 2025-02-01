@@ -56,16 +56,16 @@ class VideoManager:
                     torrent_response = None
 
                 # Search for the TMDB ID
-                tmdb_result = UserContent.tmdb(content=content)
+                tmdb = UserContent.tmdb(content=content)
 
                 # get a new description if cache is disabled
                 file_name = str(os.path.join(content.folder, content.file_name))
-                video_info = Video(file_name, tmdb_id=tmdb_result.video_id, trailer_key=tmdb_result.trailer_key)
+                video_info = Video(file_name, tmdb_id=tmdb.get_id(), trailer_key=tmdb.trailer_code)
                 video_info.build_info()
 
                 # Tracker payload
                 unit3d_up = UploadVideo(content)
-                data = unit3d_up.payload(tv_show=tmdb_result, video_info=video_info)
+                data = unit3d_up.payload(show=tmdb, video_info=video_info)
 
                 # Get a new tracker instance
                 tracker = unit3d_up.tracker(data=data)
