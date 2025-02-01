@@ -15,6 +15,7 @@ class Files:
             self,
             path: str,
             tracker_name: str,
+            guess_title: str,
             media_type: int,
             game_title: str,
             game_crew: list[str],
@@ -35,6 +36,7 @@ class Files:
         self.torrent_path: str | None = None
         self.doc_description: str | None = None
         self.screen_size: str = screen_size
+        self.guess_title: str = guess_title
 
         self.category: int = media_type
         self.game_title: str = game_title
@@ -154,6 +156,7 @@ class Files:
             file_name=self.file_name,
             folder=self.folder,
             name=self.name,
+            guess_title=self.guess_title,
             season=self.season,
             episode=self.episode,
             size=self.size,

@@ -40,6 +40,7 @@ class ContentManager:
     def process(self, file_list: list['Media']) -> list['Contents']:
         """ process media files and return 'contents' """
 
+        contents = []
         try:
             with multiprocessing.Pool(processes=4) as pool:
                 contents = pool.map(self.create_content_from_media, file_list)
@@ -63,6 +64,7 @@ class ContentManager:
         files = Files(
             path=media.torrent_path,
             tracker_name=self.tracker_name,
+            guess_title = media.guess_title,
             media_type=media.media_type,
             game_title=media.game_title,
             game_crew=media.crew,
