@@ -1,16 +1,15 @@
 # -*- coding: utf-8 -*-
 
+from common.external_services.theMovieDB.core.models.multi import Movie, TVShow
 from dataclasses import dataclass, field
 from common.utility import title, utility
-from common.media_db import results
-
 
 @dataclass
 class Data:
     metainfo: str
     name: str
     file_name: str
-    result: results
+    show: Movie | TVShow | None
     category: int
     standard: int
     media_info: str
@@ -21,4 +20,4 @@ class Data:
 
     def __post_init__(self):
         self.name = utility.ManageTitles.clean(self.name)
-        self.myguess = title.Guessit(self.file_name)  #.guessit_title
+        self.myguess = title.Guessit(self.file_name)

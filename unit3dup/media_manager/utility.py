@@ -4,16 +4,17 @@ import os
 from concurrent.futures import ThreadPoolExecutor
 from common.utility.utility import ManageTitles
 
-from unit3dup import config
 from unit3dup.media_manager.models.qbitt import QBittorrent
 from unit3dup.pvtTorrent import Mytorrent
 from unit3dup.duplicate import Duplicate
 from unit3dup.contents import Contents
+from unit3dup import config
 
+from common.external_services.theMovieDB.core.models.multi import Movie,TVShow
+from common.external_services.theMovieDB.tmdb_service import TmdbService
 from common.media_db.search import TvShow
 from common.custom_console import custom_console
 from common.clients.qbitt import Qbitt
-
 
 class UserContent:
     """
@@ -44,7 +45,7 @@ class UserContent:
                 f"** {class_name} **: Reusing the existing torrent file! {this_path}\n"
             )
             return True
-
+        return False
 
 
     @staticmethod
@@ -77,8 +78,25 @@ class UserContent:
         custom_console.rule()
         return False
 
+
     @staticmethod
-    def tmdb(content: Contents):
+    def tmdb(content: Contents) -> Movie | TVShow | None:
+
+        # Content -> search response attribute
+        show = {
+            1: "movie",
+            2: "tv",
+        }
+
+        # A new instance for TMDB
+        tmdb = TmdbService()
+
+        # Starting search
+        return tmdb.search(query=content)
+
+
+    @staticmethod
+    def tmdb_old(content: Contents):
         """
            Search for TMDB ID amd remove the episode title from the main title
 

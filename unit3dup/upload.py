@@ -2,6 +2,7 @@ import json
 import os
 import requests
 
+from common.external_services.theMovieDB.core.models.multi import Movie,TVShow
 from common.external_services.igdb.core.models.search import Game
 from unit3dup import pvtVideo, pvtTracker, payload, contents
 from common.trackers.trackers import ITTData
@@ -58,7 +59,7 @@ class UploadDocument(UploadBot):
             metainfo=self.metainfo,
             name=self.content.name,
             file_name=self.file_name,
-            result="",
+            show=None,
             category=self.content.category,
             standard=0,
             media_info="",
@@ -86,13 +87,13 @@ class UploadVideo(UploadBot):
         super().__init__(content)
         self.tracker_data = ITTData.load_from_module()
 
-    def payload(self, tv_show: list, video_info: pvtVideo):
+    def payload(self, show: Movie | TVShow, video_info: pvtVideo):
         if video_info:
             return payload.Data(
                 metainfo=self.metainfo,
                 name=self.content.name,
                 file_name=self.file_name,
-                result=tv_show,
+                show=show,
                 category=self.content.category,
                 media_info=video_info.mediainfo,
                 description=video_info.description,
@@ -107,12 +108,10 @@ class UploadVideo(UploadBot):
             return
 
     def tracker(self, data: payload) -> pvtTracker:
-        tracker = pvtTracker.Unit3d(
-            base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key=""
-        )
+        tracker = pvtTracker.Unit3d(base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key="")
         tracker.data["name"] = self.content.display_name
-        tracker.data["tmdb"] = data.result.video_id
-        tracker.data["keywords"] = data.result.keywords
+        tracker.data["tmdb"] = data.show.get_id()
+        tracker.data["keywords"] = data.show.keywords
         tracker.data["category_id"] = data.category
         tracker.data[
             "resolution_id"] = self.content.screen_size if self.content.screen_size else self.content.resolution
@@ -138,7 +137,7 @@ class UploadGame(UploadBot):
             metainfo=self.metainfo,
             name=self.content.name,
             file_name=self.file_name,
-            result="",
+            show=None,
             category=self.content.category,
             standard=0,
             media_info="",
@@ -148,9 +147,7 @@ class UploadGame(UploadBot):
         )
 
     def tracker(self, data: payload) -> pvtTracker:
-        tracker = pvtTracker.Unit3d(
-            base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key=""
-        )
+        tracker = pvtTracker.Unit3d(base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key="")
         tracker.data["name"] = self.content.display_name
         tracker.data["tmdb"] = 0
         tracker.data["category_id"] = data.category
