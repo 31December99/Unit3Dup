@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from common.external_services.theMovieDB.core.models.multi import Movie, TVShow
+from common.external_services.theMovieDB.core.api import MediaResult
 from dataclasses import dataclass, field
 from common.utility import title, utility
 
@@ -9,7 +9,7 @@ class Data:
     metainfo: str
     name: str
     file_name: str
-    show: Movie | TVShow | None
+    show: MediaResult | None
     category: int
     standard: int
     media_info: str

@@ -2,7 +2,7 @@ import json
 import os
 import requests
 
-from common.external_services.theMovieDB.core.models.multi import Movie,TVShow
+from common.external_services.theMovieDB.core.api import MediaResult
 from common.external_services.igdb.core.models.search import Game
 from unit3dup import pvtVideo, pvtTracker, payload, contents
 from common.trackers.trackers import ITTData
@@ -87,7 +87,7 @@ class UploadVideo(UploadBot):
         super().__init__(content)
         self.tracker_data = ITTData.load_from_module()
 
-    def payload(self, show: Movie | TVShow, video_info: pvtVideo):
+    def payload(self, show: MediaResult, video_info: pvtVideo):
         if video_info:
             return payload.Data(
                 metainfo=self.metainfo,
@@ -110,8 +110,8 @@ class UploadVideo(UploadBot):
     def tracker(self, data: payload) -> pvtTracker:
         tracker = pvtTracker.Unit3d(base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key="")
         tracker.data["name"] = self.content.display_name
-        tracker.data["tmdb"] = data.show.get_id()
-        tracker.data["keywords"] = data.show.keywords
+        tracker.data["tmdb"] = data.show.result.id
+        tracker.data["keywords"] = data.show.keywords_list
         tracker.data["category_id"] = data.category
         tracker.data[
             "resolution_id"] = self.content.screen_size if self.content.screen_size else self.content.resolution
