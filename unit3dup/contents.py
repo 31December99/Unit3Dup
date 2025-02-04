@@ -261,3 +261,7 @@ class Media:
         if self.platform_list:
             for platform in self.platform_list:
                 self.filename_sanitized = self.filename_sanitized.replace(platform, "")
+
+        # Remove flag
+        self.filename_sanitized = re.sub(r'\b(ita|eng)\b', ' ', self.filename_sanitized, flags=re.IGNORECASE)
+        self.filename_sanitized = re.sub(r'(p)\b', ' ', self.filename_sanitized, flags=re.IGNORECASE)
