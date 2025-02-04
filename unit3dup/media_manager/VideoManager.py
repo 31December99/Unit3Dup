@@ -4,10 +4,12 @@ import os
 
 from unit3dup.media_manager.models.qbitt import QBittorrent
 from unit3dup.media_manager.utility import UserContent
+from common.external_services.theMovieDB.core.api import DbOnline
 from unit3dup.upload import UploadVideo
 from unit3dup.contents import Contents
 from unit3dup.pvtVideo import Video
 from unit3dup import config
+
 
 class VideoManager:
 
@@ -56,11 +58,12 @@ class VideoManager:
                     torrent_response = None
 
                 # Search for the TMDB ID
-                tmdb = UserContent.tmdb(content=content)
+                db_online = DbOnline(query=content.guess_title,category=content.category)
+                tmdb = db_online.media_result
 
                 # get a new description if cache is disabled
                 file_name = str(os.path.join(content.folder, content.file_name))
-                video_info = Video(file_name, tmdb_id=tmdb.get_id(), trailer_key=tmdb.trailer_code)
+                video_info = Video(file_name, tmdb_id=tmdb.result.id, trailer_key=tmdb.trailer_key)
                 video_info.build_info()
 
                 # Tracker payload
