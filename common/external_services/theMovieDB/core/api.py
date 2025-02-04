@@ -193,7 +193,7 @@ class DbOnline(TmdbAPI):
         super().__init__()
         self.query = query
         self.category = category
-        self.media_result = self.search()  # Esegui subito la ricerca e memorizza il risultato
+        self.media_result = self.search()
 
     def search(self) -> MediaResult | None:
         """
@@ -203,10 +203,10 @@ class DbOnline(TmdbAPI):
             for result in results:
                 if ManageTitles.fuzzyit(str1=self.query, str2=result.get_title()) > 95:
                     print(f"Alternative '{result.get_title()}' found.")
-                    # Ottieni trailer e parole chiave per il risultato
+                    # Get the trailer
                     trailer_key = self.trailer(result.id)
                     keywords_list = self.keywords(result.id)
-                    # Restituisci direttamente un MediaResult con i dati richiesti
+                    # return MediaResult object
                     return MediaResult(result, trailer_key, keywords_list)
         return None
 
