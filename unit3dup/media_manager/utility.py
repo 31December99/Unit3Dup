@@ -10,9 +10,6 @@ from unit3dup.duplicate import Duplicate
 from unit3dup.contents import Contents
 from unit3dup import config
 
-from common.external_services.theMovieDB.core.models.multi import Movie,TVShow
-from common.external_services.theMovieDB.tmdb_service import TmdbService
-from common.media_db.search import TvShow
 from common.custom_console import custom_console
 from common.clients.qbitt import Qbitt
 
@@ -77,44 +74,6 @@ class UserContent:
         )
         custom_console.rule()
         return False
-
-
-    @staticmethod
-    def tmdb(content: Contents) -> Movie | TVShow | None:
-
-        # Content -> search response attribute
-        show = {
-            1: "movie",
-            2: "tv",
-        }
-
-        # A new instance for TMDB
-        tmdb = TmdbService()
-
-        # Starting search
-        return tmdb.search(query=content)
-
-
-    @staticmethod
-    def tmdb_old(content: Contents):
-        """
-           Search for TMDB ID amd remove the episode title from the main title
-
-           Args:
-               content (Contents): The content object media
-
-           Returns:
-               tmdb results
-        """
-
-        # Search for a title (Movie or Season) and return the episode title
-        my_tmdb = TvShow(content)
-        tv_show_result = my_tmdb.start(content.file_name)
-
-        # Remove episode title from display_name if it exists
-        if not content.episode_title and my_tmdb.episode_title:
-            content.display_name = content.display_name.replace(my_tmdb.episode_title, '')
-        return tv_show_result
 
     @staticmethod
     def torrent(content: Contents)-> Mytorrent:
