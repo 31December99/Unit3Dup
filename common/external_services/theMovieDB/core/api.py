@@ -58,7 +58,7 @@ class MovieEndpoint:
 class TvEndpoint:
     @staticmethod
     def search(query: str):
-        return {'url': f'{base_url}/search/serie', 'datatype': TvShow, 'query': query, 'results': 'results'}
+        return {'url': f'{base_url}/search/tv', 'datatype': TvShow, 'query': query, 'results': 'results'}
 
     @staticmethod
     def playing():
