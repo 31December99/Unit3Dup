@@ -53,7 +53,28 @@ class YtTrailer:
                         thumbnails=thumbnails
                     )
 
-                    video_id = Id(**result['id'])
+                    video_id = None
+                    # Sometimes it returns a chennelId and not only the video id
+                    if 'id' in result:
+                        id_data = result['id']
+
+                        # Check if the result is a video or a channel
+                        if id_data['kind'] == 'youtube#video':
+                            video_id = Id(
+                                kind=id_data.get('kind', ''),
+                                videoId=id_data.get('videoId', '')
+                            )
+                        elif id_data['kind'] == 'youtube#channel':
+                            # Get video_di from the result
+                            video_id = Id(
+                                kind=id_data.get('kind', ''),
+                                videoId=id_data.get('channelId', '')
+                            )
+                        else:
+                            # Fail
+                            pass
+
+                    # video_id = Id(**result['id'])
 
                     item = Item(
                         etag=result['etag'],
