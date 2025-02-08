@@ -4,12 +4,9 @@ import argparse
 from unit3dup.media_manager.models.qbitt import QBittorrent
 from unit3dup.media_manager.utility import UserContent
 from unit3dup.contents import Contents
-from unit3dup.upload import UploadGame
+from unit3dup.upload import UploadBot
 from unit3dup import config
-
 from common.external_services.igdb.client import IGDBClient
-
-
 
 
 class GameManager:
@@ -68,15 +65,14 @@ class GameManager:
                 torrent_response = None
 
             # Prepare the upload game data with the search results
-            unit3d_up = UploadGame(content)
-            data = unit3d_up.payload(igdb=game_data_results)
 
-            # Get the tracker instance to send the upload request
-            tracker = unit3d_up.tracker(data=data)
+            unit3d_up = UploadBot(content)
+            tracker_response, tracker_message = unit3d_up.send_game(igdb=game_data_results)
 
             # Send the upload request to the tracker
-            tracker_response, tracker_message = unit3d_up.send(tracker=tracker, nfo_path=content.game_nfo)
+            #tracker_response, tracker_message = unit3d_up.send(tracker=tracker, nfo_path=content.game_nfo)
 
+            
             qbittorrent_list.append(
                 QBittorrent(
                     tracker_response=tracker_response,
