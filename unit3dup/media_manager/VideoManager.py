@@ -5,7 +5,7 @@ import os
 from unit3dup.media_manager.models.qbitt import QBittorrent
 from unit3dup.media_manager.utility import UserContent
 from common.external_services.theMovieDB.core.api import DbOnline
-from unit3dup.upload import UploadVideo
+from unit3dup.upload import UploadBot
 from unit3dup.contents import Contents
 from unit3dup.pvtVideo import Video
 from unit3dup import config
@@ -66,15 +66,11 @@ class VideoManager:
                 video_info = Video(file_name, tmdb_id=tmdb.result.id, trailer_key=tmdb.trailer_key)
                 video_info.build_info()
 
-                # Tracker payload
-                unit3d_up = UploadVideo(content)
-                data = unit3d_up.payload(show=tmdb, video_info=video_info)
+                # Tracker Bot
+                unit3d_up = UploadBot(content)
 
-                # Get a new tracker instance
-                tracker = unit3d_up.tracker(data=data)
-
-                # Upload
-                tracker_response, tracker_message = unit3d_up.send(tracker=tracker)
+                # Send data to the tracker
+                tracker_response, tracker_message =  unit3d_up.send(show=tmdb, video_info=video_info)
 
                 qbittorrent_list.append(
                     QBittorrent(
@@ -83,5 +79,6 @@ class VideoManager:
                         content=content,
                         tracker_message = tracker_message
                     ))
+
         # // end content
         return qbittorrent_list
