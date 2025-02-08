@@ -58,7 +58,7 @@ class Bot:
         self.content_manager = ContentManager(
             path=self.path, tracker_name=self.tracker_name, mode=self.mode, force_media_type=force_media_type
         )
-        contents = self.content_manager.get_files()
+        contents = self.content_manager.process()
 
         # -u requires a single file
         if not contents or not os.path.exists(self.path):
