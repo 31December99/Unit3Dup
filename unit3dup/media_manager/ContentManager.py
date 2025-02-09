@@ -9,7 +9,6 @@ from unit3dup.automode import Auto
 
 from common.trackers.trackers import ITTData
 from common.utility import ManageTitles
-from common.mediainfo import MediaFile
 
 class ContentManager:
     def __init__(self, path: str, tracker_name: str, mode: str, force_media_type=None):
@@ -33,7 +32,7 @@ class ContentManager:
 
         self.meta_info: str | None = None
         self.size: int | None = None
-        self.name: str | None = None
+        self.torrent_name: str | None = None
         self.folder: str | None = None
         self.file_name: str | None = None
         self.torrent_path: str | None = None
@@ -82,7 +81,7 @@ class ContentManager:
             screen_size=media.screen_size,
             file_name=self.file_name,
             folder=self.folder,
-            name=self.name,
+            torrent_name=self.torrent_name,
             size=self.size,
             metainfo=self.meta_info,
             category=self.category,
@@ -95,19 +94,17 @@ class ContentManager:
             game_nfo=self.game_nfo,
         )
 
-
     def process_file(self) -> bool:
         """Process individual files and gather metadata"""
         self.file_name = os.path.basename(self.path)
+        # Get the current media folder
         self.folder = os.path.dirname(self.path)
         self.display_name, _ = os.path.splitext(self.file_name)
         self.display_name = ManageTitles.clean(self.display_name)
-        self.torrent_path = os.path.join(self.folder, self.file_name)
+        self.torrent_path = self.path
 
-        # Process media info for language and metadata
-        media_info = MediaFile(file_path=self.path)
-        self.languages = media_info.available_languages
-        self.name = self.file_name
+        # Torrent name
+        self.torrent_name = self.file_name
 
         # test to check if it is a doc
         self.doc_description = self.file_name
@@ -124,15 +121,19 @@ class ContentManager:
         if not files_list:
             return False
 
+        # Sample the first file in the list
         self.file_name = files_list[0]
+        # Get the current media folder
         self.folder = self.path
+        # Display name on webpage
         self.display_name = ManageTitles.clean(os.path.basename(self.path))
-        self._set_languages_from_title_or_media()
+        # self._set_languages_from_title_or_media()
 
-        self.torrent_path = self.folder
-        self.name = os.path.basename(self.folder)
+        self.torrent_path = self.path
+        # Torrent name
+        self.torrent_name = os.path.basename(self.path)
+        # Document description
         self.doc_description = "\n".join(files_list)
-
         # test to check if it is a doc
         self._handle_document_category()
 
@@ -140,11 +141,11 @@ class ContentManager:
         self.size = 0
         self.meta_info_list = []
         for file in files_list:
-            size = os.path.getsize(os.path.join(self.folder, file))
+            size = os.path.getsize(os.path.join(self.path, file))
             self.meta_info_list.append({"length": size, "path": [file]})
             self.size += size
             if file.lower().endswith(".nfo"):
-                self.game_nfo = os.path.join(self.folder, file)
+                self.game_nfo = os.path.join(self.path, file)
 
         self.meta_info = json.dumps(self.meta_info_list, indent=4)
         return True
@@ -167,16 +168,3 @@ class ContentManager:
         media_docu_type = ManageTitles.media_docu_type(self.file_name)
         if media_docu_type:
             self.category = self.tracker_data.category.get(media_docu_type)
-
-    def _set_languages_from_title_or_media(self) -> None:
-        """Set language from the title or media info"""
-        if not self.languages:
-            filename_split = self.display_name.upper().split(" ")
-            for code in filename_split:
-                if converted_code := ManageTitles.convert_iso(code):
-                    self.languages = [converted_code]
-                    break
-
-        if not self.languages:
-            media_info = MediaFile(file_path=os.path.join(self.folder, self.file_name))
-            self.languages = media_info.available_languages
