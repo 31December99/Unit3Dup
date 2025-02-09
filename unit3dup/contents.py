@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 import os
 import re
 
@@ -11,6 +10,7 @@ from common.external_services.igdb.core.tags import (
 
 from common.custom_console import custom_console
 from common.trackers.trackers import ITTData
+from common.utility import ManageTitles
 
 from dataclasses import dataclass, field
 from common.mediainfo import MediaFile
@@ -23,7 +23,7 @@ class Contents:
 
     file_name: str
     folder: str
-    name: str
+    torrent_name: str
     size: int
     metainfo: str
     category: int
@@ -63,9 +63,22 @@ class Contents:
             tracker_data.category.get("movie"),
             tracker_data.category.get("tvshow"),
         }:
+
             # Read from the current video file the height field
             file_path = os.path.join(self.folder, self.file_name)
+            # Media file
             media_file = MediaFile(file_path)
+
+            # Get languages from the title
+            filename_split = self.display_name.upper().split(" ")
+            for code in filename_split:
+                if converted_code := ManageTitles.convert_iso(code):
+                    self.audio_languages = [converted_code]
+                    break
+
+            # If not specified try with mediainfo
+            if not self.audio_languages:
+                self.languages = media_file.available_languages
 
             # Get the resolution sub from the dictionary
             resolutions = tracker_data.resolution
