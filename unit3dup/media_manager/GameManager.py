@@ -71,10 +71,6 @@ class GameManager:
             unit3d_up = UploadBot(content)
             tracker_response, tracker_message = unit3d_up.send_game(igdb=game_data_results)
 
-            # Send the upload request to the tracker
-            #tracker_response, tracker_message = unit3d_up.send(tracker=tracker, nfo_path=content.game_nfo)
-
-            
             qbittorrent_list.append(
                 QBittorrent(
                     tracker_response=tracker_response,
