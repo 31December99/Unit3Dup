@@ -11,9 +11,10 @@ from common.external_services.igdb.core.tags import (
 
 from common.custom_console import custom_console
 from common.trackers.trackers import ITTData
+
 from dataclasses import dataclass, field
 from common.mediainfo import MediaFile
-from common.utility import title
+from common import title
 
 
 @dataclass

@@ -1,16 +1,19 @@
 import json
 import requests
 
+from common.external_services.theMovieDB.core.api import MediaResult
 from common.external_services.igdb.core.models.search import Game
+from common.custom_console import custom_console
+from common.trackers.trackers import ITTData
+
 from unit3dup.pvtTracker import Unit3d
 from unit3dup.pvtVideo import Video
 from unit3dup import contents
 
-from common.external_services.theMovieDB.core.api import MediaResult
-from common.trackers.trackers import ITTData
-from common.custom_console import custom_console
-from unit3dup import config
 
+
+
+from unit3dup import config
 
 class UploadBot:
     def __init__(self, content: contents):

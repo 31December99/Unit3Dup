@@ -1,11 +1,8 @@
 # -*- coding: utf-8 -*-
 
-import requests
-
+from dataclasses import dataclass
 from unit3dup.pvtTorrent import Mytorrent
 from unit3dup.contents import Contents
-from dataclasses import dataclass
-
 
 @dataclass
 class QBittorrent:

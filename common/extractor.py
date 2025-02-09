@@ -7,7 +7,6 @@ import logging
 
 from rich.progress import Progress, SpinnerColumn
 from common.custom_console import custom_console
-from unit3dup.contents import Media
 
 # Turn off INFO
 logging.getLogger("patool").setLevel(logging.ERROR)

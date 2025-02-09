@@ -7,8 +7,8 @@ from unit3dup.contents import Contents
 from unit3dup.contents import Media
 from unit3dup.automode import Auto
 
-from common.utility.utility import ManageTitles
 from common.trackers.trackers import ITTData
+from common.utility import ManageTitles
 from common.mediainfo import MediaFile
 
 class ContentManager:

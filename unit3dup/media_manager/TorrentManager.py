@@ -3,14 +3,15 @@
 import argparse
 
 from unit3dup.media_manager.VideoManager import VideoManager
-from unit3dup.media_manager.models.qbitt import QBittorrent
 from unit3dup.media_manager.GameManager import GameManager
 from unit3dup.media_manager.DocuManager import DocuManager
-from unit3dup.media_manager.utility import UserContent
+from unit3dup.qbittorrent import QBittorrent
+from unit3dup import config
+
 from common.custom_console import custom_console
 from common.trackers.trackers import ITTData
 from common.constants import my_language
-from unit3dup import config
+from unit3dup.media_manager.common import UserContent
 
 
 class TorrentManager:

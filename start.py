@@ -1,15 +1,16 @@
 # -*- coding: utf-8 -*-
 
 from rich.console import Console
+
+from common.custom_console import custom_console
 from common.trackers.trackers import ITTData
 from common.command import CommandLine
-from common.clients.qbitt import Qbitt
 from common.config import load_config
-from unit3dup.bot import Bot
-from unit3dup import pvtTracker
-from unit3dup.torrent import View
-from common.custom_console import custom_console
 
+from unit3dup.qbitt import Qbitt
+from unit3dup.torrent import View
+from unit3dup import pvtTracker
+from unit3dup.bot import Bot
 
 console = Console(log_path=False)
 

@@ -21,7 +21,7 @@ cli = CommandLine()
 tracker_data = ITTData.load_from_module()
 
 # force the uploader to set the media type as -movie, -serie, -game
-force_media = None # tracker_data.category.get("game")
+force_media = tracker_data.category.get("movie")
 
 # /* ----------------------------------------------------------------------------------------------- */
 custom_console.bot_warning_log("Pytest")

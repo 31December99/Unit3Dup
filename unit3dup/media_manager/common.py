@@ -1,17 +1,16 @@
 # -*- coding: utf-8 -*-
 import os
-
 from concurrent.futures import ThreadPoolExecutor
-from common.utility.utility import ManageTitles
 
-from unit3dup.media_manager.models.qbitt import QBittorrent
+from common.utility import ManageTitles
+from unit3dup.qbittorrent import QBittorrent
 from unit3dup.pvtTorrent import Mytorrent
 from unit3dup.duplicate import Duplicate
 from unit3dup.contents import Contents
-from unit3dup import config
-
+from unit3dup.qbitt import Qbitt
+from common import config
 from common.custom_console import custom_console
-from common.clients.qbitt import Qbitt
+
 
 class UserContent:
     """
@@ -155,3 +154,4 @@ class UserContent:
             # Wait for all threads to complete
             for future in futures:
                 future.result()
+

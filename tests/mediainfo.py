@@ -2,8 +2,8 @@ import os
 import pprint
 
 from unit3dup.contents import Contents
-from common.utility.utility import ManageTitles
-from common.utility import title
+from common.utility import ManageTitles
+from common import title
 
 test_folder = "C:\\watcher_destination_folder"
 files_list = os.listdir(test_folder)

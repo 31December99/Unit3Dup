@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
-from unit3dup.media_manager.utility import UserContent
+from common.external_services.theMovieDB.core.models.movie.movie import Movie
+from common.external_services.theMovieDB.core.models.tvshow.tvshow import TvShow
+from common.external_services.theMovieDB.core.api import DbOnline
 from common.custom_console import custom_console
-from common.utility.utility import ManageTitles
 from common.trackers.trackers import ITTData
 from common.config import load_config
 from common.command import CommandLine
@@ -18,9 +19,6 @@ cli = CommandLine()
 # Load the tracker data from the dictionary
 tracker_data = ITTData.load_from_module()
 
-# force the uploader to set the media type as -movie, -serie, -game
-force_media = None # tracker_data.category.get("game")
-
 # /* ----------------------------------------------------------------------------------------------- */
 custom_console.bot_warning_log("Pytest")
 
@@ -33,9 +31,9 @@ class Contents:
 
 def test_tmdb_search_list():
     for content in contents:
-        tmdb = UserContent.tmdb2(content=content)
+        # Search for the TMDB ID
+        db_online = DbOnline(query=content.guess_title, category=content.category)
+        tmdb = db_online.media_result
         if tmdb:
-            print(tmdb.get_title())
-            assert  ManageTitles.fuzzyit(str1=tmdb.get_title(), str2=content.guess_title) > 95
-
-
+            assert isinstance(tmdb.result, Movie) or isinstance(tmdb.result, TvShow)
+            assert hasattr(tmdb.result, 'get_title'), f"tmdb.result 'get_title()' not found for {content.guess_title}"

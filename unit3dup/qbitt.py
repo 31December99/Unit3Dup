@@ -4,12 +4,12 @@ import typing
 import requests
 import qbittorrent
 
-from qbittorrent import Client
-from common.clients import config
-from unit3dup.pvtTorrent import Mytorrent
-from unit3dup.contents import Contents
 from common.custom_console import custom_console
 
+from qbittorrent import Client
+from unit3dup.pvtTorrent import Mytorrent
+from unit3dup.contents import Contents
+from unit3dup import config
 
 class Qbitt:
 

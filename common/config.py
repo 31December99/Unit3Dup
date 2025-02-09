@@ -5,13 +5,14 @@ import sys
 from functools import cache
 
 from common.custom_console import custom_console
+from common.utility import ManageTitles
+
 from pydantic_settings import BaseSettings
 from pydantic import model_validator
 from dotenv import load_dotenv
 from urllib.parse import urlparse
 from pathlib import Path
 
-from common.utility.utility import ManageTitles
 
 service_filename = "Unit3Dbot_service.env"
 
