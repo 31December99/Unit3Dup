@@ -13,7 +13,7 @@ from common.external_services.theMovieDB.core import config
 from common.external_services.trailers.api import YtTrailer
 from common.external_services.sessions.agents import Agent
 from common.custom_console import custom_console
-from common.utility.utility import ManageTitles
+from common.utility import ManageTitles
 
 
 

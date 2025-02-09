@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import guessit
-from common.utility.utility import ManageTitles, System
-from common.utility import title
+from common.utility import ManageTitles, System
+from common import title
 from common.constants import my_language
 from common.trackers.trackers import ITTData
 from common.trackers.itt import itt_data
@@ -150,6 +150,8 @@ class Duplicate:
                     return True
             else:
                 return False
+        return False
+
 
     @staticmethod
     def get_resolution_by_num(res_id: int) -> str:

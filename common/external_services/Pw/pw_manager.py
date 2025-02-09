@@ -7,7 +7,7 @@ from common.custom_console import custom_console
 from common.external_services.Pw.pw_service import PwService
 from qbittorrent import Client
 from unit3dup import config
-from common.utility.utility import ManageTitles
+from common.utility import ManageTitles
 
 class PwManager:
 

@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
 import argparse
 
-from unit3dup.media_manager.models.qbitt import QBittorrent
-from unit3dup.media_manager.utility import UserContent
+from common.external_services.igdb.client import IGDBClient
+from unit3dup.media_manager.common import UserContent
+
+from unit3dup.qbittorrent import QBittorrent
 from unit3dup.contents import Contents
 from unit3dup.upload import UploadBot
 from unit3dup import config
-from common.external_services.igdb.client import IGDBClient
+
 
 
 class GameManager:

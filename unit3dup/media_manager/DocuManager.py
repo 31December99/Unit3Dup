@@ -2,11 +2,13 @@
 import argparse
 import os
 
-from unit3dup.media_manager.models.qbitt import QBittorrent
-from unit3dup.media_manager.utility import UserContent
-from unit3dup.upload import UploadBot
+from unit3dup.media_manager.common import UserContent
+
+from unit3dup.qbittorrent import QBittorrent
 from unit3dup.contents import Contents
+from unit3dup.upload import UploadBot
 from unit3dup import config
+
 
 class DocuManager:
 

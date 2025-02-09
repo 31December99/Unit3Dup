@@ -2,7 +2,7 @@
 
 from .itt import itt_data
 from dataclasses import dataclass
-from common.utility.utility import ManageTitles
+from common.utility import ManageTitles
 
 
 @dataclass
