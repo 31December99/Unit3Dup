@@ -20,7 +20,7 @@ ___
 
 The program is functional but still in the early stages, undergoing constant modifications.
 You can help improve this project or just hang out with us on
-[discord](https://discord.gg/Pz3w5NNc) or [forum](https://itatorrents.xyz/forums/topics/414?page=1#post-1497) 
+[forum](https://itatorrents.xyz/forums/topics/414?page=1#post-1497) 
 
 Thank you
 
@@ -79,22 +79,22 @@ PATH environment user variable
 
 ## Bot Installation
 
-1. Download the updater (zip) [Download autoupdate.py](https://gist.github.com/31December99/8e51466feb9df1606fd4199141ac54bb)
-2. pip install requests
-3. python autoupdate.py
-4. pip install -r requirements.txt
-5. START the bot in order to create the service.env file
-6. **Complete the service.env file.
+1. Download the release zip
+2. Unzip it
+3. pip install -r requirements.txt
+4. START the bot in order to create the service.env file
+5. **Complete the service.env file.
    The fields marked as optional are not required and are not essential for uploading media to the tracker**
+
 ## ! Note regarding the service.env file !
    The service.env file is located in the home directory on Linux
    or under the AppData folder on Windows
 
-### Update Bot 
-python3 autoupdate.py
-
-pip install -r requirements.txt
-
+## Bot Update
+1. Delete only the bot folder
+2. Download the release zip
+3. Unzip it
+ 
 ___
 ### Configuration
 
@@ -114,11 +114,6 @@ Make sure to configure the necessary API keys and authentication credentials in 
 - torrent_archive =''
 - preferred_lang=en
 - size_th=100
-
-### Custom tracker .env file Example (itt.env):
-- BASE_URL=https://...
-- API_TOKEN=...
-
 
 #### Searching:
 
