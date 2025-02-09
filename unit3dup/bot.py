@@ -69,9 +69,6 @@ class Bot:
         if contents is None:
             exit(1)
 
-        # Skip empty folder
-        contents = [content for content in contents if content is not None]
-
         # -f requires at least one file
         if not contents:
             custom_console.bot_error_log(f"There are no Files to process. Try using -scan")
