@@ -37,11 +37,11 @@ class UploadBot:
         custom_console.rule()
         return {}, error_message
 
-    def send(self,show: MediaResult, video_info: Video, nfo_path = None) -> (requests, dict):
+    def send(self,show_id: int , show_keywords_list: str, video_info: Video) -> (requests, dict):
 
         self.tracker.data["name"] = self.content.display_name
-        self.tracker.data["tmdb"] = show.result.id
-        self.tracker.data["keywords"] = show.keywords_list
+        self.tracker.data["tmdb"] = show_id
+        self.tracker.data["keywords"] = show_keywords_list
         self.tracker.data["category_id"] = self.content.category
         self.tracker.data[
             "resolution_id"] = self.content.screen_size if self.content.screen_size else self.content.resolution

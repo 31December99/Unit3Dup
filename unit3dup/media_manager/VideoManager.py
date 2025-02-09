@@ -64,15 +64,18 @@ class VideoManager:
 
                 # get a new description if cache is disabled
                 file_name = str(os.path.join(content.folder, content.file_name))
-                video_info = Video(file_name, tmdb_id=tmdb.result.id, trailer_key=tmdb.trailer_key)
+
+                # Get meta from the media video
+                video_info = Video(file_name, tmdb_id=tmdb.video_id, trailer_key=tmdb.trailer_key)
                 video_info.build_info()
 
                 # Tracker Bot
                 unit3d_up = UploadBot(content)
 
                 # Send data to the tracker
-                tracker_response, tracker_message =  unit3d_up.send(show=tmdb, video_info=video_info)
-
+                tracker_response, tracker_message =  unit3d_up.send(show_id=tmdb.result.id,
+                                                                    show_keywords_list=tmdb.keywords_list,
+                                                                    video_info=video_info)
                 qbittorrent_list.append(
                     QBittorrent(
                         tracker_response=tracker_response,

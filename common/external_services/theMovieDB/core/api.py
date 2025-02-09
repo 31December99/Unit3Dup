@@ -22,10 +22,11 @@ ENABLE_LOG = True
 T = TypeVar('T')
 
 class MediaResult:
-    def __init__(self, result, trailer_key: str = None, keywords_list: str = None):
+    def __init__(self, result=None, video_id: int = 0, trailer_key: str = None, keywords_list: str = None):
         self.result = result
         self.trailer_key = trailer_key
         self.keywords_list = keywords_list
+        self.video_id = video_id
 
 
 
@@ -202,12 +203,19 @@ class DbOnline(TmdbAPI):
         if results:
             for result in results:
                 if ManageTitles.fuzzyit(str1=self.query, str2=result.get_title()) > 95:
-                    print(f"Alternative '{result.get_title()}' found.")
+                    # print(f"Alternative '{result.get_title()}' found.")
                     # Get the trailer
                     trailer_key = self.trailer(result.id)
                     keywords_list = self.keywords(result.id)
                     # return MediaResult object
-                    return MediaResult(result, trailer_key, keywords_list)
+                    return MediaResult(result, video_id=result.id, trailer_key=trailer_key, keywords_list=keywords_list)
+
+        user_tmdb_id  = custom_console.user_input(message="Title not found. Please digit a valid TMDB ID")
+        # Request the tmdb user id
+        trailer_key = self.trailer(user_tmdb_id)
+        if trailer_key:
+            keywords_list = self.keywords(user_tmdb_id)
+            return MediaResult(video_id=user_tmdb_id, trailer_key=trailer_key, keywords_list=keywords_list)
         return None
 
     def youtube_trailer(self) -> str | None:
