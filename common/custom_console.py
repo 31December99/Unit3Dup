@@ -178,9 +178,9 @@ class CustomConsole(Console):
 
     @staticmethod
     def user_input(message: str)-> int:
-        custom_console.bot_input_log(message=message)
         try:
             while True:
+                custom_console.bot_input_log(message=message)
                 user_tmdb_id = input()
                 if user_tmdb_id.isdigit():
                     user_tmdb_id = int(user_tmdb_id)
