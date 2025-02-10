@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import pprint
 from typing import TypeVar
 
 from common.external_services.theMovieDB.core.models.tvshow.alternative import Alternative
@@ -208,15 +209,20 @@ class DbOnline(TmdbAPI):
                     trailer_key = self.trailer(result.id)
                     keywords_list = self.keywords(result.id)
                     # return MediaResult object
-                    return MediaResult(result, video_id=result.id, trailer_key=trailer_key, keywords_list=keywords_list)
+                    search_results = MediaResult(result, video_id=result.id, trailer_key=trailer_key,
+                                                 keywords_list=keywords_list)
+                    self.print_results(results=search_results)
+                    return search_results
 
-        user_tmdb_id  = custom_console.user_input(message="Title not found. Please digit a valid TMDB ID")
-        # Request the tmdb user id
+        user_tmdb_id  = custom_console.user_input(message="Title not found. Please digit a valid TMDB ID -> ")
+        # Request trailer and keywords
         trailer_key = self.trailer(user_tmdb_id)
-        if trailer_key:
-            keywords_list = self.keywords(user_tmdb_id)
-            return MediaResult(video_id=user_tmdb_id, trailer_key=trailer_key, keywords_list=keywords_list)
-        return None
+        keywords_list = self.keywords(user_tmdb_id) if trailer_key else ''
+        search_results = MediaResult(video_id=user_tmdb_id, trailer_key=trailer_key, keywords_list=keywords_list)
+        self.print_results(results=search_results)
+        return search_results
+
+
 
     def youtube_trailer(self) -> str | None:
 
@@ -244,3 +250,10 @@ class DbOnline(TmdbAPI):
         keywords_list = self._keywords(video_id, self.category)
         if keywords_list:
             return ",".join([key.name for key in keywords_list])
+
+
+    def print_results(self,results: MediaResult) -> None:
+            custom_console.bot_log(f"'TMDB TITLE'..... {self.query}")
+            custom_console.bot_log(f"'TMDB ID'........ {results.video_id}")
+            custom_console.bot_log(f"'TMDB KEYWORDS'.. {results.keywords_list}")
+            print()
