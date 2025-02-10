@@ -73,7 +73,7 @@ class VideoManager:
                 unit3d_up = UploadBot(content)
 
                 # Send data to the tracker
-                tracker_response, tracker_message =  unit3d_up.send(show_id=tmdb.result.id,
+                tracker_response, tracker_message =  unit3d_up.send(show_id=tmdb.video_id,
                                                                     show_keywords_list=tmdb.keywords_list,
                                                                     video_info=video_info)
                 qbittorrent_list.append(
