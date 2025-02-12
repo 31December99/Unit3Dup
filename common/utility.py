@@ -39,14 +39,27 @@ class ManageTitles:
     def convert_iso(code):
         """ Convert iso 2 to 3 """
         code = code.upper()
-        if len(code) == 2:  # // alpha-2
-            return ManageTitles.iso_3166_alpha2_to_alpha3.get(code, None)
-        elif len(code) == 3:  # // alpha3
-            # return the same code provided it is an alpha3
-            if code in ManageTitles.iso_3166_alpha3:
-                return code
+
+        # if it's 'multilang'
+        if '-' in code:
+            codes = code.split('-')
         else:
-            return None
+            codes = code
+
+        result = []
+        for part in codes:
+            # Capture the 2 or 3 letter code followed by '-' or end string
+            match = re.match(r'([A-Za-z]{2,3})(?:-|$)', part)
+            if match:
+                iso_code = match.group(1)
+                if len(iso_code) == 2:  # // alpha-2
+                    return ManageTitles.iso_3166_alpha2_to_alpha3.get(code, None)
+                elif len(iso_code) == 3:  # // alpha3
+                    # return the same code provided it is an alpha3
+                    if iso_code in ManageTitles.iso_3166_alpha3:
+                        if iso_code:
+                            result.append(iso_code)
+        return result
 
 
     @staticmethod
