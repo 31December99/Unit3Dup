@@ -61,8 +61,12 @@ class Bot:
         contents = self.content_manager.process()
 
         # -u requires a single file
-        if not contents or not os.path.exists(self.path):
+        if not contents:
             custom_console.bot_error_log("There are no Media to process")
+            return False
+
+        if not os.path.exists(self.path):
+            custom_console.bot_error_log("Path doesn't exist")
             return False
 
         # we got a handled exception

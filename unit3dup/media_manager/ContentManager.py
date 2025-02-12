@@ -3,9 +3,8 @@ import json
 import os
 import re
 
-from unit3dup.contents import Contents
-from unit3dup.contents import Media
 from unit3dup.automode import Auto
+from unit3dup.media import Media
 
 from common.trackers.trackers import ITTData
 from common.utility import ManageTitles
@@ -44,24 +43,24 @@ class ContentManager:
 
         self.auto = Auto(path=self.path, mode=self.mode, tracker_name=self.tracker_name,
                          force_media_type=self.force_media_type)
+
         self.media_list = self.auto.upload() if self.mode in ["man", "folder"] else self.auto.scan()
 
-    def process(self)-> list['Contents']:
+    def process(self)-> list['Media']:
         contents = []
         for media in self.media_list:
             self.path = media.torrent_path
-            self.category = media.media_type
+            self.category = media.category
 
             content = self.get_data(media=media)
             if content:
                 contents.append(content)
         return contents
 
-    def get_data(self, media: Media) -> Contents | bool:
+    def get_data(self, media: Media) -> Media | bool:
         """
         Process files or folders and create a `Contents` object if the metadata is valid
         """
-
         if os.path.isdir(self.path):
             self.process_folder()
         elif os.path.isfile(self.path):
@@ -71,44 +70,31 @@ class ContentManager:
             return False
         torrent_pack = bool(re.search(r"S\d+(?!.*E\d+)", self.path))
 
-        return  Contents(
-            game_title=media.game_title,
-            game_crew=media.crew,
-            game_tags=media.game_tags,
-            guess_title=media.guess_title,
-            season=media.guess_season,
-            episode=media.guess_episode,
-            screen_size=media.screen_size,
-            file_name=self.file_name,
-            folder=self.folder,
-            torrent_name=self.torrent_name,
-            size=self.size,
-            metainfo=self.meta_info,
-            category=self.category,
-            tracker_name=self.tracker_name,
-            torrent_pack=torrent_pack,
-            torrent_path=self.torrent_path,
-            display_name=self.display_name,
-            doc_description=self.doc_description,
-            audio_languages=self.languages,
-            game_nfo=self.game_nfo,
-        )
+        media.file_name = self.file_name
+        media.torrent_name = self.torrent_name
+        media.size = self.size
+        media.metainfo = self.meta_info
+        media.meta_info = self.meta_info
+        media.torrent_pack = torrent_pack
+        media.doc_description = self.doc_description
+        media.game_nfo = self.game_nfo
+        media.display_name = self.display_name
+        return media
+
 
     def process_file(self) -> bool:
         """Process individual files and gather metadata"""
-        self.file_name = os.path.basename(self.path)
-        # Get the current media folder
-        self.folder = os.path.dirname(self.path)
-        self.display_name, _ = os.path.splitext(self.file_name)
+        self.file_name = self.path
+        # Display name on webpage
+        self.display_name, _ = os.path.splitext(os.path.basename(self.file_name))
         self.display_name = ManageTitles.clean(self.display_name)
+        # current media path
         self.torrent_path = self.path
 
         # Torrent name
         self.torrent_name = self.file_name
-
         # test to check if it is a doc
         self.doc_description = self.file_name
-        self._handle_document_category()
 
         # Build meta_info
         self.size = os.path.getsize(self.path)
@@ -122,20 +108,15 @@ class ContentManager:
             return False
 
         # Sample the first file in the list
-        self.file_name = files_list[0]
-        # Get the current media folder
-        self.folder = self.path
+        self.file_name = os.path.join(self.path, files_list[0])
         # Display name on webpage
         self.display_name = ManageTitles.clean(os.path.basename(self.path))
-        # self._set_languages_from_title_or_media()
-
+        # current media path
         self.torrent_path = self.path
         # Torrent name
         self.torrent_name = os.path.basename(self.path)
         # Document description
         self.doc_description = "\n".join(files_list)
-        # test to check if it is a doc
-        self._handle_document_category()
 
         # Build meta_info
         self.size = 0
@@ -162,9 +143,3 @@ class ContentManager:
     def list_game_files(self) -> list[str]:
         """List all files in a game folder"""
         return [file for file in os.listdir(self.path)]
-
-    def _handle_document_category(self)-> None:
-        """Verify if it is a document"""
-        media_docu_type = ManageTitles.media_docu_type(self.file_name)
-        if media_docu_type:
-            self.category = self.tracker_data.category.get(media_docu_type)

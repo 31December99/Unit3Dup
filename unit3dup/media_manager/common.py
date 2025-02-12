@@ -2,14 +2,15 @@
 import os
 from concurrent.futures import ThreadPoolExecutor
 
-from common.utility import ManageTitles
 from unit3dup.qbittorrent import QBittorrent
 from unit3dup.pvtTorrent import Mytorrent
 from unit3dup.duplicate import Duplicate
-from unit3dup.contents import Contents
+from unit3dup.media import Media
 from unit3dup.qbitt import Qbitt
-from common import config
+
 from common.custom_console import custom_console
+from common.utility import ManageTitles
+from common import config
 
 
 class UserContent:
@@ -18,7 +19,7 @@ class UserContent:
     """
 
     @staticmethod
-    def torrent_file_exists(content: Contents, class_name: str) -> bool:
+    def torrent_file_exists(content: Media, class_name: str) -> bool:
         """
         Check if a torrent file for the given content already exists
 
@@ -45,7 +46,7 @@ class UserContent:
 
 
     @staticmethod
-    def is_preferred_language(content: Contents) -> bool:
+    def is_preferred_language(content: Media) -> bool:
         """
            Compare preferred language with the audio language
 
@@ -58,7 +59,7 @@ class UserContent:
         preferred_lang = config.PREFERRED_LANG.upper()
         preferred_lang_to_iso = ManageTitles.convert_iso(preferred_lang)
 
-        if "not found" in content.audio_languages: ##?
+        if not content.audio_languages:
             return True
 
         if preferred_lang == 'ALL':
@@ -75,7 +76,7 @@ class UserContent:
         return False
 
     @staticmethod
-    def torrent(content: Contents)-> Mytorrent:
+    def torrent(content: Media)-> Mytorrent:
         """
            Create the file torrent
 
@@ -91,7 +92,7 @@ class UserContent:
         return my_torrent if my_torrent.write() else None
 
     @staticmethod
-    def is_duplicate(content: Contents) -> bool:
+    def is_duplicate(content: Media) -> bool:
         """
            Search for a duplicate. Delta = config.SIZE_TH
 

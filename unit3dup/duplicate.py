@@ -1,15 +1,18 @@
 # -*- coding: utf-8 -*-
 import guessit
 from common.utility import ManageTitles, System
-from common import title
-from common.constants import my_language
+from common.custom_console import custom_console
 from common.trackers.trackers import ITTData
 from common.trackers.itt import itt_data
-from common.custom_console import custom_console
+from common.constants import my_language
+from common import title
+
 from unit3dup.media_manager.MediaInfoManager import MediaInfoManager
-from unit3dup.contents import Contents
 from unit3dup.torrent import Torrent
+from unit3dup.media import Media
 from unit3dup import config
+
+
 
 class CompareTitles:
 
@@ -55,10 +58,10 @@ class CompareTitles:
 
 class Duplicate:
 
-    def __init__(self, content: Contents):
+    def __init__(self, content: Media):
 
         # User content from the scan process
-        self.content: Contents = content
+        self.content: Media = content
 
         # Class to get info about a torrent
         self.torrent_info = Torrent()
