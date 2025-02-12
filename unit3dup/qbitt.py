@@ -5,16 +5,16 @@ import requests
 import qbittorrent
 
 from common.custom_console import custom_console
-
 from qbittorrent import Client
+
+from unit3dup.media import Media
 from unit3dup.pvtTorrent import Mytorrent
-from unit3dup.contents import Contents
 from unit3dup import config
 
 class Qbitt:
 
     def __init__(
-        self, tracker_data_response: str, torrent: Mytorrent, content: Contents
+        self, tracker_data_response: str, torrent: Mytorrent, content: Media
     ):
         self.torrent = torrent
         self.torrent_path = content.torrent_path
@@ -57,7 +57,7 @@ class Qbitt:
 
     @classmethod
     def connect(
-        cls, tracker_data_response: str, torrent: Mytorrent, contents: Contents
+        cls, tracker_data_response: str, torrent: Mytorrent, contents: Media
     ):
         qb = cls._check_connection()
         if qb:

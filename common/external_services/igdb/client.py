@@ -5,7 +5,7 @@ from rich.table import Table
 from common.external_services.igdb.core.models.search import Game
 from common.external_services.igdb.core.api import IGDBapi
 from common.custom_console import custom_console
-from unit3dup.contents import Contents
+from unit3dup.media import Media
 
 
 class IGDBViewer:
@@ -34,7 +34,7 @@ class IGDBViewer:
         custom_console.bot_log(Align.center(table))
 
     @staticmethod
-    def to_game(results: list) -> list['Game']:
+    def to_game(results: list) -> list['Game'] | None:
 
         if results:
             return [
@@ -57,7 +57,7 @@ class IGDBViewer:
                                             " or digit your IGDB number (Q=exit, S=skip) ")
                 # If no IGDB is entered continue without the IGDB description
                 if result is None:
-                    return
+                    return None
                 # Range between first and last result
                 if 0 <= result < len(results):
                     custom_console.bot_log(f"Selected: {result}")
@@ -74,7 +74,7 @@ class IGDBViewer:
             if user_choice.upper() == "Q":
                 exit(1)
             if user_choice.upper() == "S":
-                return
+                return None
             if user_choice.isdigit():
                 user_choice = int(user_choice)
                 if user_choice < 999999:
@@ -141,7 +141,7 @@ class IGDBClient:
         return self.igdb.request(query=f'fields id,name,summary,videos,url; where id = {igdb_id};',endpoint="games")
 
 
-    def user_enter_igdb(self,igdb_results: list, content: Contents, candidate: str)-> Game | None:
+    def user_enter_igdb(self,igdb_results: list, content: Media, candidate: str)-> Game | None:
         while True:
             # Show results if there are any
             if igdb_results:
@@ -159,7 +159,7 @@ class IGDBClient:
 
             # If no IGDB is entered continue without the IGDB description
             if user_choice is None:
-                return
+                return None
             # User chooses to provide a personal IGDB ID
             if user_choice >= len(igdb_results):
                 user_result = self.search_by_id(igdb_id=user_choice)
@@ -219,7 +219,7 @@ class IGDBClient:
         return similar_results, candidates[-1] if candidates else []
 
 
-    def game(self, content: Contents)-> Game | None:
+    def game(self, content: Media)-> Game | None:
         custom_console.bot_question_log(f"Contacting host for GAME ID. Please wait...\n")
         # Try a broader search...
         igdb_results, candidate = self.broader(game_title=content.game_title)

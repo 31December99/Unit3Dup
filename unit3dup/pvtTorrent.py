@@ -5,9 +5,8 @@ import os
 import torf
 from tqdm import tqdm
 from common.custom_console import custom_console
+from unit3dup.media import Media
 from unit3dup import config
-from unit3dup.contents import Contents
-
 
 class HashProgressBar(tqdm):
     def callback(self, mytorr, path, current_num_hashed, total_pieces):
@@ -18,7 +17,7 @@ class HashProgressBar(tqdm):
 
 class Mytorrent:
 
-    def __init__(self, contents: Contents, meta: str):
+    def __init__(self, contents: Media, meta: str):
         self.torrent_path = contents.torrent_path
         self.metainfo = json.loads(meta)
 

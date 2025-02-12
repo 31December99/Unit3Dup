@@ -1,22 +1,17 @@
 import json
 import requests
 
-from common.external_services.theMovieDB.core.api import MediaResult
 from common.external_services.igdb.core.models.search import Game
 from common.custom_console import custom_console
 from common.trackers.trackers import ITTData
 
 from unit3dup.pvtTracker import Unit3d
 from unit3dup.pvtVideo import Video
-from unit3dup import contents
-
-
-
-
+from unit3dup.media import Media
 from unit3dup import config
 
 class UploadBot:
-    def __init__(self, content: contents):
+    def __init__(self, content: Media):
 
         self.API_TOKEN = config.ITT_APIKEY
         self.BASE_URL = config.ITT_URL
@@ -50,8 +45,8 @@ class UploadBot:
         self.tracker.data["sd"] = video_info.is_hd
 
         self.tracker.data["type_id"] = self.tracker_data.filter_type(self.content.file_name)
-        self.tracker.data["season_number"] = self.content.season
-        self.tracker.data["episode_number"] = (self.content.episode if not self.content.torrent_pack else 0)
+        self.tracker.data["season_number"] = self.content.guess_season
+        self.tracker.data["episode_number"] = (self.content.guess_episode if not self.content.torrent_pack else 0)
 
         tracker_response=self.tracker.upload_t(data=self.tracker.data, torrent_path=self.content.torrent_path)
         return self.message(tracker_response)
@@ -59,7 +54,7 @@ class UploadBot:
 
     def send_game(self,igdb: Game, nfo_path = None) -> (requests, dict):
 
-        igdb_platform = self.content.game_tags[0].lower() if self.content.game_tags else ''
+        igdb_platform = self.content.platform_list[0].lower() if self.content.platform_list else ''
         self.tracker.data["name"] = self.content.display_name
         self.tracker.data["tmdb"] = 0
         self.tracker.data["category_id"] = self.content.category
