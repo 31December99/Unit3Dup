@@ -54,6 +54,25 @@ def test_tmdb():
         custom_console.bot_log(f"TRACKER RESPONSE {tracker_response}")
         custom_console.bot_log(f"TRACKER MESSAGE {tracker_message}")
 
+        if not tracker_response:
+            custom_console.bot_error_log(f"NO TRACKER RESPONSE {tracker_message}")
+            input("Press Enter to continue...")
+
+        """ QBITTORRENT """
+        qbittorrent = QBittorrent(
+            tracker_response=tracker_response,
+            torrent_response=torrent_response,
+            content=content,
+            tracker_message=tracker_message
+        )
+
+        UserContent.send_to_qbittorrent([qbittorrent])
+
+
+
+
+
+
         print()
 
 
