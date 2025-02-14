@@ -92,7 +92,7 @@ class ContentManager:
         self.torrent_path = self.path
 
         # Torrent name
-        self.torrent_name = self.file_name
+        self.torrent_name =  os.path.basename(self.file_name)
         # test to check if it is a doc
         self.doc_description = self.file_name
 
