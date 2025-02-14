@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import os
-import sys
 
 from rich.align import Align
 from rich.console import Console
@@ -174,7 +173,7 @@ class CustomConsole(Console):
             input("> ")
         except KeyboardInterrupt:
             custom_console.bot_error_log("\nOperation cancelled.Please update your config file")
-            sys.exit(0)
+            exit(0)
 
     @staticmethod
     def user_input(message: str)-> int:
@@ -187,7 +186,7 @@ class CustomConsole(Console):
                     return user_tmdb_id if user_tmdb_id < 999999 else 0
         except KeyboardInterrupt:
             custom_console.bot_error_log("\nOperation cancelled. Bye !")
-            exit(1)
+            exit(0)
 
 
 # Init custom Console
