@@ -64,7 +64,7 @@ class Tracker(Myhttp):
         while True:
             try:
                 response = requests.get(
-                    url=self.filter_url, headers=self.headers, params=params
+                    url=self.filter_url, headers=self.headers, params=params, timeout=10
                 )
                 response.raise_for_status()
                 return response.json()
@@ -84,6 +84,9 @@ class Tracker(Myhttp):
                     f"or verify if the tracker is online",
                 )
                 exit(1)
+            except requests.exceptions.ReadTimeout as e:
+                custom_console.bot_error_log(f"[Tracker] HTTP Error {e}. Tracker Offline !")
+                exit(1)
 
     def _post(self, file: dict, data: dict, params: dict):
         with open(file['torrent'], "rb") as torrent:
@@ -97,13 +100,18 @@ class Tracker(Myhttp):
             if file.get('nfo', None):
                 file_.update({"nfo": ("filename.nfo", file['nfo'], "text/plain")})
 
-            return requests.post(
-                url=self.upload_url,
-                files=file_,
-                data=data,
-                headers=self.headers,
-                params=params,
-            )
+            try:
+                return requests.post(
+                    url=self.upload_url,
+                    files=file_,
+                    data=data,
+                    headers=self.headers,
+                    params=params,
+                    timeout=10
+                )
+            except requests.exceptions.ReadTimeout as e:
+                custom_console.bot_error_log(f"[Tracker] HTTP Error {e}. Tracker Offline !")
+                exit(1)
 
 
     def _fetch_all(self, params: dict) -> requests:
