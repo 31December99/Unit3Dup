@@ -13,6 +13,7 @@ from common.config import load_config
 
 from unit3dup.media_manager.ContentManager import ContentManager
 from unit3dup.media_manager.common import UserContent
+from unit3dup.qbittorrent import QBittorrent
 from unit3dup.upload import UploadBot
 from unit3dup.pvtVideo import Video
 from unit3dup.media import Media
@@ -45,4 +46,20 @@ class Content:
                                                force_media_type=tracker_data.category.get("movie"))
         movie_list = content_manager.process()
 
-        return tvshow_list + movie_list
+        custom_console.bot_warning_log("- FOLDER -")
+        test_content_game = r"C:\test_folder\single"
+        content_manager = ContentManager(path=test_content_game, tracker_name='itt', mode='folder',
+                                               force_media_type=tracker_data.category.get("tvshow"))
+        # -f
+        folder_list = content_manager.process()
+
+
+        custom_console.bot_warning_log("- SINGLE -")
+        test_content_game = r"C:\test_folder\single"
+        content_manager = ContentManager(path=test_content_game, tracker_name='itt', mode='man',
+                                               force_media_type=tracker_data.category.get("movie"))
+        # -u
+        single_list = content_manager.process()
+
+
+        return folder_list + tvshow_list + movie_list +  single_list
