@@ -2,10 +2,11 @@
 import re
 import requests
 
-from unit3dup import pvtTracker
-from unit3dup import config
 from common.custom_console import custom_console
 from common.trackers.trackers import ITTData
+
+from unit3dup import pvtTracker
+from unit3dup import config
 
 
 class Torrent:

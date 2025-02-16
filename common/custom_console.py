@@ -1,18 +1,17 @@
 # -*- coding: utf-8 -*-
 import os
-import sys
 
 from rich.align import Align
 from rich.console import Console
 from rich.panel import Panel
 from rich.text import Text
 from rich.table import Table
-from common.trackers.itt import itt_data
-
 from decouple import Config, RepositoryEnv, UndefinedValueError
 
-console = Console(log_path=False)
+from common.trackers.itt import itt_data
 
+
+console = Console(log_path=False)
 
 class CustomConsole(Console):
 
@@ -104,7 +103,7 @@ class CustomConsole(Console):
         console.log(message, style=self.question_msg_color)
 
     def bot_input_log(self, message: str):
-        console.print(message, end="", style=self.normal_color)
+        console.print(f"{message} ", end="", style=self.normal_color)
 
     def bot_question_log(self, message: str):
         console.print(message, end="", style=self.question_msg_color)
@@ -171,10 +170,23 @@ class CustomConsole(Console):
         # Wait for user confirmation in case of validation failure
         try:
             custom_console.bot_error_log(message=message)
-            input()
+            input("> ")
         except KeyboardInterrupt:
             custom_console.bot_error_log("\nOperation cancelled.Please update your config file")
-            sys.exit(0)
+            exit(0)
+
+    @staticmethod
+    def user_input(message: str)-> int:
+        try:
+            while True:
+                custom_console.bot_input_log(message=message)
+                user_tmdb_id = input()
+                if user_tmdb_id.isdigit():
+                    user_tmdb_id = int(user_tmdb_id)
+                    return user_tmdb_id if user_tmdb_id < 999999 else 0
+        except KeyboardInterrupt:
+            custom_console.bot_error_log("\nOperation cancelled. Bye !")
+            exit(0)
 
 
 # Init custom Console

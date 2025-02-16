@@ -5,9 +5,8 @@ import os
 import torf
 from tqdm import tqdm
 from common.custom_console import custom_console
+from unit3dup.media import Media
 from unit3dup import config
-from unit3dup.contents import Contents
-
 
 class HashProgressBar(tqdm):
     def callback(self, mytorr, path, current_num_hashed, total_pieces):
@@ -18,17 +17,13 @@ class HashProgressBar(tqdm):
 
 class Mytorrent:
 
-    def __init__(self, contents: Contents, meta: str):
-        self.qb = None
-        self.file_name = contents.file_name
+    def __init__(self, contents: Media, meta: str):
         self.torrent_path = contents.torrent_path
-        self.basename = os.path.basename(self.torrent_path)
-        self.content_type = contents.category
         self.metainfo = json.loads(meta)
 
         self.mytorr = torf.Torrent(path=contents.torrent_path)
         self.mytorr.comment = config.TORRENT_COMMENT
-        self.mytorr.name = contents.name
+        self.mytorr.name = contents.torrent_name
         self.mytorr.created_by = "https://github.com/31December99/Unit3Dup"
         self.mytorr.private = True
         self.mytorr.segments = 16 * 1024 * 1024
@@ -62,15 +57,3 @@ class Mytorrent:
                     f"This torrent file already exists: {full_path}"
                 )
             return False
-
-    @property
-    def comment(self):
-        return self.mytorr.comment
-
-    @comment.setter
-    def comment(self, value):
-        self.mytorr.comment = value
-
-    @property
-    def info_hash(self):
-        return self.mytorr.infohash

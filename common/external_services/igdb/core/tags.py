@@ -2,7 +2,7 @@
 crew_patterns = [
     "NOGRP", "LIGHTFORCE", "SUXXORS", "KAOS", "GOG", "TENOKE", "I_KNOW", "RAZOR1911", "RUNE", "FITGIRL",
     "ELAMIGOS", "RAZORDOX", "RAZOR", "SKIDROW", "DINOBYTES", "TINYISO", "FCKDRM", "FLT",
-    "CPY", "RELOADED", "HIVE", "VACE", "CZW", "PHOENIX", "JAGUAR", "CRIMSON", "TURBO", "DUPLEX"
+    "CPY", "RELOADED", "HIVE", "VACE", "CZW", "PHOENIX", "JAGUAR", "CRIMSON", "TURBO", "DUPLEX", "CODEX"
 ]
 
 platform_patterns = ["IOS", "LIN", "MACOS", "MOB", "NINTENDO", "OCULUS", "PC", "PS4", "PS5", "PSN", "PSVR", "STEAM",

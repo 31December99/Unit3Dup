@@ -1,18 +1,16 @@
 # -*- coding: utf-8 -*-
 import os
-
 from concurrent.futures import ThreadPoolExecutor
-from common.utility.utility import ManageTitles
 
-from unit3dup import config
-from unit3dup.media_manager.models.qbitt import QBittorrent
+from unit3dup.qbittorrent import QBittorrent
 from unit3dup.pvtTorrent import Mytorrent
 from unit3dup.duplicate import Duplicate
-from unit3dup.contents import Contents
+from unit3dup.media import Media
+from unit3dup.qbitt import Qbitt
 
-from common.media_db.search import TvShow
 from common.custom_console import custom_console
-from common.clients.qbitt import Qbitt
+from common.utility import ManageTitles
+from common import config
 
 
 class UserContent:
@@ -21,7 +19,7 @@ class UserContent:
     """
 
     @staticmethod
-    def torrent_file_exists(content: Contents, class_name: str) -> bool:
+    def torrent_file_exists(content: Media, class_name: str) -> bool:
         """
         Check if a torrent file for the given content already exists
 
@@ -44,11 +42,11 @@ class UserContent:
                 f"** {class_name} **: Reusing the existing torrent file! {this_path}\n"
             )
             return True
-
+        return False
 
 
     @staticmethod
-    def is_preferred_language(content: Contents) -> bool:
+    def is_preferred_language(content: Media) -> bool:
         """
            Compare preferred language with the audio language
 
@@ -61,7 +59,7 @@ class UserContent:
         preferred_lang = config.PREFERRED_LANG.upper()
         preferred_lang_to_iso = ManageTitles.convert_iso(preferred_lang)
 
-        if "not found" in content.audio_languages: ##?
+        if not content.audio_languages:
             return True
 
         if preferred_lang == 'ALL':
@@ -78,28 +76,7 @@ class UserContent:
         return False
 
     @staticmethod
-    def tmdb(content: Contents):
-        """
-           Search for TMDB ID amd remove the episode title from the main title
-
-           Args:
-               content (Contents): The content object media
-
-           Returns:
-               tmdb results
-        """
-
-        # Search for a title (Movie or Season) and return the episode title
-        my_tmdb = TvShow(content)
-        tv_show_result = my_tmdb.start(content.file_name)
-
-        # Remove episode title from display_name if it exists
-        if not content.episode_title and my_tmdb.episode_title:
-            content.display_name = content.display_name.replace(my_tmdb.episode_title, '')
-        return tv_show_result
-
-    @staticmethod
-    def torrent(content: Contents)-> Mytorrent:
+    def torrent(content: Media)-> Mytorrent:
         """
            Create the file torrent
 
@@ -115,7 +92,7 @@ class UserContent:
         return my_torrent if my_torrent.write() else None
 
     @staticmethod
-    def is_duplicate(content: Contents) -> bool:
+    def is_duplicate(content: Media) -> bool:
         """
            Search for a duplicate. Delta = config.SIZE_TH
 
@@ -178,3 +155,4 @@ class UserContent:
             # Wait for all threads to complete
             for future in futures:
                 future.result()
+

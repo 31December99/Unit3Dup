@@ -5,6 +5,7 @@ __pycache__/
 
 # Env file
 *.env
+*.db
 
 # C extensions
 *.so

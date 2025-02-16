@@ -2,18 +2,19 @@
 import argparse
 import os
 
-from unit3dup.media_manager.models.qbitt import QBittorrent
-from unit3dup.media_manager.utility import UserContent
-from unit3dup.upload import UploadDocument
-from unit3dup.contents import Contents
+from unit3dup.media_manager.common import UserContent
+
+from unit3dup.qbittorrent import QBittorrent
+from unit3dup.upload import UploadBot
+from unit3dup.media import Media
 from unit3dup import config
 
 class DocuManager:
 
-    def __init__(self, contents: list["Contents"], cli: argparse.Namespace):
+    def __init__(self, contents: list["Media"], cli: argparse.Namespace):
         self._my_tmdb = None
         self.file_name = None
-        self.contents: list['Contents'] = contents
+        self.contents: list['Media'] = contents
         self.cli: argparse = cli
         self.torrent_found: bool = False
 
@@ -43,14 +44,10 @@ class DocuManager:
                 torrent_response = None
 
             # Tracker payload
-            unit3d_up = UploadDocument(content)
-            data = unit3d_up.payload()
-
-            # Get a new tracker instance
-            tracker = unit3d_up.tracker(data=data)
+            unit3d_up = UploadBot(content)
 
             # Upload
-            tracker_response, tracker_message = unit3d_up.send(tracker=tracker)
+            tracker_response, tracker_message = unit3d_up.send_docu()
 
             if not self.cli.torrent:
                 qbittorrent_list.append(

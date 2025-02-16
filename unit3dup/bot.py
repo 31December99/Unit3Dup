@@ -58,19 +58,20 @@ class Bot:
         self.content_manager = ContentManager(
             path=self.path, tracker_name=self.tracker_name, mode=self.mode, force_media_type=force_media_type
         )
-        contents = self.content_manager.get_files()
+        contents = self.content_manager.process()
 
         # -u requires a single file
-        if not contents or not os.path.exists(self.path):
+        if not contents:
             custom_console.bot_error_log("There are no Media to process")
+            return False
+
+        if not os.path.exists(self.path):
+            custom_console.bot_error_log("Path doesn't exist")
             return False
 
         # we got a handled exception
         if contents is None:
             exit(1)
-
-        # Skip empty folder
-        contents = [content for content in contents if content is not None]
 
         # -f requires at least one file
         if not contents:
