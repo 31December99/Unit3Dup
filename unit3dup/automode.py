@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
 import os
-from unit3dup.contents import Media
-from common.utility.utility import ManageTitles
+from common.utility import ManageTitles
 from common.custom_console import custom_console
 
+from unit3dup.media import Media
 
 class Auto:
     """

@@ -118,7 +118,11 @@ class MyHttp:
             )
             return response
 
-        response = self.session.post(url, params=params, headers=headers, data=data)
+        try:
+            response = self.session.post(url, params=params, headers=headers, data=data)
+        except KeyboardInterrupt:
+            custom_console.bot_error_log("\nOperation cancelled")
+            exit(0)
 
         if response.status_code==200:
             if use_cache:

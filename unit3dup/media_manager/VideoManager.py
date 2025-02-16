@@ -1,17 +1,18 @@
 # -*- coding: utf-8 -*-
 import argparse
-import os
 
-from unit3dup.media_manager.models.qbitt import QBittorrent
-from unit3dup.media_manager.utility import UserContent
-from unit3dup.upload import UploadVideo
-from unit3dup.contents import Contents
+from common.external_services.theMovieDB.core.api import DbOnline
+from unit3dup.media_manager.common import UserContent
+from unit3dup.qbittorrent import QBittorrent
+from unit3dup.upload import UploadBot
 from unit3dup.pvtVideo import Video
+from unit3dup.media import Media
 from unit3dup import config
+
 
 class VideoManager:
 
-    def __init__(self, contents: list["Contents"], cli: argparse.Namespace):
+    def __init__(self, contents: list["Media"], cli: argparse.Namespace):
         """
         Initialize the VideoManager with the given contents
 
@@ -21,7 +22,7 @@ class VideoManager:
         """
 
         self.torrent_found:bool = False
-        self.contents: list['Contents'] = contents
+        self.contents: list['Media'] = contents
         self.cli: argparse = cli
 
     def process(self) -> list["QBittorrent"] | None:
@@ -34,8 +35,8 @@ class VideoManager:
         qbittorrent_list = []
         for content in self.contents:
             # Filter contents based on existing torrents or duplicates
-            if UserContent.is_preferred_language(content=content):
 
+            if UserContent.is_preferred_language(content=content):
                 # Torrent creation
                 if not UserContent.torrent_file_exists(content=content, class_name=self.__class__.__name__):
                     self.torrent_found = False
@@ -55,24 +56,23 @@ class VideoManager:
                 else:
                     torrent_response = None
 
-                # Search for the TMDB ID
-                tmdb_result = UserContent.tmdb(content=content)
 
-                # get a new description if cache is disabled
-                file_name = str(os.path.join(content.folder, content.file_name))
-                video_info = Video(file_name, tmdb_id=tmdb_result.video_id, trailer_key=tmdb_result.trailer_key)
+                # Search for the TMDB ID
+                db_online = DbOnline(query=content.guess_title,category=content.category)
+                tmdb = db_online.media_result
+
+                # Get meta from the media video
+                video_info = Video(content.file_name, tmdb_id=tmdb.video_id, trailer_key=tmdb.trailer_key)
                 video_info.build_info()
 
-                # Tracker payload
-                unit3d_up = UploadVideo(content)
-                data = unit3d_up.payload(tv_show=tmdb_result, video_info=video_info)
 
-                # Get a new tracker instance
-                tracker = unit3d_up.tracker(data=data)
+                # Tracker Bot
+                unit3d_up = UploadBot(content)
 
-                # Upload
-                tracker_response, tracker_message = unit3d_up.send(tracker=tracker)
-
+                # Send data to the tracker
+                tracker_response, tracker_message =  unit3d_up.send(show_id=tmdb.video_id,
+                                                                    show_keywords_list=tmdb.keywords_list,
+                                                                    video_info=video_info)
                 qbittorrent_list.append(
                     QBittorrent(
                         tracker_response=tracker_response,
@@ -80,5 +80,6 @@ class VideoManager:
                         content=content,
                         tracker_message = tracker_message
                     ))
+
         # // end content
         return qbittorrent_list
