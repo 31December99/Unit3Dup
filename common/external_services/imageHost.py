@@ -94,6 +94,7 @@ class ImgBB(ImageUploader):
     def get_field_name(self) -> str:
         return 'image'
 
+
 class Freeimage(ImageUploader):
 
     priority = config.FREE_IMAGE_PRIORITY
@@ -108,6 +109,22 @@ class Freeimage(ImageUploader):
 
     def get_field_name(self) -> str:
         return 'image'
+
+
+class PtScreens(ImageUploader):
+
+    priority= config.PTSCREENS_PRIORITY
+    def get_endpoint(self) -> str:
+        return "https://ptscreens.com/api/1/upload"
+
+    def get_data(self) -> dict:
+        return {
+            "key": self.key,
+        }
+
+    def get_field_name(self) -> str:
+        return 'source'
+
 
 class LensDump(ImageUploader):
 
@@ -156,7 +173,7 @@ class ImageUploaderFallback:
         return result
 
     @staticmethod
-    def result(response: dict, uploader_host: str) -> str:
+    def result(response: dict, uploader_host: str) -> str | None:
 
         if uploader_host == "Freeimage":
             return response["image"]["image"]["url"]
@@ -167,3 +184,5 @@ class ImageUploaderFallback:
         if uploader_host == "LensDump":
             return response['image']['url']
 
+        if uploader_host == "PtScreens":
+            return response['image']['url']
