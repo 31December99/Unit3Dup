@@ -30,9 +30,10 @@ ITT_APIKEY=
 TMDB_APIKEY=
 
 # IMAGE UPLOADERS
-IMGBB_KEY=
-FREE_IMAGE_KEY=
-LENSDUMP_KEY=
+IMGBB_KEY=no_key
+FREE_IMAGE_KEY=no_key
+LENSDUMP_KEY=no_key
+PTSCREENS_KEY=no_key
 
 # TRAILERS
 YOUTUBE_KEY=no_apikey
@@ -49,9 +50,10 @@ QBIT_PORT=8080
 
 ############################################## USER PREFERENCES ##############################################
 # Image uploader priority. 0=first in list
-IMGBB_PRIORITY=0
-FREE_IMAGE_PRIORITY=1
-LENSDUMP_PRIORITY=2
+PTSCREENS_PRIORITY=0
+LENSDUMP_PRIORITY=1
+FREE_IMAGE_PRIORITY=2
+IMGBB_PRIORITY=3
 
 # ------------------------------------------------------------------------------------------------------------
 
@@ -79,7 +81,7 @@ SIZE_TH=50
 WATCHER_INTERVAL=60
 # It will move media from the 'watcher_path' to the 'watcher_destination_path' and upload it'
 WATCHER_PATH=watcher_path
-WATCHER_DESTINATION_PATH=watcher_destination_path
+WATCHER_DESTINATION_PATH=.
 
 # ------------------------------------------------------------------------------------------------------------
 
@@ -126,7 +128,7 @@ PW_API_KEY=no_key
 PW_URL=http://localhost:9696/api/v1
 
 # Torrent archive the pw
-PW_TORRENT_ARCHIVE=.
+PW_TORRENT_ARCHIVE_PATH=.
 
 # download folder for the pw
 PW_DOWNLOAD=.
@@ -147,37 +149,49 @@ FTPX_KEEP_ALIVE=False
 
 class Config(BaseSettings):
     """
-    Class to manage the configuration and validation of environment vvariables
+    Class to manage the configuration and validation of environment variables
     """
 
     ITT_URL: str = "https://itatorrents.xyz"
     ITT_APIKEY: str | None = None
 
+    # // DB Online
     TMDB_APIKEY: str | None = None
-    IMGBB_KEY: str | None = None
-    FREE_IMAGE_KEY: str | None = None
+
+    # // Image Host
     LENSDUMP_KEY: str | None = None
+    FREE_IMAGE_KEY: str | None = None
+    PTSCREENS_KEY: str | None = None
+    IMGBB_KEY: str | None = None
+
+    # // Image Host priority
+    FREE_IMAGE_PRIORITY: int = 0
+    PTSCREENS_PRIORITY: int =  1
+    IMGBB_PRIORITY: int = 2
+    LENSDUMP_PRIORITY: int = 3
+
+    # // Trailers
     YOUTUBE_KEY: str | None = None
 
-    PW_API_KEY: str | None = None
-    PW_URL: str = "http://localhost:9696/api/v1"
-    PW_TORRENT_ARCHIVE_PATH: str | None = None
-    PW_DOWNLOAD_PATH: str | None = None
-    FTPX_USER: str | None = None
-    FTPX_PASS: str | None = None
-    FTPX_IP: str | None = None
-    FTPX_PORT: str = "2121"
-    IGDB_CLIENT_ID: str | None = None
-    IGDB_ID_SECRET: str | None = None
-
+    # // Torrent client
     QBIT_USER: str | None = None
     QBIT_PASS: str | None = None
     QBIT_URL: str = "http://127.0.0.1"
     QBIT_PORT: str = "8080"
 
-    IMGBB_PRIORITY: int = 0
-    FREE_IMAGE_PRIORITY: int = 1
-    LENSDUMP_PRIORITY: int = 2
+    PW_API_KEY: str | None = None
+    PW_URL: str = "http://localhost:9696/api/v1"
+    PW_TORRENT_ARCHIVE_PATH: str | None = None
+    PW_DOWNLOAD_PATH: str | None = None
+
+    FTPX_USER: str | None = None
+    FTPX_PASS: str | None = None
+    FTPX_IP: str | None = None
+    FTPX_PORT: str = "2121"
+
+    IGDB_CLIENT_ID: str | None = None
+    IGDB_ID_SECRET: str | None = None
+
 
     YOUTUBE_FAV_CHANNEL_ID: str | None = None
     YOUTUBE_CHANNEL_ENABLE: bool = False
@@ -189,7 +203,6 @@ class Config(BaseSettings):
     RESIZE_SCSHOT: bool = False
     ANON: bool = False
     CACHE_SCR: bool = False
-
 
     WATCHER_PATH: str | None = None
     WATCHER_DESTINATION_PATH: str | None = None
@@ -358,6 +371,7 @@ class Config(BaseSettings):
         values["IMGBB_KEY"] = validate_str(values.get("IMGBB_KEY", None), "IMGBB_KEY", None)
         values["FREE_IMAGE_KEY"] = validate_str(values.get("FREE_IMAGE_KEY", None), "FREE_IMAGE_KEY", None)
         values["LENSDUMP_KEY"] = validate_str(values.get("LENSDUMP_KEY", None), "LENSDUMP_KEY", None)
+        values["PTSCREENS_KEY"] = validate_str(values.get("PTSCREENS_KEY", None), "PTSCREENS_KEY", None)
         values["YOUTUBE_KEY"] = validate_str(values.get("YOUTUBE_KEY", None), "YOUTUBE_KEY", None)
 
         #// Preferences

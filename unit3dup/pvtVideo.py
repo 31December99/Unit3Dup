@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import diskcache
 
-from common.external_services.imageHost import ImgBB, Freeimage, LensDump, ImageUploaderFallback
+from common.external_services.imageHost import ImgBB, Freeimage, LensDump, ImageUploaderFallback, PtScreens
 from common.mediainfo import MediaFile
 from common.frames import VideoFrame
 from common.custom_console import custom_console
@@ -25,6 +25,7 @@ class Video:
         self.IMGBB_KEY = config.IMGBB_KEY
         self.FREE_IMAGE_KEY = config.FREE_IMAGE_KEY
         self.LENSDUMP_KEY= config.LENSDUMP_KEY
+        self.PTSCREENS_KEY= config.PTSCREENS_KEY
 
         # File name
         self.file_name: str = file_name
@@ -103,8 +104,9 @@ class Video:
         for img_bytes in extracted_frames:
 
             master_uploaders = [
-                Freeimage(img_bytes, self.FREE_IMAGE_KEY),
                 ImgBB(img_bytes, self.IMGBB_KEY),
+                Freeimage(img_bytes, self.FREE_IMAGE_KEY),
+                PtScreens(img_bytes, self.PTSCREENS_KEY),
                 LensDump(img_bytes, self.LENSDUMP_KEY),
             ]
 
