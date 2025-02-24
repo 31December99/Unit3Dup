@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import diskcache
 
-from common.external_services.imageHost import ImgBB, Freeimage, LensDump, ImageUploaderFallback, PtScreens
+from common.external_services.imageHost import ImgBB, Freeimage, LensDump, ImageUploaderFallback, PtScreens, ImgFi
 from common.mediainfo import MediaFile
 from common.frames import VideoFrame
 from common.custom_console import custom_console
@@ -26,6 +26,7 @@ class Video:
         self.FREE_IMAGE_KEY = config.FREE_IMAGE_KEY
         self.LENSDUMP_KEY= config.LENSDUMP_KEY
         self.PTSCREENS_KEY= config.PTSCREENS_KEY
+        self.IMGFI_KEY = config.IMGFI_KEY
 
         # File name
         self.file_name: str = file_name
@@ -108,6 +109,7 @@ class Video:
                 Freeimage(img_bytes, self.FREE_IMAGE_KEY),
                 PtScreens(img_bytes, self.PTSCREENS_KEY),
                 LensDump(img_bytes, self.LENSDUMP_KEY),
+                ImgFi(img_bytes, self.IMGFI_KEY),
             ]
 
             # Sorting list based on priority
