@@ -192,7 +192,7 @@ class Media:
 
     @property
     def screen_size(self):
-        if self._screen_size:
+        if not self._screen_size:
             screen_split = self.title_sanitized.split(" ")
             for screen in screen_split:
                 if screen in self.tracker_data.resolution:
@@ -220,7 +220,7 @@ class Media:
 
     @property
     def subtitle(self):
-        if self._subtitle:
+        if not self._subtitle:
             self._subtitle = self.guess_filename.subtitle
         return self._subtitle
 
@@ -366,7 +366,7 @@ class Media:
 
         # Remove flag
         filename_sanitized = re.sub(r'\b(ita|eng)\b', ' ', filename_sanitized, flags=re.IGNORECASE)
-        return re.sub(r'(p)\b', ' ', filename_sanitized, flags=re.IGNORECASE)
+        return filename_sanitized
 
 
     @staticmethod
