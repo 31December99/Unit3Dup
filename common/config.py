@@ -34,6 +34,7 @@ IMGBB_KEY=no_key
 FREE_IMAGE_KEY=no_key
 LENSDUMP_KEY=no_key
 PTSCREENS_KEY=no_key
+IMGFI_KEY=no_key
 
 # TRAILERS
 YOUTUBE_KEY=no_apikey
@@ -54,6 +55,7 @@ PTSCREENS_PRIORITY=0
 LENSDUMP_PRIORITY=1
 FREE_IMAGE_PRIORITY=2
 IMGBB_PRIORITY=3
+IMGFI_PRIORITY=4
 
 # ------------------------------------------------------------------------------------------------------------
 
@@ -163,12 +165,14 @@ class Config(BaseSettings):
     FREE_IMAGE_KEY: str | None = None
     PTSCREENS_KEY: str | None = None
     IMGBB_KEY: str | None = None
+    IMGFI_KEY: str | None = None
 
     # // Image Host priority
     FREE_IMAGE_PRIORITY: int = 0
     PTSCREENS_PRIORITY: int =  1
     IMGBB_PRIORITY: int = 2
     LENSDUMP_PRIORITY: int = 3
+    IMGFI_PRIORITY: int = 4
 
     # // Trailers
     YOUTUBE_KEY: str | None = None
@@ -218,7 +222,6 @@ class Config(BaseSettings):
     FTPX_KEEP_ALIVE: bool = False
 
     if os.name == "nt":
-        # C:\Users\user\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_\LocalCache\Local
         default_env_path: Path = Path(os.getenv("LOCALAPPDATA", ".")) / f"{service_filename}"
         torrent_archive_path: Path = Path(os.getenv("LOCALAPPDATA", ".")) / "torrent_archive"
         default_env_path_cache: Path = Path(os.getenv("LOCALAPPDATA", ".")) / f"Unit3Dup_cache"
@@ -372,6 +375,7 @@ class Config(BaseSettings):
         values["FREE_IMAGE_KEY"] = validate_str(values.get("FREE_IMAGE_KEY", None), "FREE_IMAGE_KEY", None)
         values["LENSDUMP_KEY"] = validate_str(values.get("LENSDUMP_KEY", None), "LENSDUMP_KEY", None)
         values["PTSCREENS_KEY"] = validate_str(values.get("PTSCREENS_KEY", None), "PTSCREENS_KEY", None)
+        values["IMGFI_KEY"] = validate_str(values.get("IMGFI_KEY", None), "IMGFI_KEY", None)
         values["YOUTUBE_KEY"] = validate_str(values.get("YOUTUBE_KEY", None), "YOUTUBE_KEY", None)
 
         #// Preferences
