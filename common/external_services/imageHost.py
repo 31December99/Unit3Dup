@@ -141,6 +141,22 @@ class LensDump(ImageUploader):
         return 'source'
 
 
+class ImgFi(ImageUploader):
+
+    priority= config.IMGFI_PRIORITY
+    def get_endpoint(self) -> str:
+        return "https://imgfi.com/api/1/upload"
+
+    def get_data(self) -> dict:
+        return {
+            "key": self.key,
+        }
+
+    def get_field_name(self) -> str:
+        return 'source'
+
+
+
 class ImageUploaderFallback:
     def __init__(self, uploader):
         self.uploader = uploader
@@ -185,4 +201,7 @@ class ImageUploaderFallback:
             return response['image']['url']
 
         if uploader_host == "PtScreens":
+            return response['image']['url']
+
+        if uploader_host == "ImgFi":
             return response['image']['url']
