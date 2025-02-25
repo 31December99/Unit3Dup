@@ -22,7 +22,7 @@ class PwManager:
     def process(self):
 
         # a new qbittorent instance
-        qb = Client(f"{config.QBIT_URL}:{config.QBIT_PORT}/")
+        qb = Client(f"http://{config.QBIT_HOST}:{config.QBIT_PORT}/")
         # a new pw instance
         pw_service = PwService()
         # Query the indexers

@@ -2,12 +2,13 @@
 import argparse
 import os
 
-from unit3dup.media_manager.common import UserContent
+from common.bittorrent import BittorrentData
 
-from unit3dup.qbittorrent import QBittorrent
+from unit3dup.media_manager.common import UserContent
 from unit3dup.upload import UploadBot
 from unit3dup.media import Media
 from unit3dup import config
+
 
 class DocuManager:
 
@@ -19,8 +20,8 @@ class DocuManager:
         self.torrent_found: bool = False
 
 
-    def process(self) -> list["QBittorrent"]:
-        qbittorrent_list = []
+    def process(self) -> list["BittorrentData"]:
+        bittorrent_list = []
         for content in self.contents:
             self.file_name = str(os.path.join(content.folder, content.file_name))
 
@@ -50,12 +51,12 @@ class DocuManager:
             tracker_response, tracker_message = unit3d_up.send_docu()
 
             if not self.cli.torrent:
-                qbittorrent_list.append(
-                    QBittorrent(
+                bittorrent_list.append(
+                    BittorrentData(
                         tracker_response=tracker_response,
                         torrent_response=torrent_response,
                         content=content,
                         tracker_message=tracker_message,
                     ))
 
-        return qbittorrent_list
+        return bittorrent_list

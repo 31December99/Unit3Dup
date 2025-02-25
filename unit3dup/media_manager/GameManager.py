@@ -2,9 +2,9 @@
 import argparse
 
 from common.external_services.igdb.client import IGDBClient
-from unit3dup.media_manager.common import UserContent
+from common.bittorrent import BittorrentData
 
-from unit3dup.qbittorrent import QBittorrent
+from unit3dup.media_manager.common import UserContent
 from unit3dup.upload import UploadBot
 from unit3dup.media import Media
 from unit3dup import config
@@ -25,7 +25,7 @@ class GameManager:
         self.cli: argparse = cli
         self.igdb = IGDBClient()
 
-    def process(self) -> list["QBittorrent"]:
+    def process(self) -> list["BittorrentData"]:
         """
         Process the game contents to filter duplicates and create torrents
 
@@ -36,7 +36,7 @@ class GameManager:
         if not login:
             exit(1)
 
-        qbittorrent_list = []
+        bittorrent_list = []
         for content in self.contents:
 
             # Torrent creation
@@ -70,12 +70,12 @@ class GameManager:
             unit3d_up = UploadBot(content)
             tracker_response, tracker_message = unit3d_up.send_game(igdb=game_data_results, nfo_path=content.game_nfo)
 
-            qbittorrent_list.append(
-                QBittorrent(
+            bittorrent_list.append(
+                BittorrentData(
                     tracker_response=tracker_response,
                     torrent_response=torrent_response,
                     content=content,
                     tracker_message=tracker_message
                 ))
-        return qbittorrent_list
+        return bittorrent_list
 

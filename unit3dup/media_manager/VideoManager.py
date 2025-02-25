@@ -2,8 +2,9 @@
 import argparse
 
 from common.external_services.theMovieDB.core.api import DbOnline
+from common.bittorrent import BittorrentData
+
 from unit3dup.media_manager.common import UserContent
-from unit3dup.qbittorrent import QBittorrent
 from unit3dup.upload import UploadBot
 from unit3dup.pvtVideo import Video
 from unit3dup.media import Media
@@ -25,14 +26,14 @@ class VideoManager:
         self.contents: list['Media'] = contents
         self.cli: argparse = cli
 
-    def process(self) -> list["QBittorrent"] | None:
+    def process(self) -> list["BittorrentData"] | None:
         """
            Process the video contents to filter duplicates and create torrents
 
            Returns:
                list: List of QBittorrent objects created for each content
         """
-        qbittorrent_list = []
+        bittorrent_list = []
         for content in self.contents:
             # Filter contents based on existing torrents or duplicates
 
@@ -73,8 +74,8 @@ class VideoManager:
                 tracker_response, tracker_message =  unit3d_up.send(show_id=tmdb.video_id,
                                                                     show_keywords_list=tmdb.keywords_list,
                                                                     video_info=video_info)
-                qbittorrent_list.append(
-                    QBittorrent(
+                bittorrent_list.append(
+                    BittorrentData(
                         tracker_response=tracker_response,
                         torrent_response=torrent_response,
                         content=content,
@@ -82,4 +83,4 @@ class VideoManager:
                     ))
 
         # // end content
-        return qbittorrent_list
+        return bittorrent_list
