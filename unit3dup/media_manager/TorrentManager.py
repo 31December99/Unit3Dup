@@ -5,10 +5,10 @@ import argparse
 from unit3dup.media_manager.VideoManager import VideoManager
 from unit3dup.media_manager.GameManager import GameManager
 from unit3dup.media_manager.DocuManager import DocuManager
-from unit3dup.qbittorrent import QBittorrent
 from unit3dup import config
 
 from common.custom_console import custom_console
+from common.bittorrent import BittorrentData
 from common.trackers.trackers import ITTData
 from common.constants import my_language
 from unit3dup.media_manager.common import UserContent
@@ -28,9 +28,9 @@ class TorrentManager:
 
     def process(self, contents: list) -> None:
 
-        game_process_results: list["QBittorrent"] = []
-        video_process_results: list["QBittorrent"] = []
-        docu_process_results: list["QBittorrent"] = []
+        game_process_results: list["BittorrentData"] = []
+        video_process_results: list["BittorrentData"] = []
+        docu_process_results: list["BittorrentData"] = []
         custom_console.rule()
 
         # // Build a GAME list
@@ -76,12 +76,12 @@ class TorrentManager:
         # Send
         if game_process_results:
             if not self.cli.torrent:
-                UserContent.send_to_qbittorrent(game_process_results)
+                UserContent.send_to_bittorrent(game_process_results)
 
         if video_process_results:
             if not self.cli.torrent:
-                UserContent.send_to_qbittorrent(video_process_results)
+                UserContent.send_to_bittorrent(video_process_results)
 
         if docu_process_results:
             if not self.cli.torrent:
-                UserContent.send_to_qbittorrent(docu_process_results)
+                UserContent.send_to_bittorrent(docu_process_results)

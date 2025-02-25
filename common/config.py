@@ -2,7 +2,10 @@
 
 import os
 import sys
+import ipaddress
 from functools import cache
+from pathlib import Path
+from urllib.parse import urlparse
 
 from common.custom_console import custom_console
 from common.utility import ManageTitles
@@ -10,8 +13,7 @@ from common.utility import ManageTitles
 from pydantic_settings import BaseSettings
 from pydantic import model_validator
 from dotenv import load_dotenv
-from urllib.parse import urlparse
-from pathlib import Path
+
 
 
 service_filename = "Unit3Dbot_service.env"
@@ -22,32 +24,43 @@ def create_default_env_file(path: Path):
     """
     default_content = """
 ################################################## CONFIG ###################################################
-# TRACKER
+# TRACKER CONFIG KEY
 ITT_URL=https://itatorrents.xyz
 ITT_APIKEY=
 
-# TMDB
+# TMDB CONFIG KEY
 TMDB_APIKEY=
 
-# IMAGE UPLOADERS
+# IMAGE UPLOADERS CONFIG KEY
 IMGBB_KEY=no_key
 FREE_IMAGE_KEY=no_key
 LENSDUMP_KEY=no_key
 PTSCREENS_KEY=no_key
 IMGFI_KEY=no_key
 
-# TRAILERS
+# TRAILERS KEY
 YOUTUBE_KEY=no_apikey
 
-# IGDB
+# IGDB CONFIG
 IGDB_CLIENT_ID=client_id
 IGDB_ID_SECRET=secret
 
-# QBITTORRENT CLIENT
+# QBITTORRENT CONFIG CLIENT LOGIN
 QBIT_USER=
 QBIT_PASS=
-QBIT_URL=http://localhost
+QBIT_HOST=http://localhost
 QBIT_PORT=8080
+
+# TRANSMISSION CONFIG CLIENT LOGIN
+TRASM_USER=
+TRASM_PASS=
+TRASM_HOST=http://localhost
+TRASM_PORT=9091
+
+# SET DEFAULT TORRENT CLIENT
+# Qbittorrent: TORRENT_CLIENT=qbittorrent
+# Transmission: TORRENT_CLIENT=transmission
+TORRENT_CLIENT=
 
 ############################################## USER PREFERENCES ##############################################
 # Image uploader priority. 0=first in list
@@ -121,21 +134,18 @@ ANON=False
 CACHE_SCR=False
 
 # ------------------------------------------------------------------------------------------------------------
-
-#########################################
-################  OPTIONAL  #############  
-#########################################
+############################################## OPTIONS #######################################################
 # PW - not implemented yet -
 PW_API_KEY=no_key
 PW_URL=http://localhost:9696/api/v1
 
-# Torrent archive the pw
+# PW Torrent archive
 PW_TORRENT_ARCHIVE_PATH=.
 
-# download folder for the pw
+# PW download folder
 PW_DOWNLOAD=.
 
-# FTPX 
+# FTPX (FTPD)
 FTPX_USER=user
 FTPX_PASS=pass
 FTPX_IP=127.0.0.1
@@ -177,11 +187,19 @@ class Config(BaseSettings):
     # // Trailers
     YOUTUBE_KEY: str | None = None
 
-    # // Torrent client
+    # // Qbittorrent
     QBIT_USER: str | None = None
     QBIT_PASS: str | None = None
-    QBIT_URL: str = "http://127.0.0.1"
+    QBIT_HOST: str = "127.0.0.1"
     QBIT_PORT: str = "8080"
+
+    # // Transmission
+    TRASM_USER: str | None = None
+    TRASM_PASS: str | None = None
+    TRASM_HOST: str = "127.0.0.1"
+    TRASM_PORT: str = "9091"
+
+    TORRENT_CLIENT: str | None = None
 
     PW_API_KEY: str | None = None
     PW_URL: str = "http://localhost:9696/api/v1"
@@ -330,7 +348,6 @@ class Config(BaseSettings):
             Config.wait_for_user_confirmation()
             return default_value
 
-
         def validate_url(value: str, field_name: str, default_value: str) -> str:
             """
             Validates URL
@@ -338,12 +355,27 @@ class Config(BaseSettings):
             if not value:
                 return default_value
             parsed_url = urlparse(value)
-            if not (parsed_url.scheme and parsed_url.netloc):
+            if not (parsed_url.scheme and parsed_url.netloc) or parsed_url.scheme not in ["http", "https"]:
                 custom_console.bot_error_log(
-                    f"->  Invalid URL value for {field_name} '{value}' Please use the default: {default_value}"
+                    f"->  Invalid URL value for {field_name} '{value}'. Use the default: {default_value}"
                 )
                 return default_value
             return value
+
+        def validate_ip(value: str, field_name: str, default_value: str) -> str:
+            """
+            Validates IP address
+            """
+            if not value:
+                return default_value
+            try:
+                parsed_ip = ipaddress.ip_address(value)
+                return value
+            except ValueError:
+                custom_console.bot_error_log(
+                    f"->  Invalid IP address value for {field_name} '{value}'. Use the default: {default_value}"
+                )
+                return default_value
 
 
         def validate_torrent_archive_path(value: str | None, field_name: str, default_value: str | None) -> str | None:
@@ -364,11 +396,17 @@ class Config(BaseSettings):
         #// Mandatory
         values["ITT_URL"] = validate_url(values.get("ITT_URL", "https://itatorrents.xyz"), "ITT_URL", "https://itatorrents.xyz")
         values["PW_URL"] = validate_url(values.get("PW_URL", "http://localhost:9696/api/v1"), "PW_URL", "http://localhost:9696/api/v1")
-        values["QBIT_URL"] = validate_url(values.get("QBIT_URL", "http://127.0.0.1"), "QBIT_URL", "http://127.0.0.1")
         values["QBIT_USER"] = validate_str(values.get("QBIT_USER", None), "QBIT_USER", "admin")
         values["QBIT_PASS"] = validate_str(values.get("QBIT_PASS", None), "QBIT_PASS", "")
-        values["QBIT_URL"] = validate_url(values.get("QBIT_URL", "http://127.0.0.1"), "QBIT_URL", "http://127.0.0.1")
+        values["QBIT_HOST"] = validate_ip(values.get("QBIT_HOST", "127.0.0.1"), "QBIT_HOST", "127.0.0.1")
         values["QBIT_PORT"] = validate_str(values.get("QBIT_PORT", "8080"), "QBIT_PORT", "8080")
+
+        values["TRASM_USER"] = validate_str(values.get("TRASM_USER", None), "TRASM_USER", "admin")
+        values["TRASM_PASS"] = validate_str(values.get("TRASM_PASS", None), "TRASM_PASS", "")
+        values["TRASM_HOST"] = validate_ip(values.get("TRASM_HOST", "127.0.0.1"), "TRASM_HOST", "127.0.0.1")
+        values["TRASM_PORT"] = validate_str(values.get("TRASM_PORT", "8080"), "TRASM_PORT", "8080")
+        values["TORRENT_CLIENT"] = validate_str(values.get("TORRENT_CLIENT", "qbittorrent"), "TORRENT_CLIENT", "qbittorrent")
+
         values["ITT_APIKEY"] = validate_str(values.get("ITT_APIKEY", None), "ITT_APIKEY", None)
         values["TMDB_APIKEY"] = validate_str(values.get("TMDB_APIKEY", None), "TMDB_APIKEY", None)
         values["IMGBB_KEY"] = validate_str(values.get("IMGBB_KEY", None), "IMGBB_KEY", None)

@@ -2,12 +2,12 @@
 
 from rich.console import Console
 
+from common.torrent_clients import TransmissionClient, QbittorrentClient
 from common.custom_console import custom_console
 from common.trackers.trackers import ITTData
 from common.command import CommandLine
 from common.config import load_config
 
-from unit3dup.qbitt import Qbitt
 from unit3dup.torrent import View
 from unit3dup import pvtTracker
 from unit3dup.bot import Bot
@@ -40,8 +40,18 @@ def main():
 
     # /// Test the torrent client
     if cli.args.scan or cli.args.upload or cli.args.folder:
-        test_client_torrent = Qbitt.is_online()
-        if not test_client_torrent:
+
+        if config.TORRENT_CLIENT.lower()=="qbittorrent":
+            test_client_torrent = QbittorrentClient()
+            if not test_client_torrent.connect():
+                exit(1)
+        elif config.TORRENT_CLIENT.lower()=="transmission":
+            test_client_torrent = TransmissionClient()
+            if not test_client_torrent.connect():
+                exit(1)
+        else:
+            custom_console.bot_error_log(f"Unknown Torrent Client name '{config.TORRENT_CLIENT}'")
+            custom_console.bot_error_log(f"You need to set a favorite 'torrent_client' in the config file")
             exit(1)
 
     # \\\ Commands options  \\\

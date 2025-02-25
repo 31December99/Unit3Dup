@@ -8,6 +8,12 @@ media = media.content()
 
 
 def test_tmdb():
+    for item in media:
+        custom_console.bot_warning_log(item.title)
+
+    print()
+    input("Press Enter to continue...")
+
     for content in media:
 
         """ TMDB """
@@ -57,21 +63,26 @@ def test_tmdb():
         if not tracker_response:
             custom_console.bot_error_log(f"NO TRACKER RESPONSE {tracker_message}")
             input("Press Enter to continue...")
+            exit()
 
-        """ QBITTORRENT """
-        qbittorrent = QBittorrent(
-            tracker_response=tracker_response,
-            torrent_response=torrent_response,
-            content=content,
-            tracker_message=tracker_message
+
+        """ TRANSMISSION """
+        transmission = TransmissionClient()
+        transmission.connect()
+        transmission.send_to_client(
+            tracker_data_response=tracker_response,
+            torrent=torrent_response,
+            content=content
         )
 
-        UserContent.send_to_qbittorrent([qbittorrent])
-
-
-
-
-
+        """ QBITTORRENT """
+        qbittorrent = QbittorrentClient()
+        qbittorrent.connect()
+        qbittorrent.send_to_client(
+            tracker_data_response=tracker_response,
+            torrent=torrent_response,
+            content=content
+        )
 
         print()
 
