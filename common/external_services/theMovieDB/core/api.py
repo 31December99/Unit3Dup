@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import pprint
+
 from typing import TypeVar
 
 from common.external_services.theMovieDB.core.models.tvshow.alternative import Alternative
@@ -9,10 +9,12 @@ from common.external_services.theMovieDB.core.models.tvshow.tvshow import TvShow
 from common.external_services.theMovieDB.core.models.movie.movie import Movie
 from common.external_services.theMovieDB.core.videos import Videos
 from common.external_services.theMovieDB.core.keywords import Keyword
+from common.external_services.mediaresult import MediaResult
 from common.external_services.sessions.session import MyHttp
 from common.external_services.theMovieDB.core import config
 from common.external_services.trailers.api import YtTrailer
 from common.external_services.sessions.agents import Agent
+from common.external_services.imdb import IMDB
 from common.custom_console import custom_console
 from common.utility import ManageTitles
 
@@ -21,15 +23,6 @@ from common.utility import ManageTitles
 base_url = "https://api.themoviedb.org/3"
 ENABLE_LOG = True
 T = TypeVar('T')
-
-class MediaResult:
-    def __init__(self, result=None, video_id: int = 0, trailer_key: str = None, keywords_list: str = None):
-        self.result = result
-        self.trailer_key = trailer_key
-        self.keywords_list = keywords_list
-        self.video_id = video_id
-
-
 
 class MovieEndpoint:
     @staticmethod
@@ -118,6 +111,10 @@ class TmdbAPI(MyHttp):
         :param category: category of the search query, e.g., 'movie' or 'tv'
         :return: list of T or None
         """
+        # Only tv and movie
+        if category > 2:
+            custom_console.bot_warning_log("Check the category of the search query")
+            return []
         if endpoint_class:=self.ENDPOINTS.get(TmdbAPI.show[category]):
             request = endpoint_class.search(query)
             return self.request(endpoint=request)
@@ -199,24 +196,35 @@ class DbOnline(TmdbAPI):
         """
         """
         results = self._search(self.query, self.category)
+        # User imdb_id when tmdb_id is not available
+        imdb_id = 0
         if results:
             for result in results:
                 if ManageTitles.fuzzyit(str1=self.query, str2=result.get_title()) > 95:
-                    # print(f"Alternative '{result.get_title()}' found.")
                     # Get the trailer
                     trailer_key = self.trailer(result.id)
                     keywords_list = self.keywords(result.id)
                     # return MediaResult object
-                    search_results = MediaResult(result, video_id=result.id, trailer_key=trailer_key,
+                    search_results = MediaResult(result, video_id=result.id,imdb_id=imdb_id, trailer_key=trailer_key,
                                                  keywords_list=keywords_list)
                     self.print_results(results=search_results)
                     return search_results
 
-        user_tmdb_id  = custom_console.user_input(message="Title not found. Please digit a valid TMDB ID -> ")
-        # Request trailer and keywords
-        trailer_key = self.trailer(user_tmdb_id)
-        keywords_list = self.keywords(user_tmdb_id) if trailer_key else ''
-        search_results = MediaResult(video_id=user_tmdb_id, trailer_key=trailer_key, keywords_list=keywords_list)
+        # not results found so try to initialize imdb
+        imdb = IMDB()
+        user_tmdb_id  = custom_console.user_input(message="Title not found. Please digit a valid TMDB ID ->")
+
+        # Try to add IMDB ID if tmdb is not available
+        if user_tmdb_id==0:
+            imdb_id = imdb.search(query=self.query)
+            trailer_key = None
+            keywords_list = []
+        else:
+            # Request trailer and keywords
+            trailer_key = self.trailer(user_tmdb_id)
+            keywords_list = self.keywords(user_tmdb_id) if trailer_key else ''
+
+        search_results = MediaResult(video_id=user_tmdb_id, imdb_id=imdb_id, trailer_key=trailer_key, keywords_list=keywords_list)
         self.print_results(results=search_results)
         return search_results
 
