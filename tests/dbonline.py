@@ -2,37 +2,6 @@
 
 import tests
 from common.external_services.theMovieDB.core.api import DbOnline
-from unit3dup.pvtVideo import Video
-from common.trackers.itt import itt_data
-
-tracker_data = tests.ITTData.load_from_module()
-assert isinstance(tracker_data.category, dict)
-
-
-def get_type_id(value):
-    # get key based on value
-    for itt in itt_data['TYPE_ID'].items():
-        if itt[1] == value:
-            return itt[0]
-
-def get_category(value):
-    # get key based on value
-    for itt in itt_data['CATEGORY'].items():
-        if itt[1] == value:
-            return itt[0]
-
-def get_resolution(value):
-    # get key based on value
-    for itt in itt_data['RESOLUTION'].items():
-        if itt[1] == value:
-            return itt[0]
-
-def get_tags(value):
-    # get key based on value
-    for itt in itt_data['TAGS'].items():
-        if itt[1] == value:
-            return itt[0]
-
 
 def test_content_manager():
     test_content_movie = r"C:\test_folder_dbonline"
