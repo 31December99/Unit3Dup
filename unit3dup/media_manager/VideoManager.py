@@ -31,7 +31,7 @@ class VideoManager:
            Process the video contents to filter duplicates and create torrents
 
            Returns:
-               list: List of QBittorrent objects created for each content
+               list: List of Bittorrent objects created for each content
         """
         bittorrent_list = []
         for content in self.contents:
@@ -57,13 +57,12 @@ class VideoManager:
                 else:
                     torrent_response = None
 
-
-                # Search for the TMDB ID
+                # Search for VIDEO ID
                 db_online = DbOnline(query=content.guess_title,category=content.category)
-                tmdb = db_online.media_result
+                db = db_online.media_result
 
                 # Get meta from the media video
-                video_info = Video(content.file_name, tmdb_id=tmdb.video_id, trailer_key=tmdb.trailer_key)
+                video_info = Video(content.file_name, tmdb_id=db.video_id, trailer_key=db.trailer_key)
                 video_info.build_info()
 
 
@@ -71,8 +70,8 @@ class VideoManager:
                 unit3d_up = UploadBot(content)
 
                 # Send data to the tracker
-                tracker_response, tracker_message =  unit3d_up.send(show_id=tmdb.video_id,
-                                                                    show_keywords_list=tmdb.keywords_list,
+                tracker_response, tracker_message =  unit3d_up.send(show_id=db.video_id, imdb_id=db.imdb_id,
+                                                                    show_keywords_list=db.keywords_list,
                                                                     video_info=video_info)
                 bittorrent_list.append(
                     BittorrentData(

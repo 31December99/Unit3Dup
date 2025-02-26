@@ -32,22 +32,21 @@ class UploadBot:
         custom_console.rule()
         return {}, error_message
 
-    def send(self,show_id: int , show_keywords_list: str, video_info: Video) -> (requests, dict):
-
+    def send(self,show_id: int , imdb_id: int, show_keywords_list: str, video_info: Video) -> (requests, dict):
         self.tracker.data["name"] = self.content.display_name
         self.tracker.data["tmdb"] = show_id
+        self.tracker.data["imdb"] = imdb_id
         self.tracker.data["keywords"] = show_keywords_list
         self.tracker.data["category_id"] = self.content.category
         self.tracker.data[
             "resolution_id"] = self.content.screen_size if self.content.screen_size else self.content.resolution
+
         self.tracker.data["mediainfo"] = video_info.mediainfo
         self.tracker.data["description"] = video_info.description
         self.tracker.data["sd"] = video_info.is_hd
-
         self.tracker.data["type_id"] = self.tracker_data.filter_type(self.content.file_name)
         self.tracker.data["season_number"] = self.content.guess_season
         self.tracker.data["episode_number"] = (self.content.guess_episode if not self.content.torrent_pack else 0)
-
         tracker_response=self.tracker.upload_t(data=self.tracker.data, torrent_path=self.content.torrent_path)
         return self.message(tracker_response)
 
