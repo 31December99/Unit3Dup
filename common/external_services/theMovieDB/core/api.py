@@ -155,7 +155,6 @@ class TmdbAPI(MyHttp):
             return []
 
     def _videos(self, video_id: int, category: int) -> list[T] | None:
-
         if endpoint_class:=self.ENDPOINTS.get(TmdbAPI.show[category]):
             request = endpoint_class.videos(video_id)
             return self.request(endpoint=request)
@@ -187,7 +186,6 @@ class TmdbAPI(MyHttp):
                 return [endpoint['datatype'](**attribute) for attribute in response_data]
             else:
                 return []
-
 
 
 class DbOnline(TmdbAPI):
@@ -222,10 +220,7 @@ class DbOnline(TmdbAPI):
         self.print_results(results=search_results)
         return search_results
 
-
-
     def youtube_trailer(self) -> str | None:
-
         # Search trailer on YouTube
         custom_console.bot_question_log("TMDB trailer not found. Try searching on YouTube...\n")
 
@@ -240,6 +235,11 @@ class DbOnline(TmdbAPI):
 
     def trailer(self, video_id: int) -> str | None:
         trailers = self._videos(video_id, self.category)
+
+        # Invalid video_id or video_id not found
+        if not trailers:
+            return None
+
         trailer = next(
             (video for video in trailers if video.type.lower() == 'trailer' and video.site.lower() == 'youtube'), None)
         if trailer:
