@@ -5,6 +5,9 @@ from common.external_services.theMovieDB.core.api import DbOnline
 from unit3dup.pvtVideo import Video
 from common.trackers.itt import itt_data
 
+tracker_data = tests.ITTData.load_from_module()
+assert isinstance(tracker_data.category, dict)
+
 
 def get_type_id(value):
     # get key based on value
@@ -70,8 +73,8 @@ def test_content_manager():
         tests.custom_console.bot_log(f"Screen Size   {get_resolution(content.screen_size if content.screen_size else content.resolution)}")
         assert get_resolution(content.screen_size if content.screen_size else content.resolution) == '1080p'
 
-        tests.custom_console.bot_log(f"Type_id       {get_type_id(tests.tracker_data.filter_type(content.file_name))}")
-        assert get_type_id(tests.tracker_data.filter_type(content.file_name)) == 'web-dl'
+        tests.custom_console.bot_log(f"Type_id       {get_type_id(tracker_data.filter_type(content.file_name))}")
+        assert get_type_id(tracker_data.filter_type(content.file_name)) == 'web-dl'
 
         tests.custom_console.bot_log(f"Season        {content.guess_season}")
         assert not content.guess_season
