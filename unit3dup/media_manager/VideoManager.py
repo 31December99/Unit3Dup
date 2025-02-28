@@ -2,6 +2,7 @@
 import argparse
 
 from common.external_services.theMovieDB.core.api import DbOnline
+from common.custom_console import custom_console
 from common.bittorrent import BittorrentData
 
 from unit3dup.media_manager.common import UserContent
@@ -44,6 +45,7 @@ class VideoManager:
                 else:
                     # Torrent found, skip if the watcher is active
                     if self.cli.watcher:
+                        custom_console.bot_log(f"Watcher Active.. skip the old upload '{content.file_name}'")
                         continue
                     self.torrent_found = True
 
