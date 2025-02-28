@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import argparse
-import os
 
 from common.bittorrent import BittorrentData
 from common.custom_console import custom_console
@@ -15,7 +14,6 @@ class DocuManager:
 
     def __init__(self, contents: list["Media"], cli: argparse.Namespace):
         self._my_tmdb = None
-        self.file_name = None
         self.contents: list['Media'] = contents
         self.cli: argparse = cli
         self.torrent_found: bool = False
@@ -24,7 +22,6 @@ class DocuManager:
     def process(self) -> list["BittorrentData"]:
         bittorrent_list = []
         for content in self.contents:
-            self.file_name = str(os.path.join(content.folder, content.file_name))
 
             # Torrent creation
             if not UserContent.torrent_file_exists(content=content, class_name=self.__class__.__name__):
@@ -32,7 +29,7 @@ class DocuManager:
             else:
                 # Torrent found, skip if the watcher is active
                 if self.cli.watcher:
-                    custom_console.bot_log(f"Watcher Active.. skip the old upload '{self.file_name}'")
+                    custom_console.bot_log(f"Watcher Active.. skip the old upload '{content.file_name}'")
                     continue
                 self.torrent_found = True
 
