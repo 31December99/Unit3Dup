@@ -21,6 +21,7 @@ from unit3dup.pvtVideo import Video
 from unit3dup.media import Media
 from unit3dup.bot import Bot
 
+cli = CommandLine()
 config = Load.load_config()
 
 

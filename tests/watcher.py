@@ -19,6 +19,8 @@ def test_cli_watcher():
         cli=tests.cli.args,
         mode="auto"
     )
-    assert bot.watcher(duration=tests.config.WATCHER_INTERVAL, watcher_path=tests.config.WATCHER_PATH,
-                destination_path=tests.config.WATCHER_DESTINATION_PATH, force_media_type=force_media) == True
+    assert bot.watcher(duration=tests.config.user_preferences.WATCHER_INTERVAL,
+                       watcher_path=tests.config.user_preferences.WATCHER_PATH,
+                       destination_path=tests.config.user_preferences.WATCHER_DESTINATION_PATH,
+                       force_media_type=force_media) == True
 
