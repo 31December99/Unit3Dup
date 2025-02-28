@@ -8,8 +8,8 @@ from common.custom_console import custom_console
 class IGDBapi:
 
     params = {
-        "client_id": config.IGDB_CLIENT_ID,
-        "client_secret": config.IGDB_ID_SECRET,
+        "client_id": config.tracker_config.IGDB_CLIENT_ID,
+        "client_secret": config.tracker_config.IGDB_ID_SECRET,
         "grant_type": "client_credentials",
     }
 
@@ -23,11 +23,11 @@ class IGDBapi:
 
 
     def login(self)-> bool:
-        if not config.IGDB_CLIENT_ID:
+        if not config.tracker_config.IGDB_CLIENT_ID:
             custom_console.bot_question_log("No IGDB_CLIENT_ID provided\n")
             return False
 
-        if not config.IGDB_ID_SECRET:
+        if not config.tracker_config.IGDB_ID_SECRET:
             custom_console.bot_question_log("No IGDB_ID_SECRET provided\n")
             return False
 
@@ -38,8 +38,8 @@ class IGDBapi:
 
 
         response = self.http_client.post(self.oauth, params = {
-            "client_id": config.IGDB_CLIENT_ID,
-            "client_secret": config.IGDB_ID_SECRET,
+            "client_id": config.tracker_config.IGDB_CLIENT_ID,
+            "client_secret": config.tracker_config.IGDB_ID_SECRET,
             "grant_type": "client_credentials",
         })
 
@@ -51,7 +51,7 @@ class IGDBapi:
             custom_console.bot_log("IGDB Login successful!")
 
             self.access_header = {
-                "Client-ID": config.IGDB_CLIENT_ID,
+                "Client-ID": config.tracker_config.IGDB_CLIENT_ID,
                 "Authorization": f"Bearer {access_token}",
                 "Content-Type": "application/json",
             }

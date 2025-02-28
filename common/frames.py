@@ -48,7 +48,8 @@ class VideoFrame:
         """
         image = self.resize_image(frame)
         buffered = io.BytesIO()
-        user_compress_level: int = config.COMPRESS_SCSHOT if 0 <= config.COMPRESS_SCSHOT <= 9 else 4
+        user_compress_level: int = config.user_preferences.COMPRESS_SCSHOT\
+            if 0 <= config.user_preferences.COMPRESS_SCSHOT <= 9 else 4
         image.save(
             buffered, format="PNG", optimize=True, compress_level=user_compress_level
         )
@@ -63,7 +64,7 @@ class VideoFrame:
         :param width: The width to resize to
         :return: Resized image
         """
-        if config.RESIZE_SCSHOT:
+        if config.user_preferences.RESIZE_SCSHOT:
             aspect_ratio = image.width / image.height
             height = round(width / aspect_ratio)
             resized_image = image.resize((width, height), Image.Resampling.LANCZOS)

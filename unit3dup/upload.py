@@ -13,8 +13,8 @@ from unit3dup import config
 class UploadBot:
     def __init__(self, content: Media):
 
-        self.API_TOKEN = config.ITT_APIKEY
-        self.BASE_URL = config.ITT_URL
+        self.API_TOKEN = config.tracker_config.ITT_APIKEY
+        self.BASE_URL = config.tracker_config.ITT_URL
         self.content = content
         self.tracker_data = ITTData.load_from_module()
         self.tracker = Unit3d(base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key="")

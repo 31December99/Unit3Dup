@@ -5,9 +5,11 @@ import json
 import time
 import requests
 
-from common.external_services import config
+
+from common import config
 from abc import ABC, abstractmethod
 from common.custom_console import custom_console
+
 
 
 class ImageUploader(ABC):
@@ -82,7 +84,7 @@ class ImageUploader(ABC):
 
 class ImgBB(ImageUploader):
 
-    priority= config.IMGBB_PRIORITY
+    priority= config.user_preferences.IMGBB_PRIORITY
     def get_endpoint(self) -> str:
         return "https://api.imgbb.com/1/upload"
 
@@ -97,7 +99,7 @@ class ImgBB(ImageUploader):
 
 class Freeimage(ImageUploader):
 
-    priority = config.FREE_IMAGE_PRIORITY
+    priority = config.user_preferences.FREE_IMAGE_PRIORITY
     def get_endpoint(self) -> str:
         return "https://freeimage.host/api/1/upload"
 
@@ -113,7 +115,7 @@ class Freeimage(ImageUploader):
 
 class PtScreens(ImageUploader):
 
-    priority= config.PTSCREENS_PRIORITY
+    priority= config.user_preferences.PTSCREENS_PRIORITY
     def get_endpoint(self) -> str:
         return "https://ptscreens.com/api/1/upload"
 
@@ -128,7 +130,7 @@ class PtScreens(ImageUploader):
 
 class LensDump(ImageUploader):
 
-    priority= config.LENSDUMP_PRIORITY
+    priority= config.user_preferences.LENSDUMP_PRIORITY
     def get_endpoint(self) -> str:
         return "https://lensdump.com/api/1/upload"
 
@@ -143,7 +145,7 @@ class LensDump(ImageUploader):
 
 class ImgFi(ImageUploader):
 
-    priority= config.IMGFI_PRIORITY
+    priority= config.user_preferences.IMGFI_PRIORITY
     def get_endpoint(self) -> str:
         return "https://imgfi.com/api/1/upload"
 

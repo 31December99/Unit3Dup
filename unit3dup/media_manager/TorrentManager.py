@@ -24,7 +24,7 @@ class TorrentManager:
         self.serie_category = tracker_data.category.get("tvshow")
         self.docu_category = tracker_data.category.get("edicola")
         self.game_category = tracker_data.category.get("game")
-        self.preferred_lang = my_language(config.PREFERRED_LANG)
+        self.preferred_lang = my_language(config.user_preferences.PREFERRED_LANG)
 
     def process(self, contents: list) -> None:
 
@@ -50,7 +50,7 @@ class TorrentManager:
             content for content in contents if content.category == self.docu_category
         ]
 
-        if config.DUPLICATE_ON:
+        if config.user_preferences.DUPLICATE_ON:
             custom_console.bot_log("'[ACTIVE]' Searching for duplicate")
 
         # Build the torrent file and upload each GAME to the tracker

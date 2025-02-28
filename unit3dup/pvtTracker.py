@@ -39,7 +39,7 @@ class Myhttp:
             "tvdb": "0",  # no ancora implementato
             "mal": "0",  # no ancora implementato
             "igdb": "0",
-            "anonymous": int(config.ANON),
+            "anonymous": int(config.user_preferences.ANON),
             "stream": "0",
             "sd": "0",
             "keywords": "",
@@ -311,11 +311,11 @@ class Torrents(Tracker):
 
 class Uploader(Tracker):
     def upload_t(self, data: dict, torrent_path: str, nfo_path = None) -> requests:
-        if not config.TORRENT_ARCHIVE:
+        if not config.user_preferences.TORRENT_ARCHIVE:
             full_path = f"{torrent_path}.torrent"
         else:
             torrent_file_name = os.path.basename(torrent_path)
-            full_path = os.path.join(config.TORRENT_ARCHIVE, f"{torrent_file_name}.torrent")
+            full_path = os.path.join(config.user_preferences.TORRENT_ARCHIVE, f"{torrent_file_name}.torrent")
 
         file_torrent = {"torrent": full_path}
         if nfo_path:
