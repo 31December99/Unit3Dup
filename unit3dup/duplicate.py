@@ -88,13 +88,13 @@ class Duplicate:
         self.guess_filename = title.Guessit(self.content.display_name)
 
         # convert the user preferred language to iso
-        self.preferred_lang = my_language(config.PREFERRED_LANG)
+        self.preferred_lang = my_language(config.user_preferences.PREFERRED_LANG)
 
         # Size of the user's content
         self.content_size, self.size_unit = System.get_size(content.torrent_path)
 
         # Determine how much differs from the user's media size
-        self.size_threshold = config.SIZE_TH
+        self.size_threshold = config.user_preferences.SIZE_TH
 
         # Final result
         self.flag_already = False
@@ -220,7 +220,7 @@ class Duplicate:
                 ):
 
                     delta_size = self._calculate_threshold(size=tracker_value["size"])
-                    if delta_size > config.SIZE_TH:
+                    if delta_size > config.user_preferences.SIZE_TH:
                         # Not a duplicate
                         continue
 

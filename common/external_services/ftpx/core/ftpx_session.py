@@ -12,7 +12,7 @@ class FtpXCmds(FTP_TLS):
     def __init__(self):
         super().__init__()
         self.is_quitting = False
-        if config.FTPX_KEEP_ALIVE:
+        if config.options.FTPX_KEEP_ALIVE:
             # Time interval to keep the connection alive (in seconds)
             self.keep_alive_interval = 10
             # flag to stop the keep-alive thread
@@ -47,7 +47,7 @@ class FtpXCmds(FTP_TLS):
         custom_console.bot_question_log("Exiting... Please wait for the app to close\n")
         if self.is_quitting:
             return
-        if config.FTPX_KEEP_ALIVE:
+        if config.options.FTPX_KEEP_ALIVE:
             # Set the stop flag for the keep-alive thread
             self.keep_alive_stop_flag.set()
             if self.keep_alive_thread.is_alive():
@@ -63,30 +63,30 @@ class FtpXCmds(FTP_TLS):
     @classmethod
     def new(
             cls,
-            host=config.FTPX_IP,
-            port=int(config.FTPX_PORT),
-            user=config.FTPX_USER,
-            passwd=config.FTPX_PASS,
+            host=config.options.FTPX_IP,
+            port=int(config.options.FTPX_PORT),
+            user=config.options.FTPX_USER,
+            passwd=config.options.FTPX_PASS,
     ):
 
         validate_ftpx_config = True
-        if not config.FTPX_IP:
+        if not config.options.FTPX_IP:
             custom_console.bot_question_log("No FTPX_IP provided\n")
             validate_ftpx_config = False
 
-        if not config.FTPX_PORT:
+        if not config.options.FTPX_PORT:
             custom_console.bot_question_log("No FTPX_PORT provided\n")
             validate_ftpx_config = False
 
-        if not config.FTPX_USER:
+        if not config.options.FTPX_USER:
             custom_console.bot_question_log("No FTPX_USER provided\n")
             validate_ftpx_config = False
 
-        if not config.FTPX_PASS:
+        if not config.options.FTPX_PASS:
             custom_console.bot_question_log("No FTPX_PASS provided\n")
             validate_ftpx_config = False
 
-        if not config.FTPX_LOCAL_PATH:
+        if not config.options.FTPX_LOCAL_PATH:
             custom_console.bot_question_log("No FTPX_LOCAL_PATH provided\n")
             validate_ftpx_config = False
 

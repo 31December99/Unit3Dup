@@ -32,8 +32,8 @@ class UserContent:
 
         base_name = os.path.basename(content.torrent_path)
 
-        if config.TORRENT_ARCHIVE:
-            this_path = os.path.join(config.TORRENT_ARCHIVE, f"{base_name}.torrent")
+        if config.user_preferences.TORRENT_ARCHIVE:
+            this_path = os.path.join(config.user_preferences.TORRENT_ARCHIVE, f"{base_name}.torrent")
         else:
             this_path = f"{content.torrent_path}.torrent"
 
@@ -56,7 +56,7 @@ class UserContent:
            Returns:
                return boolean
            """
-        preferred_lang = config.PREFERRED_LANG.upper()
+        preferred_lang = config.user_preferences.PREFERRED_LANG.upper()
         preferred_lang_to_iso = ManageTitles.convert_iso(preferred_lang)
 
         if not content.audio_languages:
@@ -150,16 +150,16 @@ class UserContent:
         """
         client = QbittorrentClient()
 
-        if config.TORRENT_CLIENT=='qbittorrent':
+        if config.torrent_client_config.TORRENT_CLIENT.lower()=='qbittorrent':
             client = QbittorrentClient()
             client.connect()
 
-        elif config.TORRENT_CLIENT=='transmission':
+        elif config.torrent_client_config.TORRENT_CLIENT.lower()=='transmission':
             client = TransmissionClient()
             client.connect()
         else:
             custom_console.bot_error_log(f"{UserContent.__class__.__name__}"
-                                         f" Invalid torrent client '{config.TORRENT_CLIENT}'" )
+                                         f" Invalid torrent client '{config.torrent_client_config.TORRENT_CLIENT}'" )
             exit(1)
 
         with ThreadPoolExecutor(max_workers=20) as executor:

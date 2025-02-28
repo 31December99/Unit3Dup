@@ -56,7 +56,7 @@ class GameManager:
                 continue
 
             # Skip if it is a duplicate
-            if (self.cli.duplicate or config.DUPLICATE_ON) and UserContent.is_duplicate(content=content):
+            if (self.cli.duplicate or config.user_preferences.DUPLICATE_ON) and UserContent.is_duplicate(content=content):
                 continue
 
             # Does not create the torrent if the torrent was found earlier

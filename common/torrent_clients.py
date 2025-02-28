@@ -26,9 +26,9 @@ class TorrClient(ABC):
 
     def download(self, tracker_torrent_url: requests, torrent_path: str):
         # Archive the torrent file if torrent_archive is set
-        if config.TORRENT_ARCHIVE:
+        if config.user_preferences.TORRENT_ARCHIVE:
             file_name = f"{os.path.basename(torrent_path)}.torrent"
-            full_path_archive = os.path.join(config.TORRENT_ARCHIVE, file_name)
+            full_path_archive = os.path.join(config.user_preferences.TORRENT_ARCHIVE, file_name)
         else:
             # Or save to the current path
             full_path_archive = f"{torrent_path}.torrent"
@@ -47,8 +47,11 @@ class TransmissionClient(TorrClient):
 
     def connect(self) -> transmission_rpc:
         try:
-            self.client = transmission_rpc.Client(host=config.TRASM_HOST,port=config.TRASM_PORT,
-                                                  username=config.TRASM_USER, password=config.TRASM_PASS, timeout=10)
+            self.client = transmission_rpc.Client(host=config.torrent_client_config.TRASM_HOST,
+                                                  port=config.torrent_client_config.TRASM_PORT,
+                                                  username=config.torrent_client_config.TRASM_USER,
+                                                  password=config.torrent_client_config.TRASM_PASS,
+                                                  timeout=10)
             return self.client
         except requests.exceptions.HTTPError:
             custom_console.bot_error_log(
@@ -58,16 +61,17 @@ class TransmissionClient(TorrClient):
             custom_console.bot_error_log(
                 f"{self.__class__.__name__} Connection Error. Check IP/port or run Transmission"
             )
-        except transmission_rpc.TransmissionError as e:
+        except transmission_rpc.TransmissionError:
             custom_console.bot_error_log(
-                f"{self.__class__.__name__} Login required. Check your username and password {e}"
+                f"{self.__class__.__name__} Login required. Check your username and password"
             )
         except Exception as e:
             custom_console.bot_error_log(f"{self.__class__.__name__} Unexpected error: {str(e)}")
+            custom_console.bot_error_log(f"{self.__class__.__name__} Please verify your configuration")
 
 
     def send_to_client(self,tracker_data_response: str, torrent: Mytorrent, content: Media):
-        full_path_archive = os.path.join(config.TORRENT_ARCHIVE, f"{os.path.basename(content.torrent_path)}.torrent")
+        full_path_archive = os.path.join(config.user_preferences.TORRENT_ARCHIVE, f"{os.path.basename(content.torrent_path)}.torrent")
         if not torrent:
             self.client.add_torrent(
                 torrent=open(full_path_archive, "rb"), download_dir=os.path.dirname(content.torrent_path)
@@ -90,9 +94,12 @@ class QbittorrentClient(TorrClient):
     def connect(self) -> qbittorrent:
         try:
             # Requests the protocol type http
-            self.client = qbittorrent.Client(f"http://{config.QBIT_HOST}:{config.QBIT_PORT}/",  timeout= 10)
-            self.client.login(username=config.QBIT_USER, password=config.QBIT_PASS)
-            # self.client.torrents()
+            self.client = qbittorrent.Client(f"http://"
+                                             f"{config.torrent_client_config.QBIT_HOST}:"
+                                             f"{config.torrent_client_config.QBIT_PORT}/",  timeout= 10)
+
+            self.client.login(username=config.torrent_client_config.QBIT_USER,
+                              password=config.torrent_client_config.QBIT_PASS)
             return self.client
 
         except requests.exceptions.HTTPError:
@@ -115,7 +122,7 @@ class QbittorrentClient(TorrClient):
 
 
     def send_to_client(self,tracker_data_response: str, torrent: Mytorrent, content: Media):
-        full_path_archive = os.path.join(config.TORRENT_ARCHIVE, f"{os.path.basename(content.torrent_path)}.torrent")
+        full_path_archive = os.path.join(config.user_preferences.TORRENT_ARCHIVE, f"{os.path.basename(content.torrent_path)}.torrent")
         if not torrent:
             self.client.download_from_file(
                 file_buffer=open(full_path_archive, "rb"), savepath=os.path.dirname(content.torrent_path)

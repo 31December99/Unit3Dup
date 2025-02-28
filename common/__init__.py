@@ -1,3 +1,7 @@
-from common.config import load_config
+from common.config import Load
 
-config = load_config()
+
+config = Load.load_config()
+
+
+

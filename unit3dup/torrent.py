@@ -14,7 +14,7 @@ class Torrent:
     def __init__(self):
         self.perPage = 30
         self.tracker = pvtTracker.Unit3d(
-            base_url=config.ITT_URL, api_token=config.ITT_APIKEY, pass_key=""
+            base_url=config.tracker_config.ITT_URL, api_token=config.tracker_config.ITT_APIKEY, pass_key=""
         )
 
     def get_unique_id(self, media_info: str) -> str:
@@ -141,7 +141,7 @@ class View(Torrent):
         super().__init__()
         self.perPage = 30
         self.tracker = pvtTracker.Unit3d(
-            base_url=config.ITT_URL, api_token=config.ITT_APIKEY, pass_key=""
+            base_url=config.tracker_config.ITT_URL, api_token=config.tracker_config.ITT_APIKEY, pass_key=""
         )
 
         # Load the constant tracker
