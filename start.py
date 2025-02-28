@@ -39,7 +39,7 @@ def main():
         pass
 
     # /// Test the torrent client
-    if cli.args.scan or cli.args.upload or cli.args.folder:
+    if cli.args.scan or cli.args.upload or cli.args.folder or cli.args.watcher:
 
         if config.torrent_client_config.TORRENT_CLIENT.lower()=="qbittorrent":
             test_client_torrent = QbittorrentClient()
