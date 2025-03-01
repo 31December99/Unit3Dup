@@ -60,7 +60,8 @@ class Video:
         """Build the information to send to the tracker"""
 
         # If cache is enabled and the video is already cached
-        if config.user_preferences.CACHE_SCR:
+        # and if tmdb is not zero (tmdb ID not found) otherwise it will overwrite the same video in the cache
+        if config.user_preferences.CACHE_SCR and self.tmdb_id > 0:
             description = self.load_cache(self.tmdb_id)
             if isinstance(description, dict):
                 self.description = description['description']
@@ -84,7 +85,7 @@ class Video:
 
 
         # Write the new description to the cache
-        if config.user_preferences.CACHE_SCR:
+        if config.user_preferences.CACHE_SCR and self.tmdb_id > 0:
             self.cache[self.tmdb_id] = {'description' : self.description, 'is_hd' : self.is_hd}
 
 
