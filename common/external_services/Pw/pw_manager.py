@@ -22,7 +22,7 @@ class PwManager:
     def process(self):
 
         # a new qbittorent instance
-        qb = Client(f"http://{config.QBIT_HOST}:{config.QBIT_PORT}/")
+        qb = Client(f"http://{config.tracker_config.QBIT_HOST}:{config.tracker_config.QBIT_PORT}/")
         # a new pw instance
         pw_service = PwService()
         # Query the indexers
@@ -35,8 +35,9 @@ class PwManager:
                     custom_console.log(torrent_file.downloadUrl)
                     pw_service.get_torrent_from_pw(torrent_url=torrent_file.downloadUrl,download_filename=self.filename)
 
-                    qb.login(username=config.QBIT_USER, password=config.QBIT_PASS)
+                    qb.login(username=config.tracker_config.QBIT_USER, password=config.tracker_config.QBIT_PASS)
                     qb.download_from_file(
-                        file_buffer=open(os.path.join(config.PW_TORRENT_ARCHIVE_PATH,f"{self.filename}.torrent"), "rb"),
-                        savepath=config.PW_DOWNLOAD_PATH,
+                        file_buffer=open(os.path.join(config.options.PW_TORRENT_ARCHIVE_PATH,
+                                                      f"{self.filename}.torrent"), "rb"),
+                        savepath=config.options.PW_DOWNLOAD_PATH,
                     )
