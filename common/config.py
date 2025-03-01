@@ -366,16 +366,16 @@ class Load:
 
     @staticmethod
     def load_config():
-        service_jsonfile = "Unit3Dbot_service.json"
+        config_file = "Unit3Dbot.json"
 
         if os.name == "nt":
-            default_json_path: Path = Path(os.getenv("LOCALAPPDATA", ".")) / f"{service_jsonfile}"
+            default_json_path: Path = Path(os.getenv("LOCALAPPDATA", ".")) / f"{config_file}"
             PW_TORRENT_ARCHIVE_PATH: Path = Path(os.getenv("LOCALAPPDATA", ".")) / "pw_torrent_archive"
             PW_DOWNLOAD_PATH: Path = Path(os.getenv("LOCALAPPDATA", ".")) / "pw_download"
             WATCHER_DESTINATION_PATH: Path = Path(os.getenv("LOCALAPPDATA", ".")) / "watcher_destination_path"
 
         else:
-            default_json_path: Path = Path.home() / f"{service_jsonfile}"
+            default_json_path: Path = Path.home() / f"{config_file}"
             PW_TORRENT_ARCHIVE_PATH: Path = Path.home() / "pw_torrent_archive"
             PW_DOWNLOAD_PATH: Path = Path.home() / "pw_download"
             WATCHER_DESTINATION_PATH: Path = Path.home() / "watcher_destination_path"

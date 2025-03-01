@@ -14,7 +14,7 @@ It performs the following tasks:
 - Searches for the corresponding ID on TMDB and IGDB.
 - Add trailer from Tmdb or Youtube
 - Uploads the content to the UNIT3D Next Generation tracker platform.
-- Seeding in qbittorrent
+- Seeding in qbittorrent or transmission
 
 ___
 
@@ -47,11 +47,11 @@ PATH environment user variable
 6. "python start.py" to initialize the configuration for the bot
 
 ### Configure
-open the Unit3Dbot_service.env
+open the Unit3Dbot_service.json
 
--> Linux : Unit3Dbot_service.env is located in the home directory on Linux
+-> Linux : Unit3Dbot_service.json is located in the home directory on Linux
 
--> Windows: Unit3Dbot_service.env is located in the AppData folder on Windows
+-> Windows: Unit3Dbot_service.json is located in the AppData folder on Windows
 
 example:
 
