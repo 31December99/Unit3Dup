@@ -1,6 +1,7 @@
 import ipaddress
 import json
 import os
+import shutil
 
 from pydantic import BaseModel, model_validator
 from urllib.parse import urlparse
@@ -14,13 +15,15 @@ class TrackerConfig(BaseModel):
     ITT_URL: str
     ITT_APIKEY: str | None = None
     TMDB_APIKEY: str | None = None
-    LENSDUMP_KEY: str | None = None
-    FREE_IMAGE_KEY: str | None = None
-    PTSCREENS_KEY: str | None = None
     IMGBB_KEY: str | None = None
+    FREE_IMAGE_KEY: str | None = None
+    LENSDUMP_KEY: str | None = None
+    PTSCREENS_KEY: str | None = None
     IMGFI_KEY: str | None = None
+    YOUTUBE_KEY: str | None = None
     IGDB_CLIENT_ID: str | None = None
     IGDB_ID_SECRET: str | None = None
+
 
 
 class TorrentClientConfig(BaseModel):
@@ -317,7 +320,7 @@ class Load:
                 "WATCHER_INTERVAL": 60,
                 "WATCHER_PATH": "watcher_path",
                 "WATCHER_DESTINATION_PATH": ".",
-                "NUMBER_OF_SCREENSHOTS": 4,
+                "NUMBER_OF_SCREENSHOTS": 6,
                 "COMPRESS_SCSHOT": 4,
                 "RESIZE_SCSHOT": False,
                 "TORRENT_ARCHIVE": ".",
@@ -344,24 +347,8 @@ class Load:
 
         path.parent.mkdir(parents=True, exist_ok=True)
         with open(path, "w", encoding="utf-8") as json_file:
-            json.dump(default_content, json_file, indent=4)
-
-
-    @staticmethod
-    def validate_json(file_path: Path):
-        try:
-            with open(file_path, 'r') as file:
-                json_data = file.read()
-                # allow single '\' character in JSON file not '\\'
-                json_data = json_data.replace('\\', '\\\\')
-                return json.loads(json_data)
-
-        except json.JSONDecodeError as e:
-            print(f"Config Loading error.. {e}")
-            return None
-        except FileNotFoundError:
-            print(f"Configuration '{file_path}' not found")
-            return None
+            # pycharm type checking issue (json_file)
+            json.dump(default_content, json_file, ensure_ascii=False, indent=4)
 
 
     @staticmethod
@@ -397,12 +384,11 @@ class Load:
             Load.create_default_json_file(default_json_path)
 
 
-        config_data = Load.validate_json(default_json_path)
-        if not config_data:
-            print(default_json_path)
-            exit(1)
+        # Since the last bot version there might are new attributes
+        # Load the json file, find the difference between json file and the code. Update the user's json file
+        update_config = JsonConfig(default_json_path=default_json_path)
+        json_data = update_config.process()
 
-        json_data = Load.validate_json(default_json_path)
         if not json_data:
             print("Failed to Load default configuration file")
             exit(1)
@@ -411,4 +397,152 @@ class Load:
         return c
 
 
+class JsonConfig:
+    """
+    Update the config json with the new attributes
+
+    """
+
+    def __init__(self, default_json_path: Path):
+
+        # json file path
+        self.default_json_path = default_json_path
+
+        # Load the file json
+        self.file_config_data = self.validate_json()
+
+        # Flag Update
+        # true if any diff is found
+        self.updated = False
+
+        # Load the json sections from the file
+        self.tracker_config = self.file_config_data["tracker_config"]
+        self.torrent_config = self.file_config_data["torrent_client_config"]
+        self.user_preferences_config = self.file_config_data["user_preferences"]
+        self.options_config = self.file_config_data["options"]
+
+        # New tracker attribute
+        self.tracker_diff_keys = self.tracker_config.keys() ^ TrackerConfig.__annotations__.keys()\
+            if not self.tracker_config.keys() == TrackerConfig.__annotations__.keys() else None
+
+        # New torrent attribute
+        self.torrent_diff_keys = self.torrent_config.keys() ^ TorrentClientConfig.__annotations__.keys()\
+        if not self.torrent_config.keys() == TorrentClientConfig.__annotations__.keys() else None
+
+        # New user preferences attribute
+        self.user_preferences_diff_keys = self.user_preferences_config.keys() ^ UserPreferences.__annotations__.keys()\
+        if not self.user_preferences_config.keys() == UserPreferences.__annotations__.keys() else None
+
+        # New options attribute
+        self.options_diff_keys = self.options_config.keys() ^ Options.__annotations__.keys()\
+        if not self.options_config.keys() == Options.__annotations__.keys() else None
+
+    def update_tracker_config(self):
+        # Add the new attributes in 'tracker config'
+        if self.tracker_diff_keys:
+            self.updated = True
+            missing_keys_dict = {key: '' for key in self.tracker_diff_keys}
+            self.tracker_config.update(missing_keys_dict)
+
+
+    def update_torrent_client_config(self):
+        # Add the new attributes in 'torrent client'
+        if self.torrent_diff_keys:
+            self.updated = True
+            missing_keys_dict = {key: '' for key in self.torrent_diff_keys}
+            self.torrent_config.update(missing_keys_dict)
+
+
+    def update_user_preferences_config(self):
+        # Add the new attributes in 'user preferences'
+        if self.user_preferences_diff_keys:
+            self.updated = True
+            missing_keys_dict = {key: '' for key in self.user_preferences_diff_keys}
+            self.user_preferences_config.update(missing_keys_dict)
+
+
+    def update_options_config(self):
+        # Add the new attributes in 'options'
+        if self.options_diff_keys:
+            self.updated = True
+            missing_keys_dict = {key: '' for key in self.options_diff_keys}
+            self.options_config.update(missing_keys_dict)
+
+
+    def get_config_updated(self) -> dict:
+
+        # Update the loaded file json section 'tracker'
+        self.update_tracker_config()
+
+        # Update the loaded file json section 'user preferences'
+        self.update_user_preferences_config()
+
+        # Update the loaded file json section 'client_config'
+        self.update_torrent_client_config()
+
+        # Update the loaded file json section 'options'
+        self.update_options_config()
+
+        return self.file_config_data
+
+
+    def validate_json(self) -> dict:
+        try:
+            with open(self.default_json_path, 'r') as file:
+                json_data = file.read()
+                return json.loads(json_data)
+
+        except json.JSONDecodeError as e:
+            print(f"Config Loading error.. {e}")
+            custom_console.bot_log("Try to Check '\\ characters. Example: ")
+            custom_console.bot_log("C:\myfolder -> not correct ")
+            custom_console.bot_log("C:/myfolder -> CORRECT ")
+            exit(1)
+        except FileNotFoundError:
+            print(f"Configuration '{self.default_json_path}' not found")
+            exit(1)
+
+    def process(self)-> dict:
+
+        # Json validated and updated data
+        json_updated = self.get_config_updated()
+
+        # Make backup if there are any updates
+        if self.updated:
+            # Advise the user
+            self.json_message_new_attributes()
+
+            # Write the content to another file with *.backup extension
+            shutil.copy2(self.default_json_path,f"{self.default_json_path}.backup")
+            custom_console.bot_log(f"Backup the current json file..{self.default_json_path}.backup")
+
+            # Update the current json file
+            with open(f"{self.default_json_path}", 'w', encoding='utf-8') as file_w:
+                # pycharm issue type checking ( file_w)
+                json.dump(json_updated,file_w, ensure_ascii=False, indent=4)
+
+            # Validate the file
+            custom_console.bot_log(f"Json file updated and validated {self.default_json_path}")
+            return self.validate_json()
+        else:
+            return self.file_config_data
+
+
+    def json_message_new_attributes(self):
+
+        custom_console.bot_log("Since the last bot version there are new attributes")
+        message = ''
+        if self.tracker_diff_keys:
+            message += f"Tracker Configuration Diff: {self.tracker_diff_keys}\n"
+
+        if self.torrent_diff_keys:
+            message += f"Torrent Configuration Diff: {self.torrent_diff_keys}\n"
+
+        if self.user_preferences_diff_keys:
+            message += f"User Preferences Diff: {self.user_preferences_diff_keys}\n"
+
+        if self.options_diff_keys:
+            message += f"Options Diff: {self.options_diff_keys}\n"
+
+        custom_console.bot_log(message)
 
