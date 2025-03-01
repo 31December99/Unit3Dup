@@ -214,7 +214,7 @@ class Client:
                 remote_short_path = remote_file_path
 
             self.download_to_local_path = os.path.join(
-                config.FTPX_LOCAL_PATH, *remote_short_path
+                config.options.FTPX_LOCAL_PATH, *remote_short_path
             )
             custom_console.bot_log(
                 f"Server:{os.path.basename(remote_file)} -> Client:{self.download_to_local_path}"

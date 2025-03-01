@@ -14,7 +14,7 @@ class YtTrailer:
             'part': 'snippet',
             'q': f'{title} trailer',
             'type': 'video',
-            'key': config.YOUTUBE_KEY,
+            'key': config.tracker_config.YOUTUBE_KEY,
             'channelId': '',
             'maxResults': 3,
         }
@@ -23,8 +23,8 @@ class YtTrailer:
 
         # Use a favorite channel if the flag is True
         # Otherwise use a global YouTube search
-        if config.YOUTUBE_CHANNEL_ENABLE:
-            self.params['channelId'] = config.YOUTUBE_FAV_CHANNEL_ID
+        if config.user_preferences.YOUTUBE_CHANNEL_ENABLE:
+            self.params['channelId'] = config.user_preferences.YOUTUBE_FAV_CHANNEL_ID
 
         response = requests.get(self.url, params=self.params)
 
@@ -73,8 +73,6 @@ class YtTrailer:
                         else:
                             # Fail
                             pass
-
-                    # video_id = Id(**result['id'])
 
                     item = Item(
                         etag=result['etag'],

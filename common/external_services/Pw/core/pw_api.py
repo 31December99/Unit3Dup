@@ -20,22 +20,22 @@ class PwAPI(MyHttp):
         """
         headers = Agent.headers()
         headers.update(
-            {"X-Api-Key": config.PW_API_KEY, "Content-Type": "application/json"}
+            {"X-Api-Key": config.options.PW_API_KEY, "Content-Type": "application/json"}
         )
 
         super().__init__(headers)
         self.http_client = self.session
-        self.base_url = config.PW_URL
-        self.api_key = config.PW_API_KEY
+        self.base_url = config.options.PW_URL
+        self.api_key = config.options.PW_API_KEY
         self.dataclass = {f"{self.base_url}/indexer": Indexer}
 
-        if not config.PW_URL:
+        if not config.options.PW_URL:
             custom_console.bot_question_log("No PW_URL provided\n")
-            exit(1)  # todo: classmathod
+            exit(1)
 
-        if not config.PW_API_KEY:
+        if not config.options.PW_API_KEY:
             custom_console.bot_question_log("No PW_API_KEY provided\n")
-            exit(1)  # todo: classmathod
+            exit(1)
 
     def get_indexers(self) -> ["Indexer"]:
         """Get all indexers."""
@@ -53,7 +53,7 @@ class PwAPI(MyHttp):
         response = self.get_url(url=url)
         if response.status_code == 200:
             # Write the torrent to file
-            with open(os.path.join(config.PW_TORRENT_ARCHIVE_PATH,f"{filename}.torrent"), 'wb') as f:
+            with open(os.path.join(config.options.PW_TORRENT_ARCHIVE_PATH,f"{filename}.torrent"), 'wb') as f:
                 f.write(response.content)
 
     def search(self, query: str) -> ["Search"]:
