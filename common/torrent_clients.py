@@ -72,18 +72,19 @@ class TransmissionClient(TorrClient):
 
     def send_to_client(self,tracker_data_response: str, torrent: Mytorrent, content: Media):
         full_path_archive = os.path.join(config.user_preferences.TORRENT_ARCHIVE, f"{os.path.basename(content.torrent_path)}.torrent")
+        # Torrent not created
         if not torrent:
             self.client.add_torrent(
                 torrent=open(full_path_archive, "rb"), download_dir=os.path.dirname(content.torrent_path)
                                     )
+        # Use the new one
         else:
-            # Use the new one
             download_torrent_dal_tracker = requests.get(tracker_data_response)
             if download_torrent_dal_tracker.status_code == 200:
                 torrent_file = self.download(tracker_torrent_url=download_torrent_dal_tracker,
                                              torrent_path=content.torrent_path)
                 self.client.add_torrent(
-                    torrent=torrent_file, download_dir=torrent.mytorr.location
+                    torrent=torrent_file, download_dir=str(torrent.mytorr.location)
                 )
 
 
