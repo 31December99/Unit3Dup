@@ -20,9 +20,22 @@ class HashProgressBar(tqdm):
 class Mytorrent:
 
     def __init__(self, contents: Media, meta: str):
-        self.torrent_path = contents.torrent_path
-        self.metainfo = json.loads(meta)
 
+        # If shared_path is None set the path to the value of torrent_path
+        if not config_settings.torrent_client_config.SHARED_PATH:
+            # shared path
+            self.torrent_path = contents.torrent_path
+        else:
+            # local path
+            self.torrent_path = config_settings.torrent_client_config.SHARED_PATH
+
+        # Check if torrent_path exist
+        if not os.path.exists(self.torrent_path):
+            custom_console.bot_error_log(f"Torrent path '{self.torrent_path}' does not exist")
+            custom_console.bot_error_log(f"Please check your path and retry")
+            exit(1)
+
+        self.metainfo = json.loads(meta)
         self.mytorr = torf.Torrent(path=contents.torrent_path)
         self.mytorr.comment = config_settings.user_preferences.TORRENT_COMMENT
         self.mytorr.name = contents.torrent_name

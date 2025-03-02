@@ -35,6 +35,7 @@ class TorrentClientConfig(BaseModel):
     TRASM_HOST: str = "http://localhost"
     TRASM_PORT: int = 9091
     TORRENT_CLIENT: str | None = None
+    SHARED_PATH: str | None = None
 
 
 
@@ -110,6 +111,28 @@ class Validate:
         """
         if isinstance(value, str) and value.strip():
             return value
+        print(f"-> Please Fix '{field_name}' ['{value}'] in settings.json")
+        exit(1)
+
+    @staticmethod
+    def shared_path(value: str | None, field_name: str) -> str | None:
+        """
+        Validates string
+        """
+        # if it's a str and not an empty string
+        if isinstance(value, str) and value.strip():
+            # I need to check if it's a valid path without it existing
+            # Example:
+            # On Linux shared folder:
+            # /mnt/hgfs/test_folder
+            # On Windows torrent_path:
+            # c:\test_folder
+            # The torrent client will point to c:\test_folder
+            # basic check...
+            if '/' in value or '\\' in value:
+                return value
+            else:
+                return None
         print(f"-> Please Fix '{field_name}' ['{value}'] in settings.json")
         exit(1)
 
@@ -237,11 +260,12 @@ class Config(BaseModel):
                 if field =='TRASM_PORT':
                     section[field] = Validate.integer(value=section[field], field_name=field)
 
-                if field in ['QBIT_PASS','TRASM_PASS','QBIT_USER','TRASM_USER']:
+                if field in ['QBIT_PASS','TRASM_PASS','QBIT_USER','TRASM_USER','TORRENT_CLIENT']:
                     section[field] = Validate.string(value=section[field], field_name=field)
 
-                if field == 'TORRENT_CLIENT':
-                    section[field] = Validate.string(value=section[field], field_name=field)
+                if field in ['SHARED_PATH']:
+                    section[field] = Validate.shared_path(value=section[field], field_name=field)
+
         return v
 
 
@@ -340,6 +364,7 @@ class Load:
                 "TRASM_HOST": "127.0.0.1",
                 "TRASM_PORT": "9091",
                 "TORRENT_CLIENT": "qbittorrent",
+                "SHARED_PATH": "no_shared_path"
             },
             "user_preferences": {
                 "PTSCREENS_PRIORITY": 0,
