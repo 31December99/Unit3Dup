@@ -294,9 +294,9 @@ class Load:
     _instance = None
 
     def __new__(cls, *args, **kwargs):
+        # return the same instance..
         if not cls._instance:
             cls._instance = super(Load, cls).__new__(cls, *args, **kwargs)
-            # La configurazione viene caricata solo una volta
             cls._instance._load_config()
         return cls._instance
 
@@ -599,6 +599,9 @@ class JsonConfig:
 
         if self.options_diff_keys:
             message += f"Options Diff: {self.options_diff_keys}\n"
+
+        if self.console_options_diff_keys:
+            message += f"Console Options Diff: {self.console_options_diff_keys}\n"
 
         print(message)
 
