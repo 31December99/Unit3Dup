@@ -141,12 +141,12 @@ class UserContent:
 
 
     @staticmethod
-    def send_to_bittorrent(qbittorrent_list: list[BittorrentData]) -> None:
+    def send_to_bittorrent(bittorrent_list: list[BittorrentData]) -> None:
         """
         Sends a list of torrents to qBittorrent using threads ( async later...)
 
         Args:
-            qbittorrent_list (list[QBittorrent]): A list of QBittorrent objects to be sent to the client
+            bittorrent_list (list[Bittorrent]): A list of Bittorrent objects to be sent to the client
         """
         client = QbittorrentClient()
 
@@ -164,8 +164,11 @@ class UserContent:
 
         with ThreadPoolExecutor(max_workers=20) as executor:
             # Submit the torrents
-            futures = [executor.submit(UserContent.send_to_bittorrent_worker, qb, client) for qb in qbittorrent_list]
+            futures = [executor.submit(UserContent.send_to_bittorrent_worker, bittor, client)
+                       for bittor in bittorrent_list]
             # Wait for all threads to complete
             for future in futures:
                 future.result()
 
+
+        client.set_location()
