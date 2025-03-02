@@ -3,8 +3,7 @@ import os
 import argparse
 import sys
 
-from common.custom_console import custom_console
-
+from view import custom_console
 
 class CommandLine:
     """

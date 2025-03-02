@@ -1,16 +1,17 @@
 # -*- coding: utf-8 -*-
 import guessit
 from common.utility import ManageTitles, System
-from common.custom_console import custom_console
 from common.trackers.trackers import ITTData
 from common.trackers.itt import itt_data
 from common.constants import my_language
 from common import title
 
+from view import custom_console
+
 from unit3dup.media_manager.MediaInfoManager import MediaInfoManager
 from unit3dup.torrent import Torrent
 from unit3dup.media import Media
-from unit3dup import config
+from unit3dup import config_settings
 
 
 
@@ -88,13 +89,13 @@ class Duplicate:
         self.guess_filename = title.Guessit(self.content.display_name)
 
         # convert the user preferred language to iso
-        self.preferred_lang = my_language(config.user_preferences.PREFERRED_LANG)
+        self.preferred_lang = my_language(config_settings.user_preferences.PREFERRED_LANG)
 
         # Size of the user's content
         self.content_size, self.size_unit = System.get_size(content.torrent_path)
 
         # Determine how much differs from the user's media size
-        self.size_threshold = config.user_preferences.SIZE_TH
+        self.size_threshold = config_settings.user_preferences.SIZE_TH
 
         # Final result
         self.flag_already = False
@@ -132,7 +133,7 @@ class Duplicate:
 
         # if a result is found, ask the user or autoskip
             if already_present:
-                if not config.SKIP_DUPLICATE:
+                if not config_settings.SKIP_DUPLICATE:
                     try:
                         while True:
                             custom_console.bot_question_log(
@@ -220,7 +221,7 @@ class Duplicate:
                 ):
 
                     delta_size = self._calculate_threshold(size=tracker_value["size"])
-                    if delta_size > config.user_preferences.SIZE_TH:
+                    if delta_size > config_settings.user_preferences.SIZE_TH:
                         # Not a duplicate
                         continue
 

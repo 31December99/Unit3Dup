@@ -7,13 +7,12 @@ from common.external_services.igdb.core.tags import (
     additions,
     platform_patterns,
 )
-
-from common.custom_console import custom_console
 from common.trackers.trackers import ITTData
 from common.utility import ManageTitles
-
 from common.mediainfo import MediaFile
 from common import title
+
+from view import custom_console
 
 class Media:
     def __init__(self, folder: str, subfolder: str, force_media_type: str):

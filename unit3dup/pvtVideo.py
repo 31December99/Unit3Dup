@@ -4,9 +4,10 @@ import diskcache
 from common.external_services.imageHost import ImgBB, Freeimage, LensDump, ImageUploaderFallback, PtScreens, ImgFi
 from common.mediainfo import MediaFile
 from common.frames import VideoFrame
-from common.custom_console import custom_console
 
-from unit3dup import config
+from view import custom_console
+
+from unit3dup import config_settings
 
 offline_uploaders = []
 
@@ -22,11 +23,11 @@ class Video:
     def __init__(self, file_name: str,  tmdb_id: int, trailer_key = None):
 
         # Host APi keys
-        self.IMGBB_KEY = config.tracker_config.IMGBB_KEY
-        self.FREE_IMAGE_KEY = config.tracker_config.FREE_IMAGE_KEY
-        self.LENSDUMP_KEY= config.tracker_config.LENSDUMP_KEY
-        self.PTSCREENS_KEY= config.tracker_config.PTSCREENS_KEY
-        self.IMGFI_KEY = config.tracker_config.IMGFI_KEY
+        self.IMGBB_KEY = config_settings.tracker_config.IMGBB_KEY
+        self.FREE_IMAGE_KEY = config_settings.tracker_config.FREE_IMAGE_KEY
+        self.LENSDUMP_KEY= config_settings.tracker_config.LENSDUMP_KEY
+        self.PTSCREENS_KEY= config_settings.tracker_config.PTSCREENS_KEY
+        self.IMGFI_KEY = config_settings.tracker_config.IMGFI_KEY
 
         # File name
         self.file_name: str = file_name
@@ -35,8 +36,8 @@ class Video:
         self.trailer_key: int = trailer_key
 
         # Screenshots samples
-        samples_n: int = config.user_preferences.NUMBER_OF_SCREENSHOTS\
-            if 2 <= config.user_preferences.NUMBER_OF_SCREENSHOTS <= 10 else 4
+        samples_n: int = config_settings.user_preferences.NUMBER_OF_SCREENSHOTS\
+            if 2 <= config_settings.user_preferences.NUMBER_OF_SCREENSHOTS <= 10 else 4
 
         # New object frame
         self.video_frames: VideoFrame = VideoFrame(self.file_name, num_screenshots=samples_n, tmdb_id=tmdb_id)
@@ -54,14 +55,14 @@ class Video:
         self.tmdb_id = tmdb_id
 
         # description cache
-        self.cache = diskcache.Cache(str(config.user_preferences.CACHE_PATH))
+        self.cache = diskcache.Cache(str(config_settings.user_preferences.CACHE_PATH))
 
     def build_info(self):
         """Build the information to send to the tracker"""
 
         # If cache is enabled and the video is already cached
         # and if tmdb is not zero (tmdb ID not found) otherwise it will overwrite the same video in the cache
-        if config.user_preferences.CACHE_SCR and self.tmdb_id > 0:
+        if config_settings.user_preferences.CACHE_SCR and self.tmdb_id > 0:
             description = self.load_cache(self.tmdb_id)
             if isinstance(description, dict):
                 self.description = description['description']
@@ -85,7 +86,7 @@ class Video:
 
 
         # Write the new description to the cache
-        if config.user_preferences.CACHE_SCR and self.tmdb_id > 0:
+        if config_settings.user_preferences.CACHE_SCR and self.tmdb_id > 0:
             self.cache[self.tmdb_id] = {'description' : self.description, 'is_hd' : self.is_hd}
 
 

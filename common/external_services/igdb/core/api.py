@@ -2,14 +2,14 @@
 
 from urllib.parse import urljoin
 from common.external_services.sessions.session import MyHttp
-from common import config
-from common.custom_console import custom_console
+from common import config_settings
+from view import custom_console
 
 class IGDBapi:
 
     params = {
-        "client_id": config.tracker_config.IGDB_CLIENT_ID,
-        "client_secret": config.tracker_config.IGDB_ID_SECRET,
+        "client_id": config_settings.tracker_config.IGDB_CLIENT_ID,
+        "client_secret": config_settings.tracker_config.IGDB_ID_SECRET,
         "grant_type": "client_credentials",
     }
 
@@ -23,11 +23,11 @@ class IGDBapi:
 
 
     def login(self)-> bool:
-        if not config.tracker_config.IGDB_CLIENT_ID:
+        if not config_settings.tracker_config.IGDB_CLIENT_ID:
             custom_console.bot_question_log("No IGDB_CLIENT_ID provided\n")
             return False
 
-        if not config.tracker_config.IGDB_ID_SECRET:
+        if not config_settings.tracker_config.IGDB_ID_SECRET:
             custom_console.bot_question_log("No IGDB_ID_SECRET provided\n")
             return False
 
@@ -38,8 +38,8 @@ class IGDBapi:
 
 
         response = self.http_client.post(self.oauth, params = {
-            "client_id": config.tracker_config.IGDB_CLIENT_ID,
-            "client_secret": config.tracker_config.IGDB_ID_SECRET,
+            "client_id": config_settings.tracker_config.IGDB_CLIENT_ID,
+            "client_secret": config_settings.tracker_config.IGDB_ID_SECRET,
             "grant_type": "client_credentials",
         })
 
@@ -51,7 +51,7 @@ class IGDBapi:
             custom_console.bot_log("IGDB Login successful!")
 
             self.access_header = {
-                "Client-ID": config.tracker_config.IGDB_CLIENT_ID,
+                "Client-ID": config_settings.tracker_config.IGDB_CLIENT_ID,
                 "Authorization": f"Bearer {access_token}",
                 "Content-Type": "application/json",
             }

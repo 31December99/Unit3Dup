@@ -2,11 +2,12 @@
 from thefuzz import fuzz
 from rich.align import Align
 from rich.table import Table
+
 from common.external_services.igdb.core.models.search import Game
 from common.external_services.igdb.core.api import IGDBapi
-from common.custom_console import custom_console
-from unit3dup.media import Media
 
+from unit3dup.media import Media
+from view import custom_console
 
 class IGDBViewer:
     def __init__(self):

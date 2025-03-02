@@ -2,15 +2,15 @@
 import argparse
 
 from common.external_services.theMovieDB.core.api import DbOnline
-from common.custom_console import custom_console
 from common.bittorrent import BittorrentData
 
 from unit3dup.media_manager.common import UserContent
 from unit3dup.upload import UploadBot
 from unit3dup.pvtVideo import Video
 from unit3dup.media import Media
-from unit3dup import config
+from unit3dup import config_settings
 
+from view import custom_console
 
 class VideoManager:
 
@@ -50,7 +50,7 @@ class VideoManager:
                     self.torrent_found = True
 
                 # Skip if it is a duplicate
-                if self.cli.duplicate or config.user_preferences.DUPLICATE_ON and UserContent.is_duplicate(content=content):
+                if self.cli.duplicate or config_settings.user_preferences.DUPLICATE_ON and UserContent.is_duplicate(content=content):
                     continue
 
                 # Does not create the torrent if the torrent was found earlier

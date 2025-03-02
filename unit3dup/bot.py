@@ -11,8 +11,9 @@ from common.external_services.ftpx.core.models.list import FTPDirectory
 from common.external_services.Pw.pw_manager import PwManager
 from common.external_services.ftpx.core.menu import Menu
 from common.external_services.ftpx.client import Client
-from common.custom_console import custom_console
 from common.extractor import Extractor
+from view import custom_console
+
 from pathlib import Path
 
 
