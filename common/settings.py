@@ -123,7 +123,7 @@ class Validate:
                          "black bold", "red bold", "green bold", "yellow bold", "blue bold", "magenta bold",
                          "cyan bold", "white bold"]:
                 return value
-        print(f"-> not configured {field_name} '{value}'")
+        print(f"-> Invalid value for the  {field_name} '{value}'")
         exit(1)
 
 
@@ -283,7 +283,7 @@ class Config(BaseModel):
                 exit(1)
             else:
                 field = field.upper()
-                section[field] = Validate.string(value=section[field], field_name=field)
+                section[field] = Validate.colors(value=section[field], field_name=field)
 
         return v
 
