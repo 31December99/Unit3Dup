@@ -43,7 +43,6 @@ class Media:
         self._media_file: MediaFile | None = None
         self._languages: list[str] | None = None
         self._resolution: int | None = None
-        self._filename: str | None = None
         self._tracker_name: str | None = None
 
         # // Contents dall'esterno

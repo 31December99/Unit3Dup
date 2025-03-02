@@ -89,6 +89,36 @@ class TransmissionClient(TorrClient):
                     torrent=torrent_file, download_dir=str(torrent.mytorr.location)
                 )
 
+    def set_location(self):
+        """ Set location for the torrent with shared_path """
+
+        # List of torrents loaded in transmission
+        torrents = self.client.get_torrents()
+
+        print(torrents)
+        print(config_settings.torrent_client_config.SHARED_PATH)
+
+        for torrent in torrents:
+            # Torrent ID
+            torrent_id = torrent.id
+
+            # Torrent file location
+            save_path = torrent.download_dir
+            print(save_path)
+
+            # Torrent status: stalled or seedingf
+            state = torrent.status
+            print(state)
+
+            # Check if the torrent is stalled or seeding, and the save path doesn't exist
+            if (state == 'stalledUP' or state == 'seeding') and not os.path.exists(save_path):
+                # If the torrent save path does not exist it is probably stalled
+                # Try the shared path instead
+                shared_path = config_settings.torrent_client_config.SHARED_PATH
+                self.client.move_torrent_data(torrent_id,shared_path)
+                custom_console.bot_log(f"Moved torrent data to {shared_path} for {torrent.name} "
+                                       f"status: {torrent.status}")
+
 
 class QbittorrentClient(TorrClient):
     def __init__(self):
@@ -123,9 +153,11 @@ class QbittorrentClient(TorrClient):
         except Exception as e:
             custom_console.bot_error_log(f"{self.__class__.__name__} Unexpected error: {str(e)}")
 
-
     def send_to_client(self,tracker_data_response: str, torrent: Mytorrent, content: Media):
-        full_path_archive = os.path.join(config_settings.user_preferences.TORRENT_ARCHIVE, f"{os.path.basename(content.torrent_path)}.torrent")
+        full_path_archive = os.path.join(config_settings.user_preferences.TORRENT_ARCHIVE,
+                                         f"{os.path.basename(content.torrent_path)}.torrent")
+
+        # file torrent already created
         if not torrent:
             self.client.download_from_file(
                 file_buffer=open(full_path_archive, "rb"), savepath=os.path.dirname(content.torrent_path)
@@ -139,3 +171,32 @@ class QbittorrentClient(TorrClient):
                 self.client.download_from_file(
                     file_buffer=torrent_file, savepath=torrent.mytorr.location
                 )
+
+
+    def set_location(self):
+        """ Set location for the torrent with shared_path """
+
+        # List of torrent loaded in qbittorrent
+
+        for torrent in self.client.torrents():
+
+                # Torrent info_hash
+                info_hash = torrent['infohash_v1']
+
+                # Torrent file location
+                save_path = torrent['save_path']
+
+                # Torrent status:  stalledUP = fail uploading
+                state = torrent['state']
+
+                # Stalled wrong path
+                if state == 'stalledUP' or state == 'seeding' and not os.path.exists(save_path):
+                    # If the torrent save path does not exist it is probably stalled
+                    # Try the shared path instead
+                    shared_path = config_settings.torrent_client_config.SHARED_PATH
+                    self.client.set_torrent_location(info_hash, shared_path)
+                    custom_console.bot_log(f"Moved torrent data to {shared_path} for {torrent['name']}"
+                                           f" status: {torrent['state']}")
+
+
+
