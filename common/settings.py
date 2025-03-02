@@ -110,7 +110,7 @@ class Validate:
         """
         if isinstance(value, str) and value.strip():
             return value
-        print(f"-> not configured {field_name} '{value}'")
+        print(f"-> Please Fix '{field_name}' ['{value}'] in settings.json")
         exit(1)
 
     @staticmethod
@@ -123,7 +123,7 @@ class Validate:
                          "black bold", "red bold", "green bold", "yellow bold", "blue bold", "magenta bold",
                          "cyan bold", "white bold"]:
                 return value
-        print(f"-> Invalid value for the  {field_name} '{value}'")
+        print(f"-> Please Fix '{field_name}' ['{value}'] in settings.json")
         exit(1)
 
 
@@ -137,7 +137,7 @@ class Validate:
                 return value
             if value.lower() == 'all':
                 return value
-        print(f"-> not configured {field_name} '{value}'")
+        print(f"-> Please Fix '{field_name}' ['{value}'] in settings.json")
         exit(1)
 
     @staticmethod
@@ -151,7 +151,7 @@ class Validate:
             parsed_ip = ipaddress.ip_address(value)
             return value
         except ValueError:
-            print(f"-> not configured {field_name} '{value}'")
+            print(f"-> Please Fix '{field_name}' ['{value}'] in settings.json")
             exit(1)
 
     @staticmethod
@@ -162,7 +162,7 @@ class Validate:
         try:
             return int(value)
         except (ValueError, TypeError):
-            print(f"-> not configured {field_name} '{value}'")
+            print(f"-> Please Fix '{field_name}' ['{value}'] in settings.json")
             exit(1)
 
     @staticmethod
@@ -176,7 +176,7 @@ class Validate:
                 return True
             elif normalized_value in {"false", "0", "no"}:
                 return False
-        print(f"-> not configured {field_name} '{value}'")
+        print(f"-> Please Fix '{field_name}' ['{value}'] in settings.json")
         exit(1)
 
     @staticmethod
@@ -209,6 +209,8 @@ class Config(BaseModel):
                 print(f"Please fix the '{field}' value")
                 exit(1)
             else:
+                field = field.upper()
+
                 if field=='ITT_URL':
                     section[field] = Validate.url(value=section[field], field_name=field)
                 else:
@@ -224,6 +226,8 @@ class Config(BaseModel):
                 print(f"Please fix the '{field}' value")
                 exit(1)
             else:
+                field = field.upper()
+
                 if field in  ['QBIT_HOST','TRASM_HOST']:
                     section[field] = Validate.ip(value=section[field], field_name=field, default_value="127.0.0.1")
 
@@ -283,8 +287,10 @@ class Config(BaseModel):
                 exit(1)
             else:
                 field = field.upper()
-                section[field] = Validate.colors(value=section[field], field_name=field)
-
+                if field=='WELCOME_MESSAGE':
+                    section[field] = Validate.string(value=section[field], field_name=field)
+                else:
+                    section[field] = Validate.colors(value=section[field], field_name=field)
         return v
 
 
@@ -570,7 +576,7 @@ class JsonConfig:
 
             # Write the content to another file with *.backup extension
             shutil.copy2(self.default_json_path,f"{self.default_json_path}.backup")
-            print(f"Backup the current json file..{self.default_json_path}.backup")
+            print(f"-> Backup the current json file..{self.default_json_path}.backup")
 
             # Update the current json file
             with open(f"{self.default_json_path}", 'w', encoding='utf-8') as file_w:
@@ -578,7 +584,7 @@ class JsonConfig:
                 json.dump(json_updated,file_w, ensure_ascii=False, indent=4)
 
             # Validate the file
-            print(f"Json file updated and validated {self.default_json_path}")
+            print(f"-> Json file updated and validated {self.default_json_path}")
             return self.validate_json()
         else:
             return self.file_config_data
@@ -586,22 +592,22 @@ class JsonConfig:
 
     def json_message_new_attributes(self):
 
-        print("Since the last bot version there are new attributes")
+        print("-- ** Since the last bot version there are new attributes  ** --")
         message = ''
         if self.tracker_diff_keys:
-            message += f"Tracker Configuration Diff: {self.tracker_diff_keys}\n"
+            message += f"New Tracker Configuration attribute: {self.tracker_diff_keys}\n"
 
         if self.torrent_diff_keys:
-            message += f"Torrent Configuration Diff: {self.torrent_diff_keys}\n"
+            message += f"New Torrent Configuration attribute: {self.torrent_diff_keys}\n"
 
         if self.user_preferences_diff_keys:
-            message += f"User Preferences Diff: {self.user_preferences_diff_keys}\n"
+            message += f"New User Preferences attribute: {self.user_preferences_diff_keys}\n"
 
         if self.options_diff_keys:
-            message += f"Options Diff: {self.options_diff_keys}\n"
+            message += f"New Options attribute: {self.options_diff_keys}\n"
 
         if self.console_options_diff_keys:
-            message += f"Console Options Diff: {self.console_options_diff_keys}\n"
+            message += f"New Console Options attribute: {self.console_options_diff_keys}\n"
 
         print(message)
 
