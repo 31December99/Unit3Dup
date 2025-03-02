@@ -5,12 +5,13 @@ import argparse
 from unit3dup.media_manager.VideoManager import VideoManager
 from unit3dup.media_manager.GameManager import GameManager
 from unit3dup.media_manager.DocuManager import DocuManager
-from unit3dup import config
+from unit3dup import config_settings
 
-from common.custom_console import custom_console
 from common.bittorrent import BittorrentData
 from common.trackers.trackers import ITTData
 from common.constants import my_language
+from view import custom_console
+
 from unit3dup.media_manager.common import UserContent
 
 
@@ -24,7 +25,7 @@ class TorrentManager:
         self.serie_category = tracker_data.category.get("tvshow")
         self.docu_category = tracker_data.category.get("edicola")
         self.game_category = tracker_data.category.get("game")
-        self.preferred_lang = my_language(config.user_preferences.PREFERRED_LANG)
+        self.preferred_lang = my_language(config_settings.user_preferences.PREFERRED_LANG)
 
     def process(self, contents: list) -> None:
 
@@ -50,7 +51,7 @@ class TorrentManager:
             content for content in contents if content.category == self.docu_category
         ]
 
-        if config.user_preferences.DUPLICATE_ON:
+        if config_settings.user_preferences.DUPLICATE_ON:
             custom_console.bot_log("'[ACTIVE]' Searching for duplicate")
 
         # Build the torrent file and upload each GAME to the tracker

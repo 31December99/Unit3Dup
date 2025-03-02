@@ -2,19 +2,20 @@ import json
 import requests
 
 from common.external_services.igdb.core.models.search import Game
-from common.custom_console import custom_console
 from common.trackers.trackers import ITTData
 
 from unit3dup.pvtTracker import Unit3d
+from unit3dup import config_settings
 from unit3dup.pvtVideo import Video
 from unit3dup.media import Media
-from unit3dup import config
+
+from view import custom_console
 
 class UploadBot:
     def __init__(self, content: Media):
 
-        self.API_TOKEN = config.tracker_config.ITT_APIKEY
-        self.BASE_URL = config.tracker_config.ITT_URL
+        self.API_TOKEN = config_settings.tracker_config.ITT_APIKEY
+        self.BASE_URL = config_settings.tracker_config.ITT_URL
         self.content = content
         self.tracker_data = ITTData.load_from_module()
         self.tracker = Unit3d(base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key="")

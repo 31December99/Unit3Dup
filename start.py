@@ -1,23 +1,21 @@
 # -*- coding: utf-8 -*-
 
-from rich.console import Console
-
 from common.torrent_clients import TransmissionClient, QbittorrentClient
-from common.custom_console import custom_console
 from common.trackers.trackers import ITTData
 from common.command import CommandLine
-from common import Load
+from common.settings import Load
 
 from unit3dup.torrent import View
 from unit3dup import pvtTracker
 from unit3dup.bot import Bot
 
-console = Console(log_path=False)
+from view import custom_console
 
 def main():
     """
     Main function to handle the command line interface (CLI)
     """
+
     custom_console.welcome_message()
     custom_console.bot_question_log(f"Checking your configuration file.. \n")
 
@@ -245,7 +243,7 @@ def main():
 
     # Handle case with no arguments
     if not cli.args:
-        console.print("Syntax error! Please check your commands")
+        custom_console.print("Syntax error! Please check your commands")
         return
 
 

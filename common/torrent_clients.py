@@ -6,10 +6,12 @@ import qbittorrent
 import transmission_rpc
 from abc import ABC, abstractmethod
 
-from common.custom_console import custom_console
-from unit3dup.media import Media
 from unit3dup.pvtTorrent import Mytorrent
-from unit3dup import config
+from unit3dup import config_settings
+from unit3dup.media import Media
+
+from view import custom_console
+
 
 class TorrClient(ABC):
 
@@ -26,9 +28,9 @@ class TorrClient(ABC):
 
     def download(self, tracker_torrent_url: requests, torrent_path: str):
         # Archive the torrent file if torrent_archive is set
-        if config.user_preferences.TORRENT_ARCHIVE:
+        if config_settings.user_preferences.TORRENT_ARCHIVE:
             file_name = f"{os.path.basename(torrent_path)}.torrent"
-            full_path_archive = os.path.join(config.user_preferences.TORRENT_ARCHIVE, file_name)
+            full_path_archive = os.path.join(config_settings.user_preferences.TORRENT_ARCHIVE, file_name)
         else:
             # Or save to the current path
             full_path_archive = f"{torrent_path}.torrent"
@@ -47,10 +49,10 @@ class TransmissionClient(TorrClient):
 
     def connect(self) -> transmission_rpc:
         try:
-            self.client = transmission_rpc.Client(host=config.torrent_client_config.TRASM_HOST,
-                                                  port=config.torrent_client_config.TRASM_PORT,
-                                                  username=config.torrent_client_config.TRASM_USER,
-                                                  password=config.torrent_client_config.TRASM_PASS,
+            self.client = transmission_rpc.Client(host=config_settings.torrent_client_config.TRASM_HOST,
+                                                  port=config_settings.torrent_client_config.TRASM_PORT,
+                                                  username=config_settings.torrent_client_config.TRASM_USER,
+                                                  password=config_settings.torrent_client_config.TRASM_PASS,
                                                   timeout=10)
             return self.client
         except requests.exceptions.HTTPError:
@@ -71,7 +73,7 @@ class TransmissionClient(TorrClient):
 
 
     def send_to_client(self,tracker_data_response: str, torrent: Mytorrent, content: Media):
-        full_path_archive = os.path.join(config.user_preferences.TORRENT_ARCHIVE, f"{os.path.basename(content.torrent_path)}.torrent")
+        full_path_archive = os.path.join(config_settings.user_preferences.TORRENT_ARCHIVE, f"{os.path.basename(content.torrent_path)}.torrent")
         # Torrent not created
         if not torrent:
             self.client.add_torrent(
@@ -96,11 +98,11 @@ class QbittorrentClient(TorrClient):
         try:
             # Requests the protocol type http
             self.client = qbittorrent.Client(f"http://"
-                                             f"{config.torrent_client_config.QBIT_HOST}:"
-                                             f"{config.torrent_client_config.QBIT_PORT}/",  timeout= 10)
+                                             f"{config_settings.torrent_client_config.QBIT_HOST}:"
+                                             f"{config_settings.torrent_client_config.QBIT_PORT}/",  timeout= 10)
 
-            self.client.login(username=config.torrent_client_config.QBIT_USER,
-                              password=config.torrent_client_config.QBIT_PASS)
+            self.client.login(username=config_settings.torrent_client_config.QBIT_USER,
+                              password=config_settings.torrent_client_config.QBIT_PASS)
             return self.client
 
         except requests.exceptions.HTTPError:
@@ -123,7 +125,7 @@ class QbittorrentClient(TorrClient):
 
 
     def send_to_client(self,tracker_data_response: str, torrent: Mytorrent, content: Media):
-        full_path_archive = os.path.join(config.user_preferences.TORRENT_ARCHIVE, f"{os.path.basename(content.torrent_path)}.torrent")
+        full_path_archive = os.path.join(config_settings.user_preferences.TORRENT_ARCHIVE, f"{os.path.basename(content.torrent_path)}.torrent")
         if not torrent:
             self.client.download_from_file(
                 file_buffer=open(full_path_archive, "rb"), savepath=os.path.dirname(content.torrent_path)

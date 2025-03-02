@@ -3,15 +3,15 @@ import os
 from concurrent.futures import ThreadPoolExecutor
 
 from common.torrent_clients import TransmissionClient, QbittorrentClient
-from common.custom_console import custom_console
 from common.bittorrent import BittorrentData
 from common.utility import ManageTitles
-from common import config
+from common import config_settings
 
 from unit3dup.pvtTorrent import Mytorrent
 from unit3dup.duplicate import Duplicate
 from unit3dup.media import Media
 
+from view import custom_console
 
 class UserContent:
     """
@@ -32,8 +32,8 @@ class UserContent:
 
         base_name = os.path.basename(content.torrent_path)
 
-        if config.user_preferences.TORRENT_ARCHIVE:
-            this_path = os.path.join(config.user_preferences.TORRENT_ARCHIVE, f"{base_name}.torrent")
+        if config_settings.user_preferences.TORRENT_ARCHIVE:
+            this_path = os.path.join(config_settings.user_preferences.TORRENT_ARCHIVE, f"{base_name}.torrent")
         else:
             this_path = f"{content.torrent_path}.torrent"
 
@@ -56,7 +56,7 @@ class UserContent:
            Returns:
                return boolean
            """
-        preferred_lang = config.user_preferences.PREFERRED_LANG.upper()
+        preferred_lang = config_settings.user_preferences.PREFERRED_LANG.upper()
         preferred_lang_to_iso = ManageTitles.convert_iso(preferred_lang)
 
         if not content.audio_languages:
@@ -150,16 +150,16 @@ class UserContent:
         """
         client = QbittorrentClient()
 
-        if config.torrent_client_config.TORRENT_CLIENT.lower()=='qbittorrent':
+        if config_settings.torrent_client_config.TORRENT_CLIENT.lower()=='qbittorrent':
             client = QbittorrentClient()
             client.connect()
 
-        elif config.torrent_client_config.TORRENT_CLIENT.lower()=='transmission':
+        elif config_settings.torrent_client_config.TORRENT_CLIENT.lower()=='transmission':
             client = TransmissionClient()
             client.connect()
         else:
             custom_console.bot_error_log(f"{UserContent.__class__.__name__}"
-                                         f" Invalid torrent client '{config.torrent_client_config.TORRENT_CLIENT}'" )
+                                         f" Invalid torrent client '{config_settings.torrent_client_config.TORRENT_CLIENT}'" )
             exit(1)
 
         with ThreadPoolExecutor(max_workers=20) as executor:

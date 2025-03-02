@@ -11,13 +11,12 @@ from common.external_services.theMovieDB.core.videos import Videos
 from common.external_services.theMovieDB.core.keywords import Keyword
 from common.external_services.mediaresult import MediaResult
 from common.external_services.sessions.session import MyHttp
-from common.external_services.theMovieDB.core import config
 from common.external_services.trailers.api import YtTrailer
 from common.external_services.sessions.agents import Agent
+from common.external_services.theMovieDB import config
 from common.external_services.imdb import IMDB
-from common.custom_console import custom_console
 from common.utility import ManageTitles
-
+from view import custom_console
 
 
 base_url = "https://api.themoviedb.org/3"

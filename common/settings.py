@@ -7,7 +7,6 @@ from pydantic import BaseModel, model_validator
 from urllib.parse import urlparse
 from pathlib import Path
 
-from common.custom_console import custom_console
 from common.utility import ManageTitles
 
 
@@ -36,6 +35,7 @@ class TorrentClientConfig(BaseModel):
     TRASM_HOST: str = "http://localhost"
     TRASM_PORT: int = 9091
     TORRENT_CLIENT: str | None = None
+
 
 
 class UserPreferences(BaseModel):
@@ -78,6 +78,18 @@ class Options(BaseModel):
     FTPX_KEEP_ALIVE: bool = False
 
 
+class ConsoleOptions(BaseModel):
+    NORMAL_COLOR: str = "blue bold"
+    ERROR_COLOR: str = "red bold"
+    WELCOME_MESSAGE: str = "ITT"
+    WELCOME_MESSAGE_COLOR: str = "blue"
+    WELCOME_MESSAGE_BORDER_COLOR: str = "yellow"
+    PANEL_MESSAGE_COLOR: str = "blue"
+    PANEL_MESSAGE_BORDER_COLOR: str = "yellow"
+    QUESTION_MESSAGE_COLOR: str  = "yellow"
+
+
+
 class Validate:
 
     @staticmethod
@@ -87,9 +99,7 @@ class Validate:
         """
         parsed_url = urlparse(value)
         if not (parsed_url.scheme and parsed_url.netloc) or parsed_url.scheme not in ["http", "https"]:
-            custom_console.bot_error_log(
-                f"->  Invalid URL value for {field_name} '{value}'"
-            )
+            print(f"->  Invalid URL value for {field_name} '{value}'")
             exit(1)
         return value
 
@@ -100,10 +110,22 @@ class Validate:
         """
         if isinstance(value, str) and value.strip():
             return value
-        custom_console.bot_error_log(
-            f"-> not configured {field_name} '{value}'"
-        )
+        print(f"-> not configured {field_name} '{value}'")
         exit(1)
+
+    @staticmethod
+    def colors(value: str | None, field_name: str) -> str:
+        """
+        Validates string colors
+        """
+        if isinstance(value, str) and value.strip():
+            if value.lower() in ["black", "red", "green" , "yellow" , "blue", "magenta", "cyan", "white",
+                         "black bold", "red bold", "green bold", "yellow bold", "blue bold", "magenta bold",
+                         "cyan bold", "white bold"]:
+                return value
+        print(f"-> not configured {field_name} '{value}'")
+        exit(1)
+
 
     @staticmethod
     def iso3166(value: str | None, field_name: str) -> str | None:
@@ -115,9 +137,7 @@ class Validate:
                 return value
             if value.lower() == 'all':
                 return value
-        custom_console.bot_error_log(
-            f"-> not configured {field_name} '{value}'"
-        )
+        print(f"-> not configured {field_name} '{value}'")
         exit(1)
 
     @staticmethod
@@ -131,9 +151,7 @@ class Validate:
             parsed_ip = ipaddress.ip_address(value)
             return value
         except ValueError:
-            custom_console.bot_error_log(
-                f"->  Invalid IP address value for {field_name} '{value}'"
-            )
+            print(f"-> not configured {field_name} '{value}'")
             exit(1)
 
     @staticmethod
@@ -144,9 +162,7 @@ class Validate:
         try:
             return int(value)
         except (ValueError, TypeError):
-            custom_console.bot_error_log(
-                f"-> not configured {field_name} '{value}'"
-            )
+            print(f"-> not configured {field_name} '{value}'")
             exit(1)
 
     @staticmethod
@@ -160,9 +176,7 @@ class Validate:
                 return True
             elif normalized_value in {"false", "0", "no"}:
                 return False
-        custom_console.bot_error_log(
-            f"-> not configured {field_name} '{value}'"
-        )
+        print(f"-> not configured {field_name} '{value}'")
         exit(1)
 
     @staticmethod
@@ -175,16 +189,16 @@ class Validate:
         path = Path(value).expanduser()
         if path.is_dir():
             return str(path)
-        custom_console.bot_error_log(
-            f"-> Invalid path for {field_name} '{value}'"
-        )
+        print(f"-> Invalid path for {field_name} '{value}'")
         exit(1)
+
 
 class Config(BaseModel):
     tracker_config: TrackerConfig
     torrent_client_config: TorrentClientConfig
     user_preferences: UserPreferences
     options: Options
+    console_options: ConsoleOptions
 
     @model_validator(mode='before')
     def set_default_tracker_config(cls, v):
@@ -192,7 +206,7 @@ class Config(BaseModel):
         section = v['tracker_config']
         for field,value in section.items():
             if value is None:
-                custom_console.bot_error_log(f"Please fix the '{field}' value")
+                print(f"Please fix the '{field}' value")
                 exit(1)
             else:
                 if field=='ITT_URL':
@@ -207,7 +221,7 @@ class Config(BaseModel):
         section = v['torrent_client_config']
         for field,value in section.items():
             if value is None:
-                custom_console.bot_error_log(f"Please fix the '{field}' value")
+                print(f"Please fix the '{field}' value")
                 exit(1)
             else:
                 if field in  ['QBIT_HOST','TRASM_HOST']:
@@ -233,7 +247,7 @@ class Config(BaseModel):
 
         for field,value in section.items():
             if value is None:
-                custom_console.bot_error_log(f"Please fix the '{field}' value")
+                print(f"Please fix the '{field}' value")
                 exit(1)
             else:
                 field = field.upper()
@@ -258,6 +272,21 @@ class Config(BaseModel):
     @model_validator(mode='before')
     def set_default_options(cls, v):
         return v or Options()
+
+    @model_validator(mode='before')
+    def set_default_console_options(cls, v):
+        section = v['console_options']
+
+        for field,value in section.items():
+            if value is None:
+                print(f"Please fix the '{field}' value")
+                exit(1)
+            else:
+                field = field.upper()
+                section[field] = Validate.string(value=section[field], field_name=field)
+
+        return v
+
 
 
 class Load:
@@ -342,6 +371,16 @@ class Load:
                 "FTPX_LOCAL_PATH": ".",
                 "FTPX_ROOT": ".",
                 "FTPX_KEEP_ALIVE": False,
+            },
+            "console_options": {
+                "NORMAL_COLOR": "blue bold",
+                "ERROR_COLOR": "red bold",
+                "WELCOME_MESSAGE": "ITT",
+                "WELCOME_MESSAGE_COLOR": "blue",
+                "WELCOME_MESSAGE_BORDER_COLOR": "yellow",
+                "PANEL_MESSAGE_COLOR": "blue",
+                "PANEL_MESSAGE_BORDER_COLOR": "yellow",
+                "QUESTION_MESSAGE_COLOR": "yellow",
             }
         }
 
@@ -415,11 +454,12 @@ class JsonConfig:
         # true if any diff is found
         self.updated = False
 
-        # Load the json sections from the file
+        # Load the json sections from the file ( add section man)
         self.tracker_config = self.file_config_data["tracker_config"]
         self.torrent_config = self.file_config_data["torrent_client_config"]
         self.user_preferences_config = self.file_config_data["user_preferences"]
         self.options_config = self.file_config_data["options"]
+        self.console_options_config = self.file_config_data["console_options"]
 
         # New tracker attribute
         self.tracker_diff_keys = self.tracker_config.keys() ^ TrackerConfig.__annotations__.keys()\
@@ -436,6 +476,11 @@ class JsonConfig:
         # New options attribute
         self.options_diff_keys = self.options_config.keys() ^ Options.__annotations__.keys()\
         if not self.options_config.keys() == Options.__annotations__.keys() else None
+
+        # New console options attribute
+        self.console_options_diff_keys = self.console_options_config.keys() ^ ConsoleOptions.__annotations__.keys()\
+        if not self.console_options_config.keys() == ConsoleOptions.__annotations__.keys() else None
+
 
     def update_tracker_config(self):
         # Add the new attributes in 'tracker config'
@@ -469,6 +514,14 @@ class JsonConfig:
             self.options_config.update(missing_keys_dict)
 
 
+    def update_console_options_config(self):
+        # Add the new attributes in 'console options'
+        if self.console_options_diff_keys:
+            self.updated = True
+            missing_keys_dict = {key: '' for key in self.console_options_diff_keys}
+            self.console_options_config.update(missing_keys_dict)
+
+
     def get_config_updated(self) -> dict:
 
         # Update the loaded file json section 'tracker'
@@ -483,6 +536,9 @@ class JsonConfig:
         # Update the loaded file json section 'options'
         self.update_options_config()
 
+        # Update the loaded file json section 'console options'
+        self.update_console_options_config()
+
         return self.file_config_data
 
 
@@ -494,9 +550,9 @@ class JsonConfig:
 
         except json.JSONDecodeError as e:
             print(f"Config Loading error.. {e}")
-            custom_console.bot_log("Try to Check '\\ characters. Example: ")
-            custom_console.bot_log("C:\myfolder -> not correct ")
-            custom_console.bot_log("C:/myfolder -> CORRECT ")
+            print("Try to Check '\\ characters. Example: ")
+            print("C:\myfolder -> not correct ")
+            print("C:/myfolder -> CORRECT ")
             exit(1)
         except FileNotFoundError:
             print(f"Configuration '{self.default_json_path}' not found")
@@ -514,7 +570,7 @@ class JsonConfig:
 
             # Write the content to another file with *.backup extension
             shutil.copy2(self.default_json_path,f"{self.default_json_path}.backup")
-            custom_console.bot_log(f"Backup the current json file..{self.default_json_path}.backup")
+            print(f"Backup the current json file..{self.default_json_path}.backup")
 
             # Update the current json file
             with open(f"{self.default_json_path}", 'w', encoding='utf-8') as file_w:
@@ -522,7 +578,7 @@ class JsonConfig:
                 json.dump(json_updated,file_w, ensure_ascii=False, indent=4)
 
             # Validate the file
-            custom_console.bot_log(f"Json file updated and validated {self.default_json_path}")
+            print(f"Json file updated and validated {self.default_json_path}")
             return self.validate_json()
         else:
             return self.file_config_data
@@ -530,7 +586,7 @@ class JsonConfig:
 
     def json_message_new_attributes(self):
 
-        custom_console.bot_log("Since the last bot version there are new attributes")
+        print("Since the last bot version there are new attributes")
         message = ''
         if self.tracker_diff_keys:
             message += f"Tracker Configuration Diff: {self.tracker_diff_keys}\n"
@@ -544,5 +600,5 @@ class JsonConfig:
         if self.options_diff_keys:
             message += f"Options Diff: {self.options_diff_keys}\n"
 
-        custom_console.bot_log(message)
+        print(message)
 

@@ -1,6 +1,5 @@
 guessit==3.8.0
 pymediainfo==6.1.0
-python-decouple==3.8
 python-qbittorrent==0.4.3
 pydantic==2.10.6
 requests==2.32.3

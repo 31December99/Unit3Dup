@@ -4,9 +4,11 @@ import json
 import os
 import torf
 from tqdm import tqdm
-from common.custom_console import custom_console
+
 from unit3dup.media import Media
-from unit3dup import config
+from unit3dup import config_settings
+
+from view import custom_console
 
 class HashProgressBar(tqdm):
     def callback(self, mytorr, path, current_num_hashed, total_pieces):
@@ -22,7 +24,7 @@ class Mytorrent:
         self.metainfo = json.loads(meta)
 
         self.mytorr = torf.Torrent(path=contents.torrent_path)
-        self.mytorr.comment = config.user_preferences.TORRENT_COMMENT
+        self.mytorr.comment = config_settings.user_preferences.TORRENT_COMMENT
         self.mytorr.name = contents.torrent_name
         self.mytorr.created_by = "https://github.com/31December99/Unit3Dup"
         self.mytorr.private = True
@@ -38,12 +40,12 @@ class Mytorrent:
                 exit(1)
 
     def write(self) -> bool:
-        if not config.user_preferences.TORRENT_ARCHIVE:
+        if not config_settings.user_preferences.TORRENT_ARCHIVE:
             full_path = f"{self.torrent_path}.torrent"
         else:
             torrent_file_name = os.path.basename(self.torrent_path)
             full_path = os.path.join(
-                config.user_preferences.TORRENT_ARCHIVE, f"{torrent_file_name}.torrent"
+                config_settings.user_preferences.TORRENT_ARCHIVE, f"{torrent_file_name}.torrent"
             )
 
         custom_console.bot_log(f"--> {full_path}")
