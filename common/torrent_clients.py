@@ -85,39 +85,15 @@ class TransmissionClient(TorrClient):
             if download_torrent_dal_tracker.status_code == 200:
                 torrent_file = self.download(tracker_torrent_url=download_torrent_dal_tracker,
                                              torrent_path=content.torrent_path)
-                self.client.add_torrent(
-                    torrent=torrent_file, download_dir=str(torrent.mytorr.location)
-                )
 
-    def set_location(self):
-        """ Set location for the torrent with shared_path """
+                # "Translate" files location to shared_path
+                if config_settings.torrent_client_config.SHARED_PATH:
+                    torr_location = config_settings.torrent_client_config.SHARED_PATH
+                else:
+                    # If no shared_path is specified set it to the path specified in the CLI commands (path)
+                    torr_location = torrent.mytorr.location
+                self.client.add_torrent(torrent=torrent_file, download_dir=str(torr_location))
 
-        # List of torrents loaded in transmission
-        torrents = self.client.get_torrents()
-
-        print(torrents)
-        print(config_settings.torrent_client_config.SHARED_PATH)
-
-        for torrent in torrents:
-            # Torrent ID
-            torrent_id = torrent.id
-
-            # Torrent file location
-            save_path = torrent.download_dir
-            print(save_path)
-
-            # Torrent status: stalled or seedingf
-            state = torrent.status
-            print(state)
-
-            # Check if the torrent is stalled or seeding, and the save path doesn't exist
-            if (state == 'stalledUP' or state == 'seeding') and not os.path.exists(save_path):
-                # If the torrent save path does not exist it is probably stalled
-                # Try the shared path instead
-                shared_path = config_settings.torrent_client_config.SHARED_PATH
-                self.client.move_torrent_data(torrent_id,shared_path)
-                custom_console.bot_log(f"Moved torrent data to {shared_path} for {torrent.name} "
-                                       f"status: {torrent.status}")
 
 
 class QbittorrentClient(TorrClient):
@@ -168,35 +144,12 @@ class QbittorrentClient(TorrClient):
             if download_torrent_dal_tracker.status_code == 200:
                 torrent_file = self.download(tracker_torrent_url=download_torrent_dal_tracker,
                                              torrent_path=content.torrent_path)
-                self.client.download_from_file(
-                    file_buffer=torrent_file, savepath=torrent.mytorr.location
-                )
 
 
-    def set_location(self):
-        """ Set location for the torrent with shared_path """
-
-        # List of torrent loaded in qbittorrent
-
-        for torrent in self.client.torrents():
-
-                # Torrent info_hash
-                info_hash = torrent['infohash_v1']
-
-                # Torrent file location
-                save_path = torrent['save_path']
-
-                # Torrent status:  stalledUP = fail uploading
-                state = torrent['state']
-
-                # Stalled wrong path
-                if state == 'stalledUP' or state == 'seeding' and not os.path.exists(save_path):
-                    # If the torrent save path does not exist it is probably stalled
-                    # Try the shared path instead
-                    shared_path = config_settings.torrent_client_config.SHARED_PATH
-                    self.client.set_torrent_location(info_hash, shared_path)
-                    custom_console.bot_log(f"Moved torrent data to {shared_path} for {torrent['name']}"
-                                           f" status: {torrent['state']}")
-
-
-
+                # "Translate" files location to shared_path
+                if config_settings.torrent_client_config.SHARED_PATH:
+                    torr_location = config_settings.torrent_client_config.SHARED_PATH
+                else:
+                    # If no shared_path is specified set it to the path specified in the CLI commands (path)
+                    torr_location = torrent.mytorr.location
+                self.client.download_from_file(file_buffer=torrent_file, savepath=str(torr_location))
