@@ -169,6 +169,3 @@ class UserContent:
             # Wait for all threads to complete
             for future in futures:
                 future.result()
-
-
-        client.set_location()
