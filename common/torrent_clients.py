@@ -87,8 +87,8 @@ class TransmissionClient(TorrClient):
                                              torrent_path=content.torrent_path)
 
                 # "Translate" files location to shared_path
-                if config_settings.torrent_client_config.SHARED_PATH:
-                    torr_location = config_settings.torrent_client_config.SHARED_PATH
+                if config_settings.torrent_client_config.SHARED_TRASM_PATH:
+                    torr_location = config_settings.torrent_client_config.SHARED_TRASM_PATH
                 else:
                     # If no shared_path is specified set it to the path specified in the CLI commands (path)
                     torr_location = torrent.mytorr.location
@@ -147,8 +147,8 @@ class QbittorrentClient(TorrClient):
 
 
                 # "Translate" files location to shared_path
-                if config_settings.torrent_client_config.SHARED_PATH:
-                    torr_location = config_settings.torrent_client_config.SHARED_PATH
+                if config_settings.torrent_client_config.SHARED_QBIT_PATH:
+                    torr_location = config_settings.torrent_client_config.SHARED_QBIT_PATH
                 else:
                     # If no shared_path is specified set it to the path specified in the CLI commands (path)
                     torr_location = torrent.mytorr.location
