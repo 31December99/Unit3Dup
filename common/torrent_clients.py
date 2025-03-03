@@ -68,7 +68,7 @@ class TransmissionClient(TorrClient):
                 f"{self.__class__.__name__} Login required. Check your username and password"
             )
         except Exception as e:
-            custom_console.bot_error_log(f"{self.__class__.__name__} Unexpected error: {str(e)}")
+            custom_console.bot_error_log(f"{self.__class__.__name__} Unexpected error: {e}")
             custom_console.bot_error_log(f"{self.__class__.__name__} Please verify your configuration")
 
 
@@ -127,7 +127,8 @@ class QbittorrentClient(TorrClient):
             )
 
         except Exception as e:
-            custom_console.bot_error_log(f"{self.__class__.__name__} Unexpected error: {str(e)}")
+            custom_console.bot_error_log(f"{self.__class__.__name__} Unexpected error: {e}")
+            custom_console.bot_error_log(f"{self.__class__.__name__} Please verify your configuration")
 
     def send_to_client(self,tracker_data_response: str, torrent: Mytorrent, content: Media):
         full_path_archive = os.path.join(config_settings.user_preferences.TORRENT_ARCHIVE,
