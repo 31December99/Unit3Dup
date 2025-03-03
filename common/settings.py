@@ -30,12 +30,13 @@ class TorrentClientConfig(BaseModel):
     QBIT_PASS: str | None = None
     QBIT_HOST: str = "http://localhost"
     QBIT_PORT: int = 8080
+    SHARED_QBIT_PATH: str | None = None
     TRASM_USER: str | None = None
     TRASM_PASS: str | None = None
     TRASM_HOST: str = "http://localhost"
     TRASM_PORT: int = 9091
     TORRENT_CLIENT: str | None = None
-    SHARED_PATH: str | None = None
+    SHARED_TRASM_PATH: str | None = None
 
 
 
@@ -263,7 +264,7 @@ class Config(BaseModel):
                 if field in ['QBIT_PASS','TRASM_PASS','QBIT_USER','TRASM_USER','TORRENT_CLIENT']:
                     section[field] = Validate.string(value=section[field], field_name=field)
 
-                if field in ['SHARED_PATH']:
+                if field in ['SHARED_TRASM_PATH', 'SHARED_QBIT_PATH']:
                     section[field] = Validate.shared_path(value=section[field], field_name=field)
 
         return v
@@ -359,12 +360,14 @@ class Load:
                 "QBIT_PASS": "no_pass",
                 "QBIT_HOST": "127.0.0.1",
                 "QBIT_PORT": "8080",
+                "SHARED_QBIT_PATH": "no_path",
                 "TRASM_USER": "admin",
                 "TRASM_PASS": "no_pass",
                 "TRASM_HOST": "127.0.0.1",
                 "TRASM_PORT": "9091",
                 "TORRENT_CLIENT": "qbittorrent",
-                "SHARED_PATH": "no_shared_path"
+                "SHARED_TRASM_PATH": "no_path"
+
             },
             "user_preferences": {
                 "PTSCREENS_PRIORITY": 0,
