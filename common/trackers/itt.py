@@ -13,7 +13,7 @@ itt_data = {
         "encode": 3,
         "bluray": 3,
         "fullhd": 3,
-        "hvec": 3,
+        "hevc": 3,
         "vu": 3,
         "hdrip": 3,
         "web-dl": 4,
