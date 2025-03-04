@@ -7,6 +7,8 @@ from common.trackers.trackers import ITTData
 from unit3dup.pvtTracker import Unit3d
 from unit3dup import config_settings
 from unit3dup.pvtVideo import Video
+from unit3dup.pvtDocu import PdfImages
+
 from unit3dup.media import Media
 
 from view import custom_console
@@ -66,12 +68,12 @@ class UploadBot:
                                                nfo_path=nfo_path)
         return self.message(tracker_response)
 
-    def send_docu(self):
+    def send_docu(self, document_info: PdfImages):
 
         self.tracker.data["name"] = self.content.display_name
         self.tracker.data["tmdb"] = 0
         self.tracker.data["category_id"] = self.content.category
-        self.tracker.data["description"] = self.content.doc_description
+        self.tracker.data["description"] =  document_info.description # self.content.doc_description
         self.tracker.data["type_id"] = self.tracker_data.filter_type(self.content.file_name)
         self.tracker.data["resolution_id"] = ""
         # tracker.data["torrent-cover"] = "" TODO: not yet implemented
