@@ -6,6 +6,7 @@ import shutil
 from pydantic import BaseModel, model_validator
 from urllib.parse import urlparse
 from pathlib import Path
+from pathvalidate import sanitize_filepath
 
 from common.utility import ManageTitles
 
@@ -115,13 +116,47 @@ class Validate:
         print(f"-> Please Fix '{field_name}' ['{value}'] in settings.json")
         exit(1)
 
+
     @staticmethod
-    def shared_path(value: str | None, field_name: str) -> str | None:
+    def validate_path(path: str)-> str | None:
+        try:
+            # Remove wrong chars
+            sanitized_path = sanitize_filepath(path)
+
+            # not configured = no_path
+            # '.' current path
+            if 'no_path' or '.'  in sanitized_path.lower():
+                return sanitized_path
+
+            # Test for absolute path
+            return sanitized_path if os.path.isabs(path) and 'no_path' not in path else None
+        except ValueError:
+            # not a valid path
+            return None
+
+    @staticmethod
+    def torrent_archive_path(path: str | None, field_name: str) -> str | None:
+        """
+        Validates path
+        return: validated and verified path or None
+        """
+
+        if isinstance(path, str) and path.strip():
+            if validate_path:=Validate.validate_path(path=path):
+                if Path(validate_path).expanduser().is_dir():
+                    return validate_path
+        print(f"-> Invalid path for {field_name} '{path}'")
+        exit(1)
+
+
+    @staticmethod
+    def shared_path(path: str | None, field_name: str) -> str | None:
         """
         Validates string
+        return: sanitized path or None
         """
         # if it's a str and not an empty string
-        if isinstance(value, str) and value.strip():
+        if isinstance(path, str) and path.strip():
             # I need to check if it's a valid path without it existing
             # Example:
             # On Linux shared folder:
@@ -129,12 +164,10 @@ class Validate:
             # On Windows torrent_path:
             # c:\test_folder
             # The torrent client will point to c:\test_folder
-            # basic check...
-            if '/' in value or '\\' in value:
-                return value
-            else:
-                return None
-        print(f"-> Please Fix '{field_name}' ['{value}'] in settings.json")
+            if validate_path:=Validate.validate_path(path=path):
+                return validate_path
+
+        print(f"-> Please Fix '{field_name}' ['{path}'] in settings.json")
         exit(1)
 
     @staticmethod
@@ -203,19 +236,6 @@ class Validate:
         print(f"-> Please Fix '{field_name}' ['{value}'] in settings.json")
         exit(1)
 
-    @staticmethod
-    def torrent_archive_path(value: str | None, field_name: str, default_value: str | None) -> str | None:
-        """
-        Validates path
-        """
-        if value is None or not isinstance(value, str) or not value.strip():
-            return default_value
-        path = Path(value).expanduser()
-        if path.is_dir():
-            return str(path)
-        print(f"-> Invalid path for {field_name} '{value}'")
-        exit(1)
-
 
 class Config(BaseModel):
     tracker_config: TrackerConfig
@@ -265,7 +285,7 @@ class Config(BaseModel):
                     section[field] = Validate.string(value=section[field], field_name=field)
 
                 if field in ['SHARED_TRASM_PATH', 'SHARED_QBIT_PATH']:
-                    section[field] = Validate.shared_path(value=section[field], field_name=field)
+                    section[field] = Validate.shared_path(path=section[field], field_name=field)
 
         return v
 
@@ -295,7 +315,7 @@ class Config(BaseModel):
                     section[field] =Validate.iso3166(value=section[field], field_name=field)
 
                 if field in  ['TORRENT_ARCHIVE','PW_DOWNLOAD_PATH', 'WATCHER_DESTINATION_PATH','CACHE_PATH']:
-                    section[field] =Validate.torrent_archive_path(value=section[field], field_name=field, default_value='.')
+                    section[field] =Validate.torrent_archive_path(path=section[field], field_name=field)
         return v
 
     @model_validator(mode='before')
