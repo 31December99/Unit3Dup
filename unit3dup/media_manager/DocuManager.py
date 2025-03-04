@@ -4,9 +4,10 @@ import argparse
 from common.bittorrent import BittorrentData
 
 from unit3dup.media_manager.common import UserContent
+from unit3dup.pvtDocu import PdfImages
 from unit3dup.upload import UploadBot
-from unit3dup.media import Media
 from unit3dup import config_settings
+from unit3dup.media import Media
 
 from view import custom_console
 
@@ -44,11 +45,15 @@ class DocuManager:
             else:
                 torrent_response = None
 
+            # Get the cover image
+            docu_info = PdfImages(content.file_name)
+            docu_info.build_info()
+
             # Tracker payload
             unit3d_up = UploadBot(content)
 
             # Upload
-            tracker_response, tracker_message = unit3d_up.send_docu()
+            tracker_response, tracker_message = unit3d_up.send_docu(document_info=docu_info)
 
             if not self.cli.torrent:
                 bittorrent_list.append(

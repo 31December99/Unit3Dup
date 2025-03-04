@@ -5,6 +5,7 @@ import json
 import time
 import requests
 
+from PIL import Image
 from abc import ABC, abstractmethod
 from common import config_settings
 from view import custom_console
@@ -205,3 +206,65 @@ class ImageUploaderFallback:
 
         if uploader_host == "ImgFi":
             return response['image']['url']
+
+class Build:
+    """
+    - Upload screenshots and create a new description
+    """
+    offline_uploaders = []
+
+    def __init__(self, extracted_frames: list['Image']):
+
+        # Host APi keys
+        self.IMGBB_KEY = config_settings.tracker_config.IMGBB_KEY
+        self.FREE_IMAGE_KEY = config_settings.tracker_config.FREE_IMAGE_KEY
+        self.LENSDUMP_KEY= config_settings.tracker_config.LENSDUMP_KEY
+        self.PTSCREENS_KEY= config_settings.tracker_config.PTSCREENS_KEY
+        self.IMGFI_KEY = config_settings.tracker_config.IMGFI_KEY
+        self.extracted_frames = extracted_frames
+
+
+    def description(self) -> str:
+        description = "[center]\n"
+        console_url = []
+
+        custom_console.bot_log("Starting image upload..")
+        for img_bytes in self.extracted_frames:
+
+            master_uploaders = [
+                ImgBB(img_bytes, self.IMGBB_KEY),
+                Freeimage(img_bytes, self.FREE_IMAGE_KEY),
+                PtScreens(img_bytes, self.PTSCREENS_KEY),
+                LensDump(img_bytes, self.LENSDUMP_KEY),
+                ImgFi(img_bytes, self.IMGFI_KEY),
+            ]
+
+            # Sorting list based on priority
+            master_uploaders.sort(key=lambda uploader: uploader.priority)
+
+            # for each on-line uploader
+            for uploader in master_uploaders:
+                if not uploader.__class__.__name__ in self.offline_uploaders:
+                    # Upload the screenshot
+                    fallback_uploader = ImageUploaderFallback(uploader)
+                    # Get a new URL
+                    img_url = fallback_uploader.upload()
+
+                    # If it goes offline during upload skip the uploader
+                    if not img_url:
+                        custom_console.bot_error_log(
+                            "** Upload failed, skip to next host **"
+                        )
+                        self.offline_uploaders.append(uploader.__class__.__name__)
+                        continue
+                    custom_console.bot_log(img_url)
+                    # Append the URL to new description
+                    console_url.append(img_url)
+                    description += f"[url={img_url}][img=650]{img_url}[/img][/url]"
+                    # Got description for this screenshot
+                    break
+
+        # Append the new URL to the description string
+        description += "\n[/center]"
+        return description
+
