@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import diskcache
 
-from common.external_services.imageHost import ImgBB, Freeimage, LensDump, ImageUploaderFallback, PtScreens, ImgFi,Build
+from common.external_services.imageHost import Build
 from common.mediainfo import MediaFile
 from common.frames import VideoFrame
 
@@ -14,20 +14,13 @@ offline_uploaders = []
 
 class Video:
     """
-    - Generate screenshots for each video provided
+    - Get screenshots for each provided video
     - Obtain media info for each video and for the first video in a series
     - Upload screenshots and create a new description
     - Determine if the video is standard definition (SD) or not
     """
 
     def __init__(self, file_name: str,  tmdb_id: int, trailer_key = None):
-
-        # Host APi keys
-        self.IMGBB_KEY = config_settings.tracker_config.IMGBB_KEY
-        self.FREE_IMAGE_KEY = config_settings.tracker_config.FREE_IMAGE_KEY
-        self.LENSDUMP_KEY= config_settings.tracker_config.LENSDUMP_KEY
-        self.PTSCREENS_KEY= config_settings.tracker_config.PTSCREENS_KEY
-        self.IMGFI_KEY = config_settings.tracker_config.IMGFI_KEY
 
         # File name
         self.file_name: str = file_name
