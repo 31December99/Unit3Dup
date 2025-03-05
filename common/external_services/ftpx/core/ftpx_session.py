@@ -91,7 +91,7 @@ class FtpXCmds(FTP_TLS):
             validate_ftpx_config = False
 
         if not validate_ftpx_config:
-            custom_console.bot_error_log(f"Please check your service.env file or verify if the FTP server is online")
+            custom_console.bot_error_log(f"Please check your config file or verify if the FTP server is online")
             exit(1)
 
         """Create an instance of FtpXCmds and handle connection and login"""
@@ -103,7 +103,7 @@ class FtpXCmds(FTP_TLS):
         except all_errors as e:
             custom_console.bot_error_log(f"\nFTP Server Error: {e}")
             custom_console.bot_error_log(
-                f"Please check your service.env file or verify if the FTP server is online"
+                f"Please check your config file or verify if the FTP server is online"
             )
             exit(1)
         return ftp
