@@ -74,7 +74,7 @@ class Tracker(Myhttp):
                     time.sleep(60)
                 else:
                     custom_console.bot_error_log(
-                        f"[Tracker] HTTP Error {e.response.status_code}. Check your configuration file *.env"
+                        f"[Tracker] HTTP Error {e.response.status_code}. Check your configuration file"
                         f" or verify if the tracker is online")
                     exit(1)
 
