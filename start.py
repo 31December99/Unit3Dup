@@ -26,7 +26,6 @@ def main():
     cli = CommandLine()
 
     # Read tracker name fav
-    # user_tracker_name = cli.args.tracker if cli.args.tracker else config.tracker_config.DEFAULT_TRACKER
     if not config.tracker_config.DEFAULT_TRACKER:
         custom_console.bot_error_log(f"No tracker name provided. Please update your configuration file")
         exit(1)
