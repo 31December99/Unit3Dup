@@ -30,7 +30,7 @@ class CommandLine:
 
 
         parser.add_argument(
-            "-t", "--tracker", type=str, default="itt", help="Tracker Name"
+            "-t", "--tracker", type=str, default="", help="Tracker Name"
         )
         parser.add_argument("-scan", "--scan", type=str, help="Scan Folder")
 

@@ -36,7 +36,8 @@ class DocuManager:
 
             # Skip if it is a duplicate
             if ((self.cli.duplicate or config_settings.user_preferences.DUPLICATE_ON)
-                    and UserContent.is_duplicate(content=content)):
+                    and UserContent.is_duplicate(content=content,
+                                                 tracker_name=config_settings.tracker_config.DEFAULT_TRACKER)):
                 continue
 
             # Does not create the torrent if the torrent was found earlier
@@ -50,7 +51,7 @@ class DocuManager:
             docu_info.build_info()
 
             # Tracker payload
-            unit3d_up = UploadBot(content)
+            unit3d_up = UploadBot(content=content, tracker_name=config_settings.tracker_config.DEFAULT_TRACKER)
 
             # Upload
             tracker_response, tracker_message = unit3d_up.send_docu(document_info=docu_info)

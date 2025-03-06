@@ -25,7 +25,8 @@ def test_tmdb():
             assert hasattr(db, 'video_id') and hasattr(db, 'keywords_list') and hasattr(db, 'trailer_key')
 
         """ DUPLICATE """
-        assert isinstance(tests.UserContent.is_duplicate(content=content),bool)
+        assert isinstance(tests.UserContent.is_duplicate(content=content,
+                                                         tracker_name=tests.config.tracker_config.DEFAULT_TRACKER),bool)
 
         """ VIDEO INFO """
         video_info = tests.Video(content.file_name, tmdb_id=db.video_id, trailer_key=db.trailer_key)
@@ -55,7 +56,7 @@ def test_tmdb():
 
         """ UPLOAD """
         # Tracker Bot
-        unit3d_up = tests.UploadBot(content)
+        unit3d_up = tests.UploadBot(content=content, tracker_name=tests.config.tracker_config.DEFAULT_TRACKER)
         # Send data to the tracker
         tracker_response, tracker_message = unit3d_up.send(show_id=db.video_id, imdb_id = db.imdb_id,
                                                            show_keywords_list=db.keywords_list,
