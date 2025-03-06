@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import guessit
 from common.utility import ManageTitles, System
-from common.trackers.trackers import ITTData
+from common.trackers.trackers import TRACKData
 from common.trackers.itt import itt_data
 from common.constants import my_language
 from common import title
@@ -10,8 +10,8 @@ from view import custom_console
 
 from unit3dup.media_manager.MediaInfoManager import MediaInfoManager
 from unit3dup.torrent import Torrent
-from unit3dup.media import Media
 from unit3dup import config_settings
+from unit3dup.media import Media
 
 
 
@@ -59,16 +59,16 @@ class CompareTitles:
 
 class Duplicate:
 
-    def __init__(self, content: Media, tracker_name: str):
+    def __init__(self, content: Media):
 
         # User content from the scan process
         self.content: Media = content
 
         # Class to get info about a torrent
-        self.torrent_info = Torrent(tracker_name=tracker_name)
+        self.torrent_info = Torrent(tracker_name=config_settings.tracker_config.DEFAULT_TRACKER)
 
         # Load the constant tracker
-        tracker_data = ITTData.load_from_module()
+        tracker_data = TRACKData.load_from_module(tracker_name=config_settings.tracker_config.DEFAULT_TRACKER)
 
         # Category Movie
         self.movie_category = tracker_data.category.get("movie")

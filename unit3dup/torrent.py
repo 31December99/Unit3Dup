@@ -2,7 +2,7 @@
 import re
 import requests
 
-from common.trackers.trackers import ITTData
+from common.trackers.trackers import TRACKData
 
 from unit3dup import pvtTracker
 from unit3dup import config_settings
@@ -15,8 +15,6 @@ class Torrent:
 
         self.perPage = 30
         self.tracker = pvtTracker.Unit3d(tracker=tracker_name)
-
-
 
 
     @staticmethod
@@ -165,7 +163,7 @@ class View(Torrent):
 
         self.perPage = 30
         # Load the constant tracker
-        self.tracker_data = ITTData.load_from_module()
+        self.tracker_data = TRACKData.load_from_module(config_settings.tracker_config.DEFAULT_TRACKER)
         print()
 
     def get_unique_id(self, media_info: str) -> str:

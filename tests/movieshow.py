@@ -2,7 +2,7 @@
 
 import tests
 
-tracker_data = tests.ITTData.load_from_module()
+tracker_data = tests.TRACKData.load_from_module(tests.config.tracker_config.DEFAULT_TRACKER)
 assert isinstance(tracker_data.category, dict)
 
 

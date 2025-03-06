@@ -7,7 +7,9 @@ from common.external_services.igdb.core.tags import (
     additions,
     platform_patterns,
 )
-from common.trackers.trackers import ITTData
+from unit3dup import config_settings
+
+from common.trackers.trackers import TRACKData
 from common.utility import ManageTitles
 from common.mediainfo import MediaFile
 from common import title
@@ -54,7 +56,7 @@ class Media:
         self._game_nfo: str | None = None
 
         # load the tracker data
-        self.tracker_data = ITTData.load_from_module()
+        self.tracker_data = TRACKData.load_from_module(config_settings.tracker_config.DEFAULT_TRACKER)
 
     @property
     def title_sanitized(self)-> str:

@@ -8,7 +8,7 @@ from unit3dup.media_manager.DocuManager import DocuManager
 from unit3dup import config_settings
 
 from common.bittorrent import BittorrentData
-from common.trackers.trackers import ITTData
+from common.trackers.trackers import TRACKData
 from common.constants import my_language
 from view import custom_console
 
@@ -16,10 +16,10 @@ from unit3dup.media_manager.common import UserContent
 
 
 class TorrentManager:
-    def __init__(self, cli: argparse.Namespace, tracker_name=None):  # todo tracker_name
+    def __init__(self, cli: argparse.Namespace):
         self.cli = cli
 
-        tracker_data = ITTData.load_from_module()
+        tracker_data = TRACKData.load_from_module(config_settings.tracker_config.DEFAULT_TRACKER)
 
         self.movie_category = tracker_data.category.get("movie")
         self.serie_category = tracker_data.category.get("tvshow")

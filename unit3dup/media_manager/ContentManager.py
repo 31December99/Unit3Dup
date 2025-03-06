@@ -3,11 +3,13 @@ import json
 import os
 import re
 
+from unit3dup import config_settings
 from unit3dup.automode import Auto
 from unit3dup.media import Media
 
-from common.trackers.trackers import ITTData
+from common.trackers.trackers import TRACKData
 from common.utility import ManageTitles
+
 
 class ContentManager:
     def __init__(self, path: str, tracker_name: str, mode: str, force_media_type=None):
@@ -39,7 +41,7 @@ class ContentManager:
 
         self.tracker_name: str = tracker_name
         self.path: str = os.path.normpath(path)
-        self.tracker_data = ITTData.load_from_module()
+        self.tracker_data = TRACKData.load_from_module(config_settings.tracker_config.DEFAULT_TRACKER)
 
         self.auto = Auto(path=self.path, mode=self.mode, tracker_name=self.tracker_name,
                          force_media_type=self.force_media_type)
