@@ -9,10 +9,17 @@ from unit3dup import config_settings
 from view import custom_console
 
 class Myhttp:
-    def __init__(self, base_url: str, api_token: str, pass_key: str):
-        self.base_url = base_url
-        self.api_token = api_token
+    def __init__(self, tracker: str, pass_key=''):
+
+        tracker_login = self.select_tracker(tracker.upper())
+        if not tracker_login:
+            custom_console.bot_error_log(
+                f"Tracker '{tracker}' not found. Please check your configuration or set it using the '-t' flag.")
+            exit(1)
+
         self.pass_key = pass_key
+        self.base_url = tracker_login['url']
+        self.api_token = tracker_login['api_key']
 
         self.upload_url = urljoin(self.base_url, "api/torrents/upload")
         self.filter_url = urljoin(self.base_url, "api/torrents/filter?")
@@ -51,6 +58,27 @@ class Myhttp:
             "sticky": 0,
             "torrent-cover": "",  # no ancora implementato
         }
+
+    @staticmethod
+    def select_tracker(tracker_name: str) -> dict | None:
+
+        trackers = {
+            'ITT':
+                {
+                    "url": config_settings.tracker_config.ITT_URL,
+                    "api_key": config_settings.tracker_config.ITT_APIKEY
+                }
+            ,
+            'SIS':
+                {
+                    "url": config_settings.tracker_config.SIS_URL,
+                    "api_key": config_settings.tracker_config.SIS_APIKEY
+                }
+
+        }
+
+        return trackers.get(tracker_name, None)
+
 
     def _post(self, files: str, data: dict, params: dict):
         pass

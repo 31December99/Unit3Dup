@@ -58,7 +58,9 @@ class GameManager:
                 continue
 
             # Skip if it is a duplicate
-            if (self.cli.duplicate or config_settings.user_preferences.DUPLICATE_ON) and UserContent.is_duplicate(content=content):
+            if ((self.cli.duplicate or config_settings.user_preferences.DUPLICATE_ON)
+                    and UserContent.is_duplicate(content=content,
+                                                 tracker_name=config_settings.tracker_config.DEFAULT_TRACKER)):
                 continue
 
             # Does not create the torrent if the torrent was found earlier
@@ -69,7 +71,7 @@ class GameManager:
 
             # Prepare the upload game data with the search results
 
-            unit3d_up = UploadBot(content)
+            unit3d_up = UploadBot(content=content, tracker_name=config_settings.tracker_config.DEFAULT_TRACKER)
             tracker_response, tracker_message = unit3d_up.send_game(igdb=game_data_results, nfo_path=content.game_nfo)
 
             bittorrent_list.append(

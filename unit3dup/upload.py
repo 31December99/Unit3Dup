@@ -14,13 +14,13 @@ from unit3dup.media import Media
 from view import custom_console
 
 class UploadBot:
-    def __init__(self, content: Media):
+    def __init__(self, content: Media, tracker_name: str):
 
         self.API_TOKEN = config_settings.tracker_config.ITT_APIKEY
         self.BASE_URL = config_settings.tracker_config.ITT_URL
         self.content = content
         self.tracker_data = ITTData.load_from_module()
-        self.tracker = Unit3d(base_url=self.BASE_URL, api_token=self.API_TOKEN, pass_key="")
+        self.tracker = Unit3d(tracker=tracker_name)
 
     @staticmethod
     def message(tracker_response: requests.Response) -> (requests, dict):

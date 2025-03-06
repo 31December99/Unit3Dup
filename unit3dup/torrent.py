@@ -11,11 +11,34 @@ from view import custom_console
 
 class Torrent:
 
-    def __init__(self):
+    def __init__(self, tracker_name: str):
+
         self.perPage = 30
-        self.tracker = pvtTracker.Unit3d(
-            base_url=config_settings.tracker_config.ITT_URL, api_token=config_settings.tracker_config.ITT_APIKEY, pass_key=""
-        )
+        self.tracker = pvtTracker.Unit3d(tracker=tracker_name)
+
+
+
+
+    @staticmethod
+    def select_tracker(tracker_name: str) -> dict | None:
+
+        trackers = {
+            'ITT':
+                {
+                    "url": config_settings.tracker_config.ITT_URL,
+                    "api_key": config_settings.tracker_config.ITT_APIKEY
+                }
+            ,
+            'SIS':
+                {
+                    "url": config_settings.tracker_config.SIS_URL,
+                    "api_key": config_settings.tracker_config.SIS_APIKEY
+                }
+
+        }
+
+        return trackers.get(tracker_name, None)
+
 
     def get_unique_id(self, media_info: str) -> str:
         # Divido per campi
@@ -137,13 +160,10 @@ class Torrent:
 
 class View(Torrent):
 
-    def __init__(self):
-        super().__init__()
-        self.perPage = 30
-        self.tracker = pvtTracker.Unit3d(
-            base_url=config_settings.tracker_config.ITT_URL, api_token=config_settings.tracker_config.ITT_APIKEY, pass_key=""
-        )
+    def __init__(self, tracker_name: str):
+        super().__init__(tracker_name=tracker_name)
 
+        self.perPage = 30
         # Load the constant tracker
         self.tracker_data = ITTData.load_from_module()
         print()

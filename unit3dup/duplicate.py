@@ -59,13 +59,13 @@ class CompareTitles:
 
 class Duplicate:
 
-    def __init__(self, content: Media):
+    def __init__(self, content: Media, tracker_name: str):
 
         # User content from the scan process
         self.content: Media = content
 
         # Class to get info about a torrent
-        self.torrent_info = Torrent()
+        self.torrent_info = Torrent(tracker_name=tracker_name)
 
         # Load the constant tracker
         tracker_data = ITTData.load_from_module()
@@ -133,7 +133,7 @@ class Duplicate:
 
         # if a result is found, ask the user or autoskip
             if already_present:
-                if not config_settings.SKIP_DUPLICATE:
+                if not config_settings.user_preferences.SKIP_DUPLICATE:
                     try:
                         while True:
                             custom_console.bot_question_log(

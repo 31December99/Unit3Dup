@@ -50,7 +50,9 @@ class VideoManager:
                     self.torrent_found = True
 
                 # Skip if it is a duplicate
-                if self.cli.duplicate or config_settings.user_preferences.DUPLICATE_ON and UserContent.is_duplicate(content=content):
+                if (self.cli.duplicate or config_settings.user_preferences.DUPLICATE_ON
+                        and UserContent.is_duplicate(content=content,
+                                                     tracker_name=config_settings.tracker_config.DEFAULT_TRACKER)):
                     continue
 
                 # Does not create the torrent if the torrent was found earlier
@@ -69,7 +71,7 @@ class VideoManager:
 
 
                 # Tracker Bot
-                unit3d_up = UploadBot(content)
+                unit3d_up = UploadBot(content=content, tracker_name=config_settings.tracker_config.DEFAULT_TRACKER)
 
                 # Send data to the tracker
                 tracker_response, tracker_message =  unit3d_up.send(show_id=db.video_id, imdb_id=db.imdb_id,

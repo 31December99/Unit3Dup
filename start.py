@@ -25,13 +25,19 @@ def main():
     # /// Initialize command line interface
     cli = CommandLine()
 
+    # Read tracker name fav
+    tracker_name = cli.args.tracker if cli.args.tracker else config.tracker_config.DEFAULT_TRACKER
+    if not tracker_name:
+        custom_console.bot_error_log(f"No tracker name provided. Please provide a tracker name"
+                                     f" or update your configuration file")
+        exit(1)
+
     # Load the tracker data from the dictionary
     tracker_data = ITTData.load_from_module()
 
     # /// Test the Tracker (always)
-    tracker = pvtTracker.Unit3d(
-        base_url=config.tracker_config.ITT_URL, api_token=config.tracker_config.ITT_APIKEY, pass_key=""
-    )
+    tracker = pvtTracker.Unit3d(tracker=tracker_name)
+
     if tracker.get_alive(alive=True, perPage=1):
         # custom_console.bot_log(f"[TRACKER HOST].... Online")
         pass
@@ -65,7 +71,7 @@ def main():
     # Manual upload mode
     if cli.args.upload:
         bot = Bot(
-            path=cli.args.upload, tracker_name=cli.args.tracker, cli=cli.args
+            path=cli.args.upload, tracker_name=config.tracker_config.DEFAULT_TRACKER, cli=cli.args
         )
         bot.run(force_media_type=force_media)
 
@@ -73,7 +79,7 @@ def main():
     if cli.args.folder:
         bot = Bot(
             path=cli.args.folder,
-            tracker_name=cli.args.tracker,
+            tracker_name=config.tracker_config.DEFAULT_TRACKER,
             cli=cli.args,
             mode="folder",
         )
@@ -82,14 +88,14 @@ def main():
     # Auto mode
     if cli.args.scan and not cli.args.ftp:
         bot = Bot(
-            path=cli.args.scan, tracker_name=cli.args.tracker, cli=cli.args, mode="auto"
+            path=cli.args.scan, tracker_name=config.tracker_config.DEFAULT_TRACKER, cli=cli.args, mode="auto"
         )
         bot.run(force_media_type=force_media)
 
     # Watcher
     if cli.args.watcher:
         bot = Bot(
-            path=cli.args.watcher, tracker_name=cli.args.tracker, cli=cli.args, mode="auto"
+            path=cli.args.watcher, tracker_name=config.tracker_config.DEFAULT_TRACKER, cli=cli.args, mode="auto"
         )
 
         bot.watcher(duration=config.user_preferences.WATCHER_INTERVAL, watcher_path=config.user_preferences.WATCHER_PATH,
@@ -100,7 +106,7 @@ def main():
     if cli.args.pw:
         bot = Bot(
             path=cli.args.pw,
-            tracker_name=cli.args.tracker,
+            tracker_name=config.tracker_config.DEFAULT_TRACKER,
             cli=cli.args,
         )
         bot.pw()
@@ -109,12 +115,13 @@ def main():
     # ftp and upload
     if cli.args.ftp:
         bot = Bot(
-            path='', tracker_name=cli.args.tracker, cli=cli.args, mode="folder"
+            path='', tracker_name=config.tracker_config.DEFAULT_TRACKER, cli=cli.args, mode="folder"
         )
         bot.ftp(force_media_type=force_media)
 
     # Commands list: commands not necessary for upload but may be useful
-    torrent_info = View()
+
+    torrent_info = View(tracker_name=config.tracker_config.DEFAULT_TRACKER)
 
     # Search by different criteria
     if cli.args.search:

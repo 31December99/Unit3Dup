@@ -14,6 +14,9 @@ from common.utility import ManageTitles
 class TrackerConfig(BaseModel):
     ITT_URL: str
     ITT_APIKEY: str | None = None
+    SIS_URL: str
+    SIS_APIKEY: str | None = None
+    DEFAULT_TRACKER: str | None = None
     TMDB_APIKEY: str | None = None
     IMGBB_KEY: str | None = None
     FREE_IMAGE_KEY: str | None = None
@@ -116,6 +119,17 @@ class Validate:
         print(f"-> Please Fix '{field_name}' ['{value}'] in settings.json")
         exit(1)
 
+
+    @staticmethod
+    def dict(value: list | None, field_name: str) -> list | None:
+        """
+        Validates list of dicts
+        """
+
+        if isinstance(value, list):
+            return value
+        print(f"-> Please Fix '{field_name}' ['{value}'] in settings.json")
+        exit(1)
 
     @staticmethod
     def validate_path(path: str)-> str | None:
@@ -255,8 +269,11 @@ class Config(BaseModel):
             else:
                 field = field.upper()
 
-                if field=='ITT_URL':
-                    section[field] = Validate.url(value=section[field], field_name=field)
+                if field in ['ITT_URL', 'SIS_URL']:
+                   section[field] = Validate.url(value=section[field], field_name=field)
+
+                elif field in ['ITT', 'SIS']:
+                     section[field] = Validate.dict(value=section[field], field_name=field)
                 else:
                     section[field] = Validate.string(value=section[field], field_name=field)
         return v
@@ -304,7 +321,7 @@ class Config(BaseModel):
                 if field in ['DUPLICATE_ON','SKIP_DUPLICATE','RESIZE_SCSHOT','ANON','CACHE_SCR']:
                     section[field] = Validate.boolean(value=section[field], field_name=field)
 
-                if field in ['TORRENT_COMMENT','PW_TORRENT_ARCHIVE_PATH','WATCHER_PATH']:
+                if field in ['TORRENT_COMMENT','PW_TORRENT_ARCHIVE_PATH','WATCHER_PATH','DEFAULT_TRACKER']:
                     section[field] = Validate.string(value=section[field], field_name=field)
 
                 if field in ['NUMBER_OF_SCREENSHOTS','COMPRESS_SCSHOT','IMGBB_PRIORITY','FREE_IMAGE_PRIORITY',
@@ -365,6 +382,9 @@ class Load:
             "tracker_config": {
                 "ITT_URL": "https://itatorrents.xyz",
                 "ITT_APIKEY": "no_key",
+                "SIS_URL": "https://shareisland.org",
+                "SIS_APIKEY": "no_key",
+                "DEFAULT_TRACKER": "itt",
                 "TMDB_APIKEY": "no_key",
                 "IMGBB_KEY": "no_key",
                 "FREE_IMAGE_KEY": "no_key",
@@ -402,7 +422,7 @@ class Load:
                 "SIZE_TH": 50,
                 "WATCHER_INTERVAL": 60,
                 "WATCHER_PATH": "watcher_path",
-                "WATCHER_DESTINATION_PATH": ".",
+                "WATCHER_DESTINATION_PATH": ".",\
                 "NUMBER_OF_SCREENSHOTS": 6,
                 "COMPRESS_SCSHOT": 4,
                 "RESIZE_SCSHOT": "False",
@@ -486,8 +506,7 @@ class Load:
             print("Failed to Load default configuration file")
             exit(1)
 
-        c = Config(**json_data)
-        return c
+        return Config(**json_data)
 
 
 class JsonConfig:
