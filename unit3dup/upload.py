@@ -2,7 +2,7 @@ import json
 import requests
 
 from common.external_services.igdb.core.models.search import Game
-from common.trackers.trackers import ITTData
+from common.trackers.trackers import TRACKData
 
 from unit3dup.pvtTracker import Unit3d
 from unit3dup import config_settings
@@ -19,7 +19,7 @@ class UploadBot:
         self.API_TOKEN = config_settings.tracker_config.ITT_APIKEY
         self.BASE_URL = config_settings.tracker_config.ITT_URL
         self.content = content
-        self.tracker_data = ITTData.load_from_module()
+        self.tracker_data = TRACKData.load_from_module(config_settings.tracker_config.DEFAULT_TRACKER)
         self.tracker = Unit3d(tracker=tracker_name)
 
     @staticmethod
@@ -38,7 +38,7 @@ class UploadBot:
     def send(self,show_id: int , imdb_id: int, show_keywords_list: str, video_info: Video) -> (requests, dict):
         self.tracker.data["name"] = self.content.display_name
         self.tracker.data["tmdb"] = show_id
-        self.tracker.data["imdb"] = imdb_id
+        self.tracker.data["imdb"] = imdb_id if imdb_id else 0
         self.tracker.data["keywords"] = show_keywords_list
         self.tracker.data["category_id"] = self.content.category
         self.tracker.data[

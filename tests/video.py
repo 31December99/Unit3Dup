@@ -5,7 +5,7 @@ from common.external_services.theMovieDB.core.api import DbOnline
 from unit3dup.pvtVideo import Video
 from common.trackers.itt import itt_data
 
-tracker_data = tests.ITTData.load_from_module()
+tracker_data = tests.TRACKData.load_from_module(tests.config.tracker_config.DEFAULT_TRACKER)
 assert isinstance(tracker_data.category, dict)
 
 

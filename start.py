@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from common.torrent_clients import TransmissionClient, QbittorrentClient
-from common.trackers.trackers import ITTData
+from common.trackers.trackers import TRACKData
 from common.command import CommandLine
 from common.settings import Load
 
@@ -26,17 +26,16 @@ def main():
     cli = CommandLine()
 
     # Read tracker name fav
-    tracker_name = cli.args.tracker if cli.args.tracker else config.tracker_config.DEFAULT_TRACKER
-    if not tracker_name:
-        custom_console.bot_error_log(f"No tracker name provided. Please provide a tracker name"
-                                     f" or update your configuration file")
+    # user_tracker_name = cli.args.tracker if cli.args.tracker else config.tracker_config.DEFAULT_TRACKER
+    if not config.tracker_config.DEFAULT_TRACKER:
+        custom_console.bot_error_log(f"No tracker name provided. Please update your configuration file")
         exit(1)
 
     # Load the tracker data from the dictionary
-    tracker_data = ITTData.load_from_module()
+    tracker_data = TRACKData.load_from_module(tracker_name=config.tracker_config.DEFAULT_TRACKER)
 
     # /// Test the Tracker (always)
-    tracker = pvtTracker.Unit3d(tracker=tracker_name)
+    tracker = pvtTracker.Unit3d(tracker=config.tracker_config.DEFAULT_TRACKER)
 
     if tracker.get_alive(alive=True, perPage=1):
         # custom_console.bot_log(f"[TRACKER HOST].... Online")

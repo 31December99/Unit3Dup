@@ -3,7 +3,7 @@
 import argparse
 from common.torrent_clients import TransmissionClient, QbittorrentClient
 from common.external_services.theMovieDB.core.api import DbOnline
-from common.trackers.trackers import ITTData
+from common.trackers.trackers import TRACKData
 from common.mediainfo import MediaFile
 from common.command import CommandLine
 from common.settings import Load
