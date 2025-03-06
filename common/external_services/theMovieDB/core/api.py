@@ -209,6 +209,12 @@ class DbOnline(TmdbAPI):
                     self.print_results(results=search_results)
                     return search_results
 
+        # No response from TMDB
+        if results is None:
+            custom_console.bot_error_log(
+                f"[TMDB] - No response from the remote host or the API key is invalid. Retry or update your key")
+            exit(1)
+
         # not results found so try to initialize imdb
         imdb = IMDB()
         user_tmdb_id  = custom_console.user_input(message="Title not found. Please digit a valid TMDB ID ->")
