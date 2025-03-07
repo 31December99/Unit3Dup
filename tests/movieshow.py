@@ -88,6 +88,7 @@ def test_tmdb():
             torrent=torrent_response,
             content=content
         )
+        tests.custom_console.bot_log("Done.")
         tests.custom_console.rule()
 
 
