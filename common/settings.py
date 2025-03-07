@@ -1,3 +1,4 @@
+import importlib
 import ipaddress
 import json
 import os
@@ -7,7 +8,6 @@ from pydantic import BaseModel, model_validator
 from urllib.parse import urlparse
 from pathlib import Path
 from pathvalidate import sanitize_filepath
-
 from common.utility import ManageTitles
 
 
@@ -17,6 +17,7 @@ class TrackerConfig(BaseModel):
     SIS_URL: str
     SIS_APIKEY: str | None = None
     DEFAULT_TRACKER: str | None = None
+    MULTI_TRACKER: list[str] | None = None
     TMDB_APIKEY: str | None = None
     IMGBB_KEY: str | None = None
     FREE_IMAGE_KEY: str | None = None
@@ -148,6 +149,15 @@ class Validate:
             # not a valid path
             return None
 
+
+    @staticmethod
+    def validate_multi_tracker(multi_tracker_list: list) -> list | None:
+        for tracker in multi_tracker_list:
+            if tracker not in ['itt','sis']:
+                print(f"-> Invalid Multi Tracker '{tracker}'")
+                exit(1)
+        return multi_tracker_list
+
     @staticmethod
     def torrent_archive_path(path: str | None, field_name: str) -> str | None:
         """
@@ -274,6 +284,8 @@ class Config(BaseModel):
 
                 elif field in ['ITT', 'SIS']:
                      section[field] = Validate.dict(value=section[field], field_name=field)
+                elif field in ['MULTI_TRACKER']:
+                    section[field] = Validate.validate_multi_tracker(multi_tracker_list=section[field])
                 else:
                     section[field] = Validate.string(value=section[field], field_name=field)
         return v
@@ -385,6 +397,7 @@ class Load:
                 "SIS_URL": "https://shareisland.org",
                 "SIS_APIKEY": "no_key",
                 "DEFAULT_TRACKER": "itt",
+                "MULTI_TRACKER" : ["itt","sis"],
                 "TMDB_APIKEY": "no_key",
                 "IMGBB_KEY": "no_key",
                 "FREE_IMAGE_KEY": "no_key",
