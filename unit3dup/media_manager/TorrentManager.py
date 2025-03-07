@@ -81,4 +81,4 @@ class TorrentManager:
             if docu_process_results:
                 UserContent.send_to_bittorrent(docu_process_results)
 
-        custom_console.bot_log(f"{self.cli.noupload} Done.")
+        custom_console.bot_log(f"Done.")
