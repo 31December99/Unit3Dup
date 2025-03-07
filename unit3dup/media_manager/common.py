@@ -104,7 +104,7 @@ class UserContent:
                my_torrent object
         """
 
-        duplicate = Duplicate(content=content, tracker_name=tracker_name)
+        duplicate = Duplicate(content=content)
         if duplicate.process():
             custom_console.bot_error_log(
                 f"\n*** User chose to skip '{content.display_name}' ***\n"
