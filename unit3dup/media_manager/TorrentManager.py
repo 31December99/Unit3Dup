@@ -69,20 +69,16 @@ class TorrentManager:
             docu_manager = DocuManager(contents=doc, cli=self.cli)
             docu_process_results = docu_manager.process()
 
-
-        if game_process_results or video_process_results or docu_process_results:
+        if not self.cli.noupload:
             custom_console.panel_message("\nSending torrents to the client... Please wait")
 
-        # * QBITTORRENT *
-        # Send
-        if game_process_results:
-            if not self.cli.torrent:
+            if game_process_results:
                 UserContent.send_to_bittorrent(game_process_results)
 
-        if video_process_results:
-            if not self.cli.torrent:
+            if video_process_results:
                 UserContent.send_to_bittorrent(video_process_results)
 
-        if docu_process_results:
-            if not self.cli.torrent:
+            if docu_process_results:
                 UserContent.send_to_bittorrent(docu_process_results)
+
+        custom_console.bot_log(f"{self.cli.noupload} Done.")

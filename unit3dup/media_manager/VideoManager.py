@@ -69,21 +69,20 @@ class VideoManager:
                 video_info = Video(content.file_name, tmdb_id=db.video_id, trailer_key=db.trailer_key)
                 video_info.build_info()
 
+                if self.cli.noupload:
+                    unit3d_up = UploadBot(content=content, tracker_name=config_settings.tracker_config.DEFAULT_TRACKER)
 
-                # Tracker Bot
-                unit3d_up = UploadBot(content=content, tracker_name=config_settings.tracker_config.DEFAULT_TRACKER)
-
-                # Send data to the tracker
-                tracker_response, tracker_message =  unit3d_up.send(show_id=db.video_id, imdb_id=db.imdb_id,
-                                                                    show_keywords_list=db.keywords_list,
-                                                                    video_info=video_info)
-                bittorrent_list.append(
-                    BittorrentData(
-                        tracker_response=tracker_response,
-                        torrent_response=torrent_response,
-                        content=content,
-                        tracker_message = tracker_message
-                    ))
+                    # Send data to the tracker
+                    tracker_response, tracker_message =  unit3d_up.send(show_id=db.video_id, imdb_id=db.imdb_id,
+                                                                        show_keywords_list=db.keywords_list,
+                                                                        video_info=video_info)
+                    bittorrent_list.append(
+                        BittorrentData(
+                            tracker_response=tracker_response,
+                            torrent_response=torrent_response,
+                            content=content,
+                            tracker_message = tracker_message
+                        ))
 
         # // end content
         return bittorrent_list
