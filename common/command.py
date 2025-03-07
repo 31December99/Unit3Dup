@@ -32,7 +32,7 @@ class CommandLine:
         parser.add_argument("-scan", "--scan", type=str, help="Scan folder")
 
         parser.add_argument(
-            "-torrent", "--torrent", action="store_true", help="Create torrent only"
+            "-noupload", "--noupload", action="store_true", help="Create torrent only"
         )
 
         parser.add_argument(

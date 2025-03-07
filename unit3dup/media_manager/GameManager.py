@@ -70,16 +70,16 @@ class GameManager:
                 torrent_response = None
 
             # Prepare the upload game data with the search results
+            if self.cli.noupload:
+                unit3d_up = UploadBot(content=content, tracker_name=config_settings.tracker_config.DEFAULT_TRACKER)
+                tracker_response, tracker_message = unit3d_up.send_game(igdb=game_data_results, nfo_path=content.game_nfo)
 
-            unit3d_up = UploadBot(content=content, tracker_name=config_settings.tracker_config.DEFAULT_TRACKER)
-            tracker_response, tracker_message = unit3d_up.send_game(igdb=game_data_results, nfo_path=content.game_nfo)
-
-            bittorrent_list.append(
-                BittorrentData(
-                    tracker_response=tracker_response,
-                    torrent_response=torrent_response,
-                    content=content,
-                    tracker_message=tracker_message
-                ))
+                bittorrent_list.append(
+                    BittorrentData(
+                        tracker_response=tracker_response,
+                        torrent_response=torrent_response,
+                        content=content,
+                        tracker_message=tracker_message
+                    ))
         return bittorrent_list
 

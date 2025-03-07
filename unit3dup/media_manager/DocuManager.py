@@ -51,18 +51,19 @@ class DocuManager:
             docu_info.build_info()
 
             # Tracker payload
-            unit3d_up = UploadBot(content=content, tracker_name=config_settings.tracker_config.DEFAULT_TRACKER)
+            if self.cli.noupload:
+                unit3d_up = UploadBot(content=content, tracker_name=config_settings.tracker_config.DEFAULT_TRACKER)
 
-            # Upload
-            tracker_response, tracker_message = unit3d_up.send_docu(document_info=docu_info)
+                # Upload
+                tracker_response, tracker_message = unit3d_up.send_docu(document_info=docu_info)
 
-            if not self.cli.torrent:
-                bittorrent_list.append(
-                    BittorrentData(
-                        tracker_response=tracker_response,
-                        torrent_response=torrent_response,
-                        content=content,
-                        tracker_message=tracker_message,
-                    ))
+                if not self.cli.torrent:
+                    bittorrent_list.append(
+                        BittorrentData(
+                            tracker_response=tracker_response,
+                            torrent_response=torrent_response,
+                            content=content,
+                            tracker_message=tracker_message,
+                        ))
 
         return bittorrent_list
