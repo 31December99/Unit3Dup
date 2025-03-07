@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import os
+import diskcache
 
 from typing import TypeVar
 
@@ -18,6 +20,8 @@ from common.external_services.imdb import IMDB
 from common.utility import ManageTitles
 from view import custom_console
 
+
+from unit3dup import config_settings
 
 base_url = "https://api.themoviedb.org/3"
 ENABLE_LOG = True
@@ -190,10 +194,21 @@ class DbOnline(TmdbAPI):
         self.query = query
         self.category = category
         self.media_result = self.search()
+        # VideoID TMDB cache
+        self.cache = diskcache.Cache(str(os.path.join(config_settings.user_preferences.CACHE_PATH, "tmdb.cache")))
+
 
     def search(self) -> MediaResult | None:
         """
         """
+
+        # Search in the cache first
+        search_results = self.load_cache(self.query)
+        if search_results:
+            self.print_results(results=search_results)
+            return search_results
+
+        # So start an on-line search
         results = self._search(self.query, self.category)
         # User imdb_id when tmdb_id is not available
         imdb_id = 0
@@ -207,6 +222,7 @@ class DbOnline(TmdbAPI):
                     search_results = MediaResult(result, video_id=result.id,imdb_id=imdb_id, trailer_key=trailer_key,
                                                  keywords_list=keywords_list)
                     self.print_results(results=search_results)
+                    self.cache[self.query] = search_results
                     return search_results
 
         # No response from TMDB
@@ -231,6 +247,7 @@ class DbOnline(TmdbAPI):
 
         search_results = MediaResult(video_id=user_tmdb_id, imdb_id=imdb_id, trailer_key=trailer_key, keywords_list=keywords_list)
         self.print_results(results=search_results)
+        self.cache[self.query] = search_results
         return search_results
 
     def youtube_trailer(self) -> str | None:
@@ -270,3 +287,20 @@ class DbOnline(TmdbAPI):
             custom_console.bot_log(f"'TMDB ID'........ {results.video_id}")
             custom_console.bot_log(f"'TMDB KEYWORDS'.. {results.keywords_list}")
             print()
+
+
+    def load_cache(self, query: str)-> MediaResult | None:
+        # Check if the item is in the cache
+        if query not in self.cache:
+            return None
+
+        custom_console.bot_warning_log(f"** {self.__class__.__name__} **: Using cached Search !")
+        try:
+            # Try to get the video from the cache
+            return self.cache[query]
+        except KeyError:
+            # Handle the case where the video is missing or the cache is corrupted
+            custom_console.bot_error_log("Cached frame not found or cache file corrupted")
+            custom_console.bot_error_log("Proceed to extract the screenshot again. Please wait..")
+            return None
+
