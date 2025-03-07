@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from .itt import itt_data
-from .sis import sis_data
 from dataclasses import dataclass
+from common.trackers.itt import itt_data
+from common.trackers.sis import sis_data
 from common.utility import ManageTitles
 
 
