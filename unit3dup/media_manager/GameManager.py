@@ -6,8 +6,8 @@ from common.bittorrent import BittorrentData
 
 from unit3dup.media_manager.common import UserContent
 from unit3dup.upload import UploadBot
-from unit3dup.media import Media
 from unit3dup import config_settings
+from unit3dup.media import Media
 
 from view import custom_console
 
@@ -26,7 +26,7 @@ class GameManager:
         self.cli: argparse = cli
         self.igdb = IGDBClient()
 
-    def process(self) -> list["BittorrentData"]:
+    def process(self, selected_tracker: str) -> list["BittorrentData"]:
         """
         Process the game contents to filter duplicates and create torrents
 
@@ -59,8 +59,7 @@ class GameManager:
 
             # Skip if it is a duplicate
             if ((self.cli.duplicate or config_settings.user_preferences.DUPLICATE_ON)
-                    and UserContent.is_duplicate(content=content,
-                                                 tracker_name=config_settings.tracker_config.DEFAULT_TRACKER)):
+                    and UserContent.is_duplicate(content=content, tracker_name=selected_tracker)):
                 continue
 
             # Does not create the torrent if the torrent was found earlier
@@ -71,7 +70,7 @@ class GameManager:
 
             # Prepare the upload game data with the search results
             if not self.cli.noupload:
-                unit3d_up = UploadBot(content=content, tracker_name=config_settings.tracker_config.DEFAULT_TRACKER)
+                unit3d_up = UploadBot(content=content, tracker_name=selected_tracker)
                 tracker_response, tracker_message = unit3d_up.send_game(igdb=game_data_results, nfo_path=content.game_nfo)
 
                 bittorrent_list.append(

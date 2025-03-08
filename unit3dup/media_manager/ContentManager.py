@@ -3,27 +3,19 @@ import json
 import os
 import re
 
-from unit3dup import config_settings
+from common.utility import ManageTitles, System
 from unit3dup.automode import Auto
 from unit3dup.media import Media
 
-from common.trackers.trackers import TRACKData
-from common.utility import ManageTitles
-
-
 class ContentManager:
-    def __init__(self, path: str, tracker_name: str, mode: str, force_media_type=None):
+    def __init__(self, path: str, mode: str):
         """
         Args:
             path (str): The path to the media files or directories
-            tracker_name (str): The tracker name for the content
             mode (str):  mode 'manual' or 'automatic'
-            force_media_type: if the -serie, -movie, -game si active
         """
         self.path = path
-        self.tracker_name = tracker_name
         self.mode = mode
-        self.force_media_type = force_media_type
 
         self.languages: list[str] | None = None
         self.display_name: str | None = None
@@ -39,13 +31,8 @@ class ContentManager:
         self.torrent_path: str | None = None
         self.doc_description: str | None = None
 
-        self.tracker_name: str = tracker_name
         self.path: str = os.path.normpath(path)
-        self.tracker_data = TRACKData.load_from_module(config_settings.tracker_config.DEFAULT_TRACKER)
-
-        self.auto = Auto(path=self.path, mode=self.mode, tracker_name=self.tracker_name,
-                         force_media_type=self.force_media_type)
-
+        self.auto = Auto(path=self.path, mode=self.mode)
         self.media_list = self.auto.upload() if self.mode in ["man", "folder"] else self.auto.scan()
 
     def process(self)-> list['Media']:
@@ -134,7 +121,7 @@ class ContentManager:
         return True
     def list_files_by_category(self) -> list[str]:
         """List files based on the content category"""
-        if self.category == self.tracker_data.category.get('game'):
+        if self.category == System.GAME:
             return self.list_game_files()
         return self.list_video_files()
 

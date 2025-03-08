@@ -5,10 +5,9 @@ from common.external_services.igdb.core.models.search import Game
 from common.trackers.trackers import TRACKData
 
 from unit3dup.pvtTracker import Unit3d
+from unit3dup.pvtDocu import PdfImages
 from unit3dup import config_settings
 from unit3dup.pvtVideo import Video
-from unit3dup.pvtDocu import PdfImages
-
 from unit3dup.media import Media
 
 from view import custom_console
@@ -19,31 +18,36 @@ class UploadBot:
         self.API_TOKEN = config_settings.tracker_config.ITT_APIKEY
         self.BASE_URL = config_settings.tracker_config.ITT_URL
         self.content = content
-        self.tracker_data = TRACKData.load_from_module(config_settings.tracker_config.DEFAULT_TRACKER)
+        self.tracker_name = tracker_name
+        self.tracker_data = TRACKData.load_from_module(tracker_name=tracker_name)
         self.tracker = Unit3d(tracker=tracker_name)
 
-    @staticmethod
-    def message(tracker_response: requests.Response) -> (requests, dict):
+    def message(self,tracker_response: requests.Response) -> (requests, dict):
 
         if tracker_response.status_code == 200:
             tracker_response_body = json.loads(tracker_response.text)
-            custom_console.bot_log(f"\n[TRACKER RESPONSE]............  {tracker_response_body['message'].upper()}\n\n")
-            custom_console.rule()
+            custom_console.bot_log(f"\n[RESPONSE]->'{self.tracker_name}'.....{tracker_response_body['message'].upper()}\n\n")
             return tracker_response_body["data"],{}
         else:
-            error_message = json.loads(tracker_response.text)["data"]
-        custom_console.rule()
+            name_error=''
+            info_hash_error = ''
+            _message = json.loads(tracker_response.text)["data"]
+            if _message.get("name",None):
+                name_error =  _message["name"][0]
+            if _message.get("info_hash",None):
+                info_hash_error = _message["info_hash"][0]
+            error_message =f"{name_error} : {info_hash_error}"
         return {}, error_message
 
     def send(self,show_id: int , imdb_id: int, show_keywords_list: str, video_info: Video) -> (requests, dict):
+
         self.tracker.data["name"] = self.content.display_name
         self.tracker.data["tmdb"] = show_id
         self.tracker.data["imdb"] = imdb_id if imdb_id else 0
         self.tracker.data["keywords"] = show_keywords_list
         self.tracker.data["category_id"] = self.content.category
-        self.tracker.data[
-            "resolution_id"] = self.content.screen_size if self.content.screen_size else self.content.resolution
-
+        self.tracker.data["resolution_id"] = self.tracker_data.resolution[self.content.screen_size]\
+            if self.content.screen_size else self.tracker_data.resolution[self.content.resolution]
         self.tracker.data["mediainfo"] = video_info.mediainfo
         self.tracker.data["description"] = video_info.description
         self.tracker.data["sd"] = video_info.is_hd

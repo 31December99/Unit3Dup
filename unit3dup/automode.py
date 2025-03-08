@@ -11,15 +11,12 @@ class Auto:
     A class for managing and processing video files and directories based on a given mode
     """
 
-    def __init__(
-            self, path: str, tracker_name=None, mode="auto", force_media_type = None
-    ):  # todo: select the tracker (tracker_name)
+    def __init__(self, path: str, mode="auto"):
         """
         Initialize the Auto instance with path, tracker configuration, and mode.
 
         Args:
             path (str): The path to the directory or file to be processed.
-            tracker_name (str): The name of the tracker configuration to be used.
             mode (str): The mode of operation, either 'auto', 'man', or 'folder'. Default is 'auto'.
         """
 
@@ -28,8 +25,6 @@ class Auto:
         self.path = path
         self.is_dir = os.path.isdir(self.path)
         self.auto = mode
-        self.force_media_type = force_media_type
-
 
     def upload(self):
         """
@@ -94,7 +89,7 @@ class Auto:
         return [
             result
             for media_path in files_path + subfolders_path
-            if (result := Media(folder=self.path,subfolder=media_path,force_media_type=self.force_media_type)) is not None
+            if (result := Media(folder=self.path,subfolder=media_path)) is not None
         ]
 
 

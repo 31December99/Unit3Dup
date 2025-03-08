@@ -5,7 +5,7 @@ from rich.panel import Panel
 from rich.text import Text
 from rich.table import Table
 
-from common.trackers.itt import itt_data
+from common.utility import System
 from common import config_settings
 
 
@@ -49,15 +49,6 @@ class CustomConsole(Console):
     def bot_counter_log(self, message: str):
         self.print(message, end="\r", style=config_settings.console_options.QUESTION_MESSAGE_COLOR)
 
-    @staticmethod
-    def get_key_by_value(tracker_data, category, value):
-        if category in tracker_data:
-            if isinstance(tracker_data[category], dict):
-                for k, v in tracker_data[category].items():
-                    if v == value:
-                        return k
-
-
     def bot_process_table_log(self, content: list):
 
         table = Table(
@@ -72,7 +63,7 @@ class CustomConsole(Console):
 
         for item in content:
             pack = "Yes" if item.torrent_pack else "No"
-            category_name = self.get_key_by_value(itt_data, "CATEGORY", item.category)
+            category_name =  System.category_list.get(item.category, None)
             if not category_name:
                 category_name = ''
             table.add_row(

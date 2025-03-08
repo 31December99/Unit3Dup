@@ -27,26 +27,24 @@ class Bot:
         ftp(): Connects to a remote FTP server and processes files
     """
 
-    def __init__(self, path: str, tracker_name: str, cli: argparse.Namespace, mode="man"):
+    def __init__(self, path: str, cli: argparse.Namespace, mode="man"):
         """
-        Initializes the Bot instance with path, tracker name, command-line interface object, and mode
+        Initializes the Bot instance with path, command-line interface object, and mode
 
         Args:
             path (str): The path to the directory or file to be managed
-            tracker_name (str): The name of the tracker configuration to use
             cli (argparse.Namespace): The command-line arguments object
             mode (str): The mode of operation, default is 'man'
         """
         self.content_manager = None
         self.path = path
-        self.tracker_name = tracker_name
         self.cli = cli
         self.mode = mode
 
         # Bot Manager
         self.torrent_manager = TorrentManager(cli=self.cli)
 
-    def run(self, force_media_type: int) -> bool:
+    def run(self) -> bool:
         """
         Start the process of analyzing and processing media files.
 
@@ -56,9 +54,7 @@ class Bot:
         custom_console.panel_message("Analyzing your media files... Please wait")
 
         # Get a Files list with basic attributes and create a content object for each
-        self.content_manager = ContentManager(
-            path=self.path, tracker_name=self.tracker_name, mode=self.mode, force_media_type=force_media_type
-        )
+        self.content_manager = ContentManager(path=self.path, mode=self.mode)
         contents = self.content_manager.process()
 
         # -u requires a single file
@@ -86,7 +82,7 @@ class Bot:
         self.torrent_manager.process(contents)
         return True
 
-    def watcher(self, duration: int, watcher_path: str,  destination_path: str , force_media_type: int)-> bool:
+    def watcher(self, duration: int, watcher_path: str,  destination_path: str)-> bool:
         """
         Monitors the watcher path for new files, moves them to the destination folder,
         then uploads them to the tracker
@@ -94,7 +90,6 @@ class Bot:
         Args:
             duration (int): The time duration in seconds for the watchdog to wait before checking again
             watcher_path (str): The path to the folder being monitored for new files
-            force_media_type(int): The media type to use
             destination_path: The destination path for the new files
         """
         self.path = str(destination_path)
@@ -153,7 +148,7 @@ class Bot:
 
                 # Start uploading
                 print()
-                self.run(force_media_type=force_media_type)
+                self.run()
 
         except KeyboardInterrupt:
             custom_console.bot_log("Exiting...")
@@ -173,7 +168,7 @@ class Bot:
         return True
 
 
-    def ftp(self, force_media_type: int):
+    def ftp(self):
         """
         Connects to a remote FTP server and interacts with files.
 
@@ -223,4 +218,4 @@ class Bot:
                 custom_console.bot_error_log("Unrar Exit")
                 exit(1)
 
-            self.run(force_media_type=force_media_type)
+            self.run()
