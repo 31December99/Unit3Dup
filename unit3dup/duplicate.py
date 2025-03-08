@@ -114,7 +114,7 @@ class Duplicate:
     def process(self) -> bool:
         if self.category in {self.movie_category, self.serie_category}:
             audio = f"Audio: {self.content.audio_languages}"
-            resolution = self.get_resolution_by_num(self.content.resolution)
+            resolution = self.content.screen_size or self.content.resolution
             media = f"[{audio + ' - ' + resolution}]"
         else:
             media = ""
@@ -244,7 +244,6 @@ class Duplicate:
                         self._print_output(value=tracker_value, delta_size=delta_size)
                         self.flag_already = True
 
-        # At least one media needs to match the tracker database
         return self.flag_already
 
     @staticmethod
