@@ -4,9 +4,12 @@ import tests
 from common.external_services.theMovieDB.core.api import DbOnline
 from unit3dup.pvtVideo import Video
 from common.trackers.itt import itt_data
+from view import custom_console
 
-tracker_data = tests.TRACKData.load_from_module(tests.config.tracker_config.DEFAULT_TRACKER)
-assert isinstance(tracker_data.category, dict)
+
+for tracker in tests.config.tracker_config.MULTI_TRACKER:
+    tracker_data = tests.TRACKData.load_from_module(tracker)
+    assert isinstance(tracker_data.category, dict)
 
 
 def get_type_id(value):
@@ -25,12 +28,17 @@ def get_tags(value):
     # get key based on value
     for itt in itt_data['TAGS'].items():
         if itt[1] == value:
+            print(itt[0])
             return itt[0]
 
 
 def test_content_manager():
     test_content_movie = r"C:\test_folder\Australian Dreams WEB-DL 1080p AC3 E-AC3 ITA SPA SUB-LF.mkv"
     content_manager = tests.ContentManager(path=test_content_movie, mode='man')
+
+    # Load the constant tracker
+    custom_console.bot_log(f"Available trackers {tests.config.tracker_config.MULTI_TRACKER}")
+    tracker_data = tests.TRACKData.load_from_module(tracker_name=tests.config.tracker_config.MULTI_TRACKER[0])
 
     contents = content_manager.process()
     tests.custom_console.bot_warning_log("\n- CONTENT -")
