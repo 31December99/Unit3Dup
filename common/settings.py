@@ -1,4 +1,5 @@
-import importlib
+# -*- coding: utf-8 -*-
+
 import ipaddress
 import json
 import os
@@ -9,14 +10,13 @@ from urllib.parse import urlparse
 from pathlib import Path
 from pathvalidate import sanitize_filepath
 from common.utility import ManageTitles
-
+from common import trackers
 
 class TrackerConfig(BaseModel):
     ITT_URL: str
     ITT_APIKEY: str | None = None
     SIS_URL: str
     SIS_APIKEY: str | None = None
-    DEFAULT_TRACKER: str | None = None
     MULTI_TRACKER: list[str] | None = None
     TMDB_APIKEY: str | None = None
     IMGBB_KEY: str | None = None
@@ -153,8 +153,8 @@ class Validate:
     @staticmethod
     def validate_multi_tracker(multi_tracker_list: list) -> list | None:
         for tracker in multi_tracker_list:
-            if tracker not in ['itt','sis']:
-                print(f"-> Invalid Multi Tracker '{tracker}'")
+            if tracker.upper() not in trackers.tracker_list:
+                print(f"-> Invalid Multi Tracker '{tracker}'. Please fix your configuration file")
                 exit(1)
         return multi_tracker_list
 
@@ -394,10 +394,9 @@ class Load:
             "tracker_config": {
                 "ITT_URL": "https://itatorrents.xyz",
                 "ITT_APIKEY": "no_key",
-                "SIS_URL": "https://shareisland.org",
+                "SIS_URL": "https://no_tracker.xyz",
                 "SIS_APIKEY": "no_key",
-                "DEFAULT_TRACKER": "itt",
-                "MULTI_TRACKER" : ["itt","sis"],
+                "MULTI_TRACKER" : ["itt"],
                 "TMDB_APIKEY": "no_key",
                 "IMGBB_KEY": "no_key",
                 "FREE_IMAGE_KEY": "no_key",
@@ -435,7 +434,7 @@ class Load:
                 "SIZE_TH": 50,
                 "WATCHER_INTERVAL": 60,
                 "WATCHER_PATH": "watcher_path",
-                "WATCHER_DESTINATION_PATH": ".",\
+                "WATCHER_DESTINATION_PATH": ".",
                 "NUMBER_OF_SCREENSHOTS": 6,
                 "COMPRESS_SCSHOT": 4,
                 "RESIZE_SCSHOT": "False",

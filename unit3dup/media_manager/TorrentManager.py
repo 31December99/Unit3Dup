@@ -46,7 +46,11 @@ class TorrentManager:
         if config_settings.user_preferences.DUPLICATE_ON:
             custom_console.bot_log("'[ACTIVE]' Searching for duplicate")
 
-        for tracker_in_list in config_settings.tracker_config.MULTI_TRACKER:
+        # Selected one tracker using -tracker flags or selected all the trackers with no flags
+        trackers = [self.cli.tracker] if self.cli.tracker is not None else config_settings.tracker_config.MULTI_TRACKER
+
+        # Send content to each tracker in the tracker list
+        for tracker_in_list in trackers:
             # Build the torrent file and upload each GAME to the tracker
             if games:
                 game_manager = GameManager(contents=games, cli=self.cli)

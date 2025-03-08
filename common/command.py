@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import os
 import argparse
 import sys
@@ -24,7 +26,7 @@ class CommandLine:
         parser.add_argument("-f", "--folder", type=str, help="Upload folder")
         parser.add_argument("-scan", "--scan", type=str, help="Scan folder")
         parser.add_argument("-watcher", "--watcher", action="store_true", help="Start watcher")
-        parser.add_argument("-multi", "--multi", action="store_true", help="Upload to multi tracker")
+        parser.add_argument("-t", "--tracker", type=str, help="Upload to single tracker")
 
         parser.add_argument("-pw", "--pw", type=str, help="")
         parser.add_argument("-ftp", "--ftp", action="store_true", help="Connect to FTP")

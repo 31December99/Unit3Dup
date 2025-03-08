@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 from common.torrent_clients import TransmissionClient, QbittorrentClient
-from common.trackers.trackers import TRACKData
 from common.command import CommandLine
 from common.settings import Load
 
@@ -96,9 +95,12 @@ def main():
         bot = Bot(path='', cli=cli.args, mode="folder")
         bot.ftp()
 
-    # Commands list: commands not necessary for upload but may be useful
 
-    torrent_info = View(tracker_name=config.tracker_config.DEFAULT_TRACKER)
+    # Commands list: commands not necessary for upload but may be useful
+    if not cli.args.tracker:
+        return
+
+    torrent_info = View(tracker_name=cli.args.tracker)
 
     # Search by different criteria
     if cli.args.search:
@@ -229,7 +231,6 @@ def main():
     if not cli.args:
         custom_console.print("Syntax error! Please check your commands")
         return
-
 
 if __name__ == "__main__":
     main()
