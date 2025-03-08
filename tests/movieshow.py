@@ -9,7 +9,7 @@ assert isinstance(tracker_data.category, dict)
 def test_tmdb():
 
     test_content_movie = r"C:\test_folder"
-    content_manager = tests.ContentManager(path=test_content_movie, tracker_name='itt', mode='auto')
+    content_manager = tests.ContentManager(path=test_content_movie, mode='auto')
     contents = content_manager.process()
 
     # // Print list
