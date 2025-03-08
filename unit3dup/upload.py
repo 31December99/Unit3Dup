@@ -77,7 +77,7 @@ class UploadBot:
         self.tracker.data["name"] = self.content.display_name
         self.tracker.data["tmdb"] = 0
         self.tracker.data["category_id"] = self.content.category
-        self.tracker.data["description"] =  document_info.description # self.content.doc_description
+        self.tracker.data["description"] =  document_info.description
         self.tracker.data["type_id"] = self.tracker_data.filter_type(self.content.file_name)
         self.tracker.data["resolution_id"] = ""
         # tracker.data["torrent-cover"] = "" TODO: not yet implemented
