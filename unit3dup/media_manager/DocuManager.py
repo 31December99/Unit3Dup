@@ -20,7 +20,7 @@ class DocuManager:
         self.torrent_found: bool = False
 
 
-    def process(self) -> list["BittorrentData"]:
+    def process(self, selected_tracker:str) -> list["BittorrentData"]:
         bittorrent_list = []
         for content in self.contents:
 
@@ -36,8 +36,7 @@ class DocuManager:
 
             # Skip if it is a duplicate
             if ((self.cli.duplicate or config_settings.user_preferences.DUPLICATE_ON)
-                    and UserContent.is_duplicate(content=content,
-                                                 tracker_name=config_settings.tracker_config.DEFAULT_TRACKER)):
+                    and UserContent.is_duplicate(content=content, tracker_name=selected_tracker)):
                 continue
 
             # Does not create the torrent if the torrent was found earlier
@@ -52,7 +51,7 @@ class DocuManager:
 
             # Tracker payload
             if not self.cli.noupload:
-                unit3d_up = UploadBot(content=content, tracker_name=config_settings.tracker_config.DEFAULT_TRACKER)
+                unit3d_up = UploadBot(content=content, tracker_name=selected_tracker)
 
                 # Upload
                 tracker_response, tracker_message = unit3d_up.send_docu(document_info=docu_info)

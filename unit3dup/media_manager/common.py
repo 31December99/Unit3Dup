@@ -104,7 +104,7 @@ class UserContent:
                my_torrent object
         """
 
-        duplicate = Duplicate(content=content)
+        duplicate = Duplicate(content=content, tracker_name=tracker_name)
         if duplicate.process():
             custom_console.bot_error_log(
                 f"\n*** User chose to skip '{content.display_name}' ***\n"
@@ -135,7 +135,7 @@ class UserContent:
                 )
             else:
                 # invalid response
-                custom_console.bot_log(f"[{qbittorrent_file.content.file_name}] ->"
+                custom_console.bot_error_log(f"[{qbittorrent_file.content.display_name}] ->"
                                        f" {qbittorrent_file.tracker_message}")
         except Exception as e:
             custom_console.bot_error_log(f"Error sending torrent {qbittorrent_file.content.file_name}: {str(e)}")

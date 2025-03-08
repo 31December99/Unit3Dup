@@ -25,22 +25,20 @@ def main():
     # /// Initialize command line interface
     cli = CommandLine()
 
-    # Read tracker name fav
-    if not config.tracker_config.DEFAULT_TRACKER:
+    # /// Load the list of the registered trackers
+    if not config.tracker_config.MULTI_TRACKER:
         custom_console.bot_error_log(f"No tracker name provided. Please update your configuration file")
         exit(1)
 
-    # Load the tracker data from the dictionary
-    tracker_data = TRACKData.load_from_module(tracker_name=config.tracker_config.DEFAULT_TRACKER)
+    # /// Test the Tracker
+    for tracker_data in config.tracker_config.MULTI_TRACKER:
+        tracker = pvtTracker.Unit3d(tracker=tracker_data)
+        if tracker.get_alive(alive=True, perPage=1):
+            custom_console.bot_log(f"Tracker -> '{tracker_data.upper()}' Online")
+            pass
 
-    # /// Test the Tracker (always)
-    tracker = pvtTracker.Unit3d(tracker=config.tracker_config.DEFAULT_TRACKER)
 
-    if tracker.get_alive(alive=True, perPage=1):
-        # custom_console.bot_log(f"[TRACKER HOST].... Online")
-        pass
-
-    # /// Test the torrent client
+    # /// Test the torrent clients
     if cli.args.scan or cli.args.upload or cli.args.folder or cli.args.watcher:
 
         if config.torrent_client_config.TORRENT_CLIENT.lower()=="qbittorrent":
@@ -56,66 +54,47 @@ def main():
             custom_console.bot_error_log(f"You need to set a favorite 'torrent_client' in the config file")
             exit(1)
 
-    # \\\ Commands options  \\\
-    force_media = None
-    if cli.args.game:
-        force_media = tracker_data.category.get("game")
-    if cli.args.movie:
-        force_media = tracker_data.category.get("movie")
-    if cli.args.serie:
-        force_media = tracker_data.category.get("tvshow")
 
+    # \\\ Commands options  \\\
+    force_media = None # todo
 
     # Manual upload mode
     if cli.args.upload:
-        bot = Bot(
-            path=cli.args.upload, tracker_name=config.tracker_config.DEFAULT_TRACKER, cli=cli.args
-        )
-        bot.run(force_media_type=force_media)
+        bot = Bot(path=cli.args.upload, cli=cli.args)
+        bot.run()
 
     # Manual folder mode
     if cli.args.folder:
         bot = Bot(
             path=cli.args.folder,
-            tracker_name=config.tracker_config.DEFAULT_TRACKER,
             cli=cli.args,
             mode="folder",
         )
-        bot.run(force_media_type=force_media)
+        bot.run()
 
     # Auto mode
     if cli.args.scan and not cli.args.ftp:
-        bot = Bot(
-            path=cli.args.scan, tracker_name=config.tracker_config.DEFAULT_TRACKER, cli=cli.args, mode="auto"
-        )
-        bot.run(force_media_type=force_media)
+        bot = Bot(path=cli.args.scan, cli=cli.args, mode="auto")
+        bot.run()
 
     # Watcher
     if cli.args.watcher:
-        bot = Bot(
-            path=cli.args.watcher, tracker_name=config.tracker_config.DEFAULT_TRACKER, cli=cli.args, mode="auto"
-        )
+        bot = Bot(path=cli.args.watcher, cli=cli.args, mode="auto")
 
         bot.watcher(duration=config.user_preferences.WATCHER_INTERVAL, watcher_path=config.user_preferences.WATCHER_PATH,
-                    destination_path = config.user_preferences.WATCHER_DESTINATION_PATH, force_media_type=force_media)
+                    destination_path = config.user_preferences.WATCHER_DESTINATION_PATH)
 
 
     # Pw
     if cli.args.pw:
-        bot = Bot(
-            path=cli.args.pw,
-            tracker_name=config.tracker_config.DEFAULT_TRACKER,
-            cli=cli.args,
-        )
+        bot = Bot(path=cli.args.pw,cli=cli.args)
         bot.pw()
 
 
     # ftp and upload
     if cli.args.ftp:
-        bot = Bot(
-            path='', tracker_name=config.tracker_config.DEFAULT_TRACKER, cli=cli.args, mode="folder"
-        )
-        bot.ftp(force_media_type=force_media)
+        bot = Bot(path='', cli=cli.args, mode="folder")
+        bot.ftp()
 
     # Commands list: commands not necessary for upload but may be useful
 

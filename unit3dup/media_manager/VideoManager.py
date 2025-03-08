@@ -27,13 +27,14 @@ class VideoManager:
         self.contents: list['Media'] = contents
         self.cli: argparse = cli
 
-    def process(self) -> list["BittorrentData"] | None:
+    def process(self, selected_tracker: str) -> list["BittorrentData"] | None:
         """
            Process the video contents to filter duplicates and create torrents
 
            Returns:
                list: List of Bittorrent objects created for each content
         """
+
         bittorrent_list = []
         for content in self.contents:
             # Filter contents based on existing torrents or duplicates
@@ -51,8 +52,7 @@ class VideoManager:
 
                 # Skip if it is a duplicate
                 if (self.cli.duplicate or config_settings.user_preferences.DUPLICATE_ON
-                        and UserContent.is_duplicate(content=content,
-                                                     tracker_name=config_settings.tracker_config.DEFAULT_TRACKER)):
+                        and UserContent.is_duplicate(content=content, tracker_name=selected_tracker)):
                     continue
 
                 # Does not create the torrent if the torrent was found earlier
@@ -70,7 +70,7 @@ class VideoManager:
                 video_info.build_info()
 
                 if not self.cli.noupload:
-                    unit3d_up = UploadBot(content=content, tracker_name=config_settings.tracker_config.DEFAULT_TRACKER)
+                    unit3d_up = UploadBot(content=content, tracker_name=selected_tracker)
 
                     # Send data to the tracker
                     tracker_response, tracker_message =  unit3d_up.send(show_id=db.video_id, imdb_id=db.imdb_id,

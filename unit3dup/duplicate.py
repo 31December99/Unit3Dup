@@ -2,7 +2,6 @@
 import guessit
 from common.utility import ManageTitles, System
 from common.trackers.trackers import TRACKData
-from common.trackers.itt import itt_data
 from common.constants import my_language
 from common import title
 
@@ -59,16 +58,19 @@ class CompareTitles:
 
 class Duplicate:
 
-    def __init__(self, content: Media):
+    def __init__(self, content: Media, tracker_name: str):
 
         # User content from the scan process
         self.content: Media = content
 
         # Class to get info about a torrent
-        self.torrent_info = Torrent(tracker_name=config_settings.tracker_config.DEFAULT_TRACKER)
+        self.torrent_info = Torrent(tracker_name=tracker_name)
 
         # Load the constant tracker
-        tracker_data = TRACKData.load_from_module(tracker_name=config_settings.tracker_config.DEFAULT_TRACKER)
+        tracker_data = TRACKData.load_from_module(tracker_name=tracker_name)
+
+        # Resolutions
+        self.resolutions = tracker_data.resolution
 
         # Category Movie
         self.movie_category = tracker_data.category.get("movie")
@@ -160,10 +162,8 @@ class Duplicate:
                 return False
         return False
 
-
-    @staticmethod
-    def get_resolution_by_num(res_id: int) -> str:
-        return next((key for key, value in itt_data['RESOLUTION'].items() if value == res_id), None)
+    def get_resolution_by_num(self, res_id: int) -> str:
+        return next((key for key, value in self.resolutions.items() if value == res_id), None)
 
     def _calculate_threshold(self, size: int) -> int:
         # Size in GB
