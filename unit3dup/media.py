@@ -305,10 +305,10 @@ class Media:
                     self._resolution = closest_resolution
                 else:
                     custom_console.bot_error_log(
-                        f"{self.__class__.__name__} Video Height resolution not found in {self.file_name}"
+                        f"'{self.__class__.__name__}' Video Height resolution not found in {self.file_name}"
                     )
                     custom_console.bot_error_log(
-                        f"{self.__class__.__name__} Set to default value {System.NO_RESOLUTION}"
+                        f"'{self.__class__.__name__}' Set to default value {System.NO_RESOLUTION}"
                     )
                     self._resolution = System.NO_RESOLUTION
             else:
