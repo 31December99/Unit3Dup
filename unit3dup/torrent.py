@@ -163,7 +163,7 @@ class View(Torrent):
 
         self.perPage = 30
         # Load the constant tracker
-        self.tracker_data = TRACKData.load_from_module(config_settings.tracker_config.DEFAULT_TRACKER)
+        self.tracker_data = TRACKData.load_from_module(tracker_name=tracker_name)
         print()
 
     def get_unique_id(self, media_info: str) -> str:

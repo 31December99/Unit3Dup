@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from dataclasses import dataclass
-from common.trackers.itt import itt_data
-from common.trackers.sis import sis_data
 from common.utility import ManageTitles
-
+from . import tracker_list
 
 @dataclass
 class TRACKData:
@@ -19,8 +17,7 @@ class TRACKData:
         """
         Load tracker data from module
         """
-        tracker = {'ITT': itt_data, 'SIS': sis_data}
-        tracker_data= tracker[tracker_name.upper()]
+        tracker_data= tracker_list[tracker_name.upper()]
 
         return cls(
             category=tracker_data.get("CATEGORY"),
