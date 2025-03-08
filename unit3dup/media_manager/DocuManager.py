@@ -56,13 +56,12 @@ class DocuManager:
                 # Upload
                 tracker_response, tracker_message = unit3d_up.send_docu(document_info=docu_info)
 
-                if not self.cli.torrent:
-                    bittorrent_list.append(
-                        BittorrentData(
-                            tracker_response=tracker_response,
-                            torrent_response=torrent_response,
-                            content=content,
-                            tracker_message=tracker_message,
-                        ))
+                bittorrent_list.append(
+                    BittorrentData(
+                        tracker_response=tracker_response,
+                        torrent_response=torrent_response,
+                        content=content,
+                        tracker_message=tracker_message,
+                    ))
 
         return bittorrent_list
