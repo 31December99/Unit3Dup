@@ -21,12 +21,6 @@ def get_category(value):
         if itt[1] == value:
             return itt[0]
 
-def get_resolution(value):
-    # get key based on value
-    for itt in itt_data['RESOLUTION'].items():
-        if itt[1] == value:
-            return itt[0]
-
 def get_tags(value):
     # get key based on value
     for itt in itt_data['TAGS'].items():
@@ -36,7 +30,7 @@ def get_tags(value):
 
 def test_content_manager():
     test_content_movie = r"C:\test_folder\Australian Dreams WEB-DL 1080p AC3 E-AC3 ITA SPA SUB-LF.mkv"
-    content_manager = tests.ContentManager(path=test_content_movie, tracker_name='itt', mode='man')
+    content_manager = tests.ContentManager(path=test_content_movie, mode='man')
 
     contents = content_manager.process()
     tests.custom_console.bot_warning_log("\n- CONTENT -")
@@ -70,8 +64,8 @@ def test_content_manager():
         tests.custom_console.bot_log(f"Category      {get_category(content.category)}")
         assert get_category(content.category) == 'movie'
 
-        tests.custom_console.bot_log(f"Screen Size   {get_resolution(content.screen_size if content.screen_size else content.resolution)}")
-        assert get_resolution(content.screen_size if content.screen_size else content.resolution) == '1080p'
+        tests.custom_console.bot_log(f"{tracker_data.resolution[content.screen_size] if content.screen_size else tracker_data.resolution[content.resolution]}")
+        assert tracker_data.resolution[content.screen_size] if content.screen_size else tracker_data.resolution[content.resolution] == '3'
 
         tests.custom_console.bot_log(f"Type_id       {get_type_id(tracker_data.filter_type(content.file_name))}")
         assert get_type_id(tracker_data.filter_type(content.file_name)) == 'web-dl'

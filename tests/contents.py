@@ -6,8 +6,8 @@ import tests
 def test_content_manager():
 
     test_content_movie = r"C:\test_folder"
-    content_manager = tests.ContentManager(path=test_content_movie, tracker_name='itt', mode='auto',
-                                     force_media_type=None)
+    content_manager = tests.ContentManager(path=test_content_movie, mode='auto')
+
     contents = content_manager.process()
     tests.custom_console.bot_warning_log("\n- TVSHOW -")
     for content in contents:
