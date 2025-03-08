@@ -74,7 +74,8 @@ class Video:
             build_description = Build(extracted_frames=extracted_frames)
             self.description = build_description.description()
             self.description += (f"[b][spoiler=Spoiler: PLAY TRAILER][center][youtube]"
-                                 f"{self.trailer_key}[/youtube][/center][/spoiler][/b]")
+                                 f"{self.trailer_key}[/youtube][/center][/spoiler][/b]"
+                                 f"[url=https://github.com/31December99/Unit3Dup]By Unit3Dup[/url]")
             self.is_hd = is_hd
 
         # Write the new description to the cache
