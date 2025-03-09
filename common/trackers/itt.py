@@ -2,7 +2,7 @@
 
 itt_data = {
     "CATEGORY":{ "movie": 1,
-                 "tvshow": 2,
+                 "tv": 2,
                  "edicola": 6,
                  "game": 4},
 

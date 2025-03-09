@@ -45,7 +45,7 @@ class UploadBot:
         self.tracker.data["tmdb"] = show_id
         self.tracker.data["imdb"] = imdb_id if imdb_id else 0
         self.tracker.data["keywords"] = show_keywords_list
-        self.tracker.data["category_id"] = self.content.category
+        self.tracker.data["category_id"] = self.tracker_data.category.get(self.content.category)
         self.tracker.data["resolution_id"] = self.tracker_data.resolution[self.content.screen_size]\
             if self.content.screen_size else self.tracker_data.resolution[self.content.resolution]
         self.tracker.data["mediainfo"] = video_info.mediainfo
@@ -57,17 +57,15 @@ class UploadBot:
         tracker_response=self.tracker.upload_t(data=self.tracker.data, torrent_path=self.content.torrent_path)
         return self.message(tracker_response)
 
-
     def send_game(self,igdb: Game, nfo_path = None) -> (requests, dict):
 
         igdb_platform = self.content.platform_list[0].lower() if self.content.platform_list else ''
         self.tracker.data["name"] = self.content.display_name
         self.tracker.data["tmdb"] = 0
-        self.tracker.data["category_id"] = self.content.category
+        self.tracker.data["category_id"] = self.tracker_data.category.get(self.content.category)
         self.tracker.data["description"] = igdb.description if igdb else "Sorry, there is no valid IGDB"
         self.tracker.data["type_id"] = self.tracker_data.type_id.get(igdb_platform)
         self.tracker.data["igdb"] = igdb.id if igdb else 1,  # need zero not one ( fix tracker)
-
         tracker_response=self.tracker.upload_t(data=self.tracker.data, torrent_path=self.content.torrent_path,
                                                nfo_path=nfo_path)
         return self.message(tracker_response)
@@ -76,8 +74,8 @@ class UploadBot:
 
         self.tracker.data["name"] = self.content.display_name
         self.tracker.data["tmdb"] = 0
-        self.tracker.data["category_id"] = self.content.category
-        self.tracker.data["description"] =  document_info.description
+        self.tracker.data["category_id"] = self.tracker_data.category.get(self.content.category)
+        self.tracker.data["description"] = document_info.description
         self.tracker.data["type_id"] = self.tracker_data.filter_type(self.content.file_name)
         self.tracker.data["resolution_id"] = ""
         # tracker.data["torrent-cover"] = "" TODO: not yet implemented

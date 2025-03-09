@@ -121,7 +121,7 @@ class ContentManager:
         return True
     def list_files_by_category(self) -> list[str]:
         """List files based on the content category"""
-        if self.category == System.GAME:
+        if self.category ==System.category_list.get(System.GAME):
             return self.list_game_files()
         return self.list_video_files()
 

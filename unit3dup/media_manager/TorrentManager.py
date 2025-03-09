@@ -28,19 +28,19 @@ class TorrentManager:
 
         # // Build a GAME list
         games = [
-            content for content in contents if content.category == System.GAME
+            content for content in contents if content.category == System.category_list.get(System.GAME)
         ]
 
         # // Build a VIDEO list
         videos = [
             content
             for content in contents
-            if content.category in {System.MOVIE, System.TV_SHOW}
+            if content.category in {System.category_list.get(System.MOVIE), System.category_list.get(System.TV_SHOW)}
         ]
 
         # // Build a Doc list
         doc = [
-            content for content in contents if content.category == System.DOCUMENTARY
+            content for content in contents if content.category == System.category_list.get(System.DOCUMENTARY)
         ]
 
         if config_settings.user_preferences.DUPLICATE_ON:

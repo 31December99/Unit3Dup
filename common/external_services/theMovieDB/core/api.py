@@ -79,7 +79,6 @@ class TvEndpoint:
 
 
 
-
 class TmdbAPI(MyHttp):
 
     params = {
@@ -93,12 +92,6 @@ class TmdbAPI(MyHttp):
         'tv': TvEndpoint,
     }
 
-    # Content -> search response attribute
-    show = {
-        1: "movie",
-        2: "tv",
-    }
-
     def __init__(self):
         """
         Initialize the Api instance with an HTTP client
@@ -107,7 +100,7 @@ class TmdbAPI(MyHttp):
         super().__init__(headers)
         self.http_client = self.session
 
-    def _search(self, query: str, category: int) -> list[T] | None:
+    def _search(self, query: str, category: str) -> list[T] | None:
         """
         Searches for data based on a query and category.
         :param query: search query
@@ -115,47 +108,50 @@ class TmdbAPI(MyHttp):
         :return: list of T or None
         """
         # Only tv and movie
-        if category > 2:
+        print(category)
+        input()
+        if category not in ['movie', 'tv']:
             custom_console.bot_warning_log("Check the category of the search query")
             return []
-        if endpoint_class:=self.ENDPOINTS.get(TmdbAPI.show[category]):
+        # if endpoint_class:=self.ENDPOINTS.get(TmdbAPI.show[category]):
+        if endpoint_class := self.ENDPOINTS.get(category):
             request = endpoint_class.search(query)
             return self.request(endpoint=request)
         else:
             print(f"Endpoint for category '{category}' not found.")
             return []
 
-    def nowplaying(self, category: int) -> list[T] | None:
+    def nowplaying(self, category: str) -> list[T] | None:
         """
         Searches for now playing content based on a query and category.
-        :param query: query for now playing
         :param category: category of the now playing content, e.g., 'movie' or 'tv'
         :return: list of T or None
         """
 
-        if endpoint_class:=self.ENDPOINTS.get(TmdbAPI.show[category]):
+        # if endpoint_class := self.ENDPOINTS.get(TmdbAPI.show[category]):
+        if endpoint_class:=self.ENDPOINTS.get(category):
             request = endpoint_class.playing()
             return self.request(endpoint=request)
         else:
             print(f"Endpoint for category '{category}' not found.")
             return []
 
-    def alternative(self, media_id: int, category: int) -> list[T] | None:
+    def alternative(self, media_id: int, category: str) -> list[T] | None:
         """
         Searches for data based on a query and category.
         :param media_id: id of the media to search for
         :param category: category of the search query, e.g., 'movie' or 'tv'
         :return: list of T or None
         """
-        if endpoint_class:=self.ENDPOINTS.get(TmdbAPI.show[category]):
+        if endpoint_class:=self.ENDPOINTS.get(category):
             request = endpoint_class.alternative(media_id)
             return self.request(endpoint=request)
         else:
             print(f"Endpoint for category '{category}' not found.")
             return []
 
-    def _videos(self, video_id: int, category: int) -> list[T] | None:
-        if endpoint_class:=self.ENDPOINTS.get(TmdbAPI.show[category]):
+    def _videos(self, video_id: int, category: str) -> list[T] | None:
+        if endpoint_class:=self.ENDPOINTS.get(category):
             request = endpoint_class.videos(video_id)
             return self.request(endpoint=request)
         else:
@@ -163,8 +159,8 @@ class TmdbAPI(MyHttp):
             return []
 
 
-    def _keywords(self, video_id: int, category: int) -> list[T] | None:
-        if endpoint_class:=self.ENDPOINTS.get(TmdbAPI.show[category]):
+    def _keywords(self, video_id: int, category: str) -> list[T] | None:
+        if endpoint_class:=self.ENDPOINTS.get(category):
             request = endpoint_class.keywords(video_id)
             return self.request(endpoint=request)
         else:
@@ -189,7 +185,7 @@ class TmdbAPI(MyHttp):
 
 
 class DbOnline(TmdbAPI):
-    def __init__(self, query: str, category: int) -> None:
+    def __init__(self, query: str, category: str) -> None:
         super().__init__()
         self.query = query
         self.category = category

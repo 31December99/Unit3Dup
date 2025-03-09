@@ -69,8 +69,8 @@ def test_content_manager():
         tests.custom_console.bot_log(f"IS HD  {video_info.is_hd}")
         assert get_tags(video_info.is_hd) == 'HD'
 
-        tests.custom_console.bot_log(f"Category      {get_category(content.category)}")
-        assert get_category(content.category) == 'movie'
+        tests.custom_console.bot_log(f"Category      {content.category}")
+        assert content.category == 'movie'
 
         tests.custom_console.bot_log(f"{tracker_data.resolution[content.screen_size] if content.screen_size else tracker_data.resolution[content.resolution]}")
         assert tracker_data.resolution[content.screen_size] if content.screen_size else tracker_data.resolution[content.resolution] == '3'
