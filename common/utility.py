@@ -187,7 +187,7 @@ class System:
     MOVIE = 1
     GAME = 3
 
-    category_list = {MOVIE: 'movie', TV_SHOW: 'tvshow', GAME : 'game', DOCUMENTARY: 'edicola'}
+    category_list = {MOVIE: 'movie', TV_SHOW: 'tv', GAME : 'game', DOCUMENTARY: 'edicola'}
 
     RESOLUTIONS= [ "8640", "4320",  "2160", "1080", "720", "576", "480"]
     RESOLUTION_labels = ["8640p", "4320p", "2160p", "1080p", "1080i", "720p", "720i", "576p", "576i", "480p", "480i"]

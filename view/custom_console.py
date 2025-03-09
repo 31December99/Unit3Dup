@@ -5,9 +5,7 @@ from rich.panel import Panel
 from rich.text import Text
 from rich.table import Table
 
-from common.utility import System
 from common import config_settings
-
 
 class CustomConsole(Console):
     def __init__(self):
@@ -63,12 +61,9 @@ class CustomConsole(Console):
 
         for item in content:
             pack = "Yes" if item.torrent_pack else "No"
-            category_name =  System.category_list.get(item.category, None)
-            if not category_name:
-                category_name = ''
             table.add_row(
                 pack,
-                category_name,
+                item.category,
                 item.torrent_path,
             )
 

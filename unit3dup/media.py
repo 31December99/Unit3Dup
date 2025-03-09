@@ -231,17 +231,17 @@ class Media:
 
         # Check for ext file
         if ManageTitles.media_docu_type(self.title):
-            self._category = System.DOCUMENTARY # edicola
+            self._category = System.category_list.get(System.DOCUMENTARY)
             # Check for season
         elif self.guess_filename.guessit_season:
-            self._category = System.TV_SHOW
+            self._category = System.category_list.get(System.TV_SHOW)
         # it's a movie
         else:
-            self._category = System.MOVIE
+            self._category = System.category_list.get(System.MOVIE)
 
         # If there's a crew or platform list -> game
         if self.crew_list or self.platform_list:
-            self._category = System.GAME
+            self._category = System.category_list.get(System.GAME)
         return self._category
 
     @property
@@ -252,8 +252,8 @@ class Media:
     def mediafile(self):
         if not self._media_file:
             if self.category in {
-                System.MOVIE,
-                System.TV_SHOW,
+                System.category_list.get(System.MOVIE),
+                System.category_list.get(System.TV_SHOW),
             }:
                 # Read from the current video file the height field
                 file_path = os.path.join(self.folder, self.file_name)
