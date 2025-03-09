@@ -37,6 +37,7 @@ python3 start.py -f "/home/uploader/seriedummy S01"
 
 ### How to Install 
 
+
 1. Linux : sudo apt install ffmpeg
 2. Windows : unzip https://www.ffmpeg.org/download.html and add its folder to
 PATH environment user variable
@@ -46,16 +47,33 @@ PATH environment user variable
 5. run pip install -r requirements.txt inside the bot folder
 6. "python start.py" to initialize the configuration for the bot
 
+
+#### Upload PDF
+unit3dup can grab the first page, convert it to an image (using xpdf),
+and then the bot can upload it to an image host, then add the link to the torrent page description
+
+Install xpdf tools
+
+Windows:
+
+1. Download and unzip xpdfReader from https://dl.xpdfreader.com/xpdf-tools-win-4.05.zip
+2. Put the folder 'bin64' in the system path. For example: C:\xpdf-tools-win-4.05\bin64
+3. Test it: Run pdfimages.exe in the terminal
+
+Linux:
+1. sudo apt install xpdf
+2. Test it: Run pdfimages in the terminal
+
 ### Configure
 open the Unit3Dbot_service.json
 
--> Linux : Unit3Dbot_service.json is located in the home directory on Linux
+-> Linux : Unit3Dbot.json is located in the home directory on Linux
 
--> Windows: Unit3Dbot_service.json is located in the AppData folder on Windows
+-> Windows: Unit3Dbot.json is located in the AppData folder on Windows
 
 example:
 
-C:\Users\user\AppData\Local
+C:\Users\user\AppData\Local\Unit3Dup_config\
 where "user" is your username windows account
 
 ## Bot Update
