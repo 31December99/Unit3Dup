@@ -485,12 +485,15 @@ class Load:
             PW_TORRENT_ARCHIVE_PATH: Path = Path(os.getenv("LOCALAPPDATA", ".")) / "pw_torrent_archive"
             PW_DOWNLOAD_PATH: Path = Path(os.getenv("LOCALAPPDATA", ".")) / "pw_download"
             WATCHER_DESTINATION_PATH: Path = Path(os.getenv("LOCALAPPDATA", ".")) / "watcher_destination_path"
+            WATCHER_PATH: Path = Path(os.getenv("LOCALAPPDATA", ".")) / "watcher_path"
+
 
         else:
             default_json_path: Path = Path.home() / f"{config_file}"
             PW_TORRENT_ARCHIVE_PATH: Path = Path.home() / "pw_torrent_archive"
             PW_DOWNLOAD_PATH: Path = Path.home() / "pw_download"
             WATCHER_DESTINATION_PATH: Path = Path.home() / "watcher_destination_path"
+            WATCHER_PATH:  Path = Path.home() / "watcher_path"
 
         if not PW_TORRENT_ARCHIVE_PATH.exists():
             print(f"Create default pw torrent archive path: {PW_TORRENT_ARCHIVE_PATH}")
@@ -503,6 +506,10 @@ class Load:
         if not WATCHER_DESTINATION_PATH.exists():
             print(f"Create default destination watcher path: {WATCHER_DESTINATION_PATH}")
             os.makedirs(WATCHER_DESTINATION_PATH)
+
+        if not WATCHER_PATH.exists():
+            print(f"Create default watcher path: {WATCHER_PATH}")
+            os.makedirs(WATCHER_PATH)
 
         if not default_json_path.exists():
             print(f"Create default configuration file: {default_json_path}")
