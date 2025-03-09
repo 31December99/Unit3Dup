@@ -5,6 +5,7 @@ import argparse
 import sys
 
 from view import custom_console
+from common.utility import System
 
 class CommandLine:
     """
@@ -31,8 +32,8 @@ class CommandLine:
         parser.add_argument("-pw", "--pw", type=str, help="")
         parser.add_argument("-ftp", "--ftp", action="store_true", help="Connect to FTP")
         parser.add_argument("-game", "--game", action="store_true", help="Set media type to game")
-        parser.add_argument("-movie", "--movie", action="store_true", help="Set media type to movie")
-        parser.add_argument("-serie", "--serie", action="store_true", help="Set media type to series")
+        parser.add_argument('-force', nargs='?', const="movie", type=str, default=None)
+
 
 
         parser.add_argument(
@@ -102,6 +103,16 @@ class CommandLine:
 
         self.args: parser = parser.parse_args()
         self.is_dir = os.path.isdir(self.args.scan) if self.args.scan else None
+
+        # Test -force flag
+        if self.args.force:
+            self.args.force = self.args.force[:10]
+            if self.args.force.lower() not in [ System.category_list[System.MOVIE],
+                                        System.category_list[System.GAME],
+                                        System.category_list[System.TV_SHOW],
+                                        System.category_list[System.DOCUMENTARY]]:
+                self.args.force = None
+
 
         # Check if the upload path is valid
         # expand path home_path with tilde

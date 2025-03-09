@@ -54,7 +54,7 @@ class Bot:
         custom_console.panel_message("Analyzing your media files... Please wait")
 
         # Get a Files list with basic attributes and create a content object for each
-        self.content_manager = ContentManager(path=self.path, mode=self.mode)
+        self.content_manager = ContentManager(path=self.path, mode=self.mode, cli=self.cli)
         contents = self.content_manager.process()
 
         # -u requires a single file

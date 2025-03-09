@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import argparse
 import json
 import os
 import re
@@ -8,7 +9,7 @@ from unit3dup.automode import Auto
 from unit3dup.media import Media
 
 class ContentManager:
-    def __init__(self, path: str, mode: str):
+    def __init__(self, path: str, mode: str, cli: argparse.Namespace):
         """
         Args:
             path (str): The path to the media files or directories
@@ -16,6 +17,7 @@ class ContentManager:
         """
         self.path = path
         self.mode = mode
+        self.cli = cli
 
         self.languages: list[str] | None = None
         self.display_name: str | None = None
@@ -39,6 +41,7 @@ class ContentManager:
         contents = []
         for media in self.media_list:
             self.path = media.torrent_path
+            media.category = media.category if not self.cli.force else self.cli.force
             self.category = media.category
 
             content = self.get_data(media=media)

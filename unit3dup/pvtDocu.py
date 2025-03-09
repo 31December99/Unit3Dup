@@ -39,7 +39,11 @@ class PdfImages:
             self.file_name,
             f"{self.file_name}",
         ]
-        subprocess.run(command, capture_output=True, check=True, timeout=20)
+        try:
+            subprocess.run(command, capture_output=True, check=True, timeout=20)
+        except subprocess.CalledProcessError:
+            custom_console.bot_error_log(f"It was not possible to extract any page from '{self.file_name}'")
+            exit(1)
 
         with open(f"{self.file_name}-0000.jpg", "rb") as img_file:
             img_data = img_file.read()

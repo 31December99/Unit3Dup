@@ -244,6 +244,11 @@ class Media:
             self._category = System.category_list.get(System.GAME)
         return self._category
 
+    @category.setter
+    def category(self, value):
+        self._category = value
+
+
     @property
     def game_title(self):
         return self.guess_filename.guessit_title
