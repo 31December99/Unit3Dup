@@ -12,6 +12,35 @@ from pathvalidate import sanitize_filepath
 from common.utility import ManageTitles
 from common import trackers
 
+if os.name == "nt":
+    PW_TORRENT_ARCHIVE_PATH: Path = Path(os.getenv("LOCALAPPDATA", ".")) / "Unit3Dup_config" / "pw_torrent_archive"
+    PW_DOWNLOAD_PATH: Path = Path(os.getenv("LOCALAPPDATA", ".")) / "Unit3Dup_config" / "pw_download"
+    WATCHER_DESTINATION_PATH: Path = Path(os.getenv("LOCALAPPDATA", ".")) / "Unit3Dup_config" / "watcher_destination_path"
+    WATCHER_PATH: Path = Path(os.getenv("LOCALAPPDATA", ".")) / "Unit3Dup_config" / "watcher_path"
+    CACHE_PATH: Path = Path(os.getenv("LOCALAPPDATA", ".")) / "Unit3Dup_config" / "cache_path"
+    TORRENT_ARCHIVE_PATH: Path = Path(os.getenv("LOCALAPPDATA", ".")) / "Unit3Dup_config" / "torrent_archive_path"
+
+else:
+    PW_TORRENT_ARCHIVE_PATH: Path = Path.home() / "Unit3Dup_config" / "pw_torrent_archive"
+    PW_DOWNLOAD_PATH: Path = Path.home() / "Unit3Dup_config" / "pw_download"
+    WATCHER_DESTINATION_PATH: Path = Path.home() / "Unit3Dup_config" / "watcher_destination_path"
+    WATCHER_PATH: Path = Path.home() / "Unit3Dup_config" / "watcher_path"
+    CACHE_PATH: Path = Path.home() / "Unit3Dup_config" / "cache_path"
+    TORRENT_ARCHIVE_PATH: Path = Path.home() / "Unit3Dup_config" / "torrent_archive_path"
+
+
+def get_default_path(field: str)-> str:
+    default_paths = {
+            "TORRENT_ARCHIVE_PATH": TORRENT_ARCHIVE_PATH,
+            "CACHE_PATH": CACHE_PATH,
+            "WATCHER_DESTINATION_PATH": WATCHER_DESTINATION_PATH,
+            "WATCHER_PATH": WATCHER_PATH,
+            "PW_DOWNLOAD": PW_DOWNLOAD_PATH,
+            "PW_TORRENT_ARCHIVE_PATH": PW_TORRENT_ARCHIVE_PATH
+    }
+    return str(default_paths[field])
+
+
 class TrackerConfig(BaseModel):
     ITT_URL: str
     ITT_APIKEY: str | None = None
@@ -27,7 +56,6 @@ class TrackerConfig(BaseModel):
     YOUTUBE_KEY: str | None = None
     IGDB_CLIENT_ID: str | None = None
     IGDB_ID_SECRET: str | None = None
-
 
 
 class TorrentClientConfig(BaseModel):
@@ -51,6 +79,7 @@ class UserPreferences(BaseModel):
     FREE_IMAGE_PRIORITY: int = 2
     IMGBB_PRIORITY: int = 3
     IMGFI_PRIORITY: int = 4
+    NUMBER_OF_SCREENSHOTS: int = 4
     YOUTUBE_FAV_CHANNEL_ID: str | None = None
     YOUTUBE_CHANNEL_ENABLE: bool = False
     DUPLICATE_ON: bool = False
@@ -59,15 +88,14 @@ class UserPreferences(BaseModel):
     WATCHER_INTERVAL: int = 60
     WATCHER_PATH: str | None = None
     WATCHER_DESTINATION_PATH: str | None = None
-    NUMBER_OF_SCREENSHOTS: int = 4
+    TORRENT_ARCHIVE_PATH: str | None = None
+    CACHE_PATH: str | None = None
     COMPRESS_SCSHOT: int = 4
     RESIZE_SCSHOT: bool = False
-    TORRENT_ARCHIVE: str | None = None
     TORRENT_COMMENT: str | None = "no_comment"
     PREFERRED_LANG: str | None = "all"
     ANON: bool = False
     CACHE_SCR: bool = False
-    CACHE_PATH: str | None = None
 
 
 
@@ -159,18 +187,18 @@ class Validate:
         return multi_tracker_list
 
     @staticmethod
-    def torrent_archive_path(path: str | None, field_name: str) -> str | None:
+    def unit3dup_path(path: str | None, field_name: str, default_path: str) -> str | None:
         """
         Validates path
         return: validated and verified path or None
         """
-
         if isinstance(path, str) and path.strip():
             if validate_path:=Validate.validate_path(path=path):
+                # check if path exist
                 if Path(validate_path).expanduser().is_dir():
                     return validate_path
-        print(f"-> Invalid path for {field_name} '{path}'")
-        exit(1)
+        # otherwise return the default path
+        return default_path
 
 
     @staticmethod
@@ -343,8 +371,22 @@ class Config(BaseModel):
                 if field == 'PREFERRED_LANG':
                     section[field] =Validate.iso3166(value=section[field], field_name=field)
 
-                if field in  ['TORRENT_ARCHIVE','PW_DOWNLOAD_PATH', 'WATCHER_DESTINATION_PATH','CACHE_PATH']:
-                    section[field] =Validate.torrent_archive_path(path=section[field], field_name=field)
+                if field == 'CACHE_PATH':
+                    section[field] =Validate.unit3dup_path(path=section[field], field_name=field,
+                                                           default_path=get_default_path(field=field))
+
+                if field == 'WATCHER_DESTINATION_PATH':
+                    section[field] =Validate.unit3dup_path(path=section[field], field_name=field,
+                                                           default_path=get_default_path(field=field))
+
+                if field == 'WATCHER_PATH':
+                    section[field] =Validate.unit3dup_path(path=section[field], field_name=field,
+                                                           default_path=get_default_path(field=field))
+
+                if field == 'TORRENT_ARCHIVE_PATH':
+                    section[field] =Validate.unit3dup_path(path=section[field],field_name=field,
+                                                           default_path=get_default_path(field=field))
+
         return v
 
     @model_validator(mode='before')
@@ -427,23 +469,24 @@ class Load:
                 "FREE_IMAGE_PRIORITY": 2,
                 "IMGBB_PRIORITY": 3,
                 "IMGFI_PRIORITY": 4,
+                "NUMBER_OF_SCREENSHOTS": 6,
                 "YOUTUBE_FAV_CHANNEL_ID": "UCGCbxpnt25hWPFLSbvwfg_w",
                 "YOUTUBE_CHANNEL_ENABLE": "False",
                 "DUPLICATE_ON": "False",
                 "SKIP_DUPLICATE": "False",
                 "SIZE_TH": 50,
                 "WATCHER_INTERVAL": 60,
-                "WATCHER_PATH": "watcher_path",
-                "WATCHER_DESTINATION_PATH": ".",
-                "NUMBER_OF_SCREENSHOTS": 6,
+                "WATCHER_PATH": "no_path",
+                "WATCHER_DESTINATION_PATH": "no_path",
+                "TORRENT_ARCHIVE_PATH": "no_path",
+                "CACHE_PATH": "no_path",
                 "COMPRESS_SCSHOT": 4,
                 "RESIZE_SCSHOT": "False",
-                "TORRENT_ARCHIVE": ".",
                 "TORRENT_COMMENT": "no_comment",
                 "PREFERRED_LANG": "all",
                 "ANON": "False",
                 "CACHE_SCR": "False",
-                "CACHE_PATH": ".",
+
             },
             "options": {
                 "PW_API_KEY": "no_key",
@@ -481,27 +524,9 @@ class Load:
         config_file = "Unit3Dbot.json"
 
         if os.name == "nt":
-            default_json_path: Path = Path(os.getenv("LOCALAPPDATA", ".")) / f"{config_file}"
-            PW_TORRENT_ARCHIVE_PATH: Path = Path(os.getenv("LOCALAPPDATA", ".")) / "pw_torrent_archive"
-            PW_DOWNLOAD_PATH: Path = Path(os.getenv("LOCALAPPDATA", ".")) / "pw_download"
-            WATCHER_DESTINATION_PATH: Path = Path(os.getenv("LOCALAPPDATA", ".")) / "watcher_destination_path"
-            WATCHER_PATH: Path = Path(os.getenv("LOCALAPPDATA", ".")) / "watcher_path"
-
-
+            default_json_path: Path = Path(os.getenv("LOCALAPPDATA", ".")) / "Unit3Dup_config" / f"{config_file}"
         else:
-            default_json_path: Path = Path.home() / f"{config_file}"
-            PW_TORRENT_ARCHIVE_PATH: Path = Path.home() / "pw_torrent_archive"
-            PW_DOWNLOAD_PATH: Path = Path.home() / "pw_download"
-            WATCHER_DESTINATION_PATH: Path = Path.home() / "watcher_destination_path"
-            WATCHER_PATH:  Path = Path.home() / "watcher_path"
-
-        if not PW_TORRENT_ARCHIVE_PATH.exists():
-            print(f"Create default pw torrent archive path: {PW_TORRENT_ARCHIVE_PATH}")
-            os.makedirs(PW_TORRENT_ARCHIVE_PATH)
-
-        if not PW_DOWNLOAD_PATH.exists():
-            print(f"Create default pw download path: {PW_DOWNLOAD_PATH}")
-            os.makedirs(PW_DOWNLOAD_PATH)
+            default_json_path: Path = Path.home() / "Unit3Dup_config" / f"{config_file}"
 
         if not WATCHER_DESTINATION_PATH.exists():
             print(f"Create default destination watcher path: {WATCHER_DESTINATION_PATH}")
@@ -511,9 +536,25 @@ class Load:
             print(f"Create default watcher path: {WATCHER_PATH}")
             os.makedirs(WATCHER_PATH)
 
+        if not TORRENT_ARCHIVE_PATH.exists():
+            print(f"Create default torrent archive path: {TORRENT_ARCHIVE_PATH}")
+            os.makedirs(TORRENT_ARCHIVE_PATH)
+
+        if not CACHE_PATH.exists():
+            print(f"Create default cache path: {CACHE_PATH}")
+            os.makedirs(CACHE_PATH)
+
         if not default_json_path.exists():
             print(f"Create default configuration file: {default_json_path}")
             Load.create_default_json_file(default_json_path)
+
+        if not PW_TORRENT_ARCHIVE_PATH.exists():
+            print(f"Create default pw torrent archive path: {PW_TORRENT_ARCHIVE_PATH}")
+            os.makedirs(PW_TORRENT_ARCHIVE_PATH)
+
+        if not PW_DOWNLOAD_PATH.exists():
+            print(f"Create default pw download path: {PW_DOWNLOAD_PATH}")
+            os.makedirs(PW_DOWNLOAD_PATH)
 
 
         # Since the last bot version there might are new attributes

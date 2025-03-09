@@ -20,6 +20,10 @@ def main():
 
     # Load user configuration data
     config = Load().load_config()
+    custom_console.bot_log(config.user_preferences.TORRENT_ARCHIVE_PATH)
+    custom_console.bot_log(config.user_preferences.CACHE_PATH)
+    custom_console.bot_log(config.user_preferences.WATCHER_DESTINATION_PATH)
+    custom_console.bot_log(config.user_preferences.WATCHER_PATH)
 
     # /// Initialize command line interface
     cli = CommandLine()
