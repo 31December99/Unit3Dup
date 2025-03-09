@@ -104,6 +104,10 @@ class CommandLine:
         self.is_dir = os.path.isdir(self.args.scan) if self.args.scan else None
 
         # Check if the upload path is valid
-        if self.args.upload and not os.path.exists(self.args.upload):
-            custom_console.bot_error_log(f"The path {self.args.upload} does not exist.")
-            sys.exit()
+        # expand path home_path with tilde
+        if self.args.upload:
+            self.args.upload = os.path.expanduser(self.args.upload)
+
+            if self.args.upload and not self.args.upload:
+                custom_console.bot_error_log(f"The path {self.args.upload} does not exist.")
+                sys.exit()
