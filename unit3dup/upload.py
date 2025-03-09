@@ -24,19 +24,28 @@ class UploadBot:
 
     def message(self,tracker_response: requests.Response) -> (requests, dict):
 
+        name_error = ''
+        info_hash_error = ''
+        _message = json.loads(tracker_response.text)["data"]
+
         if tracker_response.status_code == 200:
             tracker_response_body = json.loads(tracker_response.text)
             custom_console.bot_log(f"\n[RESPONSE]->'{self.tracker_name}'.....{tracker_response_body['message'].upper()}\n\n")
             return tracker_response_body["data"],{}
+
+        elif tracker_response.status_code == 404:
+            if _message.get("type_id",None):
+                name_error =  _message["type_id"]
+            else:
+                name_error = _message
+            error_message = f"{self.__class__.__name__} - {name_error}"
         else:
-            name_error=''
-            info_hash_error = ''
-            _message = json.loads(tracker_response.text)["data"]
             if _message.get("name",None):
                 name_error =  _message["name"][0]
             if _message.get("info_hash",None):
                 info_hash_error = _message["info_hash"][0]
-            error_message =f"{name_error} : {info_hash_error}"
+            error_message =f"{self.__class__.__name__} - {name_error} : {info_hash_error}"
+
         return {}, error_message
 
     def send(self,show_id: int , imdb_id: int, show_keywords_list: str, video_info: Video) -> (requests, dict):
@@ -64,7 +73,7 @@ class UploadBot:
         self.tracker.data["tmdb"] = 0
         self.tracker.data["category_id"] = self.tracker_data.category.get(self.content.category)
         self.tracker.data["description"] = igdb.description if igdb else "Sorry, there is no valid IGDB"
-        self.tracker.data["type_id"] = self.tracker_data.type_id.get(igdb_platform)
+        self.tracker.data["type_id"] = self.tracker_data.type_id.get(igdb_platform) if igdb_platform else 1
         self.tracker.data["igdb"] = igdb.id if igdb else 1,  # need zero not one ( fix tracker)
         tracker_response=self.tracker.upload_t(data=self.tracker.data, torrent_path=self.content.torrent_path,
                                                nfo_path=nfo_path)
