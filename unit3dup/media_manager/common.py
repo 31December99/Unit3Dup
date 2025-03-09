@@ -116,29 +116,29 @@ class UserContent:
 
 
     @staticmethod
-    def send_to_bittorrent_worker(qbittorrent_file: BittorrentData, client: QbittorrentClient | TransmissionClient):
+    def send_to_bittorrent_worker(bittorrent_file: BittorrentData, client: QbittorrentClient | TransmissionClient):
         """
-        worker: This function will handle sending a single torrent to qBittorrent
+        worker: This function will handle sending a single torrent to torrent clients
 
         Args:
-            qbittorrent_file (QBittorrent): The object containing the torrent and other necessary info
+            bittorrent_file: The object containing the torrent and other necessary info
             client: qbittorrent client | transmission_rpc
         """
         try:
             # Check if we have a valid response from the tracker
-            if qbittorrent_file.tracker_response:
+            if bittorrent_file.tracker_response:
                 if client:
                     client.send_to_client(
-                    tracker_data_response=qbittorrent_file.tracker_response,
-                    torrent=qbittorrent_file.torrent_response,
-                    content=qbittorrent_file.content,
+                    tracker_data_response=bittorrent_file.tracker_response,
+                    torrent=bittorrent_file.torrent_response,
+                    content=bittorrent_file.content,
                 )
             else:
                 # invalid response
-                custom_console.bot_error_log(f"[{qbittorrent_file.content.display_name}] ->"
-                                       f" {qbittorrent_file.tracker_message}")
+                custom_console.bot_error_log(f"[{bittorrent_file.content.display_name}] ->"
+                                       f" {bittorrent_file.tracker_message}")
         except Exception as e:
-            custom_console.bot_error_log(f"Error sending torrent {qbittorrent_file.content.file_name}: {str(e)}")
+            custom_console.bot_error_log(f"Error sending torrent {bittorrent_file.content.file_name}: {str(e)}")
 
 
     @staticmethod
