@@ -32,8 +32,8 @@ class UserContent:
 
         base_name = os.path.basename(content.torrent_path)
 
-        if config_settings.user_preferences.TORRENT_ARCHIVE:
-            this_path = os.path.join(config_settings.user_preferences.TORRENT_ARCHIVE, f"{base_name}.torrent")
+        if config_settings.user_preferences.TORRENT_ARCHIVE_PATH:
+            this_path = os.path.join(config_settings.user_preferences.TORRENT_ARCHIVE_PATH, f"{base_name}.torrent")
         else:
             this_path = f"{content.torrent_path}.torrent"
 
