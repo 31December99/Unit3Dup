@@ -108,8 +108,6 @@ class TmdbAPI(MyHttp):
         :return: list of T or None
         """
         # Only tv and movie
-        print(category)
-        input()
         if category not in ['movie', 'tv']:
             custom_console.bot_warning_log("Check the category of the search query")
             return []

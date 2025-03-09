@@ -57,10 +57,6 @@ def main():
             custom_console.bot_error_log(f"You need to set a favorite 'torrent_client' in the config file")
             exit(1)
 
-
-    # \\\ Commands options  \\\
-    force_media = None # todo
-
     # Manual upload mode
     if cli.args.upload:
         bot = Bot(path=cli.args.upload, cli=cli.args)
