@@ -33,12 +33,7 @@ class CommandLine:
         parser.add_argument("-ftp", "--ftp", action="store_true", help="Connect to FTP")
         parser.add_argument("-game", "--game", action="store_true", help="Set media type to game")
         parser.add_argument('-force', nargs='?', const="movie", type=str, default=None)
-
-
-
-        parser.add_argument(
-            "-noupload", "--noupload", action="store_true", help="Create torrent only"
-        )
+        parser.add_argument("-noseed", "--noseed", action="store_true", help="Create torrent only")
 
         parser.add_argument(
             "-duplicate",

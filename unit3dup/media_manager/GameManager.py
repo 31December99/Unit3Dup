@@ -69,7 +69,7 @@ class GameManager:
                 torrent_response = None
 
             # Prepare the upload game data with the search results
-            if not self.cli.noupload:
+            if not self.cli.noseed:
                 unit3d_up = UploadBot(content=content, tracker_name=selected_tracker)
                 tracker_response, tracker_message = unit3d_up.send_game(igdb=game_data_results, nfo_path=content.game_nfo)
 

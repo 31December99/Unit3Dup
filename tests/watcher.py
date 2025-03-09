@@ -9,7 +9,7 @@ def test_cli_watcher():
         watcher=True,
         torrent=False,
         duplicate=False,
-        noupload=False,
+        noseed=False,
         tracker=None,
     )
 
