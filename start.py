@@ -33,6 +33,7 @@ def main():
         custom_console.bot_error_log(f"No tracker name provided. Please update your configuration file")
         exit(1)
 
+
     # /// Test the Tracker
     for tracker_data in config.tracker_config.MULTI_TRACKER:
         tracker = pvtTracker.Unit3d(tracker=tracker_data)
@@ -40,22 +41,22 @@ def main():
             custom_console.bot_log(f"Tracker -> '{tracker_data.upper()}' Online")
             pass
 
+    if not cli.args.noseed:
+        # /// Test the torrent clients
+        if cli.args.scan or cli.args.upload or cli.args.folder or cli.args.watcher:
 
-    # /// Test the torrent clients
-    if cli.args.scan or cli.args.upload or cli.args.folder or cli.args.watcher:
-
-        if config.torrent_client_config.TORRENT_CLIENT.lower()=="qbittorrent":
-            test_client_torrent = QbittorrentClient()
-            if not test_client_torrent.connect():
+            if config.torrent_client_config.TORRENT_CLIENT.lower()=="qbittorrent":
+                test_client_torrent = QbittorrentClient()
+                if not test_client_torrent.connect():
+                    exit(1)
+            elif config.torrent_client_config.TORRENT_CLIENT.lower()=="transmission":
+                test_client_torrent = TransmissionClient()
+                if not test_client_torrent.connect():
+                    exit(1)
+            else:
+                custom_console.bot_error_log(f"Unknown Torrent Client name '{config.torrent_client_config.TORRENT_CLIENT}'")
+                custom_console.bot_error_log(f"You need to set a favorite 'torrent_client' in the config file")
                 exit(1)
-        elif config.torrent_client_config.TORRENT_CLIENT.lower()=="transmission":
-            test_client_torrent = TransmissionClient()
-            if not test_client_torrent.connect():
-                exit(1)
-        else:
-            custom_console.bot_error_log(f"Unknown Torrent Client name '{config.torrent_client_config.TORRENT_CLIENT}'")
-            custom_console.bot_error_log(f"You need to set a favorite 'torrent_client' in the config file")
-            exit(1)
 
     # Manual upload mode
     if cli.args.upload:
