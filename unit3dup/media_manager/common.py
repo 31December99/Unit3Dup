@@ -149,6 +149,10 @@ class UserContent:
         Args:
             bittorrent_list (list[Bittorrent]): A list of Bittorrent objects to be sent to the client
         """
+
+        if not bittorrent_list:
+            return None
+
         client = QbittorrentClient()
 
         if config_settings.torrent_client_config.TORRENT_CLIENT.lower()=='qbittorrent':

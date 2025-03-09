@@ -66,20 +66,20 @@ class TorrentManager:
                 docu_manager = DocuManager(contents=doc, cli=self.cli)
                 docu_process_results = docu_manager.process(selected_tracker=tracker_in_list)
 
-            if not self.cli.noupload:
-                # custom_console.panel_message("\nSending torrents to the client... Please wait")
-                custom_console.bot_warning_log(f"\nSending torrents to the client "
-                                               f"{config_settings.torrent_client_config.TORRENT_CLIENT.upper()}"
-                                               f"... Please wait")
 
-                if game_process_results:
-                    UserContent.send_to_bittorrent(game_process_results)
+            # custom_console.panel_message("\nSending torrents to the client... Please wait")
+            custom_console.bot_warning_log(f"\nSending torrents to the client "
+                                           f"{config_settings.torrent_client_config.TORRENT_CLIENT.upper()}"
+                                           f"... Please wait")
 
-                if video_process_results:
-                    UserContent.send_to_bittorrent(video_process_results)
+            if game_process_results:
+                UserContent.send_to_bittorrent(game_process_results)
 
-                if docu_process_results:
-                    UserContent.send_to_bittorrent(docu_process_results)
+            if video_process_results:
+                UserContent.send_to_bittorrent(video_process_results)
+
+            if docu_process_results:
+                UserContent.send_to_bittorrent(docu_process_results)
             custom_console.bot_log(f"Tracker '{tracker_in_list}' Done.")
             custom_console.rule()
         custom_console.bot_log(f"Done.")

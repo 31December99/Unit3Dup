@@ -50,7 +50,7 @@ class DocuManager:
             docu_info.build_info()
 
             # Tracker payload
-            if not self.cli.noupload:
+            if not self.cli.noseed:
                 unit3d_up = UploadBot(content=content, tracker_name=selected_tracker)
 
                 # Upload

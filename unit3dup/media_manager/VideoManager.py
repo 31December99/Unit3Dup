@@ -69,7 +69,7 @@ class VideoManager:
                 video_info = Video(content.file_name, tmdb_id=db.video_id, trailer_key=db.trailer_key)
                 video_info.build_info()
 
-                if not self.cli.noupload:
+                if not self.cli.noseed:
                     unit3d_up = UploadBot(content=content, tracker_name=selected_tracker)
 
                     # Send data to the tracker
