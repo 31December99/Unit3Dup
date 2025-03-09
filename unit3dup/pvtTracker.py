@@ -339,11 +339,11 @@ class Torrents(Tracker):
 
 class Uploader(Tracker):
     def upload_t(self, data: dict, torrent_path: str, nfo_path = None) -> requests:
-        if not config_settings.user_preferences.TORRENT_ARCHIVE:
+        if not config_settings.user_preferences.TORRENT_ARCHIVE_PATH:
             full_path = f"{torrent_path}.torrent"
         else:
             torrent_file_name = os.path.basename(torrent_path)
-            full_path = os.path.join(config_settings.user_preferences.TORRENT_ARCHIVE, f"{torrent_file_name}.torrent")
+            full_path = os.path.join(config_settings.user_preferences.TORRENT_ARCHIVE_PATH, f"{torrent_file_name}.torrent")
 
         file_torrent = {"torrent": full_path}
         if nfo_path:

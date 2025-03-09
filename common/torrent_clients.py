@@ -28,9 +28,9 @@ class TorrClient(ABC):
 
     def download(self, tracker_torrent_url: requests, torrent_path: str):
         # Archive the torrent file if torrent_archive is set
-        if config_settings.user_preferences.TORRENT_ARCHIVE:
+        if config_settings.user_preferences.TORRENT_ARCHIVE_PATH:
             file_name = f"{os.path.basename(torrent_path)}.torrent"
-            full_path_archive = os.path.join(config_settings.user_preferences.TORRENT_ARCHIVE, file_name)
+            full_path_archive = os.path.join(config_settings.user_preferences.TORRENT_ARCHIVE_PATH, file_name)
         else:
             # Or save to the current path
             full_path_archive = f"{torrent_path}.torrent"
@@ -73,7 +73,8 @@ class TransmissionClient(TorrClient):
 
 
     def send_to_client(self,tracker_data_response: str, torrent: Mytorrent, content: Media):
-        full_path_archive = os.path.join(config_settings.user_preferences.TORRENT_ARCHIVE, f"{os.path.basename(content.torrent_path)}.torrent")
+        full_path_archive = os.path.join(config_settings.user_preferences.TORRENT_ARCHIVE_PATH,
+                                         f"{os.path.basename(content.torrent_path)}.torrent")
         # Torrent not created
         if not torrent:
             self.client.add_torrent(
@@ -131,7 +132,7 @@ class QbittorrentClient(TorrClient):
             custom_console.bot_error_log(f"{self.__class__.__name__} Please verify your configuration")
 
     def send_to_client(self,tracker_data_response: str, torrent: Mytorrent, content: Media):
-        full_path_archive = os.path.join(config_settings.user_preferences.TORRENT_ARCHIVE,
+        full_path_archive = os.path.join(config_settings.user_preferences.TORRENT_ARCHIVE_PATH,
                                          f"{os.path.basename(content.torrent_path)}.torrent")
 
         # file torrent already created

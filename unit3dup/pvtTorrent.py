@@ -41,12 +41,12 @@ class Mytorrent:
                 exit(1)
 
     def write(self) -> bool:
-        if not config_settings.user_preferences.TORRENT_ARCHIVE:
+        if not config_settings.user_preferences.TORRENT_ARCHIVE_PATH:
             full_path = f"{self.torrent_path}.torrent"
         else:
             torrent_file_name = os.path.basename(self.torrent_path)
             full_path = os.path.join(
-                config_settings.user_preferences.TORRENT_ARCHIVE, f"{torrent_file_name}.torrent"
+                config_settings.user_preferences.TORRENT_ARCHIVE_PATH, f"{torrent_file_name}.torrent"
             )
 
         custom_console.bot_log(f"--> {full_path}")
