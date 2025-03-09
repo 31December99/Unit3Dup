@@ -10,6 +10,7 @@ def test_cli_watcher():
         torrent=False,
         duplicate=False,
         noupload=False,
+        tracker=None,
     )
 
     tests.cli.args = cli_scan
