@@ -177,6 +177,16 @@ class Validate:
             # not a valid path
             return None
 
+    @staticmethod
+    def validate_shared_path(path: str)-> str | None:
+        try:
+            # Remove wrong chars
+            sanitized_path = sanitize_filepath(path)
+            # Test for absolute path
+            return sanitized_path if os.path.isabs(path) and 'no_path' not in path else None
+        except ValueError:
+            # not a valid path
+            return None
 
     @staticmethod
     def validate_multi_tracker(multi_tracker_list: list) -> list | None:
@@ -216,11 +226,11 @@ class Validate:
             # On Windows torrent_path:
             # c:\test_folder
             # The torrent client will point to c:\test_folder
-            if validate_path:=Validate.validate_path(path=path):
+            if validate_path:=Validate.validate_shared_path(path=path):
                 return validate_path
-
-        print(f"-> Please Fix '{field_name}' ['{path}'] in settings.json")
-        exit(1)
+            else:
+                # // None = invalid dir
+                return None
 
     @staticmethod
     def colors(value: str | None, field_name: str) -> str:
