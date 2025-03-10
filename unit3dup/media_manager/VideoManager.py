@@ -65,24 +65,29 @@ class VideoManager:
                 db_online = DbOnline(query=content.guess_title,category=content.category)
                 db = db_online.media_result
 
+                # Don't upload if -noup is set to True
+                if self.cli.noup:
+                    custom_console.bot_warning_log(f"No Upload active. Done.")
+                    return []
+
                 # Get meta from the media video
                 video_info = Video(content.file_name, tmdb_id=db.video_id, trailer_key=db.trailer_key)
                 video_info.build_info()
 
-                if not self.cli.noseed:
-                    unit3d_up = UploadBot(content=content, tracker_name=selected_tracker)
+                # Tracker payload
+                unit3d_up = UploadBot(content=content, tracker_name=selected_tracker)
 
-                    # Send data to the tracker
-                    tracker_response, tracker_message =  unit3d_up.send(show_id=db.video_id, imdb_id=db.imdb_id,
-                                                                        show_keywords_list=db.keywords_list,
-                                                                        video_info=video_info)
-                    bittorrent_list.append(
-                        BittorrentData(
-                            tracker_response=tracker_response,
-                            torrent_response=torrent_response,
-                            content=content,
-                            tracker_message = tracker_message
-                        ))
+                # Send data to the tracker
+                tracker_response, tracker_message =  unit3d_up.send(show_id=db.video_id, imdb_id=db.imdb_id,
+                                                                    show_keywords_list=db.keywords_list,
+                                                                    video_info=video_info)
+                bittorrent_list.append(
+                    BittorrentData(
+                        tracker_response=tracker_response,
+                        torrent_response=torrent_response,
+                        content=content,
+                        tracker_message = tracker_message
+                    ))
 
         # // end content
         return bittorrent_list

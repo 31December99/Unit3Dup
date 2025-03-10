@@ -45,23 +45,28 @@ class DocuManager:
             else:
                 torrent_response = None
 
+
+            # Don't upload if -noup is set to True
+            if self.cli.noup:
+                custom_console.bot_warning_log(f"No Upload active. Done.")
+                return []
+
             # Get the cover image
             docu_info = PdfImages(content.file_name)
             docu_info.build_info()
 
             # Tracker payload
-            if not self.cli.noseed:
-                unit3d_up = UploadBot(content=content, tracker_name=selected_tracker)
+            unit3d_up = UploadBot(content=content, tracker_name=selected_tracker)
 
-                # Upload
-                tracker_response, tracker_message = unit3d_up.send_docu(document_info=docu_info)
+            # Upload
+            tracker_response, tracker_message = unit3d_up.send_docu(document_info=docu_info)
 
-                bittorrent_list.append(
-                    BittorrentData(
-                        tracker_response=tracker_response,
-                        torrent_response=torrent_response,
-                        content=content,
-                        tracker_message=tracker_message,
-                    ))
+            bittorrent_list.append(
+                BittorrentData(
+                    tracker_response=tracker_response,
+                    torrent_response=torrent_response,
+                    content=content,
+                    tracker_message=tracker_message,
+                ))
 
         return bittorrent_list
