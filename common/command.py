@@ -33,7 +33,8 @@ class CommandLine:
         parser.add_argument("-ftp", "--ftp", action="store_true", help="Connect to FTP")
         parser.add_argument("-game", "--game", action="store_true", help="Set media type to game")
         parser.add_argument('-force', nargs='?', const="movie", type=str, default=None)
-        parser.add_argument("-noseed", "--noseed", action="store_true", help="Create torrent only")
+        parser.add_argument("-noseed", "--noseed", action="store_true", help="No seeding after upload")
+        parser.add_argument("-noup", "--noup", action="store_true", help="Torrent only. No upload")
 
         parser.add_argument(
             "-duplicate",
@@ -114,6 +115,7 @@ class CommandLine:
         if self.args.upload:
             self.args.upload = os.path.expanduser(self.args.upload)
 
-            if self.args.upload and not self.args.upload:
-                custom_console.bot_error_log(f"The path {self.args.upload} does not exist.")
-                sys.exit()
+
+        print(self.args)
+
+        input("Press Enter to continue...")
