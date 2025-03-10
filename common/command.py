@@ -27,7 +27,7 @@ class CommandLine:
         parser.add_argument("-f", "--folder", type=str, help="Upload folder")
         parser.add_argument("-scan", "--scan", type=str, help="Scan folder")
         parser.add_argument("-watcher", "--watcher", action="store_true", help="Start watcher")
-        parser.add_argument("-t", "--tracker", type=str, help="Upload to single tracker")
+        parser.add_argument("-tracker", "--tracker", type=str, help="Upload to single tracker")
 
         parser.add_argument("-pw", "--pw", type=str, help="")
         parser.add_argument("-ftp", "--ftp", action="store_true", help="Connect to FTP")
@@ -114,8 +114,3 @@ class CommandLine:
         # expand path home_path with tilde
         if self.args.upload:
             self.args.upload = os.path.expanduser(self.args.upload)
-
-
-        print(self.args)
-
-        input("Press Enter to continue...")
