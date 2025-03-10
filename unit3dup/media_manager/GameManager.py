@@ -50,6 +50,11 @@ class GameManager:
                     continue
                 self.torrent_found = True
 
+            # Don't upload if -noup is set to True
+            if self.cli.noup:
+                custom_console.bot_warning_log(f"No Upload active. Done.")
+                return []
+
             # Search for the game on IGDB using the content's title and platform tags
             game_data_results = self.igdb.game(content=content)
 
@@ -68,17 +73,16 @@ class GameManager:
             else:
                 torrent_response = None
 
-            # Prepare the upload game data with the search results
-            if not self.cli.noseed:
-                unit3d_up = UploadBot(content=content, tracker_name=selected_tracker)
-                tracker_response, tracker_message = unit3d_up.send_game(igdb=game_data_results, nfo_path=content.game_nfo)
+            # Tracker payload
+            unit3d_up = UploadBot(content=content, tracker_name=selected_tracker)
+            tracker_response, tracker_message = unit3d_up.send_game(igdb=game_data_results, nfo_path=content.game_nfo)
 
-                bittorrent_list.append(
-                    BittorrentData(
-                        tracker_response=tracker_response,
-                        torrent_response=torrent_response,
-                        content=content,
-                        tracker_message=tracker_message
-                    ))
+            bittorrent_list.append(
+                BittorrentData(
+                    tracker_response=tracker_response,
+                    torrent_response=torrent_response,
+                    content=content,
+                    tracker_message=tracker_message
+                ))
         return bittorrent_list
 
