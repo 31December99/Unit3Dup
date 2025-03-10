@@ -9,16 +9,9 @@ from common.frames import VideoFrame
 from view import custom_console
 from unit3dup import config_settings
 
-offline_uploaders = []
-
 
 class Video:
-    """
-    - Get screenshots for each provided video
-    - Obtain media info for each video and for the first video in a series
-    - Upload screenshots and create a new description
-    - Determine if the video is standard definition (SD) or not
-    """
+    """ Build a description for the torrent page: screenshots, mediainfo, trailers,metadata """
 
     def __init__(self, file_name: str,  tmdb_id: int, trailer_key = None):
 
@@ -57,12 +50,10 @@ class Video:
         self.description = self.cache.get(self.cache_key) if (self.cache.get(self.cache_key, None)
                                                               and self.tmdb_id > 0) else None
 
-        import pprint
-        pprint.pprint(self.description)
 
     @staticmethod
     def hash_key(tmdb_id) -> str:
-        """ Generate an hashkey for the cache index """
+        """ Generate a hashkey for the cache index """
 
         key_string = f"_{tmdb_id}"
         return hashlib.md5(key_string.encode('utf-8')).hexdigest()
