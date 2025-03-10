@@ -10,7 +10,13 @@ for tracker in tests.config.tracker_config.MULTI_TRACKER:
 def test_tmdb():
 
     cli_scan = tests.argparse.Namespace(
-        force = None
+        watcher=True,
+        torrent=False,
+        duplicate=False,
+        tracker=None,
+        force=False,
+        noup=False,
+        noseed=False,
     )
 
     test_content_movie = r"C:\test_folder"

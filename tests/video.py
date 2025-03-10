@@ -34,7 +34,15 @@ def get_tags(value):
 
 def test_content_manager():
     test_content_movie = r"C:\test_folder\Australian Dreams WEB-DL 1080p AC3 E-AC3 ITA SPA SUB-LF.mkv"
-    content_manager = tests.ContentManager(path=test_content_movie, mode='man')
+    cli_scan = tests.argparse.Namespace(
+        watcher=False,
+        torrent=False,
+        duplicate=False,
+        noseed=False,
+        tracker=None,
+        force=False,
+    )
+    content_manager = tests.ContentManager(path=test_content_movie, mode='man', cli=cli_scan)
 
     # Load the constant tracker
     custom_console.bot_log(f"Available trackers {tests.config.tracker_config.MULTI_TRACKER}")

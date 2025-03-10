@@ -17,7 +17,15 @@ def validate_url(value: str) -> bool:
 
 def test_game():
     test_content_movie = r"C:\test_folder_game"
-    content_manager = tests.ContentManager(path=test_content_movie, mode='auto')
+    cli_scan = tests.argparse.Namespace(
+        watcher=False,
+        torrent=False,
+        duplicate=False,
+        noseed=False,
+        tracker=None,
+        force=False,
+    )
+    content_manager = tests.ContentManager(path=test_content_movie, mode='auto', cli=cli_scan)
 
     contents = content_manager.process()
     assert len(contents) > 0

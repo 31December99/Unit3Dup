@@ -9,8 +9,10 @@ def test_cli_watcher():
         watcher=True,
         torrent=False,
         duplicate=False,
-        noseed=False,
         tracker=None,
+        force=False,
+        noup=False,
+        noseed=False,
     )
 
     tests.cli.args = cli_scan
