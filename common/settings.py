@@ -190,6 +190,10 @@ class Validate:
 
     @staticmethod
     def validate_multi_tracker(multi_tracker_list: list) -> list | None:
+
+        if len(multi_tracker_list) != len(set(multi_tracker_list)):
+            print(f"-> Invalid multi-tracker list. Please remove duplicates from your list in the configuration file")
+            return None
         for tracker in multi_tracker_list:
             if tracker.upper() not in trackers.tracker_list:
                 print(f"-> Invalid Multi Tracker '{tracker}'. Please fix your configuration file")
