@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import hashlib
 import diskcache
 
 from common.external_services.imageHost import Build
@@ -6,7 +7,6 @@ from common.mediainfo import MediaFile
 from common.frames import VideoFrame
 
 from view import custom_console
-
 from unit3dup import config_settings
 
 offline_uploaders = []
@@ -50,21 +50,25 @@ class Video:
         # description cache
         self.cache = diskcache.Cache(str(config_settings.user_preferences.CACHE_PATH))
 
+        # Create the hask key for the cache index
+        self.cache_key = self.hash_key(self.tmdb_id)
+
+        # Load the description using hash_key and if tmdb_id > 0 (0 = tmdb ID not found)
+        self.description = self.cache.get(self.cache_key) if (self.cache.get(self.cache_key, None)
+                                                              and self.tmdb_id > 0) else None
+
+        import pprint
+        pprint.pprint(self.description)
+
+    @staticmethod
+    def hash_key(tmdb_id) -> str:
+        """ Generate an hashkey for the cache index """
+
+        key_string = f"_{tmdb_id}"
+        return hashlib.md5(key_string.encode('utf-8')).hexdigest()
+
     def build_info(self):
         """Build the information to send to the tracker"""
-
-        # If cache is enabled and the video is already cached
-        # and if tmdb is not zero (tmdb ID not found) otherwise it will overwrite the same video in the cache
-        if config_settings.user_preferences.CACHE_SCR and self.tmdb_id > 0:
-            description = self.load_cache(self.tmdb_id)
-            if isinstance(description, dict):
-                self.description = description['description']
-                self.is_hd = description['is_hd']
-                if not self.description:
-                    custom_console.bot_warning_log(f""
-                                                   f"[{self.__class__.__name__}] The description in the cache is empty")
-        else:
-            self.description = None
 
         if not self.description:
             # If there is no cache available
@@ -78,9 +82,9 @@ class Video:
                                  f"[url=https://github.com/31December99/Unit3Dup]By Unit3Dup[/url]")
             self.is_hd = is_hd
 
-        # Write the new description to the cache
         if config_settings.user_preferences.CACHE_SCR and self.tmdb_id > 0:
-            self.cache[self.tmdb_id] = {'description' : self.description, 'is_hd' : self.is_hd}
+            self.cache[self.cache_key] = {'tmdb_id': self.tmdb_id,'description': self.description,'is_hd': self.is_hd}
+
         # Create a new media info object
         self.mediainfo = self._mediainfo()
 
@@ -89,24 +93,3 @@ class Video:
         """Return media info as a string."""
         media_info = MediaFile(self.file_name)
         return media_info.info
-
-
-    def load_cache(self, index_: int):
-
-        # Check if the item is in the cache
-        if index_ not in self.cache:
-            return False
-
-        custom_console.bot_warning_log(f"** {self.__class__.__name__} **: Using cached Description!")
-
-        try:
-            # Try to get the video from the cache
-            video = self.cache[index_]
-        except KeyError:
-            # Handle the case where the video is missing or the cache is corrupted
-            custom_console.bot_error_log("Cached frame not found or cache file corrupted")
-            custom_console.bot_error_log("Proceed to extract the screenshot again. Please wait..")
-            return False
-
-        # // OK
-        return video
