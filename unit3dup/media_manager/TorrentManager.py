@@ -66,6 +66,11 @@ class TorrentManager:
                 docu_manager = DocuManager(contents=doc, cli=self.cli)
                 docu_process_results = docu_manager.process(selected_tracker=tracker_in_list)
 
+            # No seeding or upload allowed
+            if self.cli.noseed or self.cli.noup:
+                custom_console.bot_warning_log(f"No seeding active. Done.")
+                return None
+
 
             # custom_console.panel_message("\nSending torrents to the client... Please wait")
             custom_console.bot_warning_log(f"\nSending torrents to the client "
