@@ -36,7 +36,7 @@ def main():
 
     # /// Test the Tracker
     for tracker_data in config.tracker_config.MULTI_TRACKER:
-        tracker = pvtTracker.Unit3d(tracker=tracker_data)
+        tracker = pvtTracker.Unit3d(tracker_name=tracker_data)
         if tracker.get_alive(alive=True, perPage=1):
             custom_console.bot_log(f"Tracker -> '{tracker_data.upper()}' Online")
             pass

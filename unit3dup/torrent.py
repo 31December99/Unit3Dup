@@ -3,10 +3,7 @@ import re
 import requests
 
 from common.trackers.trackers import TRACKData
-
 from unit3dup import pvtTracker
-from unit3dup import config_settings
-
 from view import custom_console
 
 class Torrent:
@@ -14,29 +11,7 @@ class Torrent:
     def __init__(self, tracker_name: str):
 
         self.perPage = 30
-        self.tracker = pvtTracker.Unit3d(tracker=tracker_name)
-
-
-    @staticmethod
-    def select_tracker(tracker_name: str) -> dict | None:
-
-        trackers = {
-            'ITT':
-                {
-                    "url": config_settings.tracker_config.ITT_URL,
-                    "api_key": config_settings.tracker_config.ITT_APIKEY
-                }
-            ,
-            'SIS':
-                {
-                    "url": config_settings.tracker_config.SIS_URL,
-                    "api_key": config_settings.tracker_config.SIS_APIKEY
-                }
-
-        }
-
-        return trackers.get(tracker_name, None)
-
+        self.tracker = pvtTracker.Unit3d(tracker_name=tracker_name)
 
     def get_unique_id(self, media_info: str) -> str:
         # Divido per campi
