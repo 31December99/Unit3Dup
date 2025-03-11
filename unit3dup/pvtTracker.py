@@ -5,21 +5,22 @@ import time
 import requests
 
 from urllib.parse import urljoin
-from unit3dup import config_settings
 from view import custom_console
+from common.trackers.data import trackers_api_data
+
 
 class Myhttp:
-    def __init__(self, tracker: str, pass_key=''):
+    def __init__(self, tracker_name: str, pass_key=''):
 
-        tracker_login = self.select_tracker(tracker.upper())
-        if not tracker_login:
+        api_data = trackers_api_data[tracker_name.upper()] if tracker_name else None
+        if not api_data:
             custom_console.bot_error_log(
-                f"Tracker '{tracker}' not found. Please check your configuration or set it using the '-t' flag.")
+                f"Tracker '{tracker_name}' not found. Please check your configuration or set it using the '-t' flag.")
             exit(1)
 
         self.pass_key = pass_key
-        self.base_url = tracker_login['url']
-        self.api_token = tracker_login['api_key']
+        self.base_url = api_data['url']
+        self.api_token = api_data['api_key']
 
         self.upload_url = urljoin(self.base_url, "api/torrents/upload")
         self.filter_url = urljoin(self.base_url, "api/torrents/filter?")
@@ -42,11 +43,11 @@ class Myhttp:
             "type_id": "1",
             "resolution_id": 10,  # mandatory
             "tmdb": "",  # mandatory
-            "imdb": "0",  # no ancora implementato
+            "imdb": "0",
             "tvdb": "0",  # no ancora implementato
             "mal": "0",  # no ancora implementato
             "igdb": "0",
-            "anonymous": int(config_settings.user_preferences.ANON),
+            "anonymous": 0,
             "stream": "0",
             "sd": "0",
             "keywords": "",
@@ -58,26 +59,6 @@ class Myhttp:
             "sticky": 0,
             "torrent-cover": "",  # no ancora implementato
         }
-
-    @staticmethod
-    def select_tracker(tracker_name: str) -> dict | None:
-
-        trackers = {
-            'ITT':
-                {
-                    "url": config_settings.tracker_config.ITT_URL,
-                    "api_key": config_settings.tracker_config.ITT_APIKEY
-                }
-            ,
-            'SIS':
-                {
-                    "url": config_settings.tracker_config.SIS_URL,
-                    "api_key": config_settings.tracker_config.SIS_APIKEY
-                }
-
-        }
-
-        return trackers.get(tracker_name, None)
 
 
     def _post(self, files: str, data: dict, params: dict):
@@ -338,12 +319,12 @@ class Torrents(Tracker):
 
 
 class Uploader(Tracker):
-    def upload_t(self, data: dict, torrent_path: str, nfo_path = None) -> requests:
-        if not config_settings.user_preferences.TORRENT_ARCHIVE_PATH:
+    def upload_t(self, data: dict, torrent_path: str, torrent_archive_path: str, nfo_path = None) -> requests:
+        if not torrent_archive_path:
             full_path = f"{torrent_path}.torrent"
         else:
             torrent_file_name = os.path.basename(torrent_path)
-            full_path = os.path.join(config_settings.user_preferences.TORRENT_ARCHIVE_PATH, f"{torrent_file_name}.torrent")
+            full_path = os.path.join(torrent_archive_path, f"{torrent_file_name}.torrent")
 
         file_torrent = {"torrent": full_path}
         if nfo_path:
