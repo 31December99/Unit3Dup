@@ -46,6 +46,7 @@ class TorrentManager:
         if config_settings.user_preferences.DUPLICATE_ON:
             custom_console.bot_log("'[ACTIVE]' Searching for duplicates")
 
+        # Set the torrent as the user CLI value or the first item in the multitracker list
         tracker = self.cli.tracker if self.cli.tracker else config_settings.tracker_config.MULTI_TRACKER[0]
 
 
@@ -83,6 +84,6 @@ class TorrentManager:
 
         if docu_process_results:
             UserContent.send_to_bittorrent(docu_process_results)
-        custom_console.bot_log(f"Tracker '{self.cli.tracker}' Done.")
+        custom_console.bot_log(f"Tracker '{tracker}' Done.")
         custom_console.rule()
     custom_console.bot_log(f"Done.")
