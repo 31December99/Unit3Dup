@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 import os
+import bencode2
 from concurrent.futures import ThreadPoolExecutor
 
 from common.torrent_clients import TransmissionClient, QbittorrentClient
+from common.trackers.data import trackers_api_data
 from common.bittorrent import BittorrentData
 from common.utility import ManageTitles
 from common import config_settings
@@ -18,13 +20,45 @@ class UserContent:
     Manage user media Files
     """
 
+
     @staticmethod
-    def torrent_file_exists(content: Media, class_name: str) -> bool:
+    def torrent_announces(torrent_path: str, tracker_name_list: list):
+        """ Add announces to a torrent file"""
+
+        # // Read the existing torrent file
+        with open(torrent_path, 'rb') as f:
+            # It decodes it
+            torrent_data = bencode2.bdecode(f.read())
+
+        # // Read the available list of trackers in the confing file
+        announce_list_encoded = []
+        for tracker in tracker_name_list:
+
+            # Get data for each tracker
+            api_data = trackers_api_data[tracker.upper()]
+
+            # Add to the list and encode it
+            announce_list_encoded.append(api_data['announce'].encode())
+
+        # // if announce list exists add a new one otherwise create a new one
+        if b'announce-list' in torrent_data:
+            torrent_data[b'announce-list'].append(announce_list_encoded)
+        else:
+            torrent_data[b'announce-list'] = [announce_list_encoded]
+
+        # // Save
+        with open(torrent_path, 'wb') as f:
+            f.write(bencode2.bencode(torrent_data))
+
+
+    @staticmethod
+    def torrent_file_exists(content: Media, announces_list: list) -> bool:
         """
         Check if a torrent file for the given content already exists
 
         Args:
             content (Contents): The content object
+            announces_list: The announces list
 
         Returns:
             bool: True if the torrent file exists otherwise False
@@ -39,9 +73,14 @@ class UserContent:
 
         if os.path.exists(this_path):
             custom_console.bot_warning_log(
-                f"** {class_name} **: Reusing the existing torrent file! {this_path}\n"
+                f"** {UserContent.__class__.__name__} **: Reusing the existing torrent file! {this_path}\n"
             )
+
+            # Add an announce_list if it's not empty
+            if announces_list:
+                UserContent.torrent_announces(torrent_path=this_path, tracker_name_list=announces_list)
             return True
+
         return False
 
 
@@ -76,12 +115,13 @@ class UserContent:
         return False
 
     @staticmethod
-    def torrent(content: Media)-> Mytorrent:
+    def torrent(content: Media, tracker_name: str)-> Mytorrent:
         """
            Create the file torrent
 
            Args:
                content (Contents): The content object media
+               tracker_name: the name of the selected tracker
 
            Returns:
                my_torrent object
