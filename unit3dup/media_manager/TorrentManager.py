@@ -20,7 +20,19 @@ class TorrentManager:
         self.cli = cli
         self.preferred_lang = my_language(config_settings.user_preferences.PREFERRED_LANG)
 
+        # Add one or more trackers to the torrent file if requested
+        if self.cli.cross:
+            self.trackers_name_list = config_settings.tracker_config.MULTI_TRACKER
+        else:
+            self.trackers_name_list = []
+
+        # Add a single announce if requested
+        if self.cli.tracker:
+            self.trackers_name_list = [self.cli.tracker.upper()]
+
+
     def process(self, contents: list) -> None:
+
 
         game_process_results: list["BittorrentData"] = []
         video_process_results: list["BittorrentData"] = []
@@ -46,24 +58,29 @@ class TorrentManager:
         if config_settings.user_preferences.DUPLICATE_ON:
             custom_console.bot_log("'[ACTIVE]' Searching for duplicates")
 
-        # Set the torrent as the user CLI value or the first item in the multitracker list
+        # Set the tracker to the user CLI value or the first item in the multi-tracker list (default)
+        # If cli.tracker is set a torrent will be created if it doesn't already exist with the announce URL
+        # Otherwise the tracker name will be set to the first item in the multi_tracker which is the default value
+        # and the announce will be added from the tracker platform
         tracker = self.cli.tracker if self.cli.tracker else config_settings.tracker_config.MULTI_TRACKER[0]
-
 
         # Build the torrent file and upload each GAME to the tracker
         if games:
             game_manager = GameManager(contents=games, cli=self.cli)
-            game_process_results = game_manager.process(selected_tracker=tracker)
+            game_process_results = game_manager.process(selected_tracker=tracker,
+                                                        tracker_name_list=self.trackers_name_list)
 
         # Build the torrent file and upload each VIDEO to the trackers
         if videos:
             video_manager = VideoManager(contents=videos, cli=self.cli)
-            video_process_results = video_manager.process(selected_tracker=tracker)
+            video_process_results = video_manager.process(selected_tracker=tracker,
+                                                          tracker_name_list=self.trackers_name_list)
 
         # Build the torrent file and upload each DOC to the tracker
         if doc:
             docu_manager = DocuManager(contents=doc, cli=self.cli)
-            docu_process_results = docu_manager.process(selected_tracker=tracker)
+            docu_process_results = docu_manager.process(selected_tracker=tracker,
+                                                        tracker_name_list=self.trackers_name_list)
 
         # No seeding or upload allowed
         if self.cli.noseed or self.cli.noup:

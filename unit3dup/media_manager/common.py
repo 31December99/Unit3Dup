@@ -30,21 +30,21 @@ class UserContent:
             # It decodes it
             torrent_data = bencode2.bdecode(f.read())
 
-        # // Read the available list of trackers in the confing file
         announce_list_encoded = []
+        # a single tracker in the tracker_list corresponds to the '-tracker' flag from the user's CLI
+        # two or more trackers in the tracker_list correspond to the '-cross' flag from the user's CLI
         for tracker in tracker_name_list:
-
             # Get data for each tracker
             api_data = trackers_api_data[tracker.upper()]
-
             # Add to the list and encode it
-            announce_list_encoded.append(api_data['announce'].encode())
+            announce_list_encoded.append([api_data['announce'].encode()])
 
-        # // if announce list exists add a new one otherwise create a new one
         if b'announce-list' in torrent_data:
-            torrent_data[b'announce-list'].append(announce_list_encoded)
-        else:
-            torrent_data[b'announce-list'] = [announce_list_encoded]
+            del(torrent_data[b'announce-list'])
+        if b'announce' in torrent_data:
+            del (torrent_data[b'announce'])
+
+        torrent_data[b'announce-list'] = announce_list_encoded
 
         # // Save
         with open(torrent_path, 'wb') as f:
@@ -52,13 +52,13 @@ class UserContent:
 
 
     @staticmethod
-    def torrent_file_exists(content: Media, announces_list: list) -> bool:
+    def torrent_file_exists(content: Media, tracker_name_list: list) -> bool:
         """
         Check if a torrent file for the given content already exists
 
         Args:
             content (Contents): The content object
-            announces_list: The announces list
+            tracker_name_list: the trackers name
 
         Returns:
             bool: True if the torrent file exists otherwise False
@@ -76,11 +76,9 @@ class UserContent:
                 f"** {UserContent.__class__.__name__} **: Reusing the existing torrent file! {this_path}\n"
             )
 
-            # Add an announce_list if it's not empty
-            if announces_list:
-                UserContent.torrent_announces(torrent_path=this_path, tracker_name_list=announces_list)
+            # Add an announce_list or remove 'announce-list' if the list is empty
+            UserContent.torrent_announces(torrent_path=this_path, tracker_name_list=tracker_name_list)
             return True
-
         return False
 
 
@@ -115,19 +113,20 @@ class UserContent:
         return False
 
     @staticmethod
-    def torrent(content: Media, tracker_name: str)-> Mytorrent:
+    def torrent(content: Media, trackers: list)-> Mytorrent:
         """
            Create the file torrent
 
            Args:
                content (Contents): The content object media
-               tracker_name: the name of the selected tracker
+               trackers: list of name of the trackers
 
            Returns:
                my_torrent object
         """
 
-        my_torrent = Mytorrent(contents=content, meta=content.metainfo)
+        # Add announcement only if expressly requested by the user via cli -tracker flag
+        my_torrent = Mytorrent(contents=content, meta=content.metainfo, trackers_list=trackers)
         my_torrent.hash()
         return my_torrent if my_torrent.write() else None
 

@@ -27,17 +27,7 @@ class VideoManager:
         self.contents: list['Media'] = contents
         self.cli: argparse = cli
 
-
-        if self.cli.cross:
-            self.trackers_name_list = config_settings.tracker_config.MULTI_TRACKER
-        else:
-            self.trackers_name_list = []
-
-        if self.cli.tracker:
-            self.trackers_name_list = [self.cli.tracker.upper()]
-
-
-    def process(self, selected_tracker: str) -> list["BittorrentData"] | None:
+    def process(self, selected_tracker: str, tracker_name_list: list) -> list["BittorrentData"] | None:
         """
            Process the video contents to filter duplicates and create torrents
 
@@ -51,7 +41,7 @@ class VideoManager:
 
             if UserContent.is_preferred_language(content=content):
                 # Torrent creation
-                if not UserContent.torrent_file_exists(content=content, announces_list=self.trackers_name_list):
+                if not UserContent.torrent_file_exists(content=content, tracker_name_list=tracker_name_list):
                     self.torrent_found = False
                 else:
                     # Torrent found, skip if the watcher is active
@@ -65,9 +55,9 @@ class VideoManager:
                         and UserContent.is_duplicate(content=content, tracker_name=selected_tracker)):
                     continue
 
-                # Does not create the torrent if the torrent was found earlier
+                # Add announcement only if expressly requested by the user via cli -tracker flag
                 if not self.torrent_found:
-                    torrent_response = UserContent.torrent(content=content, tracker_name=selected_tracker)
+                    torrent_response = UserContent.torrent(content=content, trackers=tracker_name_list)
                 else:
                     torrent_response = None
 

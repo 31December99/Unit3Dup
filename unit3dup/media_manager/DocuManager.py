@@ -17,34 +17,26 @@ class DocuManager:
         self._my_tmdb = None
         self.contents: list['Media'] = contents
         self.cli: argparse = cli
-        self.torrent_found: bool = False
 
 
-    def process(self, selected_tracker:str) -> list["BittorrentData"]:
+    def process(self, selected_tracker:str, tracker_name_list: list) -> list["BittorrentData"]:
         bittorrent_list = []
         for content in self.contents:
 
             # Torrent creation
-            if not UserContent.torrent_file_exists(content=content, class_name=self.__class__.__name__):
-                self.torrent_found = False
+            if not UserContent.torrent_file_exists(content=content, tracker_name_list=tracker_name_list):
+                torrent_response = UserContent.torrent(content=content, trackers=tracker_name_list)
             else:
                 # Torrent found, skip if the watcher is active
                 if self.cli.watcher:
                     custom_console.bot_log(f"Watcher Active.. skip the old upload '{content.file_name}'")
                     continue
-                self.torrent_found = True
+                torrent_response = None
 
             # Skip if it is a duplicate
             if ((self.cli.duplicate or config_settings.user_preferences.DUPLICATE_ON)
                     and UserContent.is_duplicate(content=content, tracker_name=selected_tracker)):
                 continue
-
-            # Does not create the torrent if the torrent was found earlier
-            if not self.torrent_found:
-                torrent_response = UserContent.torrent(content=content)
-            else:
-                torrent_response = None
-
 
             # Don't upload if -noup is set to True
             if self.cli.noup:
