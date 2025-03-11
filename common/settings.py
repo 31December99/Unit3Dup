@@ -44,8 +44,10 @@ def get_default_path(field: str)-> str:
 class TrackerConfig(BaseModel):
     ITT_URL: str
     ITT_APIKEY: str | None = None
+    ITT_PID: str | None = None
     SIS_URL: str
     SIS_APIKEY: str | None = None
+    SIS_PID: str | None = None
     MULTI_TRACKER: list[str] | None = None
     TMDB_APIKEY: str | None = None
     IMGBB_KEY: str | None = None
@@ -450,8 +452,10 @@ class Load:
             "tracker_config": {
                 "ITT_URL": "https://itatorrents.xyz",
                 "ITT_APIKEY": "no_key",
+                "ITT_PID": "no_key",
                 "SIS_URL": "https://no_tracker.xyz",
                 "SIS_APIKEY": "no_key",
+                "SIS_PID": "no_key",
                 "MULTI_TRACKER" : ["itt"],
                 "TMDB_APIKEY": "no_key",
                 "IMGBB_KEY": "no_key",
