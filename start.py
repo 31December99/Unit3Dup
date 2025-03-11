@@ -59,6 +59,11 @@ def main():
                 custom_console.bot_error_log(f"You need to set a favorite 'torrent_client' in the config file")
                 exit(1)
 
+
+    if cli.args.tracker and cli.args.tracker not in config.tracker_config.MULTI_TRACKER:
+       custom_console.bot_error_log(f"Tracker '{cli.args.tracker}' not found. Please update your configuration file")
+       exit()
+
     # Manual upload mode
     if cli.args.upload:
         bot = Bot(path=cli.args.upload, cli=cli.args)
