@@ -7,11 +7,13 @@ import shutil
 
 from unit3dup.media_manager.ContentManager import ContentManager
 from unit3dup.media_manager.TorrentManager import TorrentManager
+
 from common.external_services.ftpx.core.models.list import FTPDirectory
 from common.external_services.Pw.pw_manager import PwManager
 from common.external_services.ftpx.core.menu import Menu
 from common.external_services.ftpx.client import Client
 from common.extractor import Extractor
+
 from view import custom_console
 
 from pathlib import Path
@@ -219,3 +221,16 @@ class Bot:
                 exit(1)
 
             self.run()
+
+    def seed_it(self):
+        """ Send a file torrent file for seeding"""
+        self.torrent_manager.send(self.path)
+
+    def edit_it(self):
+        """ torrent file for editing"""
+        self.torrent_manager.edit(self.path)
+
+
+
+
+

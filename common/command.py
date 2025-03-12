@@ -29,10 +29,13 @@ class CommandLine:
         parser.add_argument("-watcher", "--watcher", action="store_true", help="Start watcher")
         parser.add_argument("-tracker", "--tracker", type=str, help="Upload to single tracker")
         parser.add_argument("-cross", "--cross", action="store_true", help="")
+        parser.add_argument("-seedit", "--seedit", type=str, help="")
+        parser.add_argument("-edit", "--edit", type=str, help="")
+
 
         parser.add_argument("-pw", "--pw", type=str, help="")
         parser.add_argument("-ftp", "--ftp", action="store_true", help="Connect to FTP")
-        parser.add_argument("-game", "--game", action="store_true", help="Set media type to game")
+        # parser.add_argument("-game", "--game", action="store_true", help="Set media type to game")
         parser.add_argument('-force', nargs='?', const="movie", type=str, default=None)
         parser.add_argument("-noseed", "--noseed", action="store_true", help="No seeding after upload")
         parser.add_argument("-noup", "--noup", action="store_true", help="Torrent only. No upload")

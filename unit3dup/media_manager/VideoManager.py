@@ -41,7 +41,7 @@ class VideoManager:
 
             if UserContent.is_preferred_language(content=content):
                 # Torrent creation
-                if not UserContent.torrent_file_exists(content=content, tracker_name_list=tracker_name_list):
+                if not UserContent.torrent_file_exists(path=content.torrent_path, tracker_name_list=tracker_name_list):
                     self.torrent_found = False
                 else:
                     # Torrent found, skip if the watcher is active
@@ -81,6 +81,7 @@ class VideoManager:
                 tracker_response, tracker_message =  unit3d_up.send(show_id=db.video_id, imdb_id=db.imdb_id,
                                                                     show_keywords_list=db.keywords_list,
                                                                     video_info=video_info)
+
                 bittorrent_list.append(
                     BittorrentData(
                         tracker_response=tracker_response,

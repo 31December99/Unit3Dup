@@ -95,6 +95,12 @@ class TransmissionClient(TorrClient):
                     torr_location = torrent.mytorr.location
                 self.client.add_torrent(torrent=torrent_file, download_dir=str(torr_location))
 
+    def send_file_to_client(self, torrent_path):
+        full_path_archive = os.path.join(config_settings.user_preferences.TORRENT_ARCHIVE_PATH,
+                                         f"{os.path.basename(torrent_path)}.torrent")
+        self.client.add_torrent(torrent=open(full_path_archive, "rb"), download_dir=os.path.dirname(torrent_path))
+
+
 
 
 class QbittorrentClient(TorrClient):
@@ -131,6 +137,7 @@ class QbittorrentClient(TorrClient):
             custom_console.bot_error_log(f"{self.__class__.__name__} Unexpected error: {e}")
             custom_console.bot_error_log(f"{self.__class__.__name__} Please verify your configuration")
 
+
     def send_to_client(self,tracker_data_response: str, torrent: Mytorrent, content: Media):
         full_path_archive = os.path.join(config_settings.user_preferences.TORRENT_ARCHIVE_PATH,
                                          f"{os.path.basename(content.torrent_path)}.torrent")
@@ -155,3 +162,11 @@ class QbittorrentClient(TorrClient):
                     # If no shared_path is specified set it to the path specified in the CLI commands (path)
                     torr_location = torrent.mytorr.location
                 self.client.download_from_file(file_buffer=torrent_file, savepath=str(torr_location))
+
+    def send_file_to_client(self, torrent_path):
+        full_path_archive = os.path.join(config_settings.user_preferences.TORRENT_ARCHIVE_PATH,
+                                         f"{os.path.basename(torrent_path)}.torrent")
+
+        self.client.download_from_file(file_buffer=open(full_path_archive, "rb"),
+                                       savepath=os.path.dirname(torrent_path))
+

@@ -17,6 +17,7 @@ from view import custom_console
 
 class TorrentManager:
     def __init__(self, cli: argparse.Namespace):
+
         self.cli = cli
         self.preferred_lang = my_language(config_settings.user_preferences.PREFERRED_LANG)
 
@@ -29,6 +30,7 @@ class TorrentManager:
         # Add a single announce if requested
         if self.cli.tracker:
             self.trackers_name_list = [self.cli.tracker.upper()]
+
 
 
     def process(self, contents: list) -> None:
@@ -62,6 +64,7 @@ class TorrentManager:
         # If cli.tracker is set a torrent will be created if it doesn't already exist with the announce URL
         # Otherwise the tracker name will be set to the first item in the multi_tracker which is the default value
         # and the announce will be added from the tracker platform
+        # todo multi-upl
         tracker = self.cli.tracker if self.cli.tracker else config_settings.tracker_config.MULTI_TRACKER[0]
 
         # Build the torrent file and upload each GAME to the tracker
@@ -104,3 +107,21 @@ class TorrentManager:
         custom_console.bot_log(f"Tracker '{tracker}' Done.")
         custom_console.rule()
     custom_console.bot_log(f"Done.")
+
+    def edit(self, this_path: str)-> bool:
+        # Edit only the announce list by -tracker or -cross flags
+        return UserContent.torrent_file_exists(path=this_path, tracker_name_list=self.trackers_name_list)
+
+
+    def send(self, this_path: str):
+        # Send a torrent file that has already been created for seeding
+        # you can update the announce list by adding the -tracker or -cross flags
+        if UserContent.torrent_file_exists(path=this_path, tracker_name_list=self.trackers_name_list):
+            client = UserContent.get_client()
+            client.send_file_to_client(torrent_path=this_path)
+        else:
+            custom_console.bot_warning_log(f"File torrent not found for '{this_path}'"
+                                           f" in {config_settings.user_preferences.TORRENT_ARCHIVE_PATH}" )
+
+
+

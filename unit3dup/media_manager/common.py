@@ -30,6 +30,9 @@ class UserContent:
             # It decodes it
             torrent_data = bencode2.bdecode(f.read())
 
+        if not tracker_name_list:
+            tracker_name_list = [config_settings.tracker_config.MULTI_TRACKER[0]]
+
         announce_list_encoded = []
         # a single tracker in the tracker_list corresponds to the '-tracker' flag from the user's CLI
         # two or more trackers in the tracker_list correspond to the '-cross' flag from the user's CLI
@@ -40,10 +43,36 @@ class UserContent:
             announce_list_encoded.append([api_data['announce'].encode()])
 
         if b'announce-list' in torrent_data:
-            del(torrent_data[b'announce-list'])
-        if b'announce' in torrent_data:
-            del (torrent_data[b'announce'])
 
+            # Edit the announce list only if it is different from the announce_list_encoded (user CLI)
+            if torrent_data[b'announce-list'] != announce_list_encoded:
+                custom_console.bot_warning_log("BEFORE:")
+                for announce in torrent_data[b'announce-list']:
+                    custom_console.bot_log(f"{announce[0].decode()[:-32]}{'*' * 32}")
+
+                custom_console.bot_warning_log("AFTER:")
+                if not announce_list_encoded:
+                    custom_console.bot_log(f"Default tracker selected"
+                                           f" '{config_settings.tracker_config.MULTI_TRACKER[0].upper()}'")
+
+                else:
+                    for announce in announce_list_encoded:
+                        custom_console.bot_log(f"{announce[0].decode()[:-32]}{'*' * 32}")
+                del torrent_data[b'announce-list']
+
+        if b'announce' in torrent_data:
+            if torrent_data[b'announce'] != announce_list_encoded:
+                custom_console.bot_warning_log("BEFORE:")
+                custom_console.bot_log(f"{torrent_data[b'announce'].decode()}")
+                custom_console.bot_warning_log("AFTER:")
+                if not announce_list_encoded:
+                    custom_console.bot_log(f"Default tracker selected"
+                                           f" '{config_settings.tracker_config.MULTI_TRACKER[0].upper()}'")
+                else:
+                    custom_console.bot_log(announce_list_encoded)
+                del torrent_data[b'announce']
+
+        # Set the new announce list
         torrent_data[b'announce-list'] = announce_list_encoded
 
         # // Save
@@ -52,24 +81,24 @@ class UserContent:
 
 
     @staticmethod
-    def torrent_file_exists(content: Media, tracker_name_list: list) -> bool:
+    def torrent_file_exists(path: str, tracker_name_list: list) -> bool:
         """
         Check if a torrent file for the given content already exists
 
         Args:
-            content (Contents): The content object
+            path: The torrent's path
             tracker_name_list: the trackers name
 
         Returns:
             bool: True if the torrent file exists otherwise False
         """
 
-        base_name = os.path.basename(content.torrent_path)
+        base_name = os.path.basename(path)
 
         if config_settings.user_preferences.TORRENT_ARCHIVE_PATH:
             this_path = os.path.join(config_settings.user_preferences.TORRENT_ARCHIVE_PATH, f"{base_name}.torrent")
         else:
-            this_path = f"{content.torrent_path}.torrent"
+            this_path = f"{path}.torrent"
 
         if os.path.exists(this_path):
             custom_console.bot_warning_log(
@@ -179,6 +208,25 @@ class UserContent:
         except Exception as e:
             custom_console.bot_error_log(f"Error sending torrent {bittorrent_file.content.file_name}: {str(e)}")
 
+
+    @staticmethod
+    def get_client() -> QbittorrentClient | TransmissionClient:
+
+        client = QbittorrentClient()
+
+        if config_settings.torrent_client_config.TORRENT_CLIENT.lower()=='qbittorrent':
+            client = QbittorrentClient()
+            client.connect()
+
+        elif config_settings.torrent_client_config.TORRENT_CLIENT.lower()=='transmission':
+            client = TransmissionClient()
+            client.connect()
+        else:
+            custom_console.bot_error_log(f"{UserContent.__class__.__name__}"
+                                         f" Invalid torrent client '{config_settings.torrent_client_config.TORRENT_CLIENT}'" )
+            exit(1)
+
+        return client
 
     @staticmethod
     def send_to_bittorrent(bittorrent_list: list[BittorrentData]) -> None:
