@@ -32,6 +32,8 @@ class ContentManager:
         self.file_name: str | None = None
         self.torrent_path: str | None = None
         self.doc_description: str | None = None
+        self.tmdb_id: str | None = None
+        self.imdb_id: str | None = None
 
         self.path: str = os.path.normpath(path)
         self.auto = Auto(path=self.path, mode=self.mode)
@@ -71,7 +73,28 @@ class ContentManager:
         media.doc_description = self.doc_description
         media.game_nfo = self.game_nfo
         media.display_name = self.display_name
+        media.imdb_id = self.imdb_id
+        media.tmdb_id = self.tmdb_id
         return media
+
+    def search_video_ids(self):
+        video_id = re.findall(r"\{(imdb-\d+|tmdb-\d+)}", self.file_name, re.IGNORECASE)
+        if video_id:
+            # Found only one ID
+            if len(video_id) == 1:
+                self.imdb_id = video_id[0].replace('imdb-', '') if 'imdb-' in video_id[0] else None
+                self.tmdb_id = video_id[0].replace('tmdb-', '') if 'tmdb-' in video_id[0] else None
+
+            # Found both IDs
+            if len(video_id) == 2:
+                for id in video_id:
+                    if 'imdb-' in id:
+                        self.imdb_id = id.replace('imdb-', '')
+                    elif 'tmdb-' in id:
+                        self.tmdb_id = id.replace('tmdb-', '')
+
+        print(f"IMDB ID: {self.imdb_id}")
+        print(f"TMDB ID: {self.tmdb_id}")
 
 
     def process_file(self) -> bool:
@@ -82,6 +105,8 @@ class ContentManager:
         self.display_name = ManageTitles.clean(self.display_name)
         # current media path
         self.torrent_path = self.path
+        # Try to get video ID from the string title
+        self.search_video_ids()
 
         # Torrent name
         self.torrent_name =  os.path.basename(self.file_name)
@@ -91,6 +116,8 @@ class ContentManager:
         # Build meta_info
         self.size = os.path.getsize(self.path)
         self.meta_info = json.dumps([{"length": self.size, "path": [self.file_name]}], indent=4)
+
+
         return True
 
     def process_folder(self)-> bool:
@@ -109,7 +136,8 @@ class ContentManager:
         self.torrent_name = os.path.basename(self.path)
         # Document description
         self.doc_description = "\n".join(files_list)
-
+        # Try to get video ID from the string title
+        self.search_video_ids()
         # Build meta_info
         self.size = 0
         self.meta_info_list = []

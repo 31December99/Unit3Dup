@@ -38,7 +38,7 @@ def test_tmdb():
         """ VIDEO INFO """
         # TMDB
         tests.custom_console.bot_log(f"FileName = {content.file_name}")
-        db_online = tests.DbOnline(query=content.guess_title, category=content.category)
+        db_online = tests.DbOnline(media=content, category=content.category)
         if db:= db_online.media_result:
             assert hasattr(db, 'video_id') and hasattr(db, 'keywords_list') and hasattr(db, 'trailer_key')
 

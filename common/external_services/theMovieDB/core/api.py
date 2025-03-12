@@ -18,6 +18,8 @@ from common.external_services.sessions.agents import Agent
 from common.external_services.theMovieDB import config
 from common.external_services.imdb import IMDB
 from common.utility import ManageTitles
+
+from unit3dup.media import Media
 from view import custom_console
 
 
@@ -183,17 +185,43 @@ class TmdbAPI(MyHttp):
 
 
 class DbOnline(TmdbAPI):
-    def __init__(self, query: str, category: str) -> None:
+    def __init__(self, media: Media, category: str) -> None:
         super().__init__()
-        self.query = query
+        self.query = media.guess_title
         self.category = category
-        self.media_result = self.search()
+        self.media_result = self.search() if not media.tmdb_id and not media.imdb_id\
+            else self.results_in_string(tmdb_id=int(media.tmdb_id), imdb_id=int(media.imdb_id))
         # VideoID TMDB cache
         self.cache = diskcache.Cache(str(os.path.join(config_settings.user_preferences.CACHE_PATH, "tmdb.cache")))
 
 
+    def results_in_string(self, tmdb_id:int, imdb_id:int)-> MediaResult:
+        """
+        Use id from the string filename or name folder
+        Cache disabled
+        """
+
+        keywords_list = ''
+        trailer_key = ''
+
+        if tmdb_id:
+            if tmdb_id > 0:
+                # Request trailer and keywords
+                trailer_key = self.trailer(tmdb_id)
+                keywords_list = self.keywords(tmdb_id) if trailer_key else ''
+        else:
+            tmdb_id = 0
+
+        search_results = MediaResult(video_id=tmdb_id, imdb_id=imdb_id, trailer_key=trailer_key,
+                                     keywords_list=keywords_list)
+        self.print_results(results=search_results)
+        self.cache[self.query] = search_results
+        return search_results
+
     def search(self) -> MediaResult | None:
         """
+        Search for results based on a tmdb query
+        use cache only if there are no id in string filename or name folder
         """
 
         # Search in the cache first
