@@ -24,7 +24,7 @@ class DocuManager:
         for content in self.contents:
 
             # Torrent creation
-            if not UserContent.torrent_file_exists(content=content, tracker_name_list=tracker_name_list):
+            if not UserContent.torrent_file_exists(path=content.torrent_path, tracker_name_list=tracker_name_list):
                 torrent_response = UserContent.torrent(content=content, trackers=tracker_name_list)
             else:
                 # Torrent found, skip if the watcher is active
