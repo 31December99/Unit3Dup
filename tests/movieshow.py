@@ -66,7 +66,8 @@ def test_tmdb():
         tests.custom_console.bot_log(f"episode_number = {content.guess_episode if not content.torrent_pack else 0}")
 
         """ TORRENT INFO """
-        if torrent_response:=tests.UserContent.torrent(content=content):
+        tracker_name_list = []
+        if torrent_response:=tests.UserContent.torrent(content=content, trackers=tracker_name_list):
             assert all(value is not None for value in vars(torrent_response).values())
 
         """ UPLOAD """
