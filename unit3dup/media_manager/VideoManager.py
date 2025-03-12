@@ -62,7 +62,7 @@ class VideoManager:
                     torrent_response = None
 
                 # Search for VIDEO ID
-                db_online = DbOnline(query=content.guess_title,category=content.category)
+                db_online = DbOnline(media=content,category=content.category)
                 db = db_online.media_result
 
                 # Don't upload if -noup is set to True
