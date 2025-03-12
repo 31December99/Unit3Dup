@@ -13,6 +13,7 @@ def test_cli_watcher():
         force=False,
         noup=False,
         noseed=False,
+        cross=False,
     )
 
     tests.cli.args = cli_scan
