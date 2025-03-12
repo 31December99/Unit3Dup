@@ -91,6 +91,18 @@ def main():
                     destination_path = config.user_preferences.WATCHER_DESTINATION_PATH)
 
 
+
+    # re_seed the torrent
+    if cli.args.seedit:
+        bot = Bot(path=cli.args.seedit, cli=cli.args)
+        bot.seed_it()
+
+    # edit the announce list
+    if cli.args.edit:
+        bot = Bot(path=cli.args.edit, cli=cli.args)
+        bot.edit_it()
+
+
     # Pw
     if cli.args.pw:
         bot = Bot(path=cli.args.pw,cli=cli.args)
