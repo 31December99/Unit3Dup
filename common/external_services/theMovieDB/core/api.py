@@ -220,7 +220,6 @@ class DbOnline(TmdbAPI):
         search_results = MediaResult(video_id=tmdb_id, imdb_id=imdb_id, trailer_key=trailer_key,
                                      keywords_list=keywords_list)
         self.print_results(results=search_results)
-        self.cache[self.query] = search_results
         return search_results
 
     def search(self) -> MediaResult | None:
