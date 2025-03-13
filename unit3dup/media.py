@@ -50,8 +50,8 @@ class Media:
         self._torrent_pack: bool = False
         self._doc_description: str | None = None
         self._game_nfo: str | None = None
-        self._tmdb_id: str | None = None
-        self._imdb_id: str | None = None
+        self._tmdb_id: int | None = None
+        self._imdb_id: int | None = None
 
     @property
     def title_sanitized(self)-> str:
@@ -133,7 +133,7 @@ class Media:
         self._game_nfo = value
 
     @property
-    def tmdb_id(self) -> str:
+    def tmdb_id(self) -> int:
         return self._tmdb_id
 
     @tmdb_id.setter
@@ -141,7 +141,7 @@ class Media:
         self._tmdb_id = value
 
     @property
-    def imdb_id(self) -> str:
+    def imdb_id(self) -> int:
         return self._imdb_id
 
     @imdb_id.setter
