@@ -34,6 +34,7 @@ class ContentManager:
         self.doc_description: str | None = None
         self.tmdb_id: str | None = None
         self.imdb_id: str | None = None
+        self.igdb_id: str | None = None
 
         self.path: str = os.path.normpath(path)
         self.auto = Auto(path=self.path, mode=self.mode)
@@ -75,23 +76,22 @@ class ContentManager:
         media.display_name = self.display_name
         media.imdb_id = self.imdb_id
         media.tmdb_id = self.tmdb_id
+        media.igdb_id = self.igdb_id
+
         return media
 
-    def search_video_ids(self):
-        video_id = re.findall(r"\{(imdb-\d+|tmdb-\d+)}", self.file_name, re.IGNORECASE)
-        if video_id:
-            # Found only one ID
-            if len(video_id) == 1:
-                self.imdb_id = video_id[0].replace('imdb-', '') if 'imdb-' in video_id[0] else None
-                self.tmdb_id = video_id[0].replace('tmdb-', '') if 'tmdb-' in video_id[0] else None
 
-            # Found both IDs
-            if len(video_id) == 2:
-                for id in video_id:
-                    if 'imdb-' in id:
-                        self.imdb_id = id.replace('imdb-', '')
-                    elif 'tmdb-' in id:
-                        self.tmdb_id = id.replace('tmdb-', '')
+    def search_ids(self):
+        _id = re.findall(r"\{(imdb-\d+|tmdb-\d+|igdb-\d+)}", self.file_name, re.IGNORECASE)
+        if _id:
+            # // Searching..
+            for id in _id:
+                if 'imdb-' in id:
+                    self.imdb_id = id.replace('imdb-', '')
+                elif 'tmdb-' in id:
+                    self.tmdb_id = id.replace('tmdb-', '')
+                elif 'igdb-' in id:
+                    self.igdb_id = id.replace('igdb-', '')
 
     def process_file(self) -> bool:
         """Process individual files and gather metadata"""
@@ -102,7 +102,7 @@ class ContentManager:
         # current media path
         self.torrent_path = self.path
         # Try to get video ID from the string title
-        self.search_video_ids()
+        self.search_ids()
 
         # Torrent name
         self.torrent_name =  os.path.basename(self.file_name)
