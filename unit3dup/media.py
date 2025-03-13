@@ -52,6 +52,7 @@ class Media:
         self._game_nfo: str | None = None
         self._tmdb_id: int | None = None
         self._imdb_id: int | None = None
+        self._igdb_id: int | None = None
 
     @property
     def title_sanitized(self)-> str:
@@ -147,6 +148,14 @@ class Media:
     @imdb_id.setter
     def imdb_id(self, value):
         self._imdb_id = value
+
+    @property
+    def igdb_id(self) -> int:
+        return self._igdb_id
+
+    @igdb_id.setter
+    def igdb_id(self, value):
+        self._igdb_id = value
 
     @property
     def guess_filename(self):

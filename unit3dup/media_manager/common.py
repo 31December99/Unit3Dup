@@ -78,6 +78,7 @@ class UserContent:
         # // Save
         with open(torrent_path, 'wb') as f:
             f.write(bencode2.bencode(torrent_data))
+        print()
 
 
     @staticmethod
