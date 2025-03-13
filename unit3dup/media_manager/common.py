@@ -241,6 +241,10 @@ class UserContent:
         if not bittorrent_list:
             return None
 
+        custom_console.bot_warning_log(f"\nSending torrents to the client "
+                                       f"{config_settings.torrent_client_config.TORRENT_CLIENT.upper()}"
+                                       f"... Please wait")
+
         client = QbittorrentClient()
 
         if config_settings.torrent_client_config.TORRENT_CLIENT.lower()=='qbittorrent':

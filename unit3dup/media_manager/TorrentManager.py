@@ -91,11 +91,6 @@ class TorrentManager:
             return None
 
 
-        # custom_console.panel_message("\nSending torrents to the client... Please wait")
-        custom_console.bot_warning_log(f"\nSending torrents to the client "
-                                       f"{config_settings.torrent_client_config.TORRENT_CLIENT.upper()}"
-                                       f"... Please wait")
-
         if game_process_results:
             UserContent.send_to_bittorrent(game_process_results)
 
