@@ -93,10 +93,6 @@ class ContentManager:
                     elif 'tmdb-' in id:
                         self.tmdb_id = id.replace('tmdb-', '')
 
-        print(f"IMDB ID: {self.imdb_id}")
-        print(f"TMDB ID: {self.tmdb_id}")
-
-
     def process_file(self) -> bool:
         """Process individual files and gather metadata"""
         self.file_name = self.path

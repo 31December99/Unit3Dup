@@ -189,10 +189,16 @@ class DbOnline(TmdbAPI):
         super().__init__()
         self.query = media.guess_title
         self.category = category
-        self.media_result = self.search() if not media.tmdb_id and not media.imdb_id\
-            else self.results_in_string(tmdb_id=int(media.tmdb_id), imdb_id=int(media.imdb_id))
-        # VideoID TMDB cache
+
+        # Load the cache file
         self.cache = diskcache.Cache(str(os.path.join(config_settings.user_preferences.CACHE_PATH, "tmdb.cache")))
+
+        if media.tmdb_id or media.imdb_id:
+            # Skip cache if there is a tmdb id or imdb in the title string
+            self.media_result = self.results_in_string(tmdb_id=int(media.tmdb_id), imdb_id=int(media.imdb_id))
+        else:
+            # Load cache or search online for a tmdb id or imdb
+            self.media_result = self.search()
 
 
     def results_in_string(self, tmdb_id:int, imdb_id:int)-> MediaResult:
@@ -200,7 +206,6 @@ class DbOnline(TmdbAPI):
         Use id from the string filename or name folder
         Cache disabled
         """
-
         keywords_list = ''
         trailer_key = ''
 
@@ -226,6 +231,7 @@ class DbOnline(TmdbAPI):
 
         # Search in the cache first
         search_results = self.load_cache(self.query)
+
         if search_results:
             self.print_results(results=search_results)
             return search_results
