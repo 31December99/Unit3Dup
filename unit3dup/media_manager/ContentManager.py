@@ -88,10 +88,14 @@ class ContentManager:
             for id in _id:
                 if 'imdb-' in id:
                     self.imdb_id = id.replace('imdb-', '')
+                    self.imdb_id = self.imdb_id if self.imdb_id.isdigit() else None
                 elif 'tmdb-' in id:
                     self.tmdb_id = id.replace('tmdb-', '')
+                    self.tmdb_id = self.tmdb_id if self.tmdb_id.isdigit() else None
                 elif 'igdb-' in id:
                     self.igdb_id = id.replace('igdb-', '')
+                    self.igdb_id = self.igdb_id if self.igdb_id.isdigit() else None
+
 
     def process_file(self) -> bool:
         """Process individual files and gather metadata"""
