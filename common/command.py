@@ -2,10 +2,8 @@
 
 import os
 import argparse
-import sys
-
-from view import custom_console
 from common.utility import System
+from common.settings import Load
 
 class CommandLine:
     """
@@ -13,6 +11,9 @@ class CommandLine:
     """
 
     def __init__(self):
+
+        config = Load().load_config()
+
         parser = argparse.ArgumentParser(
             description="Manage torrents, uploads, and config checks."
         )
@@ -27,7 +28,8 @@ class CommandLine:
         parser.add_argument("-f", "--folder", type=str, help="Upload folder")
         parser.add_argument("-scan", "--scan", type=str, help="Scan folder")
         parser.add_argument("-watcher", "--watcher", action="store_true", help="Start watcher")
-        parser.add_argument("-tracker", "--tracker", type=str, help="Upload to single tracker")
+        parser.add_argument("-tracker", "--tracker", type=str, default=config.tracker_config.MULTI_TRACKER[0],
+                            help="Upload to single tracker")
         parser.add_argument("-cross", "--cross", action="store_true", help="")
         parser.add_argument("-seedit", "--seedit", type=str, help="")
         parser.add_argument("-edit", "--edit", type=str, help="")

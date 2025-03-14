@@ -85,7 +85,7 @@ class Tracker(Myhttp):
                     custom_console.bot_error_log(
                         f"[Tracker] HTTP Error {e.response.status_code}. Check your configuration file"
                         f" or verify if the tracker is online")
-                    exit(1)
+                    break
 
             except requests.exceptions.ConnectionError:
                 custom_console.bot_error_log(

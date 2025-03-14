@@ -26,12 +26,18 @@ class UploadBot:
 
         name_error = ''
         info_hash_error = ''
-        _message = json.loads(tracker_response.text)["data"]
+        _message = json.loads(tracker_response.text)
+        if 'data' in _message:
+            _message = _message['data']
 
         if tracker_response.status_code == 200:
             tracker_response_body = json.loads(tracker_response.text)
             custom_console.bot_log(f"\n[RESPONSE]->'{self.tracker_name}'.....{tracker_response_body['message'].upper()}\n\n")
             return tracker_response_body["data"],{}
+
+        elif tracker_response.status_code == 401:
+            custom_console.bot_error_log(_message)
+            exit(_message['message'])
 
         elif tracker_response.status_code == 404:
             if _message.get("type_id",None):
