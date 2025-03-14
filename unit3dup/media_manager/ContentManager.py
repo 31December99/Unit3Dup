@@ -94,7 +94,10 @@ class ContentManager:
                 elif 'igdb-' in id:
                     self.igdb_id = id.replace('igdb-', '')
                     self.igdb_id = self.igdb_id if self.igdb_id.isdigit() else None
-
+        else:
+            self.imdb_id = None
+            self.tmdb_id = None
+            self.igdb_id = None
 
     def process_file(self) -> bool:
         """Process individual files and gather metadata"""
