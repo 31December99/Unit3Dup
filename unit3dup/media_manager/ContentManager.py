@@ -77,6 +77,7 @@ class ContentManager:
         media.imdb_id = self.imdb_id
         media.tmdb_id = self.tmdb_id
         media.igdb_id = self.igdb_id
+        return media
 
 
     def search_ids(self):
