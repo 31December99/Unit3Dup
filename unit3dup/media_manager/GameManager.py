@@ -56,7 +56,7 @@ class GameManager:
             # Don't upload if -noup is set to True
             if self.cli.noup:
                 custom_console.bot_warning_log(f"No Upload active. Done.")
-                return []
+                continue
 
             # Skip if it is a duplicate
             if ((self.cli.duplicate or config_settings.user_preferences.DUPLICATE_ON)

@@ -21,17 +21,13 @@ class TorrentManager:
         self.cli = cli
         self.preferred_lang = my_language(config_settings.user_preferences.PREFERRED_LANG)
 
-        # Add one or more trackers to the torrent file if requested
-        if self.cli.cross:
-            self.trackers_name_list = config_settings.tracker_config.MULTI_TRACKER
-        else:
-            self.trackers_name_list = []
-
         # Add a single announce if requested
         if self.cli.tracker:
             self.trackers_name_list = [self.cli.tracker.upper()]
 
-
+        # Add one or more trackers to the torrent file if requested
+        if self.cli.cross:
+            self.trackers_name_list = config_settings.tracker_config.MULTI_TRACKER
 
     def process(self, contents: list) -> None:
 
@@ -65,6 +61,7 @@ class TorrentManager:
         # Otherwise the tracker name will be set to the first item in the multi_tracker which is the default value
         # and the announce will be added from the tracker platform
         # todo multi-upl
+
         tracker = self.cli.tracker if self.cli.tracker else config_settings.tracker_config.MULTI_TRACKER[0]
 
         # Build the torrent file and upload each GAME to the tracker
@@ -85,7 +82,7 @@ class TorrentManager:
             docu_process_results = docu_manager.process(selected_tracker=tracker,
                                                         tracker_name_list=self.trackers_name_list)
 
-        # No seeding or upload allowed
+        # No seeding
         if self.cli.noseed or self.cli.noup:
             custom_console.bot_warning_log(f"No seeding active. Done.")
             return None
@@ -102,10 +99,6 @@ class TorrentManager:
         custom_console.bot_log(f"Tracker '{tracker}' Done.")
         custom_console.rule()
     custom_console.bot_log(f"Done.")
-
-    def edit(self, this_path: str)-> bool:
-        # Edit only the announce list by -tracker or -cross flags
-        return UserContent.torrent_file_exists(path=this_path, tracker_name_list=self.trackers_name_list)
 
 
     def send(self, this_path: str):
