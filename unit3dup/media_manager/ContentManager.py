@@ -35,6 +35,7 @@ class ContentManager:
         self.tmdb_id: str | None = None
         self.imdb_id: str | None = None
         self.igdb_id: str | None = None
+        self.generate_title: str | None = None
 
         self.path: str = os.path.normpath(path)
         self.auto = Auto(path=self.path, mode=self.mode)
@@ -69,7 +70,6 @@ class ContentManager:
         media.torrent_name = self.torrent_name
         media.size = self.size
         media.metainfo = self.meta_info
-        media.meta_info = self.meta_info
         media.torrent_pack = torrent_pack
         media.doc_description = self.doc_description
         media.game_nfo = self.game_nfo
@@ -77,8 +77,6 @@ class ContentManager:
         media.imdb_id = self.imdb_id
         media.tmdb_id = self.tmdb_id
         media.igdb_id = self.igdb_id
-
-        return media
 
 
     def search_ids(self):
@@ -107,7 +105,6 @@ class ContentManager:
         self.torrent_path = self.path
         # Try to get video ID from the string title
         self.search_ids()
-
         # Torrent name
         self.torrent_name =  os.path.basename(self.file_name)
         # test to check if it is a doc
@@ -116,8 +113,6 @@ class ContentManager:
         # Build meta_info
         self.size = os.path.getsize(self.path)
         self.meta_info = json.dumps([{"length": self.size, "path": [self.file_name]}], indent=4)
-
-
         return True
 
     def process_folder(self)-> bool:
@@ -137,7 +132,7 @@ class ContentManager:
         # Document description
         self.doc_description = "\n".join(files_list)
         # Try to get video ID from the string title
-        self.search_video_ids()
+        self.search_ids()
         # Build meta_info
         self.size = 0
         self.meta_info_list = []

@@ -22,7 +22,7 @@ class CommandLine:
             "-check", "--check", action="store_true", help="Check config"
         )
 
-        # Upload commands
+        # Main flags
         parser.add_argument("-u", "--upload", type=str, help="Upload path")
         parser.add_argument("-f", "--folder", type=str, help="Upload folder")
         parser.add_argument("-scan", "--scan", type=str, help="Scan folder")
@@ -31,14 +31,11 @@ class CommandLine:
         parser.add_argument("-cross", "--cross", action="store_true", help="")
         parser.add_argument("-seedit", "--seedit", type=str, help="")
         parser.add_argument("-edit", "--edit", type=str, help="")
-
-
-        parser.add_argument("-pw", "--pw", type=str, help="")
-        parser.add_argument("-ftp", "--ftp", action="store_true", help="Connect to FTP")
-        # parser.add_argument("-game", "--game", action="store_true", help="Set media type to game")
         parser.add_argument('-force', nargs='?', const="movie", type=str, default=None)
         parser.add_argument("-noseed", "--noseed", action="store_true", help="No seeding after upload")
         parser.add_argument("-noup", "--noup", action="store_true", help="Torrent only. No upload")
+        parser.add_argument("-pw", "--pw", type=str, help="")
+        parser.add_argument("-ftp", "--ftp", action="store_true", help="Connect to FTP")
 
         parser.add_argument(
             "-duplicate",
@@ -47,7 +44,7 @@ class CommandLine:
             help="Find duplicates"
         )
 
-        # Tracker search commands
+        # optional
         parser.add_argument("-s", "--search", type=str, help="Search for torrent")
         parser.add_argument("-i", "--info", type=str, help="Get info on torrent")
         parser.add_argument("-up", "--uploader", type=str, help="Search by uploader")
@@ -59,19 +56,15 @@ class CommandLine:
         parser.add_argument("-type", "--type", type=str, help="Filter by type")
         parser.add_argument("-res", "--resolution", type=str, help="Filter by resolution")
         parser.add_argument("-file", "--filename", type=str, help="Search by filename")
-
         parser.add_argument("-se", "--season", type=str, help="Season number")
         parser.add_argument("-ep", "--episode", type=str, help="Episode number")
         parser.add_argument("-tmdb", "--tmdb_id", type=str, help="TMDB ID")
         parser.add_argument("-imdb", "--imdb_id", type=str, help="IMDB ID")
         parser.add_argument("-tvdb", "--tvdb_id", type=int, help="TVDB ID")
         parser.add_argument("-mal", "--mal_id", type=str, help="MAL ID")
-
         parser.add_argument("-playid", "--playlist_id", type=str, help="Playlist ID")
         parser.add_argument("-coll", "--collection_id", type=str, help="Collection ID")
         parser.add_argument("-free", "--freelech", type=str, help="Freelech discount")
-
-        # Torrent state commands
         parser.add_argument("-a", "--alive", action="store_true", help="Alive torrent")
         parser.add_argument("-d", "--dead", action="store_true", help="Dead torrent")
         parser.add_argument("-dy", "--dying", action="store_true", help="Dying torrent")
