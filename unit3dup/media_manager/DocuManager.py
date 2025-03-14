@@ -41,7 +41,7 @@ class DocuManager:
             # Don't upload if -noup is set to True
             if self.cli.noup:
                 custom_console.bot_warning_log(f"No Upload active. Done.")
-                return []
+                continue
 
             # Get the cover image
             docu_info = PdfImages(content.file_name)

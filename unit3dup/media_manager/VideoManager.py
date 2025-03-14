@@ -68,7 +68,7 @@ class VideoManager:
                 # Don't upload if -noup is set to True
                 if self.cli.noup:
                     custom_console.bot_warning_log(f"No Upload active. Done.")
-                    return []
+                    continue
 
                 # Get meta from the media video
                 video_info = Video(content.file_name, tmdb_id=db.video_id, trailer_key=db.trailer_key)
