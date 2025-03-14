@@ -230,18 +230,19 @@ class UserContent:
         return client
 
     @staticmethod
-    def send_to_bittorrent(bittorrent_list: list[BittorrentData]) -> None:
+    def send_to_bittorrent(bittorrent_list: list[BittorrentData], message: str) -> None:
         """
         Sends a list of torrents to Bittorrent using threads
 
         Args:
             bittorrent_list (list[Bittorrent]): A list of Bittorrent objects to be sent to the client
+            message: printed message
         """
 
         if not bittorrent_list:
             return None
 
-        custom_console.bot_warning_log(f"\nSending torrents to the client "
+        custom_console.bot_warning_log(f"\nSending {message} torrents to the client "
                                        f"{config_settings.torrent_client_config.TORRENT_CLIENT.upper()}"
                                        f"... Please wait")
 
