@@ -36,6 +36,10 @@ class GameManager:
         if not login:
             exit(1)
 
+        if self.cli.upload:
+            custom_console.bot_error_log("Game upload works only with the '-f' flag.You need to specify a folder name.")
+            return []
+
         bittorrent_list = []
         for content in self.contents:
 
