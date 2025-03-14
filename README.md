@@ -122,7 +122,7 @@ Specified tracker:
 
 **python3 start.py -tracker partner -u "/home/uploader/Hello.world.TheBook.pdf**
 
-In the last example, the tracker of the torrent file will be updated with the 'partner' URL announcement,
+When you use -tracker , the tracker of the torrent file will be updated with the 'partner' URL announcement,
 
 so you need to configure your passkey in the configuration JSON file
 
@@ -149,7 +149,7 @@ Send the torrent file immediately to the default torrent client.
 
 ![Version](https://img.shields.io/badge/force-red)
 
-Unit3D usualy auto rileva la categoria del media but you can overwrite it with -force command
+Unit3D as usual auto detects the media category but you can override it with the -force command
 
 **python3 start.py -force game -u "/home/uploader/Hello.world.pdf**
 
