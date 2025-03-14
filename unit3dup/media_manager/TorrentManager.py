@@ -92,13 +92,13 @@ class TorrentManager:
 
 
         if game_process_results:
-            UserContent.send_to_bittorrent(game_process_results)
+            UserContent.send_to_bittorrent(game_process_results, 'GAME')
 
         if video_process_results:
-            UserContent.send_to_bittorrent(video_process_results)
+            UserContent.send_to_bittorrent(video_process_results, 'VIDEO')
 
         if docu_process_results:
-            UserContent.send_to_bittorrent(docu_process_results)
+            UserContent.send_to_bittorrent(docu_process_results, 'DOCUMENTARY')
         custom_console.bot_log(f"Tracker '{tracker}' Done.")
         custom_console.rule()
     custom_console.bot_log(f"Done.")
