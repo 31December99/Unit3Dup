@@ -232,7 +232,7 @@ class UserContent:
     @staticmethod
     def send_to_bittorrent(bittorrent_list: list[BittorrentData]) -> None:
         """
-        Sends a list of torrents to qBittorrent using threads ( async later...)
+        Sends a list of torrents to Bittorrent using threads
 
         Args:
             bittorrent_list (list[Bittorrent]): A list of Bittorrent objects to be sent to the client

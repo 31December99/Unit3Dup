@@ -20,7 +20,10 @@ def test_content_manager():
     contents = content_manager.process()
     tests.custom_console.bot_warning_log("\n- TVSHOW -")
     for content in contents:
+        if content.mediafile:
+            content.generate_title = content.mediafile.generate(content.guess_title, content.resolution)
         tests.custom_console.bot_log(f"Display Name  {content.display_name}")
+        tests.custom_console.bot_log(f"Generate Name {content.generate_title}")
         tests.custom_console.bot_log(f"Category      {content.category}")
         tests.custom_console.bot_log(f"FileName      {content.file_name}")
         tests.custom_console.bot_log(f"Folder        {content.folder}")

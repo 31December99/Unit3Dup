@@ -53,6 +53,7 @@ class Media:
         self._tmdb_id: int | None = None
         self._imdb_id: int | None = None
         self._igdb_id: int | None = None
+        self._generate_title: str | None = None
 
     @property
     def title_sanitized(self)-> str:
@@ -156,6 +157,14 @@ class Media:
     @igdb_id.setter
     def igdb_id(self, value):
         self._igdb_id = value
+
+    @property
+    def generate_title(self) -> str:
+        return self._generate_title
+
+    @generate_title.setter
+    def generate_title(self, value):
+        self._generate_title = value
 
     @property
     def guess_filename(self):
