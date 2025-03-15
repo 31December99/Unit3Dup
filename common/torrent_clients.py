@@ -79,12 +79,13 @@ class TransmissionClient(TorrClient):
         full_path_archive = os.path.join(config_settings.user_preferences.TORRENT_ARCHIVE_PATH,
                                          f"{os.path.basename(content.torrent_path)}.torrent")
 
+
         # "Translate" files location to shared_path if necessary
         if config_settings.torrent_client_config.SHARED_QBIT_PATH:
             torr_location = config_settings.torrent_client_config.SHARED_QBIT_PATH
         else:
             # If no shared_path is specified set it to the path specified in the CLI commands (path)
-            torr_location = content.torrent_path
+            torr_location = os.path.dirname(content.torrent_path)
 
         # Transmission looks like it does not accept not absolute paths
         if not self.is_abs_shared_path(torr_location):
@@ -156,7 +157,8 @@ class QbittorrentClient(TorrClient):
             torr_location = config_settings.torrent_client_config.SHARED_QBIT_PATH
         else:
             # If no shared_path is specified set it to the path specified in the CLI commands (path)
-            torr_location = content.torrent_path
+            torr_location = os.path.dirname(content.torrent_path)
+
 
         # Transmission looks like it does not accept not absolute paths
         if not self.is_abs_shared_path(torr_location):
