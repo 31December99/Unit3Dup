@@ -52,20 +52,17 @@ Output (only files):
 > 
 > Hello.world.TheMovie.mkv.torrent
 > 
-
-
+***
 
 ![Version](https://img.shields.io/badge/Flag_f-FOLDERS-blue)
 
 > **python3 start.py -f "/home/uploader/Hello.world.S01**
 
-/home/uploader/Hello.world.S01E01
-
-/home/uploader/Hello.world.S01E02
-
-/home/uploader/Hello.world.S01E03
-
-etc..
+>/home/uploader/Hello.world.S01E01
+>
+>/home/uploader/Hello.world.S01E02
+>
+>/home/uploader/Hello.world.S01E03
 
 Output:
 
@@ -118,16 +115,16 @@ If you don't specify any tracker, the default tracker will be the first one in t
 
 Default tracker:
 
-**python3 start.py -u "/home/uploader/Hello.world.TheBook.pdf**
+>**python3 start.py -u "/home/uploader/Hello.world.TheBook.pdf**
 
 Specified tracker:
 
-**python3 start.py -tracker itt -f "/home/uploader/Hello.world.TheMovie**
-
-**python3 start.py -tracker itt -u "/home/uploader/Hello.world.TheBook.pdf**
-
-**python3 start.py -tracker partner -u "/home/uploader/Hello.world.TheBook.pdf**
-
+>**python3 start.py -tracker itt -f "/home/uploader/Hello.world.TheMovie**
+>
+>**python3 start.py -tracker itt -u "/home/uploader/Hello.world.TheBook.pdf**
+>
+>**python3 start.py -tracker partner -u "/home/uploader/Hello.world.TheBook.pdf**
+>
 When you use -tracker , the tracker of the torrent file will be updated with the 'partner' URL announcement,
 
 so you need to configure your passkey in the configuration JSON file
@@ -228,26 +225,24 @@ PATH environment user variable
 unit3dup can grab the first page, convert it to an image (using xpdf),
 and then the bot can upload it to an image host, then add the link to the torrent page description
 
-Install xpdf tools
+### Install xpdf tools
 
-Windows:
+#### Windows:
 
 1. Download and unzip xpdfReader from https://dl.xpdfreader.com/xpdf-tools-win-4.05.zip
 2. Put the folder 'bin64' in the system path. For example: C:\xpdf-tools-win-4.05\bin64
 3. Test it: Run pdfimages.exe in the terminal
 
-Linux:
+#### Linux:
 1. sudo apt install xpdf
 2. Test it: Run pdfimages in the terminal
 
-### Configure
+### Configure the bot
 open the Unit3Dbot_service.json
 
 -> Linux : Unit3Dbot.json is located in the home directory on Linux
 
 -> Windows: Unit3Dbot.json is located in the AppData folder on Windows
-
-example:
 
 C:\Users\user\AppData\Local\Unit3Dup_config\
 where "user" is your username windows account
@@ -275,7 +270,3 @@ You can help improve this project or just hang out with us on
 
 
 Thank you
-
-### Contribution
-
-Contributions are welcome! Feel free to open an issue or submit a pull request.
