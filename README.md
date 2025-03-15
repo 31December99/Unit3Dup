@@ -132,6 +132,7 @@ When you use -tracker , the tracker of the torrent file will be updated with the
 
 so you need to configure your passkey in the configuration JSON file
 
+***
 
 ![Version](https://img.shields.io/badge/cross-red)
 
@@ -141,7 +142,6 @@ Add all the trackers that have been configured in the JSON file to a specified t
 Therefore, it checks the torrent archive to see if the file exists and edits it.
 
 >**python3 start.py -cross -f "/home/uploader/Hello.world.TheMovie**
-verificare
 ***
 
 ![Version](https://img.shields.io/badge/seedit-red)
@@ -151,7 +151,7 @@ Send the torrent file immediately to the default torrent client.
 
 
 >**python3 start.py -seedit "/home/uploader/Hello.world.TheMovie**
-
+***
 
 ![Version](https://img.shields.io/badge/force-red)
 
@@ -162,14 +162,14 @@ Unit3D as usual auto detects the media category but you can override it with the
 >**python3 start.py -force movie -f "/home/uploader/Hello.world**
 
 You will get a message if you try to upload a game as a video or pdf
-
+***
 
 ![Version](https://img.shields.io/badge/noseed-red)
 
 Upload as usual but don't send the torrent file to the torrent client
 
 >**python3 start.py -noseed -f "/home/uploader/Hello.world**
-
+***
 
 ![Version](https://img.shields.io/badge/noup-red)
 
@@ -209,7 +209,7 @@ Don't upload and don't seed. Just create the file torrent
 | `-a`, `--alive`         | Alive torrent         |
 | `-d`, `--dead`          | Dead torrent          |
 | `-dy`, `--dying`        | Dying torrent         |
-
+***
 
  ![Install](https://img.shields.io/badge/How_to_Install-gr) 
 
@@ -223,8 +223,8 @@ PATH environment user variable
 5. run pip install -r requirements.txt inside the bot folder
 6. "python start.py" to initialize the configuration for the bot
 
+![Install](https://img.shields.io/badge/Upload_PDF-gr) 
 
-#### Upload PDF
 unit3dup can grab the first page, convert it to an image (using xpdf),
 and then the bot can upload it to an image host, then add the link to the torrent page description
 
