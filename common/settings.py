@@ -149,7 +149,7 @@ class Validate:
         """
         Validates string
         """
-        if isinstance(value, str) and value.strip():
+        if isinstance(value, str) and value.strip() or 'no_key' in value.lower():
             return value
         print(f"-> Please Fix '{field_name}' ['{value}'] in settings.json")
         exit(1)
@@ -467,8 +467,8 @@ class Load:
                 "PTSCREENS_KEY": "no_key",
                 "IMGFI_KEY": "no_key",
                 "YOUTUBE_KEY": "no_apikey",
-                "IGDB_CLIENT_ID": "client_id",
-                "IGDB_ID_SECRET": "secret",
+                "IGDB_CLIENT_ID": "no_key",
+                "IGDB_ID_SECRET": "no_key",
             },
             "torrent_client_config": {
                 "QBIT_USER": "admin",
@@ -706,9 +706,9 @@ class JsonConfig:
 
         except json.JSONDecodeError as e:
             print(f"Config Loading error.. {e}")
-            print("Try to Check '\\ characters. Example: ")
-            print("C:\myfolder -> not correct ")
-            print("C:/myfolder -> CORRECT ")
+            print(r"Try to Check '\\ characters. Example: ")
+            print(r"C:\myfolder -> not correct ")
+            print(r"C:/myfolder -> CORRECT ")
             exit(1)
         except FileNotFoundError:
             print(f"Configuration '{self.default_json_path}' not found")
