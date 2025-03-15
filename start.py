@@ -2,7 +2,7 @@
 
 from common.torrent_clients import TransmissionClient, QbittorrentClient
 from common.command import CommandLine
-from common.settings import Load
+from common.settings import Load,DEFAULT_JSON_PATH
 
 from unit3dup.torrent import View
 from unit3dup import pvtTracker
@@ -20,10 +20,12 @@ def main():
 
     # Load user configuration data
     config = Load().load_config()
-    custom_console.bot_log(config.user_preferences.TORRENT_ARCHIVE_PATH)
-    custom_console.bot_log(config.user_preferences.CACHE_PATH)
-    custom_console.bot_log(config.user_preferences.WATCHER_DESTINATION_PATH)
-    custom_console.bot_log(config.user_preferences.WATCHER_PATH)
+    custom_console.bot_log(f"[Configuration] '{DEFAULT_JSON_PATH}'")
+    custom_console.bot_log(f"[*.torrent Archive] '{config.user_preferences.TORRENT_ARCHIVE_PATH}'")
+    custom_console.bot_log(f"[Images,Tmdb cache] '{config.user_preferences.CACHE_PATH}'")
+    custom_console.bot_log(f"[Watcher] '{config.user_preferences.WATCHER_PATH}'")
+    custom_console.bot_log(f"[Watcher] '{config.user_preferences.WATCHER_DESTINATION_PATH}'")
+    print()
 
     # /// Initialize command line interface
     cli = CommandLine()
