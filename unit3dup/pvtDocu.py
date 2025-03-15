@@ -44,6 +44,9 @@ class PdfImages:
         except subprocess.CalledProcessError:
             custom_console.bot_error_log(f"It was not possible to extract any page from '{self.file_name}'")
             exit(1)
+        except FileNotFoundError:
+            custom_console.bot_error_log(f"It was not possible to find 'xpdf'. Please check your system PATH or install it.")
+            exit(1)
 
         with open(f"{self.file_name}-0000.jpg", "rb") as img_file:
             img_data = img_file.read()
