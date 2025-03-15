@@ -186,10 +186,9 @@ class Validate:
     @staticmethod
     def validate_shared_path(path: str)-> str | None:
         try:
-            # Remove wrong chars
-            sanitized_path = sanitize_filepath(path)
-            # Test for absolute path
-            return sanitized_path if os.path.isabs(path) and 'no_path' not in path else None
+            if 'no_path' not in path.lower():
+               return sanitize_filepath(path)
+            return None
         except ValueError:
             # not a valid path
             return None

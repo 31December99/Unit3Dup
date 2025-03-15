@@ -42,6 +42,9 @@ class TorrClient(ABC):
         # Ready for seeding
         return open(full_path_archive, "rb")
 
+    @staticmethod
+    def is_abs_shared_path(path: str)-> bool:
+         return True if os.path.isabs(path) else False
 
 class TransmissionClient(TorrClient):
     def __init__(self) -> None:
@@ -142,26 +145,32 @@ class QbittorrentClient(TorrClient):
         full_path_archive = os.path.join(config_settings.user_preferences.TORRENT_ARCHIVE_PATH,
                                          f"{os.path.basename(content.torrent_path)}.torrent")
 
+        # "Translate" files location to shared_path if necessary
+        if config_settings.torrent_client_config.SHARED_QBIT_PATH:
+            torr_location = config_settings.torrent_client_config.SHARED_QBIT_PATH
+        else:
+            # If no shared_path is specified set it to the path specified in the CLI commands (path)
+            torr_location = torrent.mytorr.location
+
+        # Transmission looks like it does not accept not absolute paths
+        if not self.is_abs_shared_path(torr_location):
+            custom_console.bot_warning_log(f"\n{torr_location} is not an absolute shared path")
+
         # file torrent already created
         if not torrent:
             self.client.download_from_file(
-                file_buffer=open(full_path_archive, "rb"), savepath=os.path.dirname(content.torrent_path)
+                file_buffer=open(full_path_archive, "rb"), savepath=str(torr_location)
             )
+
         else:
             # Use the new one
             download_torrent_dal_tracker = requests.get(tracker_data_response)
             if download_torrent_dal_tracker.status_code == 200:
                 torrent_file = self.download(tracker_torrent_url=download_torrent_dal_tracker,
                                              torrent_path=content.torrent_path)
-
-
-                # "Translate" files location to shared_path
-                if config_settings.torrent_client_config.SHARED_QBIT_PATH:
-                    torr_location = config_settings.torrent_client_config.SHARED_QBIT_PATH
-                else:
-                    # If no shared_path is specified set it to the path specified in the CLI commands (path)
-                    torr_location = torrent.mytorr.location
                 self.client.download_from_file(file_buffer=torrent_file, savepath=str(torr_location))
+
+
 
     def send_file_to_client(self, torrent_path):
         full_path_archive = os.path.join(config_settings.user_preferences.TORRENT_ARCHIVE_PATH,
