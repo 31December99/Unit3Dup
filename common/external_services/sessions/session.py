@@ -134,7 +134,7 @@ class MyHttp:
             return response
         else:
             custom_console.bot_error_log(f"{self.__class__.__name__}: {response.content}")
-            exit()
+            return response
 
 
 
