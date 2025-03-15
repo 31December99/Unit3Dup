@@ -28,7 +28,9 @@ def test_tmdb():
 
     # // Print list
     for item in contents:
-        tests.custom_console.bot_warning_log(item.title)
+        tests.custom_console.bot_warning_log(f"{item.title}, '{item.category}'")
+
+    input("Press Enter to continue...")
 
     for content in contents:
 
@@ -107,7 +109,3 @@ def test_tmdb():
         )
         tests.custom_console.bot_log("Done.")
         tests.custom_console.rule()
-        pytest.exit()
-
-
-
