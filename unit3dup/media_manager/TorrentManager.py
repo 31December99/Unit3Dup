@@ -41,6 +41,11 @@ class TorrentManager:
             content for content in contents if content.category == System.category_list.get(System.GAME)
         ]
 
+        if games:
+            if 'no_key' in config_settings.tracker_config.IGDB_CLIENT_ID:
+                custom_console.bot_warning_log("Skipping game upload, no IGDB credentials provided")
+                games = []
+
         # // Build a VIDEO list
         videos = [
             content
