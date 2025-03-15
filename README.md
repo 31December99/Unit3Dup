@@ -23,38 +23,41 @@ It performs the following tasks:
 ___
 ![Version](https://img.shields.io/badge/Flag_u-FILES-blue)
 
-**python3 start.py -u "/home/uploader/myvideos/Hello.world.S04E12.mkv"**
+> **python3 start.py -u "/home/uploader/myvideos/Hello.world.S04E12.mkv"**
 
 Output:
 
-![Version](https://img.shields.io/badge/Hello.world.S04E12.mkv.torrent-brown)
+> Hello.world.S04E12.mkv.torrent
 
-**python3 start.py -u "/home/uploader/helloworld/Hello.world.book.pdf"**
-
-Output:
-
-![Version](https://img.shields.io/badge/Hello.world.book.pdf.torrent-brown)
-
-**python3 start.py -u "/home/uploader/myvideos/Hello.world.TheMovie.mkv"**
+> **python3 start.py -u "/home/uploader/helloworld/Hello.world.book.pdf"**
 
 Output:
 
-![Version](https://img.shields.io/badge/Hello.world.TheMovie.mkv.torrent-brown)
+> Hello.world.book.pdf.torrent
 
-There is no difference between movie, series, and game, but there is a difference between folders and files:
-
-**python3 start.py -u "/home/uploader/myvideos**
+> **python3 start.py -u "/home/uploader/myvideos/Hello.world.TheMovie.mkv"**
 
 Output:
 
-![Version](https://img.shields.io/badge/Hello.world.S04E12.mkv.torrent-brown)
-![Version](https://img.shields.io/badge/Hello.world.book.pdf.torrent-brown)
-![Version](https://img.shields.io/badge/Hello.world.TheMovie.mkv.torrent-brown)
+> Hello.world.TheMovie.mkv.torrent
+
+
+> **python3 start.py -u "/home/uploader/myvideos**
+
+Output (only files):
+
+> Hello.world.S04E12.mkv.torrent
+> 
+> Hello.world.book.pdf.torrent
+> 
+> Hello.world.TheMovie.mkv.torrent
+> 
+
 
 
 ![Version](https://img.shields.io/badge/Flag_f-FOLDERS-blue)
 
-**python3 start.py -f "/home/uploader/Hello.world.S01**
+> **python3 start.py -f "/home/uploader/Hello.world.S01**
 
 /home/uploader/Hello.world.S01E01
 
@@ -66,14 +69,14 @@ etc..
 
 Output:
 
-![Version](https://img.shields.io/badge/Hello.world.S01.torrent-brown)
-
+> Hello.world.S01.torrent
 ***
-**python3 start.py -f "/home/uploader/Hello.world.S02E01**
+
+>python3 start.py -f "/home/uploader/Hello.world.S02E01**
 
 Output:
 
-![Version](https://img.shields.io/badge/Hello.world.S02E01.torrent-brown)
+>Hello.world.S02E01.torrent
 ***
 
 
@@ -81,20 +84,23 @@ Output:
 
 Output:
 
-![Version](https://img.shields.io/badge/Hello.world.TheMovie.torrent-brown)
+>Hello.world.TheMovie.torrent
 ***
 
 
 ![Version](https://img.shields.io/badge/Flag_scan-FOLDERS_AND_FILES-blue)
 
-**python3 start.py -scan "/home/uploader/Archive**
+> **python3 start.py -scan "/home/uploader/Archive**
 
 Output:
 
-![Version](https://img.shields.io/badge/Hello.world.TheMovie.torrent-brown)
-![Version](https://img.shields.io/badge/Hello.world.S02E01.torrent-brown)
-![Version](https://img.shields.io/badge/Hello.world.TheBook.pdf.torrent-brown)
-![Version](https://img.shields.io/badge/Hello.world.TheGame.torrent-brown)
+> Hello.world.TheMovie.torrent
+> 
+> Hello.world.S02E01.torrent
+> 
+> Hello.world.TheBook.pdf.torrent
+> 
+> Hello.world.TheGame.torrent
 ***
 
 
@@ -134,7 +140,7 @@ Add all the trackers that have been configured in the JSON file to a specified t
 -cross expects the media file path, not the torrent file path.
 Therefore, it checks the torrent archive to see if the file exists and edits it.
 
-**python3 start.py -cross -f "/home/uploader/Hello.world.TheMovie**
+>**python3 start.py -cross -f "/home/uploader/Hello.world.TheMovie**
 verificare
 ***
 
@@ -144,36 +150,36 @@ Send the torrent file immediately to the default torrent client.
 -seedit expects the media file path, not the torrent file path.
 
 
-**python3 start.py -seedit "/home/uploader/Hello.world.TheMovie**
+>**python3 start.py -seedit "/home/uploader/Hello.world.TheMovie**
 
 
 ![Version](https://img.shields.io/badge/force-red)
 
 Unit3D as usual auto detects the media category but you can override it with the -force command
 
-**python3 start.py -force game -u "/home/uploader/Hello.world.pdf**
+>**python3 start.py -force game -u "/home/uploader/Hello.world.pdf**
 
-**python3 start.py -force movie -f "/home/uploader/Hello.world**
+>**python3 start.py -force movie -f "/home/uploader/Hello.world**
 
-You will get an error from MediaInfo if you try to upload a game as a video or pdf
+You will get a message if you try to upload a game as a video or pdf
 
 
 ![Version](https://img.shields.io/badge/noseed-red)
 
 Upload as usual but don't send the torrent file to the torrent client
 
-**python3 start.py -noseed -f "/home/uploader/Hello.world**
+>**python3 start.py -noseed -f "/home/uploader/Hello.world**
 
 
 ![Version](https://img.shields.io/badge/noup-red)
 
 Don't upload and don't seed. Just create the file torrent
 
-**python3 start.py -noup -f "/home/uploader/Hello.world**
+>**python3 start.py -noup -f "/home/uploader/Hello.world**
 
-**python3 start.py -tracker itt -noup -f "/home/uploader/Hello.world**
+>**python3 start.py -tracker itt -noup -f "/home/uploader/Hello.world**
 
-**python3 start.py -tracker partner -noup -f "/home/uploader/Hello.world**
+>**python3 start.py -tracker partner -noup -f "/home/uploader/Hello.world**
 ***
 
 ![Version](https://img.shields.io/badge/others-red)
@@ -256,7 +262,7 @@ where "user" is your username windows account
 | Trackers          | Description              |
 |-------------------|--------------------------|
 | `ITT`             | https://itatorrents.xyz/ |
-| `SIS`             | https://shareisland.org/ |
+| `SIS`             |  |
 
 
 ## Join Us
