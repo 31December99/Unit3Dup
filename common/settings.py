@@ -12,6 +12,8 @@ from pathvalidate import sanitize_filepath
 from common.utility import ManageTitles
 from common import trackers
 
+config_file = "Unit3Dbot.json"
+
 if os.name == "nt":
     PW_TORRENT_ARCHIVE_PATH: Path = Path(os.getenv("LOCALAPPDATA", ".")) / "Unit3Dup_config" / "pw_torrent_archive"
     PW_DOWNLOAD_PATH: Path = Path(os.getenv("LOCALAPPDATA", ".")) / "Unit3Dup_config" / "pw_download"
@@ -19,6 +21,7 @@ if os.name == "nt":
     WATCHER_PATH: Path = Path(os.getenv("LOCALAPPDATA", ".")) / "Unit3Dup_config" / "watcher_path"
     CACHE_PATH: Path = Path(os.getenv("LOCALAPPDATA", ".")) / "Unit3Dup_config" / "cache_path"
     TORRENT_ARCHIVE_PATH: Path = Path(os.getenv("LOCALAPPDATA", ".")) / "Unit3Dup_config" / "torrent_archive_path"
+    DEFAULT_JSON_PATH: Path = Path(os.getenv("LOCALAPPDATA", ".")) / "Unit3Dup_config" / f"{config_file}"
 
 else:
     PW_TORRENT_ARCHIVE_PATH: Path = Path.home() / "Unit3Dup_config" / "pw_torrent_archive"
@@ -27,6 +30,7 @@ else:
     WATCHER_PATH: Path = Path.home() / "Unit3Dup_config" / "watcher_path"
     CACHE_PATH: Path = Path.home() / "Unit3Dup_config" / "cache_path"
     TORRENT_ARCHIVE_PATH: Path = Path.home() / "Unit3Dup_config" / "torrent_archive_path"
+    DEFAULT_JSON_PATH: Path = Path.home() / "Unit3Dup_config" / f"{config_file}"
 
 
 def get_default_path(field: str)-> str:
@@ -541,10 +545,12 @@ class Load:
     def load_config():
         config_file = "Unit3Dbot.json"
 
+        """
         if os.name == "nt":
             default_json_path: Path = Path(os.getenv("LOCALAPPDATA", ".")) / "Unit3Dup_config" / f"{config_file}"
         else:
             default_json_path: Path = Path.home() / "Unit3Dup_config" / f"{config_file}"
+        """
 
         if not WATCHER_DESTINATION_PATH.exists():
             print(f"Create default destination watcher path: {WATCHER_DESTINATION_PATH}")
@@ -562,9 +568,9 @@ class Load:
             print(f"Create default cache path: {CACHE_PATH}")
             os.makedirs(CACHE_PATH)
 
-        if not default_json_path.exists():
-            print(f"Create default configuration file: {default_json_path}")
-            Load.create_default_json_file(default_json_path)
+        if not DEFAULT_JSON_PATH.exists():
+            print(f"Create default configuration file: {DEFAULT_JSON_PATH}")
+            Load.create_default_json_file(DEFAULT_JSON_PATH)
 
         if not PW_TORRENT_ARCHIVE_PATH.exists():
             print(f"Create default pw torrent archive path: {PW_TORRENT_ARCHIVE_PATH}")
@@ -577,7 +583,7 @@ class Load:
 
         # Since the last bot version there might are new attributes
         # Load the json file, find the difference between json file and the code. Update the user's json file
-        update_config = JsonConfig(default_json_path=default_json_path)
+        update_config = JsonConfig(default_json_path=DEFAULT_JSON_PATH)
         json_data = update_config.process()
 
         if not json_data:
