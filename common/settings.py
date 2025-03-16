@@ -102,6 +102,7 @@ class UserPreferences(BaseModel):
     PREFERRED_LANG: str | None = "all"
     ANON: bool = False
     CACHE_SCR: bool = False
+    CACHE_DBONLINE: bool = False
 
 
 
@@ -377,7 +378,7 @@ class Config(BaseModel):
             else:
                 field = field.upper()
 
-                if field in ['DUPLICATE_ON','SKIP_DUPLICATE','RESIZE_SCSHOT','ANON','CACHE_SCR']:
+                if field in ['DUPLICATE_ON','SKIP_DUPLICATE','RESIZE_SCSHOT','ANON','CACHE_SCR', 'CACHE_DBONLINE']:
                     section[field] = Validate.boolean(value=section[field], field_name=field)
 
                 if field in ['TORRENT_COMMENT','PW_TORRENT_ARCHIVE_PATH','WATCHER_PATH','DEFAULT_TRACKER']:
@@ -507,6 +508,7 @@ class Load:
                 "PREFERRED_LANG": "all",
                 "ANON": "False",
                 "CACHE_SCR": "False",
+                "CACHE_DBONLINE": "False",
 
             },
             "options": {
@@ -542,14 +544,6 @@ class Load:
 
     @staticmethod
     def load_config():
-        config_file = "Unit3Dbot.json"
-
-        """
-        if os.name == "nt":
-            default_json_path: Path = Path(os.getenv("LOCALAPPDATA", ".")) / "Unit3Dup_config" / f"{config_file}"
-        else:
-            default_json_path: Path = Path.home() / "Unit3Dup_config" / f"{config_file}"
-        """
 
         if not WATCHER_DESTINATION_PATH.exists():
             print(f"Create default destination watcher path: {WATCHER_DESTINATION_PATH}")
@@ -578,7 +572,6 @@ class Load:
         if not PW_DOWNLOAD_PATH.exists():
             print(f"Create default pw download path: {PW_DOWNLOAD_PATH}")
             os.makedirs(PW_DOWNLOAD_PATH)
-
 
         # Since the last bot version there might are new attributes
         # Load the json file, find the difference between json file and the code. Update the user's json file

@@ -225,19 +225,18 @@ class DbOnline(TmdbAPI):
     def search(self) -> MediaResult | None:
         """
         Search for results based on a tmdb query
-        use cache only if there are no id in string filename or name folder
         """
 
-        # Search in the cache first
-        search_results = self.load_cache(self.query)
+        # Search in the cache first if cache is enabled
+        if config_settings.user_preferences.CACHE_DBONLINE:
+            search_results = self.load_cache(self.query)
+            if search_results:
+                self.print_results(results=search_results)
+                return search_results
 
-        if search_results:
-            self.print_results(results=search_results)
-            return search_results
-
-        # So start an on-line search
+        # or start an on-line search
         results = self._search(self.query, self.category)
-        # User imdb_id when tmdb_id is not available
+        # Use imdb_id when tmdb_id is not available
         imdb_id = 0
         if results:
             for result in results:
@@ -249,7 +248,10 @@ class DbOnline(TmdbAPI):
                     search_results = MediaResult(result, video_id=result.id,imdb_id=imdb_id, trailer_key=trailer_key,
                                                  keywords_list=keywords_list)
                     self.print_results(results=search_results)
-                    self.cache[self.query] = search_results
+
+                    # Write to the cache if it is enabled
+                    if config_settings.user_preferences.CACHE_DBONLINE:
+                        self.cache[self.query] = search_results
                     return search_results
 
         # No response from TMDB
