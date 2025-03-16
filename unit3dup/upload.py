@@ -1,4 +1,5 @@
 import json
+import diskcache
 import requests
 
 from common.external_services.igdb.core.models.search import Game
@@ -13,7 +14,7 @@ from unit3dup.media import Media
 from view import custom_console
 
 class UploadBot:
-    def __init__(self, content: Media, tracker_name: str):
+    def __init__(self, content: Media, tracker_name: str, cache: diskcache):
 
         self.API_TOKEN = config_settings.tracker_config.ITT_APIKEY
         self.BASE_URL = config_settings.tracker_config.ITT_URL
@@ -21,6 +22,8 @@ class UploadBot:
         self.tracker_name = tracker_name
         self.tracker_data = TRACKData.load_from_module(tracker_name=tracker_name)
         self.tracker = Unit3d(tracker_name=tracker_name)
+        # Caching tracker data
+        self.cache = cache
 
     def message(self,tracker_response: requests.Response) -> (requests, dict):
 
@@ -33,6 +36,10 @@ class UploadBot:
         if tracker_response.status_code == 200:
             tracker_response_body = json.loads(tracker_response.text)
             custom_console.bot_log(f"\n[RESPONSE]->'{self.tracker_name}'.....{tracker_response_body['message'].upper()}\n\n")
+
+            # Write to the cache only if it is enabled
+            if self.cache:
+                self.cache[self.content.file_name] = self.tracker.data
             return tracker_response_body["data"],{}
 
         elif tracker_response.status_code == 401:
