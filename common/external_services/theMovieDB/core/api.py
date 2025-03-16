@@ -260,7 +260,7 @@ class DbOnline(TmdbAPI):
 
         # not results found so try to initialize imdb
         imdb = IMDB()
-        user_tmdb_id  = custom_console.user_input(message="Title not found. Please digit a valid TMDB ID ->")
+        user_tmdb_id  = custom_console.user_input(message="Title not found. Please digit a valid TMDB ID (0=skip)->")
 
         # Try to add IMDB ID if tmdb is not available
         if user_tmdb_id==0:
@@ -288,19 +288,23 @@ class DbOnline(TmdbAPI):
             # choose the first in the list
             # todo compare against the media title especially for the favorite channel
             return result[0].items[0].id.videoId
-
+        else:
+            user_youtube_id = custom_console.user_input_str(message="Title not found."
+                                                                    " Please digit a valid Youtube ID (0=skip)->")
+            if user_youtube_id==0:
+                return None
+            return user_youtube_id
 
     def trailer(self, video_id: int) -> str | None:
+        # Search for tmdb trailer
         trailers = self._videos(video_id, self.category)
+        if trailers:
+            trailer = next((video for video in trailers if video.type.lower() == 'trailer'
+                            and video.site.lower() == 'youtube'), None)
+            if trailer:
+                return trailer.key
 
-        # Invalid video_id or video_id not found
-        if not trailers:
-            return None
-
-        trailer = next(
-            (video for video in trailers if video.type.lower() == 'trailer' and video.site.lower() == 'youtube'), None)
-        if trailer:
-            return trailer.key
+        # Search for YouTube trailer
         return self.youtube_trailer()
 
     def keywords(self, video_id: int) -> str | None:
@@ -313,6 +317,7 @@ class DbOnline(TmdbAPI):
             custom_console.bot_log(f"'TMDB TITLE'..... {self.query}")
             custom_console.bot_log(f"'TMDB ID'........ {results.video_id}")
             custom_console.bot_log(f"'TMDB KEYWORDS'.. {results.keywords_list}")
+            custom_console.bot_log(f"'TRAILER CODE' .. {results.trailer_key if results.trailer_key!='0' else 'not available'}")
             print()
 
 
