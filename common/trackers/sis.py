@@ -19,14 +19,24 @@ sis_data = {
 
 
     "TYPE_ID": {
-                "DISC": 26,
-                "REMUX": 7,
-                "WEBRIP": 15,
-                "HDTV": 6,
-                "ENCODE": 15,
-                "altro": 47,
+                "encode": 15,
+                "web": 27,
+                "web-dl": 27,
+                "webrip": 27,
+                "remux": 7,
+                "disk": 26,
+                "cinemanews": 42,
+                "hdtv": 33,
+                "window": 31,
+                "linux": 39,
+                "android": 38,
+                "appleos": 32,
+                "mp3": 25,
+                "flac": 24,
                 "epub": 48,
                 "pdf": 49,
+                "altro": 47,
+
     },
     "TYPE_ID_AUDIO": {
                 "flac": 24,
@@ -40,7 +50,6 @@ sis_data = {
                 "HD": 0,
     },
     "RESOLUTION": {
-                    '8640p': 10,
                     "4320p": 1,
                     "2160p": 2,
                     '1440p': 3,
