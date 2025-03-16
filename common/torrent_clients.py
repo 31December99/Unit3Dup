@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 import os
+import time
+
 import requests
 import qbittorrent
 import transmission_rpc
@@ -124,8 +126,19 @@ class QbittorrentClient(TorrClient):
                                              f"{config_settings.torrent_client_config.QBIT_HOST}:"
                                              f"{config_settings.torrent_client_config.QBIT_PORT}/",  timeout= 10)
 
-            self.client.login(username=config_settings.torrent_client_config.QBIT_USER,
-                              password=config_settings.torrent_client_config.QBIT_PASS)
+            # return 'None' the login is correct otherwise the login.text error (see client.py python-qbittorrent 0.4.3)
+            login_count = 10
+            while True:
+                login_fail = self.client.login(username=config_settings.torrent_client_config.QBIT_USER,
+                                  password=config_settings.torrent_client_config.QBIT_PASS)
+                if not login_fail:
+                    break
+                if login_count > 10:
+                    custom_console.bot_error_log("Failed to login.")
+                    exit(1)
+                custom_console.bot_warning_log("Failed to login. Retry...Please wait")
+                time.sleep(2)
+                login_count += 1
             return self.client
 
         except requests.exceptions.HTTPError:
@@ -169,7 +182,6 @@ class QbittorrentClient(TorrClient):
             self.client.download_from_file(
                 file_buffer=open(full_path_archive, "rb"), savepath=str(torr_location)
             )
-
         else:
             # Use the new one
             download_torrent_dal_tracker = requests.get(tracker_data_response)
