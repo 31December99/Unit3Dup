@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 import argparse
+import os
+
+import diskcache
 
 from common.external_services.igdb.client import IGDBClient
 from common.bittorrent import BittorrentData
@@ -24,6 +27,12 @@ class GameManager:
         self.contents: list['Media'] = contents
         self.cli: argparse = cli
         self.igdb = IGDBClient()
+        # Cache the tracker data
+        if config_settings.user_preferences.CACHE_TRACKERDATA:
+            self.cache:diskcache = diskcache.Cache(str(os.path.join(config_settings.user_preferences.CACHE_PATH, "gamemanager.cache")))
+        else:
+            self.cache = None
+
 
     def process(self, selected_tracker: str, tracker_name_list: list) -> list["BittorrentData"]:
         """
@@ -71,7 +80,7 @@ class GameManager:
                 continue
 
             # Tracker payload
-            unit3d_up = UploadBot(content=content, tracker_name=selected_tracker)
+            unit3d_up = UploadBot(content=content, tracker_name=selected_tracker, cache=self.cache)
             tracker_response, tracker_message = unit3d_up.send_game(igdb=game_data_results, nfo_path=content.game_nfo)
 
             bittorrent_list.append(

@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 import argparse
+import os
+
+import diskcache
 
 from common.external_services.theMovieDB.core.api import DbOnline
 from common.bittorrent import BittorrentData
@@ -26,6 +29,11 @@ class VideoManager:
         self.torrent_found:bool = False
         self.contents: list['Media'] = contents
         self.cli: argparse = cli
+        # Cache the tracker data
+        if config_settings.user_preferences.CACHE_TRACKERDATA:
+            self.cache:diskcache = diskcache.Cache(str(os.path.join(config_settings.user_preferences.CACHE_PATH, "videomanager.cache")))
+        else:
+            self.cache = None
 
     def process(self, selected_tracker: str, tracker_name_list: list) -> list["BittorrentData"] | None:
         """
@@ -75,7 +83,7 @@ class VideoManager:
                 video_info.build_info()
 
                 # Tracker payload
-                unit3d_up = UploadBot(content=content, tracker_name=selected_tracker)
+                unit3d_up = UploadBot(content=content, tracker_name=selected_tracker, cache=self.cache)
 
                 # Send data to the tracker
                 tracker_response, tracker_message =  unit3d_up.send(show_id=db.video_id, imdb_id=db.imdb_id,
