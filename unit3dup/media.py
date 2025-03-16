@@ -21,6 +21,7 @@ class Media:
 
         # // Media
         self._crew_list: list[str] | None = None
+        self._game_title: list[str] | None = None
         self._platform_list: list[str] | None = None
         self._title_sanitized: str | None = None
         self._guess_title: str | None = None
@@ -77,6 +78,24 @@ class Media:
             self._platform_list = self._platform(filename=self.title_sanitized)
         return self._platform_list
 
+    @property
+    def game_nfo(self) -> str:
+        return self._game_nfo
+
+    @game_nfo.setter
+    def game_nfo(self, value):
+        self._game_nfo = value
+
+    @property
+    def game_title(self):
+        if not self._game_title:
+            # Remove the crew name to help IGDB with searching
+            _game_tmp = self.guess_filename.guessit_title
+            for crew in self.crew_list:
+                _game_tmp = _game_tmp.replace(crew, " ")
+            self._game_title = _game_tmp.strip()
+        return self._game_title
+
 
     @property
     def torrent_name(self)-> str:
@@ -125,14 +144,6 @@ class Media:
     @torrent_pack.setter
     def torrent_pack(self, value):
         self._torrent_pack = value
-
-    @property
-    def game_nfo(self) -> str:
-        return self._game_nfo
-
-    @game_nfo.setter
-    def game_nfo(self, value):
-        self._game_nfo = value
 
     @property
     def tmdb_id(self) -> int:
@@ -283,11 +294,6 @@ class Media:
     @category.setter
     def category(self, value):
         self._category = value
-
-
-    @property
-    def game_title(self):
-        return self.guess_filename.guessit_title
 
     @property
     def mediafile(self):
