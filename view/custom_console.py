@@ -110,4 +110,13 @@ class CustomConsole(Console):
             self.bot_error_log("\nOperation cancelled. Bye !")
             exit(0)
 
+    def user_input_str(self,message: str)-> str:
+        try:
+            while True:
+                self.bot_input_log(message=message)
+                user_ = input()
+                return user_ if user_ else '0'
+        except KeyboardInterrupt:
+            self.bot_error_log("\nOperation cancelled. Bye !")
+            exit(0)
 
