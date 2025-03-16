@@ -225,12 +225,3 @@ class Bot:
     def seed_it(self):
         """ Send a file torrent file for seeding"""
         self.torrent_manager.send(self.path)
-
-    def edit_it(self):
-        """ torrent file for editing"""
-        self.torrent_manager.edit(self.path)
-
-
-
-
-
