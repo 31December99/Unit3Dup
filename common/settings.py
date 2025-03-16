@@ -103,6 +103,7 @@ class UserPreferences(BaseModel):
     ANON: bool = False
     CACHE_SCR: bool = False
     CACHE_DBONLINE: bool = False
+    CACHE_TRACKERDATA: bool = False
 
 
 
@@ -378,7 +379,8 @@ class Config(BaseModel):
             else:
                 field = field.upper()
 
-                if field in ['DUPLICATE_ON','SKIP_DUPLICATE','RESIZE_SCSHOT','ANON','CACHE_SCR', 'CACHE_DBONLINE']:
+                if field in ['DUPLICATE_ON','SKIP_DUPLICATE','RESIZE_SCSHOT','ANON','CACHE_SCR', 'CACHE_DBONLINE',
+                             'CACHE_TRACKERDATA']:
                     section[field] = Validate.boolean(value=section[field], field_name=field)
 
                 if field in ['TORRENT_COMMENT','PW_TORRENT_ARCHIVE_PATH','WATCHER_PATH','DEFAULT_TRACKER']:
@@ -509,6 +511,7 @@ class Load:
                 "ANON": "False",
                 "CACHE_SCR": "False",
                 "CACHE_DBONLINE": "False",
+                "CACHE_TRACKERDATA": "False",
 
             },
             "options": {
