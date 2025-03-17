@@ -8,19 +8,22 @@ from common.frames import VideoFrame
 
 from view import custom_console
 from unit3dup import config_settings
+from unit3dup.media import Media
 
 
 class Video:
     """ Build a description for the torrent page: screenshots, mediainfo, trailers, metadata """
 
-    def __init__(self, file_name: str,  tmdb_id: int, trailer_key=None):
-        self.file_name: str = file_name
+    def __init__(self, media: Media,  tmdb_id: int, trailer_key=None):
+        self.file_name: str = media.file_name
+        self.display_name: str = media.display_name
+
         self.tmdb_id: int = tmdb_id
         self.trailer_key: int = trailer_key
         self.cache = diskcache.Cache(str(config_settings.user_preferences.CACHE_PATH))
 
         # Create a cache key for tmdb_id
-        self.cache_key = self.hash_key(self.tmdb_id)
+        self.cache_key = self.hash_key(f"{self.tmdb_id}.{self.display_name}")
 
         # Load the video frames
         samples_n = max(2, min(config_settings.user_preferences.NUMBER_OF_SCREENSHOTS, 10))
@@ -32,14 +35,13 @@ class Video:
         self.mediainfo: str = ''
 
     @staticmethod
-    def hash_key(tmdb_id) -> str:
+    def hash_key(key: str) -> str:
         """ Generate a hashkey for the cache index """
-        key_string = f"_{tmdb_id}"
-        return hashlib.md5(key_string.encode('utf-8')).hexdigest()
+        return hashlib.md5(key.encode('utf-8')).hexdigest()
 
     def build_info(self):
         """Build the information to send to the tracker"""
-        if config_settings.user_preferences.CACHE_SCR and self.tmdb_id > 0:
+        if config_settings.user_preferences.CACHE_SCR:
             description = self.cache.get(self.cache_key)
             if description:
                 self.description = description.get('description', '')
@@ -58,7 +60,7 @@ class Video:
             self.is_hd = is_hd
 
         # Caching
-        if config_settings.user_preferences.CACHE_SCR and self.tmdb_id > 0:
+        if config_settings.user_preferences.CACHE_SCR:
             self.cache[self.cache_key] = {'tmdb_id': self.tmdb_id, 'description': self.description, 'is_hd': self.is_hd}
 
         # media_info
