@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*-
 import argparse
-import os
-
-import diskcache
 
 from common.bittorrent import BittorrentData
 
@@ -20,12 +17,6 @@ class DocuManager:
         self._my_tmdb = None
         self.contents: list['Media'] = contents
         self.cli: argparse = cli
-        # Cache the tracker data
-        if config_settings.user_preferences.CACHE_TRACKERDATA:
-            self.cache:diskcache = diskcache.Cache(str(os.path.join(config_settings.user_preferences.CACHE_PATH, "documanager.cache")))
-        else:
-            self.cache = None
-
 
 
     def process(self, selected_tracker:str, tracker_name_list: list) -> list["BittorrentData"]:
@@ -57,7 +48,7 @@ class DocuManager:
             docu_info.build_info()
 
             # Tracker payload
-            unit3d_up = UploadBot(content=content, tracker_name=selected_tracker,cache=self.cache)
+            unit3d_up = UploadBot(content=content, tracker_name=selected_tracker)
 
             # Upload
             tracker_response, tracker_message = unit3d_up.send_docu(document_info=docu_info)
