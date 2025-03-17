@@ -71,7 +71,7 @@ class VideoManager:
                     continue
 
                 # Get meta from the media video
-                video_info = Video(content.file_name, tmdb_id=db.video_id, trailer_key=db.trailer_key)
+                video_info = Video(media=content, tmdb_id=db.video_id, trailer_key=db.trailer_key)
                 video_info.build_info()
 
                 # Tracker payload
