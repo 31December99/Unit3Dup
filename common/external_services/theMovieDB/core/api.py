@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
+import hashlib
 import diskcache
 
 from typing import TypeVar
@@ -200,6 +201,11 @@ class DbOnline(TmdbAPI):
             # Load cache or search online for a tmdb id or imdb
             self.media_result = self.search()
 
+    @staticmethod
+    def hash_key(key: str) -> str:
+        """ Generate a hashkey for the cache index """
+        return hashlib.md5(key.encode('utf-8')).hexdigest()
+
 
     def results_in_string(self, tmdb_id:int, imdb_id:int)-> MediaResult:
         """
@@ -229,7 +235,7 @@ class DbOnline(TmdbAPI):
 
         # Search in the cache first if cache is enabled
         if config_settings.user_preferences.CACHE_DBONLINE:
-            search_results = self.load_cache(self.query)
+            search_results = self.load_cache(self.hash_key(self.query))
             if search_results:
                 self.print_results(results=search_results)
                 return search_results
@@ -251,7 +257,7 @@ class DbOnline(TmdbAPI):
 
                     # Write to the cache if it is enabled
                     if config_settings.user_preferences.CACHE_DBONLINE:
-                        self.cache[self.query] = search_results
+                        self.cache[self.hash_key(self.query)] = search_results
                     return search_results
 
         # No response from TMDB
@@ -262,13 +268,16 @@ class DbOnline(TmdbAPI):
 
         # not results found so try to initialize imdb
         imdb = IMDB()
-        user_tmdb_id  = custom_console.user_input(message="Title not found. Please digit a valid TMDB ID (0=skip)->")
+        user_tmdb_id  = custom_console.user_input(message=f"Title ['{self.query}'] not found. "
+                                                          f"Please digit a valid TMDB ID (0=skip)->")
 
         # Try to add IMDB ID if tmdb is not available
         if user_tmdb_id==0:
             imdb_id = imdb.search(query=self.query)
-            trailer_key = None
+            trailer_key = "not available"
             keywords_list = []
+            # try searching for a YouTube video anyway
+            trailer_key = self.youtube_trailer()
         else:
             # Request trailer and keywords
             trailer_key = self.trailer(user_tmdb_id)
@@ -276,17 +285,14 @@ class DbOnline(TmdbAPI):
 
         search_results = MediaResult(video_id=user_tmdb_id, imdb_id=imdb_id, trailer_key=trailer_key, keywords_list=keywords_list)
         self.print_results(results=search_results)
-        self.cache[self.query] = search_results
+        self.cache[self.hash_key(self.query)] = search_results
         return search_results
 
     def youtube_trailer(self) -> str | None:
         # Search trailer on YouTube
-        custom_console.bot_question_log("TMDB trailer not found. Try searching on YouTube...\n")
-
         yt_trailer = YtTrailer(self.query)
         result = yt_trailer.get_trailer_link()
         if result:
-            custom_console.bot_question_log("Found !\n")
             # choose the first in the list
             # todo compare against the media title especially for the favorite channel
             return result[0].items[0].id.videoId
@@ -294,7 +300,7 @@ class DbOnline(TmdbAPI):
             user_youtube_id = custom_console.user_input_str(message="Title not found."
                                                                     " Please digit a valid Youtube ID (0=skip)->")
             if user_youtube_id==0:
-                return None
+                return "not available"
             return user_youtube_id
 
     def trailer(self, video_id: int) -> str | None:
@@ -305,6 +311,8 @@ class DbOnline(TmdbAPI):
                             and video.site.lower() == 'youtube'), None)
             if trailer:
                 return trailer.key
+            else:
+                return "not available"
 
         # Search for YouTube trailer
         return self.youtube_trailer()
@@ -319,7 +327,7 @@ class DbOnline(TmdbAPI):
             custom_console.bot_log(f"'TMDB TITLE'..... {self.query}")
             custom_console.bot_log(f"'TMDB ID'........ {results.video_id}")
             custom_console.bot_log(f"'TMDB KEYWORDS'.. {results.keywords_list}")
-            custom_console.bot_log(f"'TRAILER CODE' .. {results.trailer_key if results.trailer_key!='0' else 'not available'}")
+            custom_console.bot_log(f"'TRAILER CODE' .. {results.trailer_key}")
             print()
 
 
