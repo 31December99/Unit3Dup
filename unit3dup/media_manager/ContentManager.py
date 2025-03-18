@@ -41,7 +41,7 @@ class ContentManager:
         self.auto = Auto(path=self.path, mode=self.mode)
         self.media_list = self.auto.upload() if self.mode in ["man", "folder"] else self.auto.scan()
 
-    def process(self)-> list['Media']:
+    def process(self)-> list[Media]:
         contents = []
         for media in self.media_list:
             self.path = media.torrent_path

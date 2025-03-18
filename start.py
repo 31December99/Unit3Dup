@@ -66,13 +66,27 @@ def main():
                 exit(1)
 
 
+    # Check if the tracker name exists
     if cli.args.tracker and cli.args.tracker not in config.tracker_config.MULTI_TRACKER:
        custom_console.bot_error_log(f"Tracker '{cli.args.tracker}' not found. Please update your configuration file")
        exit()
 
+    # Get default tracker
+    tracker_name_list = [config.tracker_config.MULTI_TRACKER[0]]
+
+    # Add a single announce if requested
+    if cli.args.tracker:
+        tracker_name_list = [cli.args.tracker.upper()]
+
+    # Add one or more trackers to the torrent file if requested
+    if cli.args.cross:
+        print(config.tracker_config.MULTI_TRACKER)
+        tracker_name_list = config.tracker_config.MULTI_TRACKER
+
+
     # Manual upload mode
     if cli.args.upload:
-        bot = Bot(path=cli.args.upload, cli=cli.args)
+        bot = Bot(path=cli.args.upload, cli=cli.args, trackers_name_list=tracker_name_list)
         bot.run()
 
     # Manual folder mode
@@ -81,17 +95,18 @@ def main():
             path=cli.args.folder,
             cli=cli.args,
             mode="folder",
+            trackers_name_list=tracker_name_list,
         )
         bot.run()
 
     # Auto mode
     if cli.args.scan and not cli.args.ftp:
-        bot = Bot(path=cli.args.scan, cli=cli.args, mode="auto")
+        bot = Bot(path=cli.args.scan, cli=cli.args, mode="auto", trackers_name_list=tracker_name_list)
         bot.run()
 
     # Watcher
     if cli.args.watcher:
-        bot = Bot(path=cli.args.watcher, cli=cli.args, mode="auto")
+        bot = Bot(path=cli.args.watcher, cli=cli.args, mode="auto", trackers_name_list=tracker_name_list)
 
         bot.watcher(duration=config.user_preferences.WATCHER_INTERVAL, watcher_path=config.user_preferences.WATCHER_PATH,
                     destination_path = config.user_preferences.WATCHER_DESTINATION_PATH)
@@ -99,18 +114,18 @@ def main():
 
     # re_seed the torrent
     if cli.args.seedit:
-        bot = Bot(path=cli.args.seedit, cli=cli.args)
+        bot = Bot(path=cli.args.seedit, cli=cli.args, trackers_name_list=tracker_name_list)
         bot.seed_it()
 
     # Pw
     if cli.args.pw:
-        bot = Bot(path=cli.args.pw,cli=cli.args)
+        bot = Bot(path=cli.args.pw,cli=cli.args, trackers_name_list=tracker_name_list)
         bot.pw()
 
 
     # ftp and upload
     if cli.args.ftp:
-        bot = Bot(path='', cli=cli.args, mode="folder")
+        bot = Bot(path='', cli=cli.args, mode="folder", trackers_name_list=tracker_name_list)
         bot.ftp()
 
 

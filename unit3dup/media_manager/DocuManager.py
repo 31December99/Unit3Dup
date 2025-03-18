@@ -13,18 +13,22 @@ from view import custom_console
 
 class DocuManager:
 
-    def __init__(self, contents: list["Media"], cli: argparse.Namespace):
+    def __init__(self, contents: list[Media], cli: argparse.Namespace):
         self._my_tmdb = None
         self.contents: list['Media'] = contents
         self.cli: argparse = cli
 
 
-    def process(self, selected_tracker:str, tracker_name_list: list) -> list["BittorrentData"]:
+    def process(self, selected_tracker:str, tracker_name_list: list) -> list[BittorrentData]:
         bittorrent_list = []
         for content in self.contents:
 
             # Torrent creation
-            if not UserContent.torrent_file_exists(path=content.torrent_path, tracker_name_list=tracker_name_list):
+            if not UserContent.torrent_file_exists(path=content.torrent_path,
+                                                   tracker_name_list=tracker_name_list,
+                                                   selected_tracker=selected_tracker):
+
+
                 torrent_response = UserContent.torrent(content=content, trackers=tracker_name_list)
             else:
                 # Torrent found, skip if the watcher is active
