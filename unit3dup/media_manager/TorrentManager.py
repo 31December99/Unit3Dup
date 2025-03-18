@@ -25,24 +25,16 @@ class TorrentManager:
         self.doc: list[Media] = []
         self.cli = cli
 
-    def process(self, contents: list, selected_tracker: str, trackers_name_list: list) -> None:
+    def process(self, contents: list) -> None:
         """
         Send content to each selected tracker with the trackers_name_list.
         trackers_name_list can be a list of tracker names or the current tracker for the upload process
 
         Args:
             contents: torrent contents
-            selected_tracker: current tracker for the upload process (default tracker or -tracker )
-            trackers_name_list: list of tracker names to update the torrent file ( -cross)
         Returns:
             NOne
         """
-
-
-        game_process_results: list[BittorrentData] = []
-        video_process_results: list[BittorrentData] = []
-        docu_process_results: list[BittorrentData] = []
-
         # // Build a GAME list
         self.games = [
             content for content in contents if content.category == System.category_list.get(System.GAME)
@@ -51,7 +43,7 @@ class TorrentManager:
         if self.games:
             if 'no_key' in config_settings.tracker_config.IGDB_CLIENT_ID:
                 custom_console.bot_warning_log("Skipping game upload, no IGDB credentials provided")
-                games = []
+                self.games = []
 
         # // Build a VIDEO list
         self.videos = [
@@ -68,60 +60,71 @@ class TorrentManager:
         if config_settings.user_preferences.DUPLICATE_ON:
             custom_console.bot_log("'[ACTIVE]' Searching for duplicates")
 
-        # Set the tracker to the user CLI value or the first item in the multi-tracker list (default)
-        # If cli.tracker is set a torrent will be created if it doesn't already exist with the announce URL
-        # Otherwise the tracker name will be set to the first item in the multi_tracker which is the default value
-        # and the announce will be added from the tracker platform
-        # todo multi-upl
+    def run(self, trackers_name_list: list):
+        """
 
-        # tracker = self.cli.tracker if self.cli.tracker else config_settings.tracker_config.MULTI_TRACKER[0] sospeso
+        Args:
+            trackers_name_list: list of tracker names to update the torrent file ( -cross or -tracker)
+        Returns:
 
-        # Build the torrent file and upload each GAME to the tracker
-        if self.games:
-            game_manager = GameManager(contents=self.games, cli=self.cli)
-            game_process_results = game_manager.process(selected_tracker=selected_tracker,
-                                                        tracker_name_list=trackers_name_list)
+        """
 
-        # Build the torrent file and upload each VIDEO to the trackers
-        if self.videos:
-            video_manager = VideoManager(contents=self.videos, cli=self.cli)
-            video_process_results = video_manager.process(selected_tracker=selected_tracker,
-                                                          tracker_name_list=trackers_name_list)
+        game_process_results: list[BittorrentData] = []
+        video_process_results: list[BittorrentData] = []
+        docu_process_results: list[BittorrentData] = []
 
-        # Build the torrent file and upload each DOC to the tracker
-        if self.doc:
-            docu_manager = DocuManager(contents=self.doc, cli=self.cli)
-            docu_process_results = docu_manager.process(selected_tracker=selected_tracker,
-                                                        tracker_name_list=trackers_name_list)
+        for selected_tracker in trackers_name_list:
+            # Build the torrent file and upload each GAME to the tracker
+            if self.games:
+                game_manager = GameManager(contents=self.games, cli=self.cli)
+                game_process_results = game_manager.process(selected_tracker=selected_tracker,
+                                                            tracker_name_list=trackers_name_list)
 
-        # No seeding
-        if self.cli.noseed or self.cli.noup:
-            custom_console.bot_warning_log(f"No seeding active. Done.")
-            return None
+            # Build the torrent file and upload each VIDEO to the trackers
+            if self.videos:
+                video_manager = VideoManager(contents=self.videos, cli=self.cli)
+                video_process_results = video_manager.process(selected_tracker=selected_tracker,
+                                                              tracker_name_list=trackers_name_list)
+
+            # Build the torrent file and upload each DOC to the tracker
+            if self.doc:
+                docu_manager = DocuManager(contents=self.doc, cli=self.cli)
+                docu_process_results = docu_manager.process(selected_tracker=selected_tracker,
+                                                            tracker_name_list=trackers_name_list)
+
+            # No seeding
+            if self.cli.noseed or self.cli.noup:
+                custom_console.bot_warning_log(f"No seeding active. Done.")
+                return None
 
 
-        if game_process_results:
-            UserContent.send_to_bittorrent(game_process_results, 'GAME')
+            if game_process_results:
+                UserContent.send_to_bittorrent(game_process_results, 'GAME')
 
-        if video_process_results:
-            UserContent.send_to_bittorrent(video_process_results, 'VIDEO')
+            if video_process_results:
+                UserContent.send_to_bittorrent(video_process_results, 'VIDEO')
 
-        if docu_process_results:
-            UserContent.send_to_bittorrent(docu_process_results, 'DOCUMENTARY')
-        custom_console.bot_log(f"Tracker '{selected_tracker}' Done.")
-        custom_console.rule()
+            if docu_process_results:
+                UserContent.send_to_bittorrent(docu_process_results, 'DOCUMENTARY')
+            custom_console.bot_log(f"Tracker '{selected_tracker}' Done.")
+            custom_console.rule()
+
     custom_console.bot_log(f"Done.")
 
 
     def send(self, this_path: str, trackers_name_list: list):
         # Send a torrent file that has already been created for seeding
         # you can update the announce list by adding the -tracker or -cross flags
-        if UserContent.torrent_file_exists(path=this_path, tracker_name_list=trackers_name_list):
-            client = UserContent.get_client()
-            client.send_file_to_client(torrent_path=this_path)
-        else:
-            custom_console.bot_warning_log(f"File torrent not found for '{this_path}'"
-                                           f" in {config_settings.user_preferences.TORRENT_ARCHIVE_PATH}" )
+
+        # for each selected tracker we send our tracker list ( default or by -tracker,-cross flags)
+        for selected_tracker in trackers_name_list:
+            if UserContent.torrent_file_exists(path=this_path, selected_tracker=selected_tracker,
+                                                               tracker_name_list=trackers_name_list):
+                client = UserContent.get_client()
+                client.send_file_to_client(torrent_path=this_path)
+            else:
+                custom_console.bot_warning_log(f"File torrent not found for '{this_path}'"
+                                               f" in {config_settings.user_preferences.TORRENT_ARCHIVE_PATH}" )
 
 
 
