@@ -81,10 +81,11 @@ class Bot:
         # Print the list of files being processed
         custom_console.bot_process_table_log(contents)
 
-        # Process the contents (files) with tracker list
-        for tracker in self.trackers_name_list:
-            self.torrent_manager.process(contents=contents, selected_tracker=tracker,
-                                         trackers_name_list=self.trackers_name_list)
+        # Process the contents (files)
+        self.torrent_manager.process(contents=contents)
+
+        # Run the torrents creations and the upload process
+        self.torrent_manager.run(trackers_name_list=self.trackers_name_list)
         return True
 
     def watcher(self, duration: int, watcher_path: str,  destination_path: str)-> bool:
