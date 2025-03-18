@@ -6,7 +6,7 @@ import tests
 
 def test_content_manager():
 
-    test_content_movie = r""
+    test_content_movie = r"C:\test_tmp\Australian Dreams WEB-DL 1080p AC3 E-AC3 ITA SPA SUB-LF.mkv"
     cli_scan = tests.argparse.Namespace(
         watcher=False,
         torrent=False,
@@ -28,7 +28,7 @@ def test_content_manager():
         result = db_online.media_result
 
         """ VIDEO INFO """
-        video_info = tests.Video(content.file_name, tmdb_id=result.video_id, trailer_key=result.trailer_key)
+        video_info = tests.Video(content, tmdb_id=result.video_id, trailer_key=result.trailer_key)
         video_info.build_info()
 
         if content.mediafile:

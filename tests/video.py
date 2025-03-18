@@ -64,7 +64,7 @@ def test_content_manager():
         assert db.imdb_id == '10199580'
 
         """ VIDEO INFO """
-        video_info = Video(content.file_name, tmdb_id=db.video_id, trailer_key=db.trailer_key)
+        video_info = Video(content, tmdb_id=db.video_id, trailer_key=db.trailer_key)
         video_info.build_info()
 
         assert video_info.mediainfo is not None
