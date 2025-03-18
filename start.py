@@ -80,7 +80,6 @@ def main():
 
     # Add one or more trackers to the torrent file if requested
     if cli.args.cross:
-        print(config.tracker_config.MULTI_TRACKER)
         tracker_name_list = config.tracker_config.MULTI_TRACKER
 
 
