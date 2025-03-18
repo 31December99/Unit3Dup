@@ -114,7 +114,6 @@ class TmdbAPI(MyHttp):
         if category not in ['movie', 'tv']:
             custom_console.bot_warning_log("Check the category of the search query")
             return []
-        # if endpoint_class:=self.ENDPOINTS.get(TmdbAPI.show[category]):
         if endpoint_class := self.ENDPOINTS.get(category):
             request = endpoint_class.search(query)
             return self.request(endpoint=request)
@@ -129,7 +128,6 @@ class TmdbAPI(MyHttp):
         :return: list of T or None
         """
 
-        # if endpoint_class := self.ENDPOINTS.get(TmdbAPI.show[category]):
         if endpoint_class:=self.ENDPOINTS.get(category):
             request = endpoint_class.playing()
             return self.request(endpoint=request)
@@ -207,6 +205,16 @@ class DbOnline(TmdbAPI):
         return hashlib.md5(key.encode('utf-8')).hexdigest()
 
 
+    def is_like(self, results: list[T]) -> T | bool:
+        # Search for in the tile or original_name
+        if results:
+            for result in results:
+                if ManageTitles.fuzzyit(str1=self.query, str2=result.get_title()) > 95:
+                    return result
+                if ManageTitles.fuzzyit(str1=self.query, str2=result.original_name) > 95:
+                    return result
+        return False
+
     def results_in_string(self, tmdb_id:int, imdb_id:int)-> MediaResult:
         """
         Use id from the string filename or name folder
@@ -245,20 +253,20 @@ class DbOnline(TmdbAPI):
         # Use imdb_id when tmdb_id is not available
         imdb_id = 0
         if results:
-            for result in results:
-                if ManageTitles.fuzzyit(str1=self.query, str2=result.get_title()) > 95:
-                    # Get the trailer
-                    trailer_key = self.trailer(result.id)
-                    keywords_list = self.keywords(result.id)
-                    # return MediaResult object
-                    search_results = MediaResult(result, video_id=result.id,imdb_id=imdb_id, trailer_key=trailer_key,
-                                                 keywords_list=keywords_list)
-                    self.print_results(results=search_results)
+            if result:=self.is_like(results):
+                # Get the trailer
+                trailer_key = self.trailer(result.id)
+                keywords_list = self.keywords(result.id)
+                # return MediaResult object
+                search_results = MediaResult(result, video_id=result.id, imdb_id=imdb_id,
+                                             trailer_key=trailer_key,
+                                             keywords_list=keywords_list)
+                self.print_results(results=search_results)
 
-                    # Write to the cache if it is enabled
-                    if config_settings.user_preferences.CACHE_DBONLINE:
-                        self.cache[self.hash_key(self.query)] = search_results
-                    return search_results
+                # Write to the cache if it is enabled
+                if config_settings.user_preferences.CACHE_DBONLINE:
+                    self.cache[self.hash_key(self.query)] = search_results
+                return search_results
 
         # No response from TMDB
         if results is None:
