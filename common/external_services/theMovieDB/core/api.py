@@ -211,7 +211,7 @@ class DbOnline(TmdbAPI):
             for result in results:
                 if ManageTitles.fuzzyit(str1=self.query, str2=result.get_title()) > 95:
                     return result
-                if ManageTitles.fuzzyit(str1=self.query, str2=result.original_name) > 95:
+                if ManageTitles.fuzzyit(str1=self.query, str2=result.get_original()) > 95:
                     return result
         return False
 
@@ -252,6 +252,7 @@ class DbOnline(TmdbAPI):
         results = self._search(self.query, self.category)
         # Use imdb_id when tmdb_id is not available
         imdb_id = 0
+        results = []
         if results:
             if result:=self.is_like(results):
                 # Get the trailer
