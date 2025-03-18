@@ -6,11 +6,6 @@ from common.utility import ManageTitles
 
 class IMDB:
 
-    show = {
-        1: "movie",
-        2: "tv",
-    }
-
     def __init__(self):
         self.api = Cinemagoer()
 
