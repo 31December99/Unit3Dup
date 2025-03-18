@@ -29,7 +29,7 @@ class Bot:
         ftp(): Connects to a remote FTP server and processes files
     """
 
-    def __init__(self, path: str, cli: argparse.Namespace, mode="man"):
+    def __init__(self, path: str, cli: argparse.Namespace, trackers_name_list: list, mode="man"):
         """
         Initializes the Bot instance with path, command-line interface object, and mode
 
@@ -38,6 +38,7 @@ class Bot:
             cli (argparse.Namespace): The command-line arguments object
             mode (str): The mode of operation, default is 'man'
         """
+        self.trackers_name_list = trackers_name_list
         self.content_manager = None
         self.path = path
         self.cli = cli
@@ -80,8 +81,10 @@ class Bot:
         # Print the list of files being processed
         custom_console.bot_process_table_log(contents)
 
-        # Process the contents (files)
-        self.torrent_manager.process(contents)
+        # Process the contents (files) with tracker list
+        for tracker in self.trackers_name_list:
+            self.torrent_manager.process(contents=contents, selected_tracker=tracker,
+                                         trackers_name_list=self.trackers_name_list)
         return True
 
     def watcher(self, duration: int, watcher_path: str,  destination_path: str)-> bool:
@@ -224,4 +227,4 @@ class Bot:
 
     def seed_it(self):
         """ Send a file torrent file for seeding"""
-        self.torrent_manager.send(self.path)
+        self.torrent_manager.send(self.path, self.trackers_name_list)

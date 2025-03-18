@@ -21,11 +21,11 @@ class GameManager:
             contents (list): List of content media objects
             cli (argparse.Namespace): user flag Command line
         """
-        self.contents: list['Media'] = contents
+        self.contents: list[Media] = contents
         self.cli: argparse = cli
         self.igdb = IGDBClient()
 
-    def process(self, selected_tracker: str, tracker_name_list: list) -> list["BittorrentData"]:
+    def process(self, selected_tracker: str, tracker_name_list: list) -> list[BittorrentData]:
         """
         Process the game contents to filter duplicates and create torrents
 
@@ -44,7 +44,10 @@ class GameManager:
         for content in self.contents:
 
             # Torrent creation
-            if not UserContent.torrent_file_exists(path=content.torrent_path, tracker_name_list=tracker_name_list):
+            if not UserContent.torrent_file_exists(path=content.torrent_path,
+                                                   tracker_name_list=tracker_name_list,
+                                                   selected_tracker=selected_tracker):
+
                 torrent_response = UserContent.torrent(content=content, trackers=tracker_name_list)
             else:
                 # Torrent found, skip if the watcher is active

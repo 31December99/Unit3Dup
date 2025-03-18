@@ -14,7 +14,7 @@ from view import custom_console
 
 class VideoManager:
 
-    def __init__(self, contents: list["Media"], cli: argparse.Namespace):
+    def __init__(self, contents: list[Media], cli: argparse.Namespace):
         """
         Initialize the VideoManager with the given contents
 
@@ -24,10 +24,10 @@ class VideoManager:
         """
 
         self.torrent_found:bool = False
-        self.contents: list['Media'] = contents
+        self.contents: list[Media] = contents
         self.cli: argparse = cli
 
-    def process(self, selected_tracker: str, tracker_name_list: list) -> list["BittorrentData"] | None:
+    def process(self, selected_tracker: str, tracker_name_list: list) -> list[BittorrentData] | None:
         """
            Process the video contents to filter duplicates and create torrents
 
@@ -41,7 +41,9 @@ class VideoManager:
 
             if UserContent.is_preferred_language(content=content):
                 # Torrent creation
-                if not UserContent.torrent_file_exists(path=content.torrent_path, tracker_name_list=tracker_name_list):
+                if not UserContent.torrent_file_exists(path=content.torrent_path,
+                                                       tracker_name_list=tracker_name_list,
+                                                       selected_tracker=selected_tracker):
                     self.torrent_found = False
                 else:
                     # Torrent found, skip if the watcher is active

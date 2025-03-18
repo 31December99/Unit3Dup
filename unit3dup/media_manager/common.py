@@ -22,16 +22,18 @@ class UserContent:
 
 
     @staticmethod
-    def torrent_announces(torrent_path: str, tracker_name_list: list):
+    def torrent_announces(torrent_path: str, tracker_name_list: list,selected_tracker: str):
         """ Add announces to a torrent file"""
+
+
+        if not tracker_name_list:
+           tracker_name_list = [selected_tracker]
 
         # // Read the existing torrent file
         with open(torrent_path, 'rb') as f:
             # It decodes it
             torrent_data = bencode2.bdecode(f.read())
 
-        if not tracker_name_list:
-            tracker_name_list = [config_settings.tracker_config.MULTI_TRACKER[0]]
 
         announce_list_encoded = []
         # a single tracker in the tracker_list corresponds to the '-tracker' flag from the user's CLI
@@ -82,13 +84,14 @@ class UserContent:
 
 
     @staticmethod
-    def torrent_file_exists(path: str, tracker_name_list: list) -> bool:
+    def torrent_file_exists(path: str, tracker_name_list: list, selected_tracker: str) -> bool:
         """
         Check if a torrent file for the given content already exists
 
         Args:
             path: The torrent's path
             tracker_name_list: the trackers name
+            selected_tracker: current tracker for the upload process (default tracker or -tracker )
 
         Returns:
             bool: True if the torrent file exists otherwise False
@@ -107,7 +110,9 @@ class UserContent:
             )
 
             # Add an announce_list or remove 'announce-list' if the list is empty
-            UserContent.torrent_announces(torrent_path=this_path, tracker_name_list=tracker_name_list)
+            UserContent.torrent_announces(torrent_path=this_path,
+                                          tracker_name_list=tracker_name_list,
+                                          selected_tracker=selected_tracker)
             return True
         return False
 
