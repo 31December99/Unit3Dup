@@ -209,7 +209,7 @@ class UserContent:
                 )
             else:
                 # invalid response
-                custom_console.bot_error_log(f"[{bittorrent_file.content.display_name}] ->"
+                custom_console.bot_error_log(f"{bittorrent_file.content.display_name} ->"
                                        f" {bittorrent_file.tracker_message}")
         except Exception as e:
             custom_console.bot_error_log(f"Error sending torrent {bittorrent_file.content.file_name}: {str(e)}")
