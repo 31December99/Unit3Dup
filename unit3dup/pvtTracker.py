@@ -79,22 +79,22 @@ class Tracker(Myhttp):
                 return response.json()
             except requests.exceptions.HTTPError as e:
                 if e.response.status_code == 429:
-                    custom_console.bot_error_log(f"[Tracker] HTTP Error {e.response.status_code} Rate limit (wait for 60 secs)...")
+                    custom_console.bot_error_log(f"\[Tracker] HTTP Error {e.response.status_code} Rate limit (wait for 60 secs)...")
                     time.sleep(60)
                 else:
                     custom_console.bot_error_log(
-                        f"[Tracker] HTTP Error {e.response.status_code}. Check your configuration file"
+                        f"\[Tracker] HTTP Error {e.response.status_code}. Check your configuration file"
                         f" or verify if the tracker is online")
                     break
 
             except requests.exceptions.ConnectionError:
                 custom_console.bot_error_log(
-                    f"[Tracker] Connection error. Please check your configuration data "
+                    f"\[Tracker] Connection error. Please check your configuration data "
                     f"or verify if the tracker is online",
                 )
                 exit(1)
             except requests.exceptions.ReadTimeout as e:
-                custom_console.bot_error_log(f"[Tracker] HTTP Error {e}. Tracker Offline !")
+                custom_console.bot_error_log(f"\[Tracker] HTTP Error {e}. Tracker Offline !")
                 exit(1)
 
     def _post(self, file: dict, data: dict, params: dict):
@@ -119,7 +119,7 @@ class Tracker(Myhttp):
                     timeout=10
                 )
             except requests.exceptions.ReadTimeout as e:
-                custom_console.bot_error_log(f"[Tracker] HTTP Error {e}. Tracker Offline !")
+                custom_console.bot_error_log(f"\[Tracker] HTTP Error {e}. Tracker Offline !")
                 exit(1)
 
 
