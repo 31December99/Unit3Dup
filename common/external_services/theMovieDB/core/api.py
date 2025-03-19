@@ -86,7 +86,7 @@ class TmdbAPI(MyHttp):
 
     params = {
         "api_key": config.TMDB_APIKEY,
-        "language": "it-IT",
+        "language": "IT-EN",
     }
 
     # Mappatura automatica degli endpoint
@@ -190,7 +190,8 @@ class DbOnline(TmdbAPI):
         self.category = category
 
         # Load the cache file
-        self.cache = diskcache.Cache(str(os.path.join(config_settings.user_preferences.CACHE_PATH, "tmdb.cache")))
+        if config_settings.user_preferences.CACHE_DBONLINE:
+            self.cache = diskcache.Cache(str(os.path.join(config_settings.user_preferences.CACHE_PATH, "tmdb.cache")))
 
         if media.tmdb_id or media.imdb_id:
             # Skip cache if there is a tmdb id or imdb in the title string
@@ -252,13 +253,11 @@ class DbOnline(TmdbAPI):
         results = self._search(self.query, self.category)
         # Use imdb_id when tmdb_id is not available
         imdb_id = 0
-        results = []
         if results:
             if result:=self.is_like(results):
                 # Get the trailer
                 trailer_key = self.trailer(result.id)
                 keywords_list = self.keywords(result.id)
-                # return MediaResult object
                 search_results = MediaResult(result, video_id=result.id, imdb_id=imdb_id,
                                              trailer_key=trailer_key,
                                              keywords_list=keywords_list)
@@ -272,12 +271,12 @@ class DbOnline(TmdbAPI):
         # No response from TMDB
         if results is None:
             custom_console.bot_error_log(
-                f"[TMDB] - No response from the remote host or the API key is invalid. Retry or update your key")
+                f"\[TMDB] - No response from the remote host or the API key is invalid. Retry or update your key")
             exit(1)
 
         # not results found so try to initialize imdb
         imdb = IMDB()
-        user_tmdb_id  = custom_console.user_input(message=f"Title ['{self.query}'] not found. "
+        user_tmdb_id  = custom_console.user_input(message=f"Title \['{self.query}'] not found. "
                                                           f"Please digit a valid TMDB ID (0=skip)->")
 
         # Try to add IMDB ID if tmdb is not available
