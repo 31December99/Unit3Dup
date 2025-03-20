@@ -183,9 +183,14 @@ Don't upload and don't seed. Just create the file torrent
 ![Install](https://img.shields.io/badge/How_to_Install-gr) 
 
 1.Download the last release (https://github.com/31December99/Unit3Dup/releases)
+
 2. unzip it
+
 3. pip install -r requirements.txt
+
 4. python start.py
+
+
 
 ![Install](https://img.shields.io/badge/LINUX_ffmpeg-gr)
 
@@ -223,7 +228,7 @@ PATH environment user variable
         "IGDB_ID_SECRET": "",
         "MULTI_TRACKER": [
             "itt",
-            "partner"
+            "partner_name_example"
         ]
     }
 }
