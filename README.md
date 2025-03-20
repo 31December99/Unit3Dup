@@ -179,6 +179,88 @@ Don't upload and don't seed. Just create the file torrent
 >**python3 start.py -tracker partner -noup -f "/home/uploader/Hello.world**
 ***
 
+
+![Install](https://img.shields.io/badge/How_to_Install-gr) 
+
+1.Download the last release (https://github.com/31December99/Unit3Dup/releases)
+2. unzip it
+3. pip install -r requirements.txt
+4. python start.py
+
+![Install](https://img.shields.io/badge/LINUX_ffmpeg-gr)
+
+sudo apt install ffmpeg
+
+![Install](https://img.shields.io/badge/WINDOWS_ffmpeg-gr)
+
+Download and unzip https://www.ffmpeg.org/download.html and add its folder to
+PATH environment user variable
+
+![Install](https://img.shields.io/badge/QUICK_CONFIG-gr)
+
+
+-> Linux : Unit3Dbot.json is located in the home directory on Linux
+
+-> Windows: Unit3Dbot.json is located in the AppData folder on Windows
+
+```
+{
+    "tracker_config": {
+        "ITT_URL": "https://itatorrents.xyz",
+        "ITT_APIKEY": "api_key12345",
+        "ITT_PID": "pid_12345",
+        "SIS_URL": "http://www.partenerexample.com",
+        "SIS_APIKEY": "12345",
+        "SIS_PID": "pid_12345",
+        "TMDB_APIKEY": "",
+        "IMGBB_KEY": "",
+        "FREE_IMAGE_KEY": "",
+        "LENSDUMP_KEY": "",
+        "PTSCREENS_KEY": "",
+        "IMGFI_KEY": "",
+        "YOUTUBE_KEY": "",
+        "IGDB_CLIENT_ID": "",
+        "IGDB_ID_SECRET": "",
+        "MULTI_TRACKER": [
+            "itt",
+            "partner"
+        ]
+    }
+}
+```
+
+![Install](https://img.shields.io/badge/Upload_PDF-gr) 
+
+unit3dup can grab the first page, convert it to an image (using xpdf),
+and then the bot can upload it to an image host, then add the link to the torrent page description
+
+### 
+
+![Install](https://img.shields.io/badge/WINDOWS-Install_xpdf_tools-gr)
+
+1. Download and unzip xpdfReader from https://dl.xpdfreader.com/xpdf-tools-win-4.05.zip
+2. Put the folder 'bin64' in the system path. For example: C:\xpdf-tools-win-4.05\bin64
+3. Test it: Run pdfimages.exe in the terminal
+
+![Install](https://img.shields.io/badge/LINUX-Install_xpdf_tools-gr)
+1. sudo apt install xpdf
+2. Test it: Run pdfimages in the terminal
+
+![Install](https://img.shields.io/badge/Bot_UPDATE-gr)
+
+1. Delete only the bot folder
+2. Download the release zip
+3. Unzip it
+4. no config
+4. finish 
+
+
+| Trackers          | Description              |
+|-------------------|--------------------------|
+| `ITT`             | https://itatorrents.xyz/ |
+| `SIS`             |  |
+
+
 ![Version](https://img.shields.io/badge/others-red)
 
 | Flag               | Description           |
@@ -207,58 +289,6 @@ Don't upload and don't seed. Just create the file torrent
 | `-d`, `--dead`          | Dead torrent          |
 | `-dy`, `--dying`        | Dying torrent         |
 ***
-
- ![Install](https://img.shields.io/badge/How_to_Install-gr) 
-
-
-1. Linux : sudo apt install ffmpeg
-2. Windows : unzip https://www.ffmpeg.org/download.html and add its folder to
-PATH environment user variable
-
-3. Download the release zip
-4. Unzip it
-5. run pip install -r requirements.txt inside the bot folder
-6. "python start.py" to initialize the configuration for the bot
-
-![Install](https://img.shields.io/badge/Upload_PDF-gr) 
-
-unit3dup can grab the first page, convert it to an image (using xpdf),
-and then the bot can upload it to an image host, then add the link to the torrent page description
-
-### Install xpdf tools
-
-#### Windows:
-
-1. Download and unzip xpdfReader from https://dl.xpdfreader.com/xpdf-tools-win-4.05.zip
-2. Put the folder 'bin64' in the system path. For example: C:\xpdf-tools-win-4.05\bin64
-3. Test it: Run pdfimages.exe in the terminal
-
-#### Linux:
-1. sudo apt install xpdf
-2. Test it: Run pdfimages in the terminal
-
-### Configure the bot
-open the Unit3Dbot_service.json
-
--> Linux : Unit3Dbot.json is located in the home directory on Linux
-
--> Windows: Unit3Dbot.json is located in the AppData folder on Windows
-
-C:\Users\user\AppData\Local\Unit3Dup_config\
-where "user" is your username windows account
-
-## Bot Update
-1. Delete only the bot folder
-2. Download the release zip
-3. Unzip it
-4. finish 
-
-
-| Trackers          | Description              |
-|-------------------|--------------------------|
-| `ITT`             | https://itatorrents.xyz/ |
-| `SIS`             |  |
-
 
 ## Join Us
 
