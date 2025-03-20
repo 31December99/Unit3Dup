@@ -56,7 +56,7 @@ class Mytorrent:
                 config_settings.user_preferences.TORRENT_ARCHIVE_PATH, f"{torrent_file_name}.torrent"
             )
 
-        custom_console.bot_log(f"--> {full_path}")
+        custom_console.bot_log(f"'TORRENT'.. {full_path}\n")
 
         try:
             self.mytorr.write(full_path)

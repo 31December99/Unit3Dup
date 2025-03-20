@@ -25,9 +25,9 @@ class UserContent:
     def torrent_announces(torrent_path: str, tracker_name_list: list,selected_tracker: str):
         """ Add announces to a torrent file"""
 
-
         if not tracker_name_list:
            tracker_name_list = [selected_tracker]
+        custom_console.bot_log(f"TRACKERS: {tracker_name_list}")
 
         # // Read the existing torrent file
         with open(torrent_path, 'rb') as f:
@@ -45,37 +45,18 @@ class UserContent:
             announce_list_encoded.append([api_data['announce'].encode()])
 
         if b'announce-list' in torrent_data:
-
             # Edit the announce list only if it is different from the announce_list_encoded (user CLI)
             if torrent_data[b'announce-list'] != announce_list_encoded:
-                custom_console.bot_warning_log("BEFORE:")
-                for announce in torrent_data[b'announce-list']:
-                    custom_console.bot_log(f"{announce[0].decode()[:-32]}{'*' * 32}")
-
-                custom_console.bot_warning_log("AFTER:")
-                if not announce_list_encoded:
-                    custom_console.bot_log(f"Default tracker selected"
-                                           f" '{config_settings.tracker_config.MULTI_TRACKER[0].upper()}'")
-
-                else:
-                    for announce in announce_list_encoded:
-                        custom_console.bot_log(f"{announce[0].decode()[:-32]}{'*' * 32}")
                 del torrent_data[b'announce-list']
 
         if b'announce' in torrent_data:
             if torrent_data[b'announce'] != announce_list_encoded:
-                custom_console.bot_warning_log("BEFORE:")
-                custom_console.bot_log(f"{torrent_data[b'announce'].decode()}")
-                custom_console.bot_warning_log("AFTER:")
-                if not announce_list_encoded:
-                    custom_console.bot_log(f"Default tracker selected"
-                                           f" '{config_settings.tracker_config.MULTI_TRACKER[0].upper()}'")
-                else:
-                    custom_console.bot_log(announce_list_encoded)
                 del torrent_data[b'announce']
 
         # Set the new announce list
         torrent_data[b'announce-list'] = announce_list_encoded
+        for announce in announce_list_encoded:
+            custom_console.bot_log(f"{announce[0].decode()[:-32]}{'*' * 16}")
 
         # // Save
         with open(torrent_path, 'wb') as f:
@@ -106,7 +87,7 @@ class UserContent:
 
         if os.path.exists(this_path):
             custom_console.bot_warning_log(
-                f"** {UserContent.__class__.__name__} **: Reusing the existing torrent file! {this_path}\n"
+                f"Reusing the existing torrent file\n"
             )
 
             # Add an announce_list or remove 'announce-list' if the list is empty
