@@ -82,6 +82,10 @@ def main():
     if cli.args.cross:
         tracker_name_list = config.tracker_config.MULTI_TRACKER
 
+    # Send content to the multi_tracker list
+    if cli.args.multi:
+        tracker_name_list = config.tracker_config.MULTI_TRACKER
+
 
     # Manual upload mode
     if cli.args.upload:
