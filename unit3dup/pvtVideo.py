@@ -42,9 +42,9 @@ class Video:
     def build_info(self):
         """Build the information to send to the tracker"""
         if config_settings.user_preferences.CACHE_SCR:
-            custom_console.bot_warning_log(f"\n<> Using chached images for {self.tmdb_id}...")
             description = self.cache.get(self.cache_key)
             if description:
+                custom_console.bot_warning_log(f"\n<> Using chached images for {self.tmdb_id}...")
                 self.description = description.get('description', '')
                 self.is_hd = description.get('is_hd', 0)
 
