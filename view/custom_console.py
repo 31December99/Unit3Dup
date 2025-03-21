@@ -9,11 +9,11 @@ from common import config_settings
 
 class CustomConsole(Console):
     def __init__(self):
-        super().__init__()
+        super().__init__(log_path=False)
 
     def welcome_message(self):
         title_panel = Panel(
-            Text(f"UNIT3Dup - An uploader for the Unit3D torrent tracker - {config_settings.console_options.WELCOME_MESSAGE}",
+            Text(f"UNIT3Dup - An uploader for the Unit3D torrent tracker -\n{config_settings.console_options.WELCOME_MESSAGE}",
                  style=config_settings.console_options.WELCOME_MESSAGE_COLOR, justify="center"),
             border_style=config_settings.console_options.WELCOME_MESSAGE_BORDER_COLOR,
             title_align="center",
