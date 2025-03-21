@@ -67,14 +67,16 @@ class VideoManager:
                 db_online = DbOnline(media=content,category=content.category)
                 db = db_online.media_result
 
+                # Get meta from the media video
+                video_info = Video(media=content, tmdb_id=db.video_id, trailer_key=db.trailer_key)
+                video_info.build_info()
+
                 # Don't upload if -noup is set to True
                 if self.cli.noup:
                     custom_console.bot_warning_log(f"No Upload active. Done.")
                     continue
 
-                # Get meta from the media video
-                video_info = Video(media=content, tmdb_id=db.video_id, trailer_key=db.trailer_key)
-                video_info.build_info()
+                custom_console.rule()
 
                 # Tracker payload
                 unit3d_up = UploadBot(content=content, tracker_name=selected_tracker)
