@@ -95,7 +95,8 @@ class TorrentManager:
             # No seeding
             if self.cli.noseed or self.cli.noup:
                 custom_console.bot_warning_log(f"No seeding active. Done.")
-                return None
+                custom_console.rule()
+                continue
 
 
             if game_process_results:
@@ -110,7 +111,7 @@ class TorrentManager:
             custom_console.rule()
 
     custom_console.bot_log(f"Done.")
-
+    custom_console.rule()
 
     def send(self, this_path: str, trackers_name_list: list):
         # Send a torrent file that has already been created for seeding
