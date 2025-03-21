@@ -146,6 +146,19 @@ class Validate:
         return value
 
     @staticmethod
+    def pid(value: str, field_name: str, multi_trackers: list) -> str:
+        """
+        Validates pid
+        """
+        # If pid is unset
+        if 'no_pid' in value.lower():
+            # Check if the tracker is requested in the multitracker_list
+            if field_name[:-4].lower() in multi_trackers:
+                print(f"->  No PID value for {field_name} '{value}'")
+                exit(1)
+        return value
+
+    @staticmethod
     def string(value: str | None, field_name: str) -> str | None:
         """
         Validates string
@@ -197,9 +210,14 @@ class Validate:
     @staticmethod
     def validate_multi_tracker(multi_tracker_list: list) -> list | None:
 
+        if not multi_tracker_list:
+            print(f"-> Invalid multi-tracker list. The list is empty !")
+            exit(1)
+
         if len(multi_tracker_list) != len(set(multi_tracker_list)):
             print(f"-> Invalid multi-tracker list. Please remove duplicates from your list in the configuration file")
             return None
+
         for tracker in multi_tracker_list:
             if tracker.upper() not in trackers.tracker_list:
                 print(f"-> Invalid Multi Tracker '{tracker}'. Please fix your configuration file")
@@ -329,6 +347,11 @@ class Config(BaseModel):
 
                 if field in ['ITT_URL', 'SIS_URL']:
                    section[field] = Validate.url(value=section[field], field_name=field)
+
+
+                if field in ['ITT_PID', 'SIS_PID']:
+                   section[field] = Validate.pid(value=section[field], field_name=field,
+                                                 multi_trackers=section['MULTI_TRACKER'])
 
                 elif field in ['ITT', 'SIS']:
                      section[field] = Validate.dict(value=section[field], field_name=field)
