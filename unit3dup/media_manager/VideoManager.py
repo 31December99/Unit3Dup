@@ -35,6 +35,11 @@ class VideoManager:
                list: List of Bittorrent objects created for each content
         """
 
+        # -multi : no announce_list . One announce for multi tracker
+        if self.cli.multi:
+            tracker_name_list = [selected_tracker.upper()]
+
+        #  Init the torrent list
         bittorrent_list = []
         for content in self.contents:
             # Filter contents based on existing torrents or duplicates
@@ -75,8 +80,6 @@ class VideoManager:
                 if self.cli.noup:
                     custom_console.bot_warning_log(f"No Upload active. Done.")
                     continue
-
-                custom_console.rule()
 
                 # Tracker payload
                 unit3d_up = UploadBot(content=content, tracker_name=selected_tracker)
