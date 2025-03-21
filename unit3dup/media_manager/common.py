@@ -27,7 +27,7 @@ class UserContent:
 
         if not tracker_name_list:
            tracker_name_list = [selected_tracker]
-        custom_console.bot_log(f"TRACKERS: {tracker_name_list}")
+        custom_console.bot_log(f"UPLOAD TO {tracker_name_list}")
 
         # // Read the existing torrent file
         with open(torrent_path, 'rb') as f:
@@ -51,6 +51,9 @@ class UserContent:
 
         if b'announce' in torrent_data:
             if torrent_data[b'announce'] != announce_list_encoded:
+                print(torrent_data[b'announce'])
+                print(announce_list_encoded)
+                input("Press Enter to continue...")
                 del torrent_data[b'announce']
 
         # Set the new announce list
@@ -86,9 +89,7 @@ class UserContent:
             this_path = f"{path}.torrent"
 
         if os.path.exists(this_path):
-            custom_console.bot_warning_log(
-                f"Reusing the existing torrent file\n"
-            )
+            custom_console.bot_warning_log(f"<> Reusing the existing torrent file..\n")
 
             # Add an announce_list or remove 'announce-list' if the list is empty
             UserContent.torrent_announces(torrent_path=this_path,

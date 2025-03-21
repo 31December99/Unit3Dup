@@ -336,7 +336,6 @@ class DbOnline(TmdbAPI):
             custom_console.bot_log(f"'TMDB ID'........ {results.video_id}")
             custom_console.bot_log(f"'TMDB KEYWORDS'.. {results.keywords_list}")
             custom_console.bot_log(f"'TRAILER CODE' .. {results.trailer_key}")
-            custom_console.rule()
 
 
     def load_cache(self, query: str)-> MediaResult | None:
@@ -344,7 +343,7 @@ class DbOnline(TmdbAPI):
         if query not in self.cache:
             return None
 
-        custom_console.bot_warning_log(f"** {self.__class__.__name__} **: Using cached Search !")
+        custom_console.bot_warning_log(f"<> Using cached results")
         try:
             # Try to get the video from the cache
             return self.cache[query]
