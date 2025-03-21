@@ -527,7 +527,7 @@ class Load:
             "console_options": {
                 "NORMAL_COLOR": "blue bold",
                 "ERROR_COLOR": "red bold",
-                "WELCOME_MESSAGE": "ITT",
+                "WELCOME_MESSAGE": "https://itatorrents.xyz",
                 "WELCOME_MESSAGE_COLOR": "blue",
                 "WELCOME_MESSAGE_BORDER_COLOR": "yellow",
                 "PANEL_MESSAGE_COLOR": "blue",

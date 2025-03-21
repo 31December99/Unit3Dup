@@ -22,6 +22,7 @@ class Mytorrent:
     def __init__(self, contents: Media, meta: str, trackers_list = None):
 
         self.torrent_path = contents.torrent_path
+        self.trackers_list = trackers_list
 
         # Create and get data for the tracker name if the -tracker flag is set
         # otherwise the announce will be added by the tracker platform
@@ -39,7 +40,7 @@ class Mytorrent:
         self.mytorr.segments = 16 * 1024 * 1024
 
     def hash(self):
-        custom_console.print(f"\n[ HASHING ] {self.mytorr.name}")
+        custom_console.print(f"\n{self.trackers_list} {self.mytorr.name}")
         with HashProgressBar() as progress:
             try:
                 self.mytorr.generate(threads=4, callback=progress.callback, interval=0)
@@ -55,9 +56,6 @@ class Mytorrent:
             full_path = os.path.join(
                 config_settings.user_preferences.TORRENT_ARCHIVE_PATH, f"{torrent_file_name}.torrent"
             )
-
-        custom_console.bot_log(f"'TORRENT'.. {full_path}\n")
-
         try:
             self.mytorr.write(full_path)
             return True

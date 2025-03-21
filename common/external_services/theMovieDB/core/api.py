@@ -336,7 +336,7 @@ class DbOnline(TmdbAPI):
             custom_console.bot_log(f"'TMDB ID'........ {results.video_id}")
             custom_console.bot_log(f"'TMDB KEYWORDS'.. {results.keywords_list}")
             custom_console.bot_log(f"'TRAILER CODE' .. {results.trailer_key}")
-            print()
+            custom_console.rule()
 
 
     def load_cache(self, query: str)-> MediaResult | None:

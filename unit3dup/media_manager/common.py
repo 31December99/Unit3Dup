@@ -228,8 +228,8 @@ class UserContent:
         if not bittorrent_list:
             return None
 
-        custom_console.bot_warning_log(f"\nSending {message} torrents to the client "
-                                       f"{config_settings.torrent_client_config.TORRENT_CLIENT.upper()}"
+        custom_console.bot_warning_log(f"\nSending {message} torrents to the "
+                                       f"{config_settings.torrent_client_config.TORRENT_CLIENT.upper()} client "
                                        f"... Please wait")
 
         client = QbittorrentClient()
