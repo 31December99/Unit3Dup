@@ -44,10 +44,6 @@ class TorrClient(ABC):
         # Ready for seeding
         return open(full_path_archive, "rb")
 
-    @staticmethod
-    def is_abs_shared_path(path: str)-> bool:
-         return True if os.path.isabs(path) else False
-
 class TransmissionClient(TorrClient):
     def __init__(self) -> None:
         super().__init__()
@@ -88,10 +84,6 @@ class TransmissionClient(TorrClient):
         else:
             # If no shared_path is specified set it to the path specified in the CLI commands (path)
             torr_location = os.path.dirname(content.torrent_path)
-
-        # Transmission looks like it does not accept not absolute paths
-        if not self.is_abs_shared_path(torr_location):
-            custom_console.bot_warning_log(f"\n{torr_location} is not an absolute shared path")
 
         # Torrent not created
         if not torrent:
@@ -171,11 +163,6 @@ class QbittorrentClient(TorrClient):
         else:
             # If no shared_path is specified set it to the path specified in the CLI commands (path)
             torr_location = os.path.dirname(content.torrent_path)
-
-
-        # Transmission looks like it does not accept not absolute paths
-        if not self.is_abs_shared_path(torr_location):
-            custom_console.bot_warning_log(f"\n{torr_location} is not an absolute shared path")
 
         # file torrent already created
         if not torrent:
