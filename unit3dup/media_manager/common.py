@@ -51,9 +51,6 @@ class UserContent:
 
         if b'announce' in torrent_data:
             if torrent_data[b'announce'] != announce_list_encoded:
-                print(torrent_data[b'announce'])
-                print(announce_list_encoded)
-                input("Press Enter to continue...")
                 del torrent_data[b'announce']
 
         # Set the new announce list
