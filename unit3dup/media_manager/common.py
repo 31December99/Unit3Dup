@@ -86,7 +86,7 @@ class UserContent:
             this_path = f"{path}.torrent"
 
         if os.path.exists(this_path):
-            custom_console.bot_warning_log(f"<> Reusing the existing torrent file..\n")
+            custom_console.bot_warning_log(f"<> \nReusing the existing torrent file..\n")
 
             # Add an announce_list or remove 'announce-list' if the list is empty
             UserContent.torrent_announces(torrent_path=this_path,
