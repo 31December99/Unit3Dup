@@ -86,7 +86,7 @@ class TmdbAPI(MyHttp):
 
     params = {
         "api_key": config.TMDB_APIKEY,
-        "language": "IT-EN",
+        "language": "it-IT",
     }
 
     # Mappatura automatica degli endpoint
@@ -271,12 +271,12 @@ class DbOnline(TmdbAPI):
         # No response from TMDB
         if results is None:
             custom_console.bot_error_log(
-                f"\[TMDB] - No response from the remote host or the API key is invalid. Retry or update your key")
+                f"TMDB - No response from the remote host or the API key is invalid. Retry or update your key")
             exit(1)
 
         # not results found so try to initialize imdb
         imdb = IMDB()
-        user_tmdb_id  = custom_console.user_input(message=f"Title \['{self.query}'] not found. "
+        user_tmdb_id  = custom_console.user_input(message=f"Title '{self.query}' not found. "
                                                           f"Please digit a valid TMDB ID (0=skip)->")
 
         # Try to add IMDB ID if tmdb is not available
