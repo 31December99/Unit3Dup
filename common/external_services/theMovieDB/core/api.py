@@ -277,7 +277,7 @@ class DbOnline(TmdbAPI):
         # not results found so try to initialize imdb
         imdb = IMDB()
         user_tmdb_id  = custom_console.user_input(message=f"Title '{self.query}' not found. "
-                                                          f"Please digit a valid TMDB ID (0=skip)->")
+                                                          f"Please digit a valid TMDB ID '{self.category}' (0=skip)->")
 
         # Try to add IMDB ID if tmdb is not available
         if user_tmdb_id==0:
