@@ -17,7 +17,8 @@ class Media:
     def __init__(self, folder: str, subfolder: str):
         self.folder: str = folder
         self.subfolder: str = subfolder
-        self.title = os.path.basename(os.path.join(self.folder, self.subfolder))
+        self.title: str = os.path.basename(os.path.join(self.folder, self.subfolder))
+        self._is_tv: bool = False
 
         # // Media
         self._crew_list: list[str] | None = None
@@ -214,13 +215,15 @@ class Media:
     @property
     def guess_season(self):
         if not self._guess_season:
-            self._guess_season = self.guess_filename.guessit_season
+            if self.is_tv(self.title_sanitized):
+                self._guess_season = self.guess_filename.guessit_season
         return self._guess_season
 
     @property
     def guess_episode(self):
         if not self._episode:
-            self._episode = self.guess_filename.guessit_episode
+            if self.is_tv(self.title_sanitized):
+                self._episode = self.guess_filename.guessit_season
         return self._episode
 
     @property
@@ -270,26 +273,30 @@ class Media:
             self._torrent_path = os.path.join(self.folder, self.subfolder)
         return self._torrent_path
 
-    def _is_tv(self, title_sanitized: str) -> bool:
-        # guessit get confused with random numbers in the title es. 3000 o 2047 ecc
-        # so we don't use the guessit.season or episode attributes
-        if re.search(r"\b\d{4}\b", title_sanitized):
-            patterns = [
-                r"S\d{1,2}E\d{1,2}",  # S01E01 o S1E1
-                r"S\d{1,2}-E\d{1,2}",  # S01-E01, S1-E1
-                r"S\s*\d{1,2}-\s*E\s*\d{1,2}",  # S 01 - E 01
-                r"\d{1,2}E\d{1,2}",  # 1E1
-                r"S\d{1,2}E\d{1,2}-",  # S01E01-
-                r"S\d{1,2}", # S03
-            ]
-            for pattern in patterns:
-                matches = re.findall(pattern, title_sanitized)
-                if matches:
-                    return True
-        else:
-            if self.guess_filename.guessit_season:
-                return True
-        return False
+    def is_tv(self, title_sanitized: str) -> bool:
+        # guessit return a wrong season/episode value
+        # when a random numbers > current year is in the title
+        # so we check with regex
+        if not self._is_tv:
+            if re.search(r"\b\d{4}\b", title_sanitized):
+                patterns = [
+                    r"S\d{1,2}E\d{1,2}",  # S01E01 o S1E1
+                    r"S\d{1,2}-E\d{1,2}",  # S01-E01, S1-E1
+                    r"S\s*\d{1,2}-\s*E\s*\d{1,2}",  # S 01 - E 01
+                    r"\d{1,2}E\d{1,2}",  # 1E1
+                    r"S\d{1,2}E\d{1,2}-",  # S01E01-
+                    r"S\d{1,2}", # S03
+                ]
+                for pattern in patterns:
+                    matches = re.findall(pattern, title_sanitized)
+                    if matches:
+                        # return true if it's a real tv show
+                        self._is_tv = True
+            # otherwise check just the attribute season
+            else:
+                if self.guess_season:
+                    self._is_tv = False
+        return self._is_tv
 
     @property
     def category(self):
@@ -301,7 +308,7 @@ class Media:
             self._category = System.category_list.get(System.DOCUMENTARY)
             return self._category
 
-        elif self._is_tv(self.title_sanitized):
+        elif self.is_tv(self.title_sanitized):
              self._category = System.category_list.get(System.TV_SHOW)
         # it's a movie
         else:
