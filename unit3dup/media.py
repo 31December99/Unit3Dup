@@ -270,6 +270,13 @@ class Media:
             self._torrent_path = os.path.join(self.folder, self.subfolder)
         return self._torrent_path
 
+    def isTv(self, title: str) -> bool:
+        # guessit get confused with random numbers in the title es. 3000 o 2047 ecc
+        # so we don't use the guessit.season or episode attributes
+        match = re.search(r'(S?(\d+)[xX](\d+))', title, re.IGNORECASE)
+        if match:
+            return True
+        return False
 
     @property
     def category(self):
@@ -279,9 +286,10 @@ class Media:
         # Check for ext file
         if ManageTitles.media_docu_type(self.title):
             self._category = System.category_list.get(System.DOCUMENTARY)
-            # Check for season
-        elif self.guess_filename.guessit_season:
-            self._category = System.category_list.get(System.TV_SHOW)
+            return self._category
+
+        elif self.isTv(self.title_sanitized):
+             self._category = System.category_list.get(System.TV_SHOW)
         # it's a movie
         else:
             self._category = System.category_list.get(System.MOVIE)
