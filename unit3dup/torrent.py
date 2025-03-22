@@ -10,7 +10,7 @@ class Torrent:
 
     def __init__(self, tracker_name: str):
 
-        self.perPage = 30
+        self.perPage = 130
         self.tracker = pvtTracker.Unit3d(tracker_name=tracker_name)
 
     def get_unique_id(self, media_info: str) -> str:
@@ -136,7 +136,7 @@ class View(Torrent):
     def __init__(self, tracker_name: str):
         super().__init__(tracker_name=tracker_name)
 
-        self.perPage = 30
+        self.perPage = 130
         # Load the constant tracker
         self.tracker_data = TRACKData.load_from_module(tracker_name=tracker_name)
         print()
