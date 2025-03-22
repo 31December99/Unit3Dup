@@ -33,7 +33,7 @@ def get_tags(value):
 
 
 def test_content_manager():
-    test_content_movie = r"C:\test_folder\Australian Dreams WEB-DL 1080p AC3 E-AC3 ITA SPA SUB-LF.mkv"
+    test_content_movie = r"C:\vm_share\Australian.dreams.2019.WEB-DL.1080p.EAC3.2.0.ITA.x264-ZioRip.mkv"
     cli_scan = tests.argparse.Namespace(
         watcher=False,
         torrent=False,
@@ -57,11 +57,11 @@ def test_content_manager():
             assert hasattr(db, 'video_id') and hasattr(db, 'keywords_list') and hasattr(db, 'trailer_key')
 
         # not found in TMDB
-        assert db.video_id == 0
-        assert db.keywords_list == []
-        assert db.trailer_key is None
+        assert db.video_id == 1451126
+        assert db.keywords_list != []
+        assert db.trailer_key is not None
         # SET imdb when tmdb is not available
-        assert db.imdb_id == '10199580'
+        assert db.imdb_id == 0
 
         """ VIDEO INFO """
         video_info = Video(content, tmdb_id=db.video_id, trailer_key=db.trailer_key)
@@ -72,7 +72,7 @@ def test_content_manager():
         assert video_info.description is not None
 
         tests.custom_console.bot_log(f"Display Name  {content.display_name}")
-        assert content.display_name == "Australian Dreams WEB-DL 1080p AC3 E-AC3 ITA SPA SUB-LF"
+        assert content.display_name == "Australian dreams 2019 WEB-DL 1080p EAC3 2 0 ITA x264-ZioRip"
 
         tests.custom_console.bot_log(f"IS HD  {video_info.is_hd}")
         assert get_tags(video_info.is_hd) == 'HD'

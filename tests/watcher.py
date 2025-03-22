@@ -15,13 +15,15 @@ def test_cli_watcher():
         noseed=False,
         cross=False,
         upload=False,
+        multi=False,
     )
 
     tests.cli.args = cli_scan
     bot = tests.Bot(
         path=r"",  # /**/
         cli=tests.cli.args,
-        mode="auto"
+        mode="auto",
+        trackers_name_list= ['ITT']
     )
     assert bot.watcher(duration=tests.config.user_preferences.WATCHER_INTERVAL,
                        watcher_path=tests.config.user_preferences.WATCHER_PATH,
