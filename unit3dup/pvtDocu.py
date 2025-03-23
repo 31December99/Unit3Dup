@@ -33,14 +33,16 @@ class PdfImages:
     def extract(self) -> list['Image']:
         images = []
         command = [
-            "pdftopng",
+            "pdftocairo",
+            "-q",  # Silent
+            "-png",
             "-f", "1",
             "-l", "1",
             self.file_name,
             f"{self.file_name}",
         ]
 
-        filename = f"{self.file_name}-000001.png"
+        filename = f"{self.file_name}-001.png"
         try:
             subprocess.run(command, capture_output=True, check=True, timeout=20)
         except subprocess.CalledProcessError:
