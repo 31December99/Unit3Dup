@@ -23,7 +23,8 @@ class Video:
         self.cache = diskcache.Cache(str(config_settings.user_preferences.CACHE_PATH))
 
         # Create a cache key for tmdb_id
-        self.cache_key = self.hash_key(f"{self.tmdb_id}.{self.display_name}")
+        self.key = f"{self.tmdb_id}.{self.display_name}"
+        self.cache_key = self.hash_key(self.key)
 
         # Load the video frames
         samples_n = max(2, min(config_settings.user_preferences.NUMBER_OF_SCREENSHOTS, 10))
@@ -44,7 +45,7 @@ class Video:
         if config_settings.user_preferences.CACHE_SCR:
             description = self.cache.get(self.cache_key)
             if description:
-                custom_console.bot_warning_log(f"\n<> Using chached images for {self.tmdb_id}...")
+                custom_console.bot_warning_log(f"\n<> Using cached images for '{self.key}'")
                 self.description = description.get('description', '')
                 self.is_hd = description.get('is_hd', 0)
 
