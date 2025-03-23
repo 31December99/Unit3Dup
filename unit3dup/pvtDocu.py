@@ -29,16 +29,18 @@ class PdfImages:
         # description cache
         self.docu_cache = diskcache.Cache(str(os.path.join(config_settings.user_preferences.CACHE_PATH, "covers.cache")))
 
+
     def extract(self) -> list['Image']:
         images = []
         command = [
-            "pdfimages",
+            "pdftopng",
             "-f", "1",
             "-l", "1",
-            "-j",
             self.file_name,
             f"{self.file_name}",
         ]
+
+        filename = f"{self.file_name}-000001.png"
         try:
             subprocess.run(command, capture_output=True, check=True, timeout=20)
         except subprocess.CalledProcessError:
@@ -48,11 +50,12 @@ class PdfImages:
             custom_console.bot_error_log(f"It was not possible to find 'xpdf'. Please check your system PATH or install it.")
             exit(1)
 
-        with open(f"{self.file_name}-0000.jpg", "rb") as img_file:
+        with open(filename, "rb") as img_file:
             img_data = img_file.read()
             images.append(img_data)
+        if os.path.exists(filename):
+            os.remove(filename)
 
-        os.remove(f"{self.file_name}-0000.jpg")
         return images
 
 
@@ -72,7 +75,7 @@ class PdfImages:
 
         if not self.description:
             # If there is no cache available
-            custom_console.bot_log(f"\n[GENERATING PAGES..]")
+            custom_console.bot_log(f"GENERATING PAGES..")
             extracted_frames = self.extract()
             custom_console.bot_log("Done.")
             # Create a new description
