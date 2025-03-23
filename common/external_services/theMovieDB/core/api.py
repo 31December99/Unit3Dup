@@ -343,6 +343,8 @@ class DbOnline(TmdbAPI):
     def print_results(self,results: MediaResult) -> None:
             custom_console.bot_log(f"'TMDB TITLE'..... {self.query}")
             custom_console.bot_log(f"'TMDB ID'........ {results.video_id}")
+            if results.imdb_id:
+                custom_console.bot_warning_log(f"_'IMDB ID'_........ '{results.imdb_id}'")
             custom_console.bot_log(f"'TMDB KEYWORDS'.. {results.keywords_list}")
             custom_console.bot_log(f"'TRAILER CODE' .. {results.trailer_key}")
 
