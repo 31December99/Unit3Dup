@@ -5,14 +5,22 @@ import time
 import requests
 
 from urllib.parse import urljoin
-from common.custom_console import custom_console
-from unit3dup import config
+from view import custom_console
+from common.trackers.data import trackers_api_data
+
 
 class Myhttp:
-    def __init__(self, base_url: str, api_token: str, pass_key: str):
-        self.base_url = base_url
-        self.api_token = api_token
+    def __init__(self, tracker_name: str, pass_key=''):
+
+        api_data = trackers_api_data[tracker_name.upper()] if tracker_name else None
+        if not api_data:
+            custom_console.bot_error_log(
+                f"Tracker '{tracker_name}' not found. Please check your configuration or set it using the '-t' flag.")
+            exit(1)
+
         self.pass_key = pass_key
+        self.base_url = api_data['url']
+        self.api_token = api_data['api_key']
 
         self.upload_url = urljoin(self.base_url, "api/torrents/upload")
         self.filter_url = urljoin(self.base_url, "api/torrents/filter?")
@@ -35,11 +43,11 @@ class Myhttp:
             "type_id": "1",
             "resolution_id": 10,  # mandatory
             "tmdb": "",  # mandatory
-            "imdb": "0",  # no ancora implementato
+            "imdb": "0",
             "tvdb": "0",  # no ancora implementato
             "mal": "0",  # no ancora implementato
             "igdb": "0",
-            "anonymous": int(config.ANON),
+            "anonymous": 0,
             "stream": "0",
             "sd": "0",
             "keywords": "",
@@ -51,6 +59,7 @@ class Myhttp:
             "sticky": 0,
             "torrent-cover": "",  # no ancora implementato
         }
+
 
     def _post(self, files: str, data: dict, params: dict):
         pass
@@ -70,22 +79,22 @@ class Tracker(Myhttp):
                 return response.json()
             except requests.exceptions.HTTPError as e:
                 if e.response.status_code == 429:
-                    custom_console.bot_error_log(f"[Tracker] HTTP Error {e.response.status_code} Rate limit (wait for 60 secs)...")
+                    custom_console.bot_error_log(f"TRACKER HTTP Error {e.response.status_code} Rate limit (wait for 60 secs)...")
                     time.sleep(60)
                 else:
                     custom_console.bot_error_log(
-                        f"[Tracker] HTTP Error {e.response.status_code}. Check your configuration file *.env"
+                        f"TRACKER HTTP Error {e.response.status_code}. Check your configuration file"
                         f" or verify if the tracker is online")
-                    exit(1)
+                    break
 
             except requests.exceptions.ConnectionError:
                 custom_console.bot_error_log(
-                    f"[Tracker] Connection error. Please check your configuration data "
+                    f"TRACKER Connection error. Please check your configuration data "
                     f"or verify if the tracker is online",
                 )
                 exit(1)
             except requests.exceptions.ReadTimeout as e:
-                custom_console.bot_error_log(f"[Tracker] HTTP Error {e}. Tracker Offline !")
+                custom_console.bot_error_log(f"TRACKER HTTP Error {e}. Tracker Offline !")
                 exit(1)
 
     def _post(self, file: dict, data: dict, params: dict):
@@ -110,7 +119,7 @@ class Tracker(Myhttp):
                     timeout=10
                 )
             except requests.exceptions.ReadTimeout as e:
-                custom_console.bot_error_log(f"[Tracker] HTTP Error {e}. Tracker Offline !")
+                custom_console.bot_error_log(f"TRACKER HTTP Error {e}. Tracker Offline !")
                 exit(1)
 
 
@@ -310,12 +319,12 @@ class Torrents(Tracker):
 
 
 class Uploader(Tracker):
-    def upload_t(self, data: dict, torrent_path: str, nfo_path = None) -> requests:
-        if not config.TORRENT_ARCHIVE:
+    def upload_t(self, data: dict, torrent_path: str, torrent_archive_path: str, nfo_path = None) -> requests:
+        if not torrent_archive_path:
             full_path = f"{torrent_path}.torrent"
         else:
             torrent_file_name = os.path.basename(torrent_path)
-            full_path = os.path.join(config.TORRENT_ARCHIVE, f"{torrent_file_name}.torrent")
+            full_path = os.path.join(torrent_archive_path, f"{torrent_file_name}.torrent")
 
         file_torrent = {"torrent": full_path}
         if nfo_path:

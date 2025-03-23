@@ -6,7 +6,7 @@ from unit3dup.media import Media
 
 
 @dataclass
-class QBittorrent:
+class BittorrentData:
     tracker_response: str
     torrent_response: Mytorrent
     content: Media

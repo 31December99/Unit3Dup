@@ -1,61 +1,74 @@
 # -*- coding: utf-8 -*-
 import argparse
-import os
+
+from common.bittorrent import BittorrentData
 
 from unit3dup.media_manager.common import UserContent
-
-from unit3dup.qbittorrent import QBittorrent
+from unit3dup.pvtDocu import PdfImages
 from unit3dup.upload import UploadBot
+from unit3dup import config_settings
 from unit3dup.media import Media
-from unit3dup import config
+
+from view import custom_console
 
 class DocuManager:
 
-    def __init__(self, contents: list["Media"], cli: argparse.Namespace):
+    def __init__(self, contents: list[Media], cli: argparse.Namespace):
         self._my_tmdb = None
-        self.file_name = None
         self.contents: list['Media'] = contents
         self.cli: argparse = cli
-        self.torrent_found: bool = False
 
 
-    def process(self) -> list["QBittorrent"]:
-        qbittorrent_list = []
+    def process(self, selected_tracker:str, tracker_name_list: list) -> list[BittorrentData]:
+
+        # -multi : no announce_list . One announce for multi tracker
+        if self.cli.multi:
+            tracker_name_list = [selected_tracker.upper()]
+
+        #  Init the torrent list
+        bittorrent_list = []
         for content in self.contents:
-            self.file_name = str(os.path.join(content.folder, content.file_name))
 
             # Torrent creation
-            if not UserContent.torrent_file_exists(content=content, class_name=self.__class__.__name__):
-                self.torrent_found = False
+            if not UserContent.torrent_file_exists(path=content.torrent_path,
+                                                   tracker_name_list=tracker_name_list,
+                                                   selected_tracker=selected_tracker):
+
+
+                torrent_response = UserContent.torrent(content=content, trackers=tracker_name_list)
             else:
                 # Torrent found, skip if the watcher is active
                 if self.cli.watcher:
+                    custom_console.bot_log(f"Watcher Active.. skip the old upload '{content.file_name}'")
                     continue
-                self.torrent_found = True
-
-            # Skip if it is a duplicate
-            if (self.cli.duplicate or config.DUPLICATE_ON) and UserContent.is_duplicate(content=content):
-                continue
-
-            # Does not create the torrent if the torrent was found earlier
-            if not self.torrent_found:
-                torrent_response = UserContent.torrent(content=content)
-            else:
                 torrent_response = None
 
+            # Skip if it is a duplicate
+            if ((self.cli.duplicate or config_settings.user_preferences.DUPLICATE_ON)
+                    and UserContent.is_duplicate(content=content, tracker_name=selected_tracker)):
+                continue
+
+            # Don't upload if -noup is set to True
+            if self.cli.noup:
+                custom_console.bot_warning_log(f"No Upload active. Done.")
+                continue
+
+            # Get the cover image
+            docu_info = PdfImages(content.file_name)
+            docu_info.build_info()
+
             # Tracker payload
-            unit3d_up = UploadBot(content)
+            unit3d_up = UploadBot(content=content, tracker_name=selected_tracker)
 
             # Upload
-            tracker_response, tracker_message = unit3d_up.send_docu()
+            tracker_response, tracker_message = unit3d_up.send_docu(document_info=docu_info)
 
-            if not self.cli.torrent:
-                qbittorrent_list.append(
-                    QBittorrent(
-                        tracker_response=tracker_response,
-                        torrent_response=torrent_response,
-                        content=content,
-                        tracker_message=tracker_message,
-                    ))
+            bittorrent_list.append(
+                BittorrentData(
+                    tracker_response=tracker_response,
+                    torrent_response=torrent_response,
+                    content=content,
+                    tracker_message=tracker_message,
+                ))
 
-        return qbittorrent_list
+        return bittorrent_list

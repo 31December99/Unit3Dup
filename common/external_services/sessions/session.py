@@ -5,7 +5,7 @@ import httpx
 import diskcache as dc
 import logging
 from common.external_services.sessions.exceptions import exception_handler
-from common.custom_console import custom_console
+from view import custom_console
 
 ENABLE_LOG = False
 logging.getLogger("httpx").setLevel(logging.CRITICAL)
@@ -134,7 +134,7 @@ class MyHttp:
             return response
         else:
             custom_console.bot_error_log(f"{self.__class__.__name__}: {response.content}")
-            exit()
+            return response
 
 
 

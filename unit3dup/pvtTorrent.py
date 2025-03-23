@@ -4,9 +4,12 @@ import json
 import os
 import torf
 from tqdm import tqdm
-from common.custom_console import custom_console
+
+from common.trackers.data import trackers_api_data
 from unit3dup.media import Media
-from unit3dup import config
+from unit3dup import config_settings
+
+from view import custom_console
 
 class HashProgressBar(tqdm):
     def callback(self, mytorr, path, current_num_hashed, total_pieces):
@@ -14,22 +17,30 @@ class HashProgressBar(tqdm):
         self.total = 100
         self.update(int(progress_percentage) - self.n)
 
-
 class Mytorrent:
 
-    def __init__(self, contents: Media, meta: str):
-        self.torrent_path = contents.torrent_path
-        self.metainfo = json.loads(meta)
+    def __init__(self, contents: Media, meta: str, trackers_list = None):
 
-        self.mytorr = torf.Torrent(path=contents.torrent_path)
-        self.mytorr.comment = config.TORRENT_COMMENT
+        self.torrent_path = contents.torrent_path
+        self.trackers_list = trackers_list
+
+        # Create and get data for the tracker name if the -tracker flag is set
+        # otherwise the announce will be added by the tracker platform
+        announces = []
+        for tracker_name in trackers_list:
+            announce = trackers_api_data[tracker_name.upper()]['announce'] if tracker_name else None
+            announces.append([announce])
+
+        self.metainfo = json.loads(meta)
+        self.mytorr = torf.Torrent(path=contents.torrent_path, trackers=announces)
+        self.mytorr.comment = config_settings.user_preferences.TORRENT_COMMENT
         self.mytorr.name = contents.torrent_name
         self.mytorr.created_by = "https://github.com/31December99/Unit3Dup"
         self.mytorr.private = True
         self.mytorr.segments = 16 * 1024 * 1024
 
     def hash(self):
-        custom_console.print(f"\n[ HASHING ] {self.mytorr.name}")
+        custom_console.print(f"\n{self.trackers_list} {self.mytorr.name}")
         with HashProgressBar() as progress:
             try:
                 self.mytorr.generate(threads=4, callback=progress.callback, interval=0)
@@ -38,16 +49,13 @@ class Mytorrent:
                 exit(1)
 
     def write(self) -> bool:
-        if not config.TORRENT_ARCHIVE:
+        if not config_settings.user_preferences.TORRENT_ARCHIVE_PATH:
             full_path = f"{self.torrent_path}.torrent"
         else:
             torrent_file_name = os.path.basename(self.torrent_path)
             full_path = os.path.join(
-                config.TORRENT_ARCHIVE, f"{torrent_file_name}.torrent"
+                config_settings.user_preferences.TORRENT_ARCHIVE_PATH, f"{torrent_file_name}.torrent"
             )
-
-        custom_console.bot_log(f"--> {full_path}")
-
         try:
             self.mytorr.write(full_path)
             return True

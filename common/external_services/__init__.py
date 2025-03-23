@@ -1,5 +1,4 @@
 import logging
-from common.config import load_config
 
 logging.basicConfig(
     level=logging.INFO,
@@ -7,4 +6,4 @@ logging.basicConfig(
 )
 
 logger = logging.getLogger(__name__)
-config = load_config()
+

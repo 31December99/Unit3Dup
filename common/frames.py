@@ -5,9 +5,8 @@ import io
 from pathlib import Path
 from PIL import Image
 
-from common.custom_console import custom_console
-from common import config
-
+from common import config_settings
+from view import custom_console
 
 class VideoFrame:
     def __init__(self, video_path: str, num_screenshots: int, tmdb_id: int):
@@ -48,7 +47,8 @@ class VideoFrame:
         """
         image = self.resize_image(frame)
         buffered = io.BytesIO()
-        user_compress_level: int = config.COMPRESS_SCSHOT if 0 <= config.COMPRESS_SCSHOT <= 9 else 4
+        user_compress_level: int = config_settings.user_preferences.COMPRESS_SCSHOT\
+            if 0 <= config_settings.user_preferences.COMPRESS_SCSHOT <= 9 else 4
         image.save(
             buffered, format="PNG", optimize=True, compress_level=user_compress_level
         )
@@ -63,7 +63,7 @@ class VideoFrame:
         :param width: The width to resize to
         :return: Resized image
         """
-        if config.RESIZE_SCSHOT:
+        if config_settings.user_preferences.RESIZE_SCSHOT:
             aspect_ratio = image.width / image.height
             height = round(width / aspect_ratio)
             resized_image = image.resize((width, height), Image.Resampling.LANCZOS)
@@ -148,17 +148,17 @@ class VideoFrame:
             result = subprocess.run(command, capture_output=True, check=True, timeout=20)
             return Image.open(io.BytesIO(result.stdout))
         except subprocess.CalledProcessError as e:
-            custom_console.bot_error_log(f"[IMAGES] Error: Please verify if your file is corrupted")
+            custom_console.bot_error_log(f"IMAGES Error: Please verify if your file is corrupted")
             exit(1)
         except subprocess.TimeoutExpired:
-            custom_console.bot_error_log(f"[IMAGES] Error: Time Out. Please verify if your file is corrupted")
+            custom_console.bot_error_log(f"IMAGES Error: Time Out. Please verify if your file is corrupted")
             exit(1)
         except FileNotFoundError:
             custom_console.bot_error_log(
                 "[FFMPEG not found] - Install ffmpeg or check your system path")
             exit(1)
         except Image.UnidentifiedImageError as e:
-            custom_console.bot_error_log(f"[IMAGES] Error: {self.video_path}  Cannot identify image file. "
+            custom_console.bot_error_log(f"IMAGES Error: {self.video_path}  Cannot identify image file. "
                                          f"Please verify if your file is corrupted")
             exit(1)
 

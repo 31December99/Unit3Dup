@@ -3,11 +3,12 @@
 import argparse
 import os
 
-from common.custom_console import custom_console
 from common.external_services.Pw.pw_service import PwService
-from qbittorrent import Client
-from unit3dup import config
 from common.utility import ManageTitles
+from common import config_settings
+
+from qbittorrent import Client
+from view import custom_console
 
 class PwManager:
 
@@ -22,7 +23,7 @@ class PwManager:
     def process(self):
 
         # a new qbittorent instance
-        qb = Client(f"{config.QBIT_URL}:{config.QBIT_PORT}/")
+        qb = Client(f"http://{config_settings.tracker_config.QBIT_HOST}:{config_settings.tracker_config.QBIT_PORT}/")
         # a new pw instance
         pw_service = PwService()
         # Query the indexers
@@ -35,8 +36,11 @@ class PwManager:
                     custom_console.log(torrent_file.downloadUrl)
                     pw_service.get_torrent_from_pw(torrent_url=torrent_file.downloadUrl,download_filename=self.filename)
 
-                    qb.login(username=config.QBIT_USER, password=config.QBIT_PASS)
+                    qb.login(username=config_settings.tracker_config.QBIT_USER,
+                             password=config_settings.tracker_config.QBIT_PASS)
+
                     qb.download_from_file(
-                        file_buffer=open(os.path.join(config.PW_TORRENT_ARCHIVE_PATH,f"{self.filename}.torrent"), "rb"),
-                        savepath=config.PW_DOWNLOAD_PATH,
+                        file_buffer=open(os.path.join(config_settings.options.PW_TORRENT_ARCHIVE_PATH,
+                                                      f"{self.filename}.torrent"), "rb"),
+                        savepath=config_settings.options.PW_DOWNLOAD_PATH,
                     )

@@ -11,6 +11,10 @@ class MediaFile:
     def __init__(self, file_path):
         self.file_path = file_path
 
+        self._video_info: list = []
+        self._general_track: dict = {}
+        self._audio_info: list = []
+
         try:
             self.media_info = MediaInfo.parse(self.file_path)
         except OSError as e:
@@ -20,30 +24,33 @@ class MediaFile:
 
 
     @property
-    def general_track(self):
+    def general_track(self)-> dict:
         """Returns general information"""
-        for track in self.media_info.to_data().get("tracks", []):
-            if track.get("track_type") == "General":
-                return track
-        return {}
+        if not self._general_track:
+            for track in self.media_info.to_data().get("tracks", []):
+                if track.get("track_type") == "General":
+                    return self._general_track
+            self._general_track = {}
+        return self._general_track
 
     @property
-    def video_track(self):
+    def video_track(self) -> list:
         """Returns video information"""
-        video_info = []
-        for track in self.media_info.tracks:
-            if track.track_type == "Video":
-                video_info.append(track.to_data())
-        return video_info
+        if not self._video_info:
+            for track in self.media_info.tracks:
+                if track.track_type == "Video":
+                    self._video_info.append(track.to_data())
+
+        return self._video_info
 
     @property
-    def audio_track(self):
+    def audio_track(self) -> list:
         """Returns audio information"""
-        audio_info = []
-        for track in self.media_info.tracks:
-            if track.track_type == "Audio":
-                audio_info.append(track.to_data())
-        return audio_info
+        if not self._audio_info:
+            for track in self.media_info.tracks:
+                if track.track_type == "Audio":
+                    self._audio_info.append(track.to_data())
+        return self._audio_info
 
     @property
     def codec_id(self):
@@ -176,3 +183,11 @@ class MediaFile:
                     return int(match.group(1))
 
         return None
+
+    def generate(self, guess_title: str, resolution: str)-> str | None:
+        if self.video_track:
+            video_format = self.video_track[0].get("format", "")
+            audio_format = self.audio_track[0].get("format", "")
+            _, file_ext =os.path.splitext(self.file_path)
+
+            return f"{guess_title}.web-dl.{video_format}.{resolution}.{audio_format}.{file_ext}"

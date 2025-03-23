@@ -7,23 +7,22 @@ from common.external_services.igdb.core.tags import (
     additions,
     platform_patterns,
 )
-
-from common.custom_console import custom_console
-from common.trackers.trackers import ITTData
-from common.utility import ManageTitles
-
+from common.utility import ManageTitles, System
 from common.mediainfo import MediaFile
 from common import title
 
+from view import custom_console
+
 class Media:
-    def __init__(self, folder: str, subfolder: str, force_media_type: str):
+    def __init__(self, folder: str, subfolder: str):
         self.folder: str = folder
         self.subfolder: str = subfolder
-        self.force_media_type: str = force_media_type
-        self.title = os.path.basename(os.path.join(self.folder, self.subfolder))
+        self.title: str = os.path.basename(os.path.join(self.folder, self.subfolder))
+        self._is_tv: bool = False
 
         # // Media
         self._crew_list: list[str] | None = None
+        self._game_title: list[str] | None = None
         self._platform_list: list[str] | None = None
         self._title_sanitized: str | None = None
         self._guess_title: str | None = None
@@ -44,7 +43,6 @@ class Media:
         self._media_file: MediaFile | None = None
         self._languages: list[str] | None = None
         self._resolution: int | None = None
-        self._filename: str | None = None
         self._tracker_name: str | None = None
 
         # // Contents dall'esterno
@@ -54,9 +52,10 @@ class Media:
         self._torrent_pack: bool = False
         self._doc_description: str | None = None
         self._game_nfo: str | None = None
-
-        # load the tracker data
-        self.tracker_data = ITTData.load_from_module()
+        self._tmdb_id: int | None = None
+        self._imdb_id: int | None = None
+        self._igdb_id: int | None = None
+        self._generate_title: str | None = None
 
     @property
     def title_sanitized(self)-> str:
@@ -79,6 +78,24 @@ class Media:
         if not self._platform_list:
             self._platform_list = self._platform(filename=self.title_sanitized)
         return self._platform_list
+
+    @property
+    def game_nfo(self) -> str:
+        return self._game_nfo
+
+    @game_nfo.setter
+    def game_nfo(self, value):
+        self._game_nfo = value
+
+    @property
+    def game_title(self):
+        if not self._game_title:
+            # Remove the crew name to help IGDB with searching
+            _game_tmp = self.guess_filename.guessit_title
+            for crew in self.crew_list:
+                _game_tmp = _game_tmp.replace(crew, " ")
+            self._game_title = _game_tmp.strip()
+        return self._game_title
 
 
     @property
@@ -130,12 +147,36 @@ class Media:
         self._torrent_pack = value
 
     @property
-    def game_nfo(self) -> str:
-        return self._game_nfo
+    def tmdb_id(self) -> int:
+        return self._tmdb_id
 
-    @game_nfo.setter
-    def game_nfo(self, value):
-        self._game_nfo = value
+    @tmdb_id.setter
+    def tmdb_id(self, value):
+        self._tmdb_id = value
+
+    @property
+    def imdb_id(self) -> int:
+        return self._imdb_id
+
+    @imdb_id.setter
+    def imdb_id(self, value):
+        self._imdb_id = value
+
+    @property
+    def igdb_id(self) -> int:
+        return self._igdb_id
+
+    @igdb_id.setter
+    def igdb_id(self, value):
+        self._igdb_id = value
+
+    @property
+    def generate_title(self) -> str:
+        return self._generate_title
+
+    @generate_title.setter
+    def generate_title(self, value):
+        self._generate_title = value
 
     @property
     def guess_filename(self):
@@ -180,7 +221,7 @@ class Media:
     @property
     def guess_episode(self):
         if not self._episode:
-            self._episode = self.guess_filename.guessit_episode
+           self._episode = self.guess_filename.guessit_season
         return self._episode
 
     @property
@@ -195,8 +236,8 @@ class Media:
         if not self._screen_size:
             screen_split = self.title_sanitized.split(" ")
             for screen in screen_split:
-                if screen in self.tracker_data.resolution:
-                    self._screen_size = self.tracker_data.resolution[screen]
+                if screen in System.RESOLUTION_labels:
+                    self._screen_size = screen
         return self._screen_size
 
 
@@ -230,49 +271,38 @@ class Media:
             self._torrent_path = os.path.join(self.folder, self.subfolder)
         return self._torrent_path
 
-
     @property
     def category(self):
         if self._category:
             return self._category
 
-        # Load categories
-        movie_category = self.tracker_data.category.get("movie")
-        serie_category = self.tracker_data.category.get("tvshow")
-        game_category = self.tracker_data.category.get("game")
-        docu_category = self.tracker_data.category.get("edicola")
+        # Check for ext file
+        if ManageTitles.media_docu_type(self.title):
+            self._category = System.category_list.get(System.DOCUMENTARY)
+            return self._category
 
-        # Based on forced_media type ( user cli)
-        if self.force_media_type:
-            self._category = self.force_media_type
+        # Search for a tv_show
+        elif self.guess_filename.guessit_season:
+            self._category = System.category_list.get(System.TV_SHOW)
         else:
-            # Check for ext file
-            if self.tracker_data.category.get(ManageTitles.media_docu_type(self.title)):
-                self._category = docu_category
-            # Check for season
-            elif self.guess_filename.guessit_season:
-                self._category = serie_category
-            # it's a movie
-            else:
-                self._category = movie_category
+            self._category = System.category_list.get(System.MOVIE)
 
-            # If there's a crew or platform list -> game
-            if self.crew_list or self.platform_list:
-                self._category = game_category
+        # If there's a crew or platform list -> game
+        if self.crew_list or self.platform_list:
+            self._category = System.category_list.get(System.GAME)
         return self._category
 
-    @property
-    def game_title(self):
-        return self.guess_filename.guessit_title
+    @category.setter
+    def category(self, value):
+        self._category = value
 
     @property
     def mediafile(self):
         if not self._media_file:
             if self.category in {
-                self.tracker_data.category.get("movie"),
-                self.tracker_data.category.get("tvshow"),
+                System.category_list.get(System.MOVIE),
+                System.category_list.get(System.TV_SHOW),
             }:
-
                 # Read from the current video file the height field
                 file_path = os.path.join(self.folder, self.file_name)
 
@@ -291,12 +321,6 @@ class Media:
     def resolution(self):
         if not self._resolution:
             if self.mediafile:
-                # Get the resolution sub from the dictionary
-                resolutions = self.tracker_data.resolution
-                # Remove duplicate because the 'i' and 'p' and return a set
-                resolution_values = {
-                    key[:-1] for key in resolutions.keys() if key[:-1].isdigit()
-                }
                 # The resolution from the mediainfo not always mach those in tracker data
                 # so we apply the difference between 'x' (tracker resolution in set) and the video_height
                 # do it for each value in resolution_values and return the min among all values
@@ -307,7 +331,7 @@ class Media:
 
                 if self.mediafile.video_height:
                     closest_resolution = min(
-                        resolution_values,
+                        System.RESOLUTIONS,
                         key=lambda x: abs(int(x) - int(self.mediafile.video_height)),
                     )
 
@@ -326,22 +350,18 @@ class Media:
                         else:
                             closest_resolution = f"{closest_resolution}p"
 
-                    if closest_resolution not in self.tracker_data.resolution:
-                        self._resolution = self.tracker_data.resolution["altro"]
-                    else:
-                        self._resolution = self.tracker_data.resolution[closest_resolution]
+                    self._resolution = closest_resolution
                 else:
                     custom_console.bot_error_log(
-                        f"{self.__class__.__name__} Video Height resolution not found in {self.file_name}"
+                        f"'{self.__class__.__name__}' Video Height resolution not found in {self.file_name}"
                     )
                     custom_console.bot_error_log(
-                        f"{self.__class__.__name__} Set to default value {self.tracker_data.resolution['altro']}"
+                        f"'{self.__class__.__name__}' Set to default value {System.NO_RESOLUTION}"
                     )
-                    self._resolution = self.tracker_data.resolution["altro"]
+                    self._resolution = System.NO_RESOLUTION
             else:
                 # Game
-                self._resolution = self.tracker_data.resolution["altro"]
-
+                self._resolution = System.NO_RESOLUTION
         return self._resolution
 
     def _filename_sanitized_(self):

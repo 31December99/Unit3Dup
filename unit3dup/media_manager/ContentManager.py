@@ -1,27 +1,23 @@
 # -*- coding: utf-8 -*-
+import argparse
 import json
 import os
 import re
 
+from common.utility import ManageTitles, System
 from unit3dup.automode import Auto
 from unit3dup.media import Media
 
-from common.trackers.trackers import ITTData
-from common.utility import ManageTitles
-
 class ContentManager:
-    def __init__(self, path: str, tracker_name: str, mode: str, force_media_type=None):
+    def __init__(self, path: str, mode: str, cli: argparse.Namespace):
         """
         Args:
             path (str): The path to the media files or directories
-            tracker_name (str): The tracker name for the content
             mode (str):  mode 'manual' or 'automatic'
-            force_media_type: if the -serie, -movie, -game si active
         """
         self.path = path
-        self.tracker_name = tracker_name
         self.mode = mode
-        self.force_media_type = force_media_type
+        self.cli = cli
 
         self.languages: list[str] | None = None
         self.display_name: str | None = None
@@ -36,20 +32,20 @@ class ContentManager:
         self.file_name: str | None = None
         self.torrent_path: str | None = None
         self.doc_description: str | None = None
+        self.tmdb_id: str | None = None
+        self.imdb_id: str | None = None
+        self.igdb_id: str | None = None
+        self.generate_title: str | None = None
 
-        self.tracker_name: str = tracker_name
         self.path: str = os.path.normpath(path)
-        self.tracker_data = ITTData.load_from_module()
-
-        self.auto = Auto(path=self.path, mode=self.mode, tracker_name=self.tracker_name,
-                         force_media_type=self.force_media_type)
-
+        self.auto = Auto(path=self.path, mode=self.mode)
         self.media_list = self.auto.upload() if self.mode in ["man", "folder"] else self.auto.scan()
 
-    def process(self)-> list['Media']:
+    def process(self)-> list[Media]:
         contents = []
         for media in self.media_list:
             self.path = media.torrent_path
+            media.category = media.category if not self.cli.force else self.cli.force
             self.category = media.category
 
             content = self.get_data(media=media)
@@ -74,13 +70,34 @@ class ContentManager:
         media.torrent_name = self.torrent_name
         media.size = self.size
         media.metainfo = self.meta_info
-        media.meta_info = self.meta_info
         media.torrent_pack = torrent_pack
         media.doc_description = self.doc_description
         media.game_nfo = self.game_nfo
         media.display_name = self.display_name
+        media.imdb_id = self.imdb_id
+        media.tmdb_id = self.tmdb_id
+        media.igdb_id = self.igdb_id
         return media
 
+
+    def search_ids(self):
+        _id = re.findall(r"\{(imdb-\d+|tmdb-\d+|igdb-\d+)}", self.file_name, re.IGNORECASE)
+        if _id:
+            # // Searching..
+            for id in _id:
+                if 'imdb-' in id:
+                    self.imdb_id = id.replace('imdb-', '')
+                    self.imdb_id = self.imdb_id if self.imdb_id.isdigit() else None
+                elif 'tmdb-' in id:
+                    self.tmdb_id = id.replace('tmdb-', '')
+                    self.tmdb_id = self.tmdb_id if self.tmdb_id.isdigit() else None
+                elif 'igdb-' in id:
+                    self.igdb_id = id.replace('igdb-', '')
+                    self.igdb_id = self.igdb_id if self.igdb_id.isdigit() else None
+        else:
+            self.imdb_id = None
+            self.tmdb_id = None
+            self.igdb_id = None
 
     def process_file(self) -> bool:
         """Process individual files and gather metadata"""
@@ -90,7 +107,8 @@ class ContentManager:
         self.display_name = ManageTitles.clean(self.display_name)
         # current media path
         self.torrent_path = self.path
-
+        # Try to get video ID from the string title
+        self.search_ids()
         # Torrent name
         self.torrent_name =  os.path.basename(self.file_name)
         # test to check if it is a doc
@@ -117,7 +135,8 @@ class ContentManager:
         self.torrent_name = os.path.basename(self.path)
         # Document description
         self.doc_description = "\n".join(files_list)
-
+        # Try to get video ID from the string title
+        self.search_ids()
         # Build meta_info
         self.size = 0
         self.meta_info_list = []
@@ -132,7 +151,7 @@ class ContentManager:
         return True
     def list_files_by_category(self) -> list[str]:
         """List files based on the content category"""
-        if self.category == self.tracker_data.category.get('game'):
+        if self.category ==System.category_list.get(System.GAME):
             return self.list_game_files()
         return self.list_video_files()
 
