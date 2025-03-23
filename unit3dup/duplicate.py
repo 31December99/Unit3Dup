@@ -119,7 +119,7 @@ class Duplicate:
         else:
             media = ""
 
-        custom_console.bot_log(f"-> {self.content.display_name.upper()} - "
+        custom_console.bot_log(f"-> 'Delta < Size_th = duplicate' {self.content.display_name.upper()} - "
                                f"Size {self.content_size} {self.size_unit} "
                                f"{media} size_th={self.size_threshold}%\n")
         return self.search()
