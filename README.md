@@ -243,13 +243,15 @@ and then the bot can upload it to an image host, then add the link to the torren
 
 ![Install](https://img.shields.io/badge/WINDOWS-Install_xpdf_tools-gr)
 
-1. Download and unzip xpdfReader from https://dl.xpdfreader.com/xpdf-tools-win-4.05.zip
-2. Put the folder 'bin64' in the system path. For example: C:\xpdf-tools-win-4.05\bin64
-3. Test it: Run pdfimages.exe in the terminal
+1. Download and unzip poppler for windows from https://github.com/oschwartz10612/poppler-windows/releases
+2. unzip it
+2. Put the folder 'bin' in the system path. For example: C:\poppler-24.08.0\Library\bin
+3. _close and reopen a new console window_
+3. Test it: Run pdftocairo in the terminal
 
 ![Install](https://img.shields.io/badge/LINUX-Install_xpdf_tools-gr)
-1. sudo apt install xpdf
-2. Test it: Run pdfimages in the terminal
+1. sudo apt install poppler-utils
+2. Test it: Run pdftocairo in the terminal
 
 ![Install](https://img.shields.io/badge/Bot_UPDATE-gr)
 
