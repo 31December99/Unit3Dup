@@ -1,16 +1,16 @@
 # -*- coding: utf-8 -*-
 import guessit
 from common.utility import ManageTitles, System
-from common.custom_console import custom_console
-from common.trackers.trackers import ITTData
-from common.trackers.itt import itt_data
+from common.trackers.trackers import TRACKData
 from common.constants import my_language
 from common import title
 
+from view import custom_console
+
 from unit3dup.media_manager.MediaInfoManager import MediaInfoManager
 from unit3dup.torrent import Torrent
+from unit3dup import config_settings
 from unit3dup.media import Media
-from unit3dup import config
 
 
 
@@ -58,16 +58,19 @@ class CompareTitles:
 
 class Duplicate:
 
-    def __init__(self, content: Media):
+    def __init__(self, content: Media, tracker_name: str):
 
         # User content from the scan process
         self.content: Media = content
 
         # Class to get info about a torrent
-        self.torrent_info = Torrent()
+        self.torrent_info = Torrent(tracker_name=tracker_name)
 
         # Load the constant tracker
-        tracker_data = ITTData.load_from_module()
+        tracker_data = TRACKData.load_from_module(tracker_name=tracker_name)
+
+        # Resolutions
+        self.resolutions = tracker_data.resolution
 
         # Category Movie
         self.movie_category = tracker_data.category.get("movie")
@@ -88,13 +91,13 @@ class Duplicate:
         self.guess_filename = title.Guessit(self.content.display_name)
 
         # convert the user preferred language to iso
-        self.preferred_lang = my_language(config.PREFERRED_LANG)
+        self.preferred_lang = my_language(config_settings.user_preferences.PREFERRED_LANG)
 
         # Size of the user's content
         self.content_size, self.size_unit = System.get_size(content.torrent_path)
 
         # Determine how much differs from the user's media size
-        self.size_threshold = config.SIZE_TH
+        self.size_threshold = config_settings.user_preferences.SIZE_TH
 
         # Final result
         self.flag_already = False
@@ -111,12 +114,12 @@ class Duplicate:
     def process(self) -> bool:
         if self.category in {self.movie_category, self.serie_category}:
             audio = f"Audio: {self.content.audio_languages}"
-            resolution = self.get_resolution_by_num(self.content.resolution)
+            resolution = self.content.screen_size or self.content.resolution
             media = f"[{audio + ' - ' + resolution}]"
         else:
             media = ""
 
-        custom_console.bot_log(f"-> {self.content.display_name.upper()} - "
+        custom_console.bot_log(f"-> 'Delta < Size_th = duplicate' {self.content.display_name.upper()} - "
                                f"Size {self.content_size} {self.size_unit} "
                                f"{media} size_th={self.size_threshold}%\n")
         return self.search()
@@ -132,7 +135,7 @@ class Duplicate:
 
         # if a result is found, ask the user or autoskip
             if already_present:
-                if not config.SKIP_DUPLICATE:
+                if not config_settings.user_preferences.SKIP_DUPLICATE:
                     try:
                         while True:
                             custom_console.bot_question_log(
@@ -159,10 +162,8 @@ class Duplicate:
                 return False
         return False
 
-
-    @staticmethod
-    def get_resolution_by_num(res_id: int) -> str:
-        return next((key for key, value in itt_data['RESOLUTION'].items() if value == res_id), None)
+    def get_resolution_by_num(self, res_id: int) -> str:
+        return next((key for key, value in self.resolutions.items() if value == res_id), None)
 
     def _calculate_threshold(self, size: int) -> int:
         # Size in GB
@@ -220,7 +221,7 @@ class Duplicate:
                 ):
 
                     delta_size = self._calculate_threshold(size=tracker_value["size"])
-                    if delta_size > config.SIZE_TH:
+                    if delta_size > config_settings.user_preferences.SIZE_TH:
                         # Not a duplicate
                         continue
 
@@ -243,7 +244,6 @@ class Duplicate:
                         self._print_output(value=tracker_value, delta_size=delta_size)
                         self.flag_already = True
 
-        # At least one media needs to match the tracker database
         return self.flag_already
 
     @staticmethod

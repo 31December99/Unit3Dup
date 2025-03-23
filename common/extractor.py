@@ -6,7 +6,7 @@ import patoolib
 import logging
 
 from rich.progress import Progress, SpinnerColumn
-from common.custom_console import custom_console
+from view import custom_console
 
 # Turn off INFO
 logging.getLogger("patool").setLevel(logging.ERROR)

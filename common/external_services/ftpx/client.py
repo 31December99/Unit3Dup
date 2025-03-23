@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
 import os
 
-from common.external_services.ftpx.core.models.list import FTPDirectory
-from common.external_services.ftpx.core.ftpx_service import FtpX
-from common.external_services.ftpx import config
-from common.custom_console import custom_console
 from rich.prompt import Prompt
 from rich.table import Table
 from rich.text import Text
 
+from common.external_services.ftpx.core.models.list import FTPDirectory
+from common.external_services.ftpx.core.ftpx_service import FtpX
+from common import config_settings
+
+from view import custom_console
 
 class Folder:
     """
@@ -132,7 +133,7 @@ class Client:
         self.ftpx_service = FtpX.new()
 
         # // Build the first Home page
-        home_folder = self.ftpx_service.get_list(remote_path=config.FTPX_ROOT)
+        home_folder = self.ftpx_service.get_list(remote_path=config_settings.options.FTPX_ROOT)
 
         # Quit if there are no files in the root folder
         if not home_folder:
@@ -214,7 +215,7 @@ class Client:
                 remote_short_path = remote_file_path
 
             self.download_to_local_path = os.path.join(
-                config.FTPX_LOCAL_PATH, *remote_short_path
+                config_settings.options.FTPX_LOCAL_PATH, *remote_short_path
             )
             custom_console.bot_log(
                 f"Server:{os.path.basename(remote_file)} -> Client:{self.download_to_local_path}"
@@ -245,7 +246,7 @@ class Client:
         self.remote_path = self.remote_path.replace("\\", "/")
         self.ftpx_service.change_dir(new_path=self.remote_path)
         # // Build a new Home page for the current folder
-        home_folder = self.ftpx_service.get_list(remote_path=config.FTPX_ROOT)
+        home_folder = self.ftpx_service.get_list(remote_path=config_settings.options.FTPX_ROOT)
         # Create a page with the current folder
         self.page = MyPage(home_folder)
         # Save the current list of files

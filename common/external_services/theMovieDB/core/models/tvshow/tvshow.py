@@ -9,6 +9,10 @@ class Media(ABC):
     def get_title(self) -> str:
         pass
 
+    @abstractmethod
+    def get_original(self) -> str:
+        pass
+
 
 @dataclass
 class TvShow(Media):
@@ -33,3 +37,6 @@ class TvShow(Media):
 
     def get_title(self) -> str:
         return self.name
+
+    def get_original(self) -> str:
+        return self.original_name

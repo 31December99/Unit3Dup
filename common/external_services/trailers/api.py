@@ -2,8 +2,9 @@
 
 import requests
 from .response import YouTubeSearchResponse, Thumbnails, Id, Item, PageInfo, Snippet
-from common.custom_console import custom_console
-from common.external_services.trailers import config
+
+from common import config_settings
+from view import custom_console
 
 class YtTrailer:
     url = 'https://www.googleapis.com/youtube/v3/search'
@@ -14,7 +15,7 @@ class YtTrailer:
             'part': 'snippet',
             'q': f'{title} trailer',
             'type': 'video',
-            'key': config.YOUTUBE_KEY,
+            'key': config_settings.tracker_config.YOUTUBE_KEY,
             'channelId': '',
             'maxResults': 3,
         }
@@ -23,8 +24,8 @@ class YtTrailer:
 
         # Use a favorite channel if the flag is True
         # Otherwise use a global YouTube search
-        if config.YOUTUBE_CHANNEL_ENABLE:
-            self.params['channelId'] = config.YOUTUBE_FAV_CHANNEL_ID
+        if config_settings.user_preferences.YOUTUBE_CHANNEL_ENABLE:
+            self.params['channelId'] = config_settings.user_preferences.YOUTUBE_FAV_CHANNEL_ID
 
         response = requests.get(self.url, params=self.params)
 
@@ -73,8 +74,6 @@ class YtTrailer:
                         else:
                             # Fail
                             pass
-
-                    # video_id = Id(**result['id'])
 
                     item = Item(
                         etag=result['etag'],

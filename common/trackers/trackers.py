@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 
-from .itt import itt_data
 from dataclasses import dataclass
 from common.utility import ManageTitles
-
+from . import tracker_list
 
 @dataclass
-class ITTData:
+class TRACKData:
     category: dict[str, int]
     freelech: dict[str, int]
     type_id: dict[str, int]
@@ -14,16 +13,18 @@ class ITTData:
     codec: list
 
     @classmethod
-    def load_from_module(cls) -> "ITTData":
+    def load_from_module(cls, tracker_name: str) -> "TRACKData":
         """
-        Carica i dati da un modulo e crea un'istanza di ITTData.
+        Load tracker data from module
         """
+        tracker_data= tracker_list[tracker_name.upper()]
+
         return cls(
-            category=itt_data.get("CATEGORY"),
-            freelech=itt_data.get("FREELECH"),
-            type_id=itt_data.get("TYPE_ID"),
-            resolution=itt_data.get("RESOLUTION"),
-            codec=itt_data.get("CODEC"),
+            category=tracker_data.get("CATEGORY"),
+            freelech=tracker_data.get("FREELECH"),
+            type_id=tracker_data.get("TYPE_ID"),
+            resolution=tracker_data.get("RESOLUTION"),
+            codec=tracker_data.get("CODEC"),
         )
 
     def filter_type(self, file_name: str) -> int:

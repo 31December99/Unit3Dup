@@ -2,20 +2,16 @@
 import re
 import requests
 
-from common.custom_console import custom_console
-from common.trackers.trackers import ITTData
-
+from common.trackers.trackers import TRACKData
 from unit3dup import pvtTracker
-from unit3dup import config
-
+from view import custom_console
 
 class Torrent:
 
-    def __init__(self):
-        self.perPage = 30
-        self.tracker = pvtTracker.Unit3d(
-            base_url=config.ITT_URL, api_token=config.ITT_APIKEY, pass_key=""
-        )
+    def __init__(self, tracker_name: str):
+
+        self.perPage = 130
+        self.tracker = pvtTracker.Unit3d(tracker_name=tracker_name)
 
     def get_unique_id(self, media_info: str) -> str:
         # Divido per campi
@@ -137,15 +133,12 @@ class Torrent:
 
 class View(Torrent):
 
-    def __init__(self):
-        super().__init__()
-        self.perPage = 30
-        self.tracker = pvtTracker.Unit3d(
-            base_url=config.ITT_URL, api_token=config.ITT_APIKEY, pass_key=""
-        )
+    def __init__(self, tracker_name: str):
+        super().__init__(tracker_name=tracker_name)
 
+        self.perPage = 130
         # Load the constant tracker
-        self.tracker_data = ITTData.load_from_module()
+        self.tracker_data = TRACKData.load_from_module(tracker_name=tracker_name)
         print()
 
     def get_unique_id(self, media_info: str) -> str:

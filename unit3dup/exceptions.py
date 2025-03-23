@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from functools import wraps
 from typing import Callable, Any
-from common.custom_console import custom_console
+from view import custom_console
 
 
 class Unit3DError(Exception):

@@ -2,11 +2,12 @@
 from thefuzz import fuzz
 from rich.align import Align
 from rich.table import Table
+
 from common.external_services.igdb.core.models.search import Game
 from common.external_services.igdb.core.api import IGDBapi
-from common.custom_console import custom_console
-from unit3dup.media import Media
 
+from unit3dup.media import Media
+from view import custom_console
 
 class IGDBViewer:
     def __init__(self):
@@ -125,6 +126,8 @@ class IGDBClient:
         else:
             bbcode+="\nNo trailers available.\n"
 
+        # Sign
+        bbcode += f"[url=https://github.com/31December99/Unit3Dup]Uploaded by Unit3Dup[/url]"
         mygame.description = bbcode
         return mygame
 
@@ -140,6 +143,15 @@ class IGDBClient:
     def search_by_id(self, igdb_id: int)-> list:
         return self.igdb.request(query=f'fields id,name,summary,videos,url; where id = {igdb_id};',endpoint="games")
 
+    def preview_results(self, results: list)-> Game | None:
+        if results:
+            # Only one game was chosen from the menù
+            mygame = self.viewer.to_game(results)
+            # Add a description
+            mygame = self.game_description(mygame=mygame[0])
+            # Show the results
+            self.viewer.view_results(igdb_results=[mygame])
+            return mygame
 
     def user_enter_igdb(self,igdb_results: list, content: Media, candidate: str)-> Game | None:
         while True:
@@ -164,16 +176,7 @@ class IGDBClient:
             if user_choice >= len(igdb_results):
                 user_result = self.search_by_id(igdb_id=user_choice)
                 if user_result:
-                   # Only one game was chosen from the menù
-                   mygame =  self.viewer.to_game(user_result)
-                   # Add a description
-                   mygame = self.game_description(mygame=mygame[0])
-                   custom_console.bot_log(" - IGDB Found -")
-                   # Show the results
-                   self.viewer.view_results(igdb_results=[mygame])
-                   custom_console.bot_input_log("Press a button to continue..")
-                   input()
-                   return mygame
+                    return self.preview_results(user_result)
                 else:
                    # Wrong IGDB ID
                    custom_console.bot_question_log("* IGDB Not found * Re-try\n")
@@ -221,9 +224,14 @@ class IGDBClient:
 
     def game(self, content: Media)-> Game | None:
         custom_console.bot_question_log(f"Contacting host for GAME ID. Please wait...\n")
+
+        # Search by IGDB id in the title string
+        if content.igdb_id:
+            search_result = self.search_by_id(igdb_id=content.igdb_id)
+            return self.preview_results(results=search_result)
+
         # Try a broader search...
         igdb_results, candidate = self.broader(game_title=content.game_title)
-
         # Show the results and ask the user to choose an IGDB ID in case there are multiple options or no results
         return self.user_enter_igdb(igdb_results=igdb_results, content=content, candidate=candidate)
 

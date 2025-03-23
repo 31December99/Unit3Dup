@@ -5,83 +5,124 @@ import argparse
 from unit3dup.media_manager.VideoManager import VideoManager
 from unit3dup.media_manager.GameManager import GameManager
 from unit3dup.media_manager.DocuManager import DocuManager
-from unit3dup.qbittorrent import QBittorrent
-from unit3dup import config
+from unit3dup import config_settings
+from unit3dup.media import Media
 
-from common.custom_console import custom_console
-from common.trackers.trackers import ITTData
+from common.bittorrent import BittorrentData
 from common.constants import my_language
+from common.utility import System
+
 from unit3dup.media_manager.common import UserContent
+from view import custom_console
 
 
 class TorrentManager:
-    def __init__(self, cli: argparse.Namespace, tracker_name=None):  # todo tracker_name
+    def __init__(self, cli: argparse.Namespace):
+
+        self.preferred_lang = my_language(config_settings.user_preferences.PREFERRED_LANG)
+        self.games: list[Media] = []
+        self.videos: list[Media] = []
+        self.doc: list[Media] = []
         self.cli = cli
 
-        tracker_data = ITTData.load_from_module()
-
-        self.movie_category = tracker_data.category.get("movie")
-        self.serie_category = tracker_data.category.get("tvshow")
-        self.docu_category = tracker_data.category.get("edicola")
-        self.game_category = tracker_data.category.get("game")
-        self.preferred_lang = my_language(config.PREFERRED_LANG)
-
     def process(self, contents: list) -> None:
+        """
+        Send content to each selected tracker with the trackers_name_list.
+        trackers_name_list can be a list of tracker names or the current tracker for the upload process
 
-        game_process_results: list["QBittorrent"] = []
-        video_process_results: list["QBittorrent"] = []
-        docu_process_results: list["QBittorrent"] = []
-        custom_console.rule()
-
+        Args:
+            contents: torrent contents
+        Returns:
+            NOne
+        """
         # // Build a GAME list
-        games = [
-            content for content in contents if content.category == self.game_category
+        self.games = [
+            content for content in contents if content.category == System.category_list.get(System.GAME)
         ]
 
+        if self.games:
+            if 'no_key' in config_settings.tracker_config.IGDB_CLIENT_ID:
+                custom_console.bot_warning_log("Skipping game upload, no IGDB credentials provided")
+                self.games = []
+
         # // Build a VIDEO list
-        videos = [
+        self.videos = [
             content
             for content in contents
-            if content.category in {self.movie_category, self.serie_category}
+            if content.category in {System.category_list.get(System.MOVIE), System.category_list.get(System.TV_SHOW)}
         ]
 
         # // Build a Doc list
-        doc = [
-            content for content in contents if content.category == self.docu_category
+        self.doc = [
+            content for content in contents if content.category == System.category_list.get(System.DOCUMENTARY)
         ]
 
-        if config.DUPLICATE_ON:
-            custom_console.bot_log("'[ACTIVE]' Searching for duplicate")
+    def run(self, trackers_name_list: list):
+        """
 
-        # Build the torrent file and upload each GAME to the tracker
-        if games:
-            game_manager = GameManager(contents=games, cli=self.cli)
-            game_process_results = game_manager.process()
+        Args:
+            trackers_name_list: list of tracker names to update the torrent file ( -cross or -tracker)
+        Returns:
 
-        # Build the torrent file and upload each VIDEO to the tracker
-        if videos:
-            video_manager = VideoManager(contents=videos, cli=self.cli)
-            video_process_results = video_manager.process()
+        """
 
-        # Build the torrent file and upload each DOC to the tracker
-        if doc:
-            docu_manager = DocuManager(contents=doc, cli=self.cli)
-            docu_process_results = docu_manager.process()
+        game_process_results: list[BittorrentData] = []
+        video_process_results: list[BittorrentData] = []
+        docu_process_results: list[BittorrentData] = []
+
+        for selected_tracker in trackers_name_list:
+            # Build the torrent file and upload each GAME to the tracker
+            if self.games:
+                game_manager = GameManager(contents=self.games, cli=self.cli)
+                game_process_results = game_manager.process(selected_tracker=selected_tracker,
+                                                            tracker_name_list=trackers_name_list)
+
+            # Build the torrent file and upload each VIDEO to the trackers
+            if self.videos:
+                video_manager = VideoManager(contents=self.videos, cli=self.cli)
+                video_process_results = video_manager.process(selected_tracker=selected_tracker,
+                                                              tracker_name_list=trackers_name_list)
+
+            # Build the torrent file and upload each DOC to the tracker
+            if self.doc:
+                docu_manager = DocuManager(contents=self.doc, cli=self.cli)
+                docu_process_results = docu_manager.process(selected_tracker=selected_tracker,
+                                                            tracker_name_list=trackers_name_list)
+
+            # No seeding
+            if self.cli.noseed or self.cli.noup:
+                custom_console.bot_warning_log(f"No seeding active. Done.")
+                custom_console.rule()
+                continue
 
 
-        if game_process_results or video_process_results or docu_process_results:
-            custom_console.panel_message("\nSending torrents to the client... Please wait")
+            if game_process_results:
+                UserContent.send_to_bittorrent(game_process_results, 'GAME')
 
-        # * QBITTORRENT *
-        # Send
-        if game_process_results:
-            if not self.cli.torrent:
-                UserContent.send_to_qbittorrent(game_process_results)
+            if video_process_results:
+                UserContent.send_to_bittorrent(video_process_results, 'VIDEO')
 
-        if video_process_results:
-            if not self.cli.torrent:
-                UserContent.send_to_qbittorrent(video_process_results)
+            if docu_process_results:
+                UserContent.send_to_bittorrent(docu_process_results, 'DOCUMENTARY')
+            custom_console.bot_log(f"Tracker '{selected_tracker}' Done.")
+            custom_console.rule()
 
-        if docu_process_results:
-            if not self.cli.torrent:
-                UserContent.send_to_qbittorrent(docu_process_results)
+    custom_console.bot_log(f"Done.")
+    custom_console.rule()
+
+    def send(self, this_path: str, trackers_name_list: list):
+        # Send a torrent file that has already been created for seeding
+        # you can update the announce list by adding the -tracker or -cross flags
+
+        # for each selected tracker we send our tracker list ( default or by -tracker,-cross flags)
+        for selected_tracker in trackers_name_list:
+            if UserContent.torrent_file_exists(path=this_path, selected_tracker=selected_tracker,
+                                                               tracker_name_list=trackers_name_list):
+                client = UserContent.get_client()
+                client.send_file_to_client(torrent_path=this_path)
+            else:
+                custom_console.bot_warning_log(f"File torrent not found for '{this_path}'"
+                                               f" in {config_settings.user_preferences.TORRENT_ARCHIVE_PATH}" )
+
+
+
