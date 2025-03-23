@@ -45,7 +45,7 @@ class PdfImages:
         # Sanitize the input file name
         sanitized_file_name = self.sanitize_filename(os.path.basename(self.file_name))
         path = os.path.dirname(self.file_name)
-        output_name = f"{os.path.join(path, sanitized_file_name)}.png"
+        output_name = os.path.join(path, sanitized_file_name)
 
         command = [
             "pdftocairo",
@@ -66,6 +66,7 @@ class PdfImages:
             custom_console.bot_error_log(f"It was not possible to find 'xpdf'. Please check your system PATH or install it.")
             exit(1)
 
+        output_name+='.png'
         with open(output_name, "rb") as img_file:
             img_data = img_file.read()
             images.append(img_data)
