@@ -57,9 +57,6 @@ class TorrentManager:
             content for content in contents if content.category == System.category_list.get(System.DOCUMENTARY)
         ]
 
-        if config_settings.user_preferences.DUPLICATE_ON:
-            custom_console.bot_log("'[ACTIVE]' Searching for duplicates")
-
     def run(self, trackers_name_list: list):
         """
 
