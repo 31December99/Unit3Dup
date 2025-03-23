@@ -126,6 +126,8 @@ class IGDBClient:
         else:
             bbcode+="\nNo trailers available.\n"
 
+        # Sign
+        bbcode += f"[url=https://github.com/31December99/Unit3Dup]Uploaded by Unit3Dup[/url]"
         mygame.description = bbcode
         return mygame
 
