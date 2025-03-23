@@ -86,7 +86,7 @@ class UserContent:
             this_path = f"{path}.torrent"
 
         if os.path.exists(this_path):
-            custom_console.bot_warning_log(f"\n<> Reusing the existing torrent file..\n")
+            custom_console.bot_warning_log(f"\n<> Reusing the existing torrent file..'{path}'\n")
 
             # Add an announce_list or remove 'announce-list' if the list is empty
             UserContent.torrent_announces(torrent_path=this_path,
@@ -188,8 +188,8 @@ class UserContent:
                 )
             else:
                 # invalid response
-                custom_console.bot_error_log(f"{bittorrent_file.content.display_name} ->"
-                                       f" {bittorrent_file.tracker_message}")
+                custom_console.rule()
+
         except Exception as e:
             custom_console.bot_error_log(f"Error sending torrent {bittorrent_file.content.file_name}: {str(e)}")
 

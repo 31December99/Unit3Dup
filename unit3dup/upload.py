@@ -32,7 +32,8 @@ class UploadBot:
 
         if tracker_response.status_code == 200:
             tracker_response_body = json.loads(tracker_response.text)
-            custom_console.bot_log(f"\n[RESPONSE]->'{self.tracker_name}'.....{tracker_response_body['message'].upper()}\n\n")
+            custom_console.bot_log(f"\n[RESPONSE]-> '{self.tracker_name}'.....{tracker_response_body['message'].upper()}\n\n")
+            custom_console.rule()
             return tracker_response_body["data"],{}
 
         elif tracker_response.status_code == 401:
@@ -52,6 +53,8 @@ class UploadBot:
                 info_hash_error = _message["info_hash"][0]
             error_message =f"{self.__class__.__name__} - {name_error} : {info_hash_error}"
 
+        custom_console.bot_error_log(f"\n[RESPONSE]-> '{error_message}\n\n")
+        custom_console.rule()
         return {}, error_message
 
     def send(self,show_id: int , imdb_id: int, show_keywords_list: str, video_info: Video) -> (requests, dict):
