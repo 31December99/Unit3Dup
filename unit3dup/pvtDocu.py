@@ -3,6 +3,7 @@ import os
 
 import diskcache
 import subprocess
+import unicodedata
 
 from common.external_services.imageHost import Build
 from view import custom_console
@@ -29,20 +30,33 @@ class PdfImages:
         # description cache
         self.docu_cache = diskcache.Cache(str(os.path.join(config_settings.user_preferences.CACHE_PATH, "covers.cache")))
 
+    @staticmethod
+    def sanitize_filename(filename: str) -> str:
+        # normalize !
+        normalized_filename = unicodedata.normalize('NFKD', filename).encode('ascii', 'ignore').decode('ascii')
+        # replace special chars with those in list
+        sanitized_filename = "".join(c if c.isalnum() or c in ['.', '-', '_'] else "_" for c in normalized_filename)
+        return sanitized_filename
+
 
     def extract(self) -> list['Image']:
         images = []
+
+        # Sanitize the input file name
+        sanitized_file_name = self.sanitize_filename(os.path.basename(self.file_name))
+        path = os.path.dirname(self.file_name)
+        output_name = f"{os.path.join(path, sanitized_file_name)}.png"
+
         command = [
             "pdftocairo",
             "-q",  # Silent
+            "-singlefile", # do not add digit
             "-png",
             "-f", "1",
             "-l", "1",
             self.file_name,
-            f"{self.file_name}",
+            output_name,
         ]
-
-        filename = f"{self.file_name}-001.png"
         try:
             subprocess.run(command, capture_output=True, check=True, timeout=20)
         except subprocess.CalledProcessError:
@@ -52,14 +66,13 @@ class PdfImages:
             custom_console.bot_error_log(f"It was not possible to find 'xpdf'. Please check your system PATH or install it.")
             exit(1)
 
-        with open(filename, "rb") as img_file:
+        with open(output_name, "rb") as img_file:
             img_data = img_file.read()
             images.append(img_data)
-        if os.path.exists(filename):
-            os.remove(filename)
+        if os.path.exists(output_name):
+            os.remove(output_name)
 
         return images
-
 
     def build_info(self):
         """Build the information to send to the tracker"""
