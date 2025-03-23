@@ -241,7 +241,7 @@ and then the bot can upload it to an image host, then add the link to the torren
 
 ### 
 
-![Install](https://img.shields.io/badge/WINDOWS-Install_xpdf_tools-gr)
+![Install](https://img.shields.io/badge/WINDOWS-Install_poppler_tools-gr)
 
 1. Download and unzip poppler for windows from https://github.com/oschwartz10612/poppler-windows/releases
 2. unzip it
@@ -249,7 +249,7 @@ and then the bot can upload it to an image host, then add the link to the torren
 3. _close and reopen a new console window_
 3. Test it: Run pdftocairo in the terminal
 
-![Install](https://img.shields.io/badge/LINUX-Install_xpdf_tools-gr)
+![Install](https://img.shields.io/badge/LINUX-Install_poppler_tools-gr)
 1. sudo apt install poppler-utils
 2. Test it: Run pdftocairo in the terminal
 
