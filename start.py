@@ -30,6 +30,11 @@ def main():
     # /// Initialize command line interface
     cli = CommandLine()
 
+    cli.args.tracker = None
+    cli.args.multi  = None
+    cli.args.cross = None
+
+
     # /// Load the list of the registered trackers
     if not config.tracker_config.MULTI_TRACKER:
         custom_console.bot_error_log(f"No tracker name provided. Please update your configuration file")
