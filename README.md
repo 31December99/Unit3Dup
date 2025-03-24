@@ -107,38 +107,6 @@ Output:
 
 Every few seconds, it checks the watcher folder, moves the content to the watcher_destination, and uploads everything to the tracker. It won't upload if there's already a torrent file.
 
-![Version](https://img.shields.io/badge/tracker-red)
-
-You can select a specific tracker name that has been configured in the configuration file *.json
-
-If you don't specify any tracker, the default tracker will be the first one in the list in the configuration file
-
-Default tracker:
-
->**python3 start.py -u "/home/uploader/Hello.world.TheBook.pdf**
-
-Specified tracker:
-
->**python3 start.py -tracker itt -f "/home/uploader/Hello.world.TheMovie**
->
->**python3 start.py -tracker itt -u "/home/uploader/Hello.world.TheBook.pdf**
->
->**python3 start.py -tracker partner -u "/home/uploader/Hello.world.TheBook.pdf**
->
-When you use -tracker , the tracker of the torrent file will be updated with the 'partner' URL announcement,
-
-so you need to configure your passkey in the configuration JSON file
-
-***
-
-![Version](https://img.shields.io/badge/cross-red)
-
-Add all the trackers that have been configured in the JSON file to a specified torrent file
-
--cross expects the media file path, not the torrent file path.
-Therefore, it checks the torrent archive to see if the file exists and edits it.
-
->**python3 start.py -cross -f "/home/uploader/Hello.world.TheMovie**
 ***
 
 ![Version](https://img.shields.io/badge/seedit-red)
