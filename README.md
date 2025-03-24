@@ -141,10 +141,6 @@ Upload as usual but don't send the torrent file to the torrent client
 Don't upload and don't seed. Just create the file torrent
 
 >**python3 start.py -noup -f "/home/uploader/Hello.world**
-
->**python3 start.py -tracker itt -noup -f "/home/uploader/Hello.world**
-
->**python3 start.py -tracker partner -noup -f "/home/uploader/Hello.world**
 ***
 
 
