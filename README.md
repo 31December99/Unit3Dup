@@ -178,9 +178,6 @@ PATH environment user variable
         "ITT_URL": "https://itatorrents.xyz",
         "ITT_APIKEY": "api_key12345",
         "ITT_PID": "pid_12345",
-        "SIS_URL": "http://www.partenerexample.com",
-        "SIS_APIKEY": "12345",
-        "SIS_PID": "pid_12345",
         "TMDB_APIKEY": "",
         "IMGBB_KEY": "",
         "FREE_IMAGE_KEY": "",
@@ -190,10 +187,6 @@ PATH environment user variable
         "YOUTUBE_KEY": "",
         "IGDB_CLIENT_ID": "",
         "IGDB_ID_SECRET": "",
-        "MULTI_TRACKER": [
-            "itt",
-            "partner_name_example"
-        ]
     }
 }
 ```
@@ -229,7 +222,7 @@ and then the bot can upload it to an image host, then add the link to the torren
 | Trackers          | Description              |
 |-------------------|--------------------------|
 | `ITT`             | https://itatorrents.xyz/ |
-| `SIS`             |  |
+
 
 
 ![Version](https://img.shields.io/badge/others-red)
