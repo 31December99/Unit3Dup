@@ -74,15 +74,15 @@ def main():
     # Get default tracker
     tracker_name_list = [config.tracker_config.MULTI_TRACKER[0]]
 
-    # Add a single announce if requested
+    # Add a single announce if requested (disabled)
     if cli.args.tracker:
         tracker_name_list = [cli.args.tracker.upper()]
 
-    # Add one or more trackers to the torrent file if requested
+    # Add one or more trackers to the torrent file if requested (disabled)
     if cli.args.cross:
         tracker_name_list = config.tracker_config.MULTI_TRACKER
 
-    # Send content to the multi_tracker list
+    # Send content to the multi_tracker list (disabled)
     if cli.args.multi:
         tracker_name_list = config.tracker_config.MULTI_TRACKER
 
