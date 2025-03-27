@@ -29,10 +29,8 @@ def main():
 
     # /// Initialize command line interface
     cli = CommandLine()
-
-    cli.args.tracker = None
-    cli.args.multi  = None
-    cli.args.cross = None
+    # -multi Disabled
+    cli.args.mt =  None
 
 
     # /// Load the list of the registered trackers
@@ -88,7 +86,7 @@ def main():
         tracker_name_list = config.tracker_config.MULTI_TRACKER
 
     # Send content to the multi_tracker list (disabled)
-    if cli.args.multi:
+    if cli.args.mt:
         tracker_name_list = config.tracker_config.MULTI_TRACKER
 
 
