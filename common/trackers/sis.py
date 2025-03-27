@@ -2,7 +2,7 @@
 
 sis_data = {
     "CATEGORY": {"movie": 1,
-                 "tvshow": 2,
+                 "tv": 2,
                  "ebook":15,
                  "edicola": 17,
                  "xxx":19,
