@@ -33,7 +33,7 @@ class CommandLine:
                             help="Upload to single tracker")
 
         parser.add_argument("-cross", "--cross", action="store_true", help="")
-        parser.add_argument("-multi", "--multi", action="store_true", help="")
+        parser.add_argument("-mt", "--mt", action="store_true", help="")
 
         parser.add_argument("-seedit", "--seedit", type=str, help="")
         parser.add_argument('-force', nargs='?', const="movie", type=str, default=None)
