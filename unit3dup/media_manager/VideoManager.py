@@ -36,37 +36,29 @@ class VideoManager:
         """
 
         # -multi : no announce_list . One announce for multi tracker
-        if self.cli.multi:
+        if self.cli.mt:
             tracker_name_list = [selected_tracker.upper()]
 
         #  Init the torrent list
         bittorrent_list = []
         for content in self.contents:
             # Filter contents based on existing torrents or duplicates
-
             if UserContent.is_preferred_language(content=content):
                 # Torrent creation
-                if not UserContent.torrent_file_exists(path=content.torrent_path,
-                                                       tracker_name_list=tracker_name_list,
-                                                       selected_tracker=selected_tracker):
-                    self.torrent_found = False
-                else:
-                    # Torrent found, skip if the watcher is active
+                if UserContent.torrent_file_exists(path=content.torrent_path,
+                                                   tracker_name_list=tracker_name_list,
+                                                   selected_tracker=selected_tracker):
+                    torrent_response = None
                     if self.cli.watcher:
                         custom_console.bot_log(f"Watcher Active.. skip the old upload '{content.file_name}'")
                         continue
-                    self.torrent_found = True
+                else:
+                    torrent_response = UserContent.torrent(content=content, trackers=tracker_name_list)
 
                 # Skip if it is a duplicate
                 if (self.cli.duplicate or config_settings.user_preferences.DUPLICATE_ON
                         and UserContent.is_duplicate(content=content, tracker_name=selected_tracker)):
                     continue
-
-                # Add announcement only if expressly requested by the user via cli -tracker flag
-                if not self.torrent_found:
-                    torrent_response = UserContent.torrent(content=content, trackers=tracker_name_list)
-                else:
-                    torrent_response = None
 
                 # Search for VIDEO ID
                 db_online = DbOnline(media=content,category=content.category)
