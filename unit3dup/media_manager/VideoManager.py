@@ -44,10 +44,9 @@ class VideoManager:
         bittorrent_list = []
         for content in self.contents:
             # get the archive path
-            base_name = os.path.basename(content.torrent_path)
             archive = os.path.join(tracker_archive, selected_tracker)
             os.makedirs(archive, exist_ok=True)
-            torrent_filepath = os.path.join(tracker_archive,selected_tracker, f"{base_name}.torrent")
+            torrent_filepath = os.path.join(tracker_archive,selected_tracker, f"{content.torrent_name}.torrent")
 
 
             # Filter contents based on existing torrents or duplicates
