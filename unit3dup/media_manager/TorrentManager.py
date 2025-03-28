@@ -66,9 +66,16 @@ class TorrentManager:
 
         """
 
+
         game_process_results: list[BittorrentData] = []
         video_process_results: list[BittorrentData] = []
         docu_process_results: list[BittorrentData] = []
+
+        if config_settings.user_preferences.TORRENT_ARCHIVE_PATH:
+            tracker_archive = config_settings.user_preferences.TORRENT_ARCHIVE_PATH
+        else:
+            tracker_archive =  '.'
+
 
         for selected_tracker in trackers_name_list:
             # Build the torrent file and upload each GAME to the tracker
@@ -81,7 +88,8 @@ class TorrentManager:
             if self.videos:
                 video_manager = VideoManager(contents=self.videos, cli=self.cli)
                 video_process_results = video_manager.process(selected_tracker=selected_tracker,
-                                                              tracker_name_list=trackers_name_list)
+                                                              tracker_name_list=trackers_name_list,
+                                                              tracker_archive=tracker_archive)
 
             # Build the torrent file and upload each DOC to the tracker
             if self.doc:

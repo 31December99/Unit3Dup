@@ -57,7 +57,7 @@ class UploadBot:
         custom_console.rule()
         return {}, error_message
 
-    def send(self,show_id: int , imdb_id: int, show_keywords_list: str, video_info: Video) -> (requests, dict):
+    def send(self,show_id: int , imdb_id: int, show_keywords_list: str, video_info: Video, torrent_archive: str) -> (requests, dict):
 
         self.tracker.data["name"] = self.content.display_name
         self.tracker.data["tmdb"] = show_id
@@ -74,7 +74,7 @@ class UploadBot:
         self.tracker.data["season_number"] = self.content.guess_season
         self.tracker.data["episode_number"] = (self.content.guess_episode if not self.content.torrent_pack else 0)
         tracker_response=self.tracker.upload_t(data=self.tracker.data, torrent_path=self.content.torrent_path,
-                                               torrent_archive_path=config_settings.user_preferences.TORRENT_ARCHIVE_PATH)
+                                               torrent_archive_path=torrent_archive)
         return self.message(tracker_response)
 
     def send_game(self,igdb: Game, nfo_path = None) -> (requests, dict):

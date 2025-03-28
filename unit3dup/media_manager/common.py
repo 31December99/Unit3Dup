@@ -86,7 +86,7 @@ class UserContent:
         return create_torrent
 
     @staticmethod
-    def torrent(content: Media, tracker_name_list: list, selected_tracker: str) -> Mytorrent | None:
+    def torrent(content: Media, tracker_name_list: list, selected_tracker: str, this_path: str) -> Mytorrent | None:
         """
         Check if a torrent file for the given content already exists
 
@@ -101,14 +101,6 @@ class UserContent:
             bool: True if the torrent file exists otherwise False
         """
 
-        base_name = os.path.basename(content.torrent_path)
-
-        if config_settings.user_preferences.TORRENT_ARCHIVE_PATH:
-            this_path = os.path.join(config_settings.user_preferences.TORRENT_ARCHIVE_PATH, f"{base_name}.torrent")
-        else:
-            this_path = f"{content.torrent_path}.torrent"
-
-        # Check for the existence of the torrent file and compare the announced urls with -tracker flags
         if os.path.exists(this_path):
             custom_console.bot_warning_log(f"\n<> Reusing the existing torrent file..'{content.torrent_path}'\n")
 
@@ -120,12 +112,12 @@ class UserContent:
             if different:
                 my_torrent = Mytorrent(contents=content, meta=content.metainfo, trackers_list=tracker_name_list)
                 my_torrent.hash()
-                return my_torrent if my_torrent.write(overwrite=True) else None
+                return my_torrent if my_torrent.write(overwrite=True, full_path=this_path) else None
         else:
             # Crea a new torrent file
             my_torrent = Mytorrent(contents=content, meta=content.metainfo, trackers_list=tracker_name_list)
             my_torrent.hash()
-            return my_torrent if my_torrent.write(overwrite=False) else None
+            return my_torrent if my_torrent.write(overwrite=False, full_path=this_path) else None
 
         # if it exists but no update is needed
         return None
@@ -171,6 +163,7 @@ class UserContent:
                     tracker_data_response=bittorrent_file.tracker_response,
                     torrent=bittorrent_file.torrent_response,
                     content=bittorrent_file.content,
+                    archive_path=bittorrent_file.archive_path,
                 )
             else:
                 # invalid response
