@@ -96,7 +96,8 @@ class TorrentManager:
             if self.doc:
                 docu_manager = DocuManager(contents=self.doc, cli=self.cli)
                 docu_process_results = docu_manager.process(selected_tracker=selected_tracker,
-                                                            tracker_name_list=trackers_name_list)
+                                                            tracker_name_list=trackers_name_list,
+                                                            tracker_archive=tracker_archive)
 
             # No seeding
             if self.cli.noseed or self.cli.noup:
