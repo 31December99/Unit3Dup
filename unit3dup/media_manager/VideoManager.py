@@ -28,7 +28,7 @@ class VideoManager:
         self.contents: list[Media] = contents
         self.cli: argparse = cli
 
-    def process(self, selected_tracker: str, tracker_name_list: list) -> list[BittorrentData] | None:
+    def process(self, selected_tracker: str, tracker_name_list: list, tracker_archive: str) -> list[BittorrentData] | None:
         """
            Process the video contents to filter duplicates and create torrents
 
@@ -43,6 +43,13 @@ class VideoManager:
         #  Init the torrent list
         bittorrent_list = []
         for content in self.contents:
+            # get the archive path
+            base_name = os.path.basename(content.torrent_path)
+            archive = os.path.join(tracker_archive, selected_tracker)
+            os.makedirs(archive, exist_ok=True)
+            torrent_filepath = os.path.join(tracker_archive,selected_tracker, f"{base_name}.torrent")
+
+
             # Filter contents based on existing torrents or duplicates
             if UserContent.is_preferred_language(content=content):
 
@@ -52,7 +59,7 @@ class VideoManager:
                     continue
 
                 torrent_response = UserContent.torrent(content=content, tracker_name_list=tracker_name_list,
-                                                       selected_tracker=selected_tracker)
+                                                       selected_tracker=selected_tracker, this_path=torrent_filepath)
 
                 # Skip if it is a duplicate
                 if (self.cli.duplicate or config_settings.user_preferences.DUPLICATE_ON
@@ -78,14 +85,15 @@ class VideoManager:
                 # Send data to the tracker
                 tracker_response, tracker_message =  unit3d_up.send(show_id=db.video_id, imdb_id=db.imdb_id,
                                                                     show_keywords_list=db.keywords_list,
-                                                                    video_info=video_info)
+                                                                    video_info=video_info,torrent_archive=torrent_filepath)
 
                 bittorrent_list.append(
                     BittorrentData(
                         tracker_response=tracker_response,
                         torrent_response=torrent_response,
                         content=content,
-                        tracker_message = tracker_message
+                        tracker_message = tracker_message,
+                        archive_path=torrent_filepath,
                     ))
 
         # // end content
