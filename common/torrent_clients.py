@@ -28,15 +28,7 @@ class TorrClient(ABC):
     def send_to_client(self, tracker_data_response: str, torrent: Mytorrent, content: Media, archive_path: str):
         pass
 
-    def download(self, tracker_torrent_url: requests, torrent_path: str):
-        # Archive the torrent file if torrent_archive is set
-        if config_settings.user_preferences.TORRENT_ARCHIVE_PATH:
-            file_name = f"{os.path.basename(torrent_path)}.torrent"
-            full_path_archive = os.path.join(config_settings.user_preferences.TORRENT_ARCHIVE_PATH, file_name)
-        else:
-            # Or save to the current path
-            full_path_archive = f"{torrent_path}.torrent"
-
+    def download(self, tracker_torrent_url: requests, full_path_archive: str):
         # File archived
         with open(full_path_archive, "wb") as file:
             file.write(tracker_torrent_url.content)
@@ -89,10 +81,10 @@ class TransmissionClient(TorrClient):
         else:
             # Use the new one
             download_torrent_dal_tracker = requests.get(tracker_data_response)
+
             if download_torrent_dal_tracker.status_code == 200:
                 torrent_file = self.download(tracker_torrent_url=download_torrent_dal_tracker,
-                                             torrent_path=content.torrent_path)
-
+                                             full_path_archive=archive_path)
                 self.client.add_torrent(torrent=torrent_file, download_dir=str(torr_location))
 
     def send_file_to_client(self, torrent_path, archive_path: str ):
@@ -165,7 +157,7 @@ class QbittorrentClient(TorrClient):
             download_torrent_dal_tracker = requests.get(tracker_data_response)
             if download_torrent_dal_tracker.status_code == 200:
                 torrent_file = self.download(tracker_torrent_url=download_torrent_dal_tracker,
-                                             torrent_path=content.torrent_path)
+                                             full_path_archive=archive_path)
 
                 self.client.download_from_file(file_buffer=torrent_file, savepath=str(torr_location))
 
