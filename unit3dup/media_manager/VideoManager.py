@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import argparse
+import os
 
 from common.external_services.theMovieDB.core.api import DbOnline
 from common.bittorrent import BittorrentData
@@ -44,16 +45,14 @@ class VideoManager:
         for content in self.contents:
             # Filter contents based on existing torrents or duplicates
             if UserContent.is_preferred_language(content=content):
-                # Torrent creation
-                if UserContent.torrent_file_exists(path=content.torrent_path,
-                                                   tracker_name_list=tracker_name_list,
-                                                   selected_tracker=selected_tracker):
-                    torrent_response = None
-                    if self.cli.watcher:
+
+                if self.cli.watcher:
+                    if os.path.exists(content.torrent_path):
                         custom_console.bot_log(f"Watcher Active.. skip the old upload '{content.file_name}'")
-                        continue
-                else:
-                    torrent_response = UserContent.torrent(content=content, trackers=tracker_name_list)
+                    continue
+
+                torrent_response = UserContent.torrent(content=content, tracker_name_list=tracker_name_list,
+                                                       selected_tracker=selected_tracker)
 
                 # Skip if it is a duplicate
                 if (self.cli.duplicate or config_settings.user_preferences.DUPLICATE_ON

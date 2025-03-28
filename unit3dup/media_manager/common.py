@@ -8,7 +8,6 @@ from common.trackers.data import trackers_api_data
 from common.bittorrent import BittorrentData
 from common.utility import ManageTitles
 from common import config_settings
-
 from unit3dup.pvtTorrent import Mytorrent
 from unit3dup.duplicate import Duplicate
 from unit3dup.media import Media
@@ -19,82 +18,6 @@ class UserContent:
     """
     Manage user media Files
     """
-
-
-    @staticmethod
-    def torrent_announces(torrent_path: str, tracker_name_list: list,selected_tracker: str):
-        """ Add announces to a torrent file"""
-
-        if not tracker_name_list:
-           tracker_name_list = [selected_tracker]
-        custom_console.bot_log(f"UPLOAD TO {tracker_name_list}")
-
-        # // Read the existing torrent file
-        with open(torrent_path, 'rb') as f:
-            # It decodes it
-            torrent_data = bencode2.bdecode(f.read())
-
-
-        announce_list_encoded = []
-        # a single tracker in the tracker_list corresponds to the '-tracker' flag from the user's CLI
-        # two or more trackers in the tracker_list correspond to the '-cross' flag from the user's CLI
-        for tracker in tracker_name_list:
-            # Get data for each tracker
-            api_data = trackers_api_data[tracker.upper()]
-            # Add to the list and encode it
-            announce_list_encoded.append([api_data['announce'].encode()])
-
-        if b'announce-list' in torrent_data:
-            # Edit the announce list only if it is different from the announce_list_encoded (user CLI)
-            if torrent_data[b'announce-list'] != announce_list_encoded:
-                del torrent_data[b'announce-list']
-
-        if b'announce' in torrent_data:
-            if torrent_data[b'announce'] != announce_list_encoded:
-                del torrent_data[b'announce']
-
-        # Set the new announce list
-        torrent_data[b'announce-list'] = announce_list_encoded
-        for announce in announce_list_encoded:
-            custom_console.bot_log(f"{announce[0].decode()[:-32]}{'*' * 16}")
-
-        # // Save
-        with open(torrent_path, 'wb') as f:
-            f.write(bencode2.bencode(torrent_data))
-        print()
-
-
-    @staticmethod
-    def torrent_file_exists(path: str, tracker_name_list: list, selected_tracker: str) -> bool:
-        """
-        Check if a torrent file for the given content already exists
-
-        Args:
-            path: The torrent's path
-            tracker_name_list: the trackers name
-            selected_tracker: current tracker for the upload process (default tracker or -tracker )
-
-        Returns:
-            bool: True if the torrent file exists otherwise False
-        """
-
-        base_name = os.path.basename(path)
-
-        if config_settings.user_preferences.TORRENT_ARCHIVE_PATH:
-            this_path = os.path.join(config_settings.user_preferences.TORRENT_ARCHIVE_PATH, f"{base_name}.torrent")
-        else:
-            this_path = f"{path}.torrent"
-
-        if os.path.exists(this_path):
-            custom_console.bot_warning_log(f"\n<> Reusing the existing torrent file..'{path}'\n")
-
-            # Add an announce_list or remove 'announce-list' if the list is empty
-            UserContent.torrent_announces(torrent_path=this_path,
-                                          tracker_name_list=tracker_name_list,
-                                          selected_tracker=selected_tracker)
-            return True
-        return False
-
 
     @staticmethod
     def is_preferred_language(content: Media) -> bool:
@@ -126,23 +49,86 @@ class UserContent:
         custom_console.rule()
         return False
 
+
+
     @staticmethod
-    def torrent(content: Media, trackers: list)-> Mytorrent:
+    def torrent_announces(torrent_path: str, tracker_name_list: list,selected_tracker: str) -> bool:
+        """ Add announces to a torrent file"""
+
+        if not tracker_name_list:
+           tracker_name_list = [selected_tracker]
+        custom_console.bot_log(f"UPLOAD TO {tracker_name_list}")
+
+        # // Read the existing torrent file
+        with open(torrent_path, 'rb') as f:
+            # It decodes it
+            torrent_data = bencode2.bdecode(f.read())
+
+        announce_list_encoded = []
+        # a single tracker in the tracker_list corresponds to the '-tracker' flag from the user's CLI
+        # two or more trackers in the tracker_list correspond to the '-cross' flag from the user's CLI
+        for tracker in tracker_name_list:
+            # Get data for each tracker
+            api_data = trackers_api_data[tracker.upper()]
+            # Add to the list and encode it
+            announce_list_encoded.append([api_data['announce'].encode()])
+
+        create_torrent = False
+        if b'announce-list' in torrent_data:
+            if torrent_data[b'announce-list'] != announce_list_encoded:
+                create_torrent = True
+
+
+        if b'announce' in torrent_data:
+            if torrent_data[b'announce'] != announce_list_encoded[0][0]:
+                create_torrent = True
+
+        return create_torrent
+
+    @staticmethod
+    def torrent(content: Media, tracker_name_list: list, selected_tracker: str) -> Mytorrent | None:
         """
-           Create the file torrent
+        Check if a torrent file for the given content already exists
 
-           Args:
-               content (Contents): The content object media
-               trackers: list of name of the trackers
+        Args:
+            trackers:
+            content:
+            path: The torrent's path
+            tracker_name_list: the trackers name
+            selected_tracker: current tracker for the upload process (default tracker or -tracker )
 
-           Returns:
-               my_torrent object
+        Returns:
+            bool: True if the torrent file exists otherwise False
         """
 
-        # Add announcement only if expressly requested by the user via cli -tracker flag
-        my_torrent = Mytorrent(contents=content, meta=content.metainfo, trackers_list=trackers)
-        my_torrent.hash()
-        return my_torrent if my_torrent.write() else None
+        base_name = os.path.basename(content.torrent_path)
+
+        if config_settings.user_preferences.TORRENT_ARCHIVE_PATH:
+            this_path = os.path.join(config_settings.user_preferences.TORRENT_ARCHIVE_PATH, f"{base_name}.torrent")
+        else:
+            this_path = f"{content.torrent_path}.torrent"
+
+        # Check for the existence of the torrent file and compare the announced urls with -tracker flags
+        if os.path.exists(this_path):
+            custom_console.bot_warning_log(f"\n<> Reusing the existing torrent file..'{content.torrent_path}'\n")
+
+            # Compare the exists announces and return True if it's/they are different from the request -tracker flags
+            different = UserContent.torrent_announces(torrent_path=this_path,
+                                          tracker_name_list=tracker_name_list,
+                                          selected_tracker=selected_tracker)
+            # False if we need Update the torrent file
+            if different:
+                my_torrent = Mytorrent(contents=content, meta=content.metainfo, trackers_list=tracker_name_list)
+                my_torrent.hash()
+                return my_torrent if my_torrent.write(overwrite=True) else None
+        else:
+            # Crea a new torrent file
+            my_torrent = Mytorrent(contents=content, meta=content.metainfo, trackers_list=tracker_name_list)
+            my_torrent.hash()
+            return my_torrent if my_torrent.write(overwrite=False) else None
+
+        # if it exists but no update is needed
+        return None
 
     @staticmethod
     def is_duplicate(content: Media, tracker_name: str) -> bool:

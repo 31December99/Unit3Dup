@@ -48,7 +48,7 @@ class Mytorrent:
                 custom_console.bot_error_log(e)
                 exit(1)
 
-    def write(self) -> bool:
+    def write(self, overwrite: bool) -> bool:
         if not config_settings.user_preferences.TORRENT_ARCHIVE_PATH:
             full_path = f"{self.torrent_path}.torrent"
         else:
@@ -56,12 +56,16 @@ class Mytorrent:
             full_path = os.path.join(
                 config_settings.user_preferences.TORRENT_ARCHIVE_PATH, f"{torrent_file_name}.torrent"
             )
+
         try:
+            if overwrite:
+                os.remove(full_path)
             self.mytorr.write(full_path)
             return True
         except torf.TorfError as e:
             if "File exists" in str(e):
-                custom_console.bot_error_log(
-                    f"This torrent file already exists: {full_path}"
-                )
+                custom_console.bot_error_log(f"This torrent file already exists: {full_path}")
+            return False
+        except FileNotFoundError as e:
+            custom_console.bot_error_log(f"Trying to update torrent but it does not exist: {full_path}")
             return False
