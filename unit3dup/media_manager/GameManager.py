@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import argparse
+import os
 
 from common.external_services.igdb.client import IGDBClient
 from common.bittorrent import BittorrentData
@@ -25,7 +26,7 @@ class GameManager:
         self.cli: argparse = cli
         self.igdb = IGDBClient()
 
-    def process(self, selected_tracker: str, tracker_name_list: list) -> list[BittorrentData]:
+    def process(self, selected_tracker: str, tracker_name_list: list,  tracker_archive: str) -> list[BittorrentData] | None:
         """
         Process the game contents to filter duplicates and create torrents
 
@@ -37,7 +38,7 @@ class GameManager:
             exit(1)
 
         # -multi : no announce_list . One announce for multi tracker
-        if self.cli.multi:
+        if self.cli.mt:
             tracker_name_list = [selected_tracker.upper()]
 
         if self.cli.upload:
@@ -48,19 +49,20 @@ class GameManager:
         #  Init the torrent list
         bittorrent_list = []
         for content in self.contents:
+            # get the archive path
+            archive = os.path.join(tracker_archive, selected_tracker)
+            os.makedirs(archive, exist_ok=True)
+            torrent_filepath = os.path.join(tracker_archive,selected_tracker, f"{content.torrent_name}.torrent")
 
-            # Torrent creation
-            if not UserContent.torrent_file_exists(path=content.torrent_path,
-                                                   tracker_name_list=tracker_name_list,
-                                                   selected_tracker=selected_tracker):
-
-                torrent_response = UserContent.torrent(content=content, trackers=tracker_name_list)
-            else:
-                # Torrent found, skip if the watcher is active
-                if self.cli.watcher:
+            # Filter contents based on existing torrents or duplicates
+            if self.cli.watcher:
+                if os.path.exists(content.torrent_path):
                     custom_console.bot_log(f"Watcher Active.. skip the old upload '{content.file_name}'")
-                    continue
-                torrent_response = None
+                continue
+
+            torrent_response = UserContent.torrent(content=content, tracker_name_list=tracker_name_list,
+                                                       selected_tracker=selected_tracker, this_path=torrent_filepath)
+
 
             # Don't upload if -noup is set to True
             if self.cli.noup:
@@ -81,14 +83,16 @@ class GameManager:
 
             # Tracker payload
             unit3d_up = UploadBot(content=content, tracker_name=selected_tracker)
-            tracker_response, tracker_message = unit3d_up.send_game(igdb=game_data_results, nfo_path=content.game_nfo)
+            tracker_response, tracker_message = unit3d_up.send_game(igdb=game_data_results, nfo_path=content.game_nfo,
+                                                                    torrent_archive=torrent_filepath)
 
             bittorrent_list.append(
                 BittorrentData(
                     tracker_response=tracker_response,
                     torrent_response=torrent_response,
                     content=content,
-                    tracker_message=tracker_message
+                    tracker_message=tracker_message,
+                    archive_path = torrent_filepath,
                 ))
         return bittorrent_list
 

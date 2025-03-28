@@ -77,7 +77,7 @@ class UploadBot:
                                                torrent_archive_path=torrent_archive)
         return self.message(tracker_response)
 
-    def send_game(self,igdb: Game, nfo_path = None) -> (requests, dict):
+    def send_game(self,igdb: Game, torrent_archive: str, nfo_path = None) -> (requests, dict):
 
         igdb_platform = self.content.platform_list[0].lower() if self.content.platform_list else ''
         self.tracker.data["name"] = self.content.display_name
@@ -88,11 +88,10 @@ class UploadBot:
         self.tracker.data["type_id"] = self.tracker_data.type_id.get(igdb_platform) if igdb_platform else 1
         self.tracker.data["igdb"] = igdb.id if igdb else 1,  # need zero not one ( fix tracker)
         tracker_response=self.tracker.upload_t(data=self.tracker.data, torrent_path=self.content.torrent_path,
-                                               torrent_archive_path=config_settings.user_preferences.TORRENT_ARCHIVE_PATH,
-                                               nfo_path=nfo_path)
+                                               torrent_archive_path=torrent_archive, nfo_path=nfo_path)
         return self.message(tracker_response)
 
-    def send_docu(self, document_info: PdfImages):
+    def send_docu(self, document_info: PdfImages, torrent_archive: str):
 
         self.tracker.data["name"] = self.content.display_name
         self.tracker.data["tmdb"] = 0
@@ -104,5 +103,5 @@ class UploadBot:
         # tracker.data["torrent-cover"] = "" TODO: not yet implemented
 
         tracker_response=self.tracker.upload_t(data=self.tracker.data, torrent_path=self.content.torrent_path,
-                                        torrent_archive_path = config_settings.user_preferences.TORRENT_ARCHIVE_PATH)
+                                        torrent_archive_path = torrent_archive)
         return self.message(tracker_response)
