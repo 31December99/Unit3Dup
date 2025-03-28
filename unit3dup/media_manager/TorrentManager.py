@@ -82,7 +82,8 @@ class TorrentManager:
             if self.games:
                 game_manager = GameManager(contents=self.games, cli=self.cli)
                 game_process_results = game_manager.process(selected_tracker=selected_tracker,
-                                                            tracker_name_list=trackers_name_list)
+                                                            tracker_name_list=trackers_name_list,
+                                                            tracker_archive=tracker_archive)
 
             # Build the torrent file and upload each VIDEO to the trackers
             if self.videos:
