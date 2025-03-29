@@ -116,14 +116,6 @@ def main():
         bot = Bot(path=cli.args.seedit, cli=cli.args, trackers_name_list=tracker_name_list)
         bot.seed_it()
 
-
-    if cli.args.reseed:
-        print("Not Implemented")
-        exit(1)
-        # bot = Bot(path=cli.args.reseed, cli=cli.args, trackers_name_list=tracker_name_list)
-        # bot.re_seed()
-
-
     # Pw
     if cli.args.pw:
         bot = Bot(path=cli.args.pw,cli=cli.args, trackers_name_list=tracker_name_list)
