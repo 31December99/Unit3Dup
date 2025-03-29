@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import argparse
+import os
 
 from common.bittorrent import BittorrentData
 
@@ -18,30 +19,27 @@ class DocuManager:
         self.contents: list['Media'] = contents
         self.cli: argparse = cli
 
-
-    def process(self, selected_tracker:str, tracker_name_list: list) -> list[BittorrentData]:
+    def process(self, selected_tracker: str, tracker_name_list: list, tracker_archive: str) -> list[BittorrentData] | None:
 
         # -multi : no announce_list . One announce for multi tracker
-        if self.cli.multi:
+        if self.cli.mt:
             tracker_name_list = [selected_tracker.upper()]
 
         #  Init the torrent list
         bittorrent_list = []
         for content in self.contents:
+            # get the archive path
+            archive = os.path.join(tracker_archive, selected_tracker)
+            os.makedirs(archive, exist_ok=True)
+            torrent_filepath = os.path.join(tracker_archive,selected_tracker, f"{content.torrent_name}.torrent")
 
-            # Torrent creation
-            if not UserContent.torrent_file_exists(path=content.torrent_path,
-                                                   tracker_name_list=tracker_name_list,
-                                                   selected_tracker=selected_tracker):
-
-
-                torrent_response = UserContent.torrent(content=content, trackers=tracker_name_list)
-            else:
-                # Torrent found, skip if the watcher is active
-                if self.cli.watcher:
+            if self.cli.watcher:
+                if os.path.exists(content.torrent_path):
                     custom_console.bot_log(f"Watcher Active.. skip the old upload '{content.file_name}'")
-                    continue
-                torrent_response = None
+                continue
+
+            torrent_response = UserContent.torrent(content=content, tracker_name_list=tracker_name_list,
+                                                   selected_tracker=selected_tracker, this_path=torrent_filepath)
 
             # Skip if it is a duplicate
             if ((self.cli.duplicate or config_settings.user_preferences.DUPLICATE_ON)
@@ -61,7 +59,8 @@ class DocuManager:
             unit3d_up = UploadBot(content=content, tracker_name=selected_tracker)
 
             # Upload
-            tracker_response, tracker_message = unit3d_up.send_docu(document_info=docu_info)
+            tracker_response, tracker_message = unit3d_up.send_docu(document_info=docu_info,
+                                                                    torrent_archive=torrent_filepath)
 
             bittorrent_list.append(
                 BittorrentData(
@@ -69,6 +68,7 @@ class DocuManager:
                     torrent_response=torrent_response,
                     content=content,
                     tracker_message=tracker_message,
+                    archive_path=torrent_filepath,
                 ))
 
         return bittorrent_list

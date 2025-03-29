@@ -44,7 +44,7 @@ class ManageTitles:
         if '-' in code:
             codes = code.split('-')
         else:
-            codes = code
+            codes = [code]
 
         result = []
         for part in codes:

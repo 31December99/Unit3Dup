@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import argparse
+import os
 
 from common.external_services.theMovieDB.core.api import DbOnline
 from common.bittorrent import BittorrentData
@@ -27,7 +28,7 @@ class VideoManager:
         self.contents: list[Media] = contents
         self.cli: argparse = cli
 
-    def process(self, selected_tracker: str, tracker_name_list: list) -> list[BittorrentData] | None:
+    def process(self, selected_tracker: str, tracker_name_list: list, tracker_archive: str) -> list[BittorrentData] | None:
         """
            Process the video contents to filter duplicates and create torrents
 
@@ -36,37 +37,33 @@ class VideoManager:
         """
 
         # -multi : no announce_list . One announce for multi tracker
-        if self.cli.multi:
+        if self.cli.mt:
             tracker_name_list = [selected_tracker.upper()]
 
         #  Init the torrent list
         bittorrent_list = []
         for content in self.contents:
-            # Filter contents based on existing torrents or duplicates
+            # get the archive path
+            archive = os.path.join(tracker_archive, selected_tracker)
+            os.makedirs(archive, exist_ok=True)
+            torrent_filepath = os.path.join(tracker_archive,selected_tracker, f"{content.torrent_name}.torrent")
 
+
+            # Filter contents based on existing torrents or duplicates
             if UserContent.is_preferred_language(content=content):
-                # Torrent creation
-                if not UserContent.torrent_file_exists(path=content.torrent_path,
-                                                       tracker_name_list=tracker_name_list,
-                                                       selected_tracker=selected_tracker):
-                    self.torrent_found = False
-                else:
-                    # Torrent found, skip if the watcher is active
-                    if self.cli.watcher:
+
+                if self.cli.watcher:
+                    if os.path.exists(content.torrent_path):
                         custom_console.bot_log(f"Watcher Active.. skip the old upload '{content.file_name}'")
-                        continue
-                    self.torrent_found = True
+                    continue
+
+                torrent_response = UserContent.torrent(content=content, tracker_name_list=tracker_name_list,
+                                                       selected_tracker=selected_tracker, this_path=torrent_filepath)
 
                 # Skip if it is a duplicate
                 if (self.cli.duplicate or config_settings.user_preferences.DUPLICATE_ON
                         and UserContent.is_duplicate(content=content, tracker_name=selected_tracker)):
                     continue
-
-                # Add announcement only if expressly requested by the user via cli -tracker flag
-                if not self.torrent_found:
-                    torrent_response = UserContent.torrent(content=content, trackers=tracker_name_list)
-                else:
-                    torrent_response = None
 
                 # Search for VIDEO ID
                 db_online = DbOnline(media=content,category=content.category)
@@ -87,14 +84,15 @@ class VideoManager:
                 # Send data to the tracker
                 tracker_response, tracker_message =  unit3d_up.send(show_id=db.video_id, imdb_id=db.imdb_id,
                                                                     show_keywords_list=db.keywords_list,
-                                                                    video_info=video_info)
+                                                                    video_info=video_info,torrent_archive=torrent_filepath)
 
                 bittorrent_list.append(
                     BittorrentData(
                         tracker_response=tracker_response,
                         torrent_response=torrent_response,
                         content=content,
-                        tracker_message = tracker_message
+                        tracker_message = tracker_message,
+                        archive_path=torrent_filepath,
                     ))
 
         # // end content

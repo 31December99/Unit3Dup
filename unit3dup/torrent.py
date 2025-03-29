@@ -358,7 +358,7 @@ class View(Torrent):
         tracker_data = self.get_dead()
         custom_console.bot_log(f"Dead torrents.. Filter by if the torrent has 0 seeders")
         if tracker_data:
-            self.page_view(tracker_data=tracker_data, tracker=self.tracker)
+            self.page_view(tracker_data=tracker_data, tracker=self.tracker, info=True)
 
     def view_dying(self):
         tracker_data = self.get_dying()

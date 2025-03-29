@@ -25,18 +25,10 @@ class TorrClient(ABC):
         pass
 
     @abstractmethod
-    def send_to_client(self, tracker_data_response: str, torrent: Mytorrent, content: Media):
+    def send_to_client(self, tracker_data_response: str, torrent: Mytorrent, content: Media, archive_path: str):
         pass
 
-    def download(self, tracker_torrent_url: requests, torrent_path: str):
-        # Archive the torrent file if torrent_archive is set
-        if config_settings.user_preferences.TORRENT_ARCHIVE_PATH:
-            file_name = f"{os.path.basename(torrent_path)}.torrent"
-            full_path_archive = os.path.join(config_settings.user_preferences.TORRENT_ARCHIVE_PATH, file_name)
-        else:
-            # Or save to the current path
-            full_path_archive = f"{torrent_path}.torrent"
-
+    def download(self, tracker_torrent_url: requests, full_path_archive: str):
         # File archived
         with open(full_path_archive, "wb") as file:
             file.write(tracker_torrent_url.content)
@@ -73,11 +65,7 @@ class TransmissionClient(TorrClient):
             custom_console.bot_error_log(f"{self.__class__.__name__} Please verify your configuration")
 
 
-    def send_to_client(self,tracker_data_response: str, torrent: Mytorrent, content: Media):
-        full_path_archive = os.path.join(config_settings.user_preferences.TORRENT_ARCHIVE_PATH,
-                                         f"{os.path.basename(content.torrent_path)}.torrent")
-
-
+    def send_to_client(self,tracker_data_response: str, torrent: Mytorrent, content: Media, archive_path: str):
         # "Translate" files location to shared_path if necessary
         if config_settings.torrent_client_config.SHARED_QBIT_PATH:
             torr_location = config_settings.torrent_client_config.SHARED_QBIT_PATH
@@ -88,21 +76,19 @@ class TransmissionClient(TorrClient):
         # Torrent not created
         if not torrent:
             self.client.add_torrent(
-                torrent=open(full_path_archive, "rb"), download_dir=str(torr_location)
+                torrent=open(archive_path, "rb"), download_dir=str(torr_location)
                                     )
         else:
             # Use the new one
             download_torrent_dal_tracker = requests.get(tracker_data_response)
+
             if download_torrent_dal_tracker.status_code == 200:
                 torrent_file = self.download(tracker_torrent_url=download_torrent_dal_tracker,
-                                             torrent_path=content.torrent_path)
-
+                                             full_path_archive=archive_path)
                 self.client.add_torrent(torrent=torrent_file, download_dir=str(torr_location))
 
-    def send_file_to_client(self, torrent_path):
-        full_path_archive = os.path.join(config_settings.user_preferences.TORRENT_ARCHIVE_PATH,
-                                         f"{os.path.basename(torrent_path)}.torrent")
-        self.client.add_torrent(torrent=open(full_path_archive, "rb"), download_dir=os.path.dirname(torrent_path))
+    def send_file_to_client(self, torrent_path, archive_path: str ):
+        self.client.add_torrent(torrent=open(archive_path, "rb"), download_dir=os.path.dirname(torrent_path))
 
 
 
@@ -153,10 +139,7 @@ class QbittorrentClient(TorrClient):
             custom_console.bot_error_log(f"{self.__class__.__name__} Please verify your configuration")
 
 
-    def send_to_client(self,tracker_data_response: str, torrent: Mytorrent, content: Media):
-        full_path_archive = os.path.join(config_settings.user_preferences.TORRENT_ARCHIVE_PATH,
-                                         f"{os.path.basename(content.torrent_path)}.torrent")
-
+    def send_to_client(self, tracker_data_response: str, torrent: Mytorrent, content: Media, archive_path: str):
         # "Translate" files location to shared_path if necessary
         if config_settings.torrent_client_config.SHARED_QBIT_PATH:
             torr_location = config_settings.torrent_client_config.SHARED_QBIT_PATH
@@ -167,23 +150,19 @@ class QbittorrentClient(TorrClient):
         # file torrent already created
         if not torrent:
             self.client.download_from_file(
-                file_buffer=open(full_path_archive, "rb"), savepath=str(torr_location)
+                file_buffer=open(archive_path, "rb"), savepath=str(torr_location)
             )
         else:
             # Use the new one
             download_torrent_dal_tracker = requests.get(tracker_data_response)
             if download_torrent_dal_tracker.status_code == 200:
                 torrent_file = self.download(tracker_torrent_url=download_torrent_dal_tracker,
-                                             torrent_path=content.torrent_path)
+                                             full_path_archive=archive_path)
 
                 self.client.download_from_file(file_buffer=torrent_file, savepath=str(torr_location))
 
 
-
-    def send_file_to_client(self, torrent_path):
-        full_path_archive = os.path.join(config_settings.user_preferences.TORRENT_ARCHIVE_PATH,
-                                         f"{os.path.basename(torrent_path)}.torrent")
-
-        self.client.download_from_file(file_buffer=open(full_path_archive, "rb"),
+    def send_file_to_client(self, torrent_path, archive_path: str):
+        self.client.download_from_file(file_buffer=open(archive_path, "rb"),
                                        savepath=os.path.dirname(torrent_path))
 

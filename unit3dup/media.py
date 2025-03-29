@@ -255,8 +255,10 @@ class Media:
             filename_split = self.display_name.upper().split(" ")
             for code in filename_split:
                 if converted_code := ManageTitles.convert_iso(code):
-                    self._audio_languages = [converted_code]
+                    self._audio_languages = converted_code
                     return self._audio_languages
+            # get from the audio track
+            self._audio_languages = self.languages
         return self._audio_languages
 
     @property
