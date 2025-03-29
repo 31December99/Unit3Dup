@@ -320,13 +320,7 @@ class Torrents(Tracker):
 
 class Uploader(Tracker):
     def upload_t(self, data: dict, torrent_path: str, torrent_archive_path: str, nfo_path = None) -> requests:
-        if not torrent_archive_path:
-            full_path = f"{torrent_path}.torrent"
-        else:
-            torrent_file_name = os.path.basename(torrent_path)
-            full_path = os.path.join(torrent_archive_path, f"{torrent_file_name}.torrent")
-
-        file_torrent = {"torrent": full_path}
+        file_torrent = {"torrent": torrent_archive_path}
         if nfo_path:
             file_torrent.update({"nfo": self.encode_utf8(file_path=nfo_path)})
 

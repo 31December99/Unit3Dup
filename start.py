@@ -30,10 +30,6 @@ def main():
     # /// Initialize command line interface
     cli = CommandLine()
 
-    cli.args.tracker = None
-    cli.args.multi  = None
-    cli.args.cross = None
-
 
     # /// Load the list of the registered trackers
     if not config.tracker_config.MULTI_TRACKER:
@@ -83,14 +79,9 @@ def main():
     if cli.args.tracker:
         tracker_name_list = [cli.args.tracker.upper()]
 
-    # Add one or more trackers to the torrent file if requested (disabled)
-    if cli.args.cross:
+    # Send content to the multi_tracker list
+    if cli.args.mt:
         tracker_name_list = config.tracker_config.MULTI_TRACKER
-
-    # Send content to the multi_tracker list (disabled)
-    if cli.args.multi:
-        tracker_name_list = config.tracker_config.MULTI_TRACKER
-
 
     # Manual upload mode
     if cli.args.upload:
@@ -124,6 +115,14 @@ def main():
     if cli.args.seedit:
         bot = Bot(path=cli.args.seedit, cli=cli.args, trackers_name_list=tracker_name_list)
         bot.seed_it()
+
+
+    if cli.args.reseed:
+        print("Not Implemented")
+        exit(1)
+        # bot = Bot(path=cli.args.reseed, cli=cli.args, trackers_name_list=tracker_name_list)
+        # bot.re_seed()
+
 
     # Pw
     if cli.args.pw:

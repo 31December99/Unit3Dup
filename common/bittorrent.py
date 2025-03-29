@@ -11,3 +11,4 @@ class BittorrentData:
     torrent_response: Mytorrent
     content: Media
     tracker_message: dict
+    archive_path: str

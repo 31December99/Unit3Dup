@@ -2,7 +2,7 @@
 
 sis_data = {
     "CATEGORY": {"movie": 1,
-                 "tvshow": 2,
+                 "tv": 2,
                  "ebook":15,
                  "edicola": 17,
                  "xxx":19,
@@ -27,7 +27,8 @@ sis_data = {
                 "disk": 26,
                 "cinemanews": 42,
                 "hdtv": 33,
-                "window": 31,
+                "windows": 31,
+                "pc": 31,
                 "linux": 39,
                 "android": 38,
                 "appleos": 32,
