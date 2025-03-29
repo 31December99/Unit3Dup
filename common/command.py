@@ -28,6 +28,8 @@ class CommandLine:
         parser.add_argument("-f", "--folder", type=str, help="Upload folder")
         parser.add_argument("-scan", "--scan", type=str, help="Scan folder")
         parser.add_argument("-reseed", "--reseed", action="store_true", help="reseed folder")
+        parser.add_argument("-title", "--title", type=str, help="add a title")
+
 
         parser.add_argument("-watcher", "--watcher", action="store_true", help="Start watcher")
         parser.add_argument("-tracker", "--tracker", type=str, default=config.tracker_config.MULTI_TRACKER[0],
