@@ -5,6 +5,7 @@ import os
 from common.external_services.igdb.client import IGDBClient
 from common.bittorrent import BittorrentData
 
+from unit3dup.media_manager.SeedManager import SeedManager
 from unit3dup.media_manager.common import UserContent
 from unit3dup.upload import UploadBot
 from unit3dup import config_settings
@@ -33,6 +34,10 @@ class GameManager:
         Returns:
             list: List of Bittorrent objects created for each content
         """
+
+        # Tracker administration
+        seed_manager = SeedManager(cli=self.cli, trackers_name_list=tracker_name_list)
+
         login = self.igdb.connect()
         if not login:
             exit(1)
@@ -64,11 +69,6 @@ class GameManager:
                                                        selected_tracker=selected_tracker, this_path=torrent_filepath)
 
 
-            # Don't upload if -noup is set to True
-            if self.cli.noup:
-                custom_console.bot_warning_log(f"No Upload active. Done.")
-                continue
-
             # Skip if it is a duplicate
             if ((self.cli.duplicate or config_settings.user_preferences.DUPLICATE_ON)
                     and UserContent.is_duplicate(content=content, tracker_name=selected_tracker)):
@@ -81,10 +81,27 @@ class GameManager:
             if not game_data_results:
                 continue
 
-            # Tracker payload
+            # Run the seeding process if requested by the user
+            """ only for the video content
+            if self.cli.reseed:
+                seed_manager.process(tmdb_id=game_data_results.id)
+                seed_manager.run(trackers_name_list=tracker_name_list)
+                continue
+            """
+
+            # Tracker instance
             unit3d_up = UploadBot(content=content, tracker_name=selected_tracker)
-            tracker_response, tracker_message = unit3d_up.send_game(igdb=game_data_results, nfo_path=content.game_nfo,
-                                                                    torrent_archive=torrent_filepath)
+
+            # Get the data
+            unit3d_up.data_game(igdb=game_data_results)
+
+            # Don't upload if -noup is set to True
+            if self.cli.noup:
+                custom_console.bot_warning_log(f"No Upload active. Done.")
+                continue
+
+            # Send to the tracker
+            tracker_response, tracker_message = unit3d_up.send(torrent_archive=torrent_filepath, nfo_path=content.game_nfo)
 
             bittorrent_list.append(
                 BittorrentData(
