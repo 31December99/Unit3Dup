@@ -57,28 +57,31 @@ class ContentManager:
         """
         Process files or folders and create a `Contents` object if the metadata is valid
         """
+        process = False
         if os.path.isdir(self.path):
-            self.process_folder()
+            process = self.process_folder()
         elif os.path.isfile(self.path):
-            self.process_file()
+            process = self.process_file()
 
         if not self.meta_info:
             return False
         torrent_pack = bool(re.search(r"S\d+(?!.*E\d+)", self.path))
 
-        media.file_name = self.file_name
-        media.torrent_name = self.torrent_name
-        media.size = self.size
-        media.metainfo = self.meta_info
-        media.torrent_pack = torrent_pack
-        media.doc_description = self.doc_description
-        media.game_nfo = self.game_nfo
-        media.display_name = self.display_name
-        media.imdb_id = self.imdb_id
-        media.tmdb_id = self.tmdb_id
-        media.igdb_id = self.igdb_id
-        return media
-
+        if process:
+            media.file_name = self.file_name
+            media.torrent_name = self.torrent_name
+            media.size = self.size
+            media.metainfo = self.meta_info
+            media.torrent_pack = torrent_pack
+            media.doc_description = self.doc_description
+            media.game_nfo = self.game_nfo
+            media.display_name = self.display_name
+            media.imdb_id = self.imdb_id
+            media.tmdb_id = self.tmdb_id
+            media.igdb_id = self.igdb_id
+            return media
+        else:
+            return False
 
     def search_ids(self):
         _id = re.findall(r"\{(imdb-\d+|tmdb-\d+|igdb-\d+)}", self.file_name, re.IGNORECASE)
