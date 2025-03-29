@@ -27,6 +27,7 @@ class CommandLine:
         parser.add_argument("-u", "--upload", type=str, help="Upload path")
         parser.add_argument("-f", "--folder", type=str, help="Upload folder")
         parser.add_argument("-scan", "--scan", type=str, help="Scan folder")
+        parser.add_argument("-reseed", "--reseed", action="store_true", help="reseed folder")
 
         parser.add_argument("-watcher", "--watcher", action="store_true", help="Start watcher")
         parser.add_argument("-tracker", "--tracker", type=str, default=config.tracker_config.MULTI_TRACKER[0],
@@ -37,7 +38,7 @@ class CommandLine:
         parser.add_argument('-force', nargs='?', const="movie", type=str, default=None)
         parser.add_argument("-noseed", "--noseed", action="store_true", help="No seeding after upload")
         parser.add_argument("-noup", "--noup", action="store_true", help="Torrent only. No upload")
-        parser.add_argument("-reseed", "--reseed", action="store_true", help="")
+
 
 
         parser.add_argument("-pw", "--pw", type=str, help="")
