@@ -172,6 +172,13 @@ class Media:
 
     @property
     def generate_title(self) -> str:
+
+        if not self._generate_title:
+            video_f = self.mediafile.video_track[0]['format']
+            video_h = self.mediafile.video_track[0]['height']
+            audio_f = self.mediafile.audio_track[0]['format']
+            audio_lang = self.mediafile.audio_track[0]['language']
+            self._generate_title =  f"{self.guess_title}.{video_h}.{video_f}.{audio_f}.{audio_lang.upper()}"
         return self._generate_title
 
     @generate_title.setter
@@ -211,6 +218,12 @@ class Media:
         if not self._guess_title:
             self._guess_title = title.Guessit(self.title_sanitized).guessit_title
         return self._guess_title
+
+    @guess_title.setter
+    def guess_title(self, value):
+        self._guess_title = value
+
+
 
     @property
     def guess_season(self):
