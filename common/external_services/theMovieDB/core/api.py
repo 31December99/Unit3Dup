@@ -206,15 +206,21 @@ class DbOnline(TmdbAPI):
         """ Generate a hashkey for the cache index """
         return hashlib.md5(key.encode('utf-8')).hexdigest()
 
-
     def is_like(self, results: list[T]) -> T | bool:
-        # Search for in the tile or original_name
         if results:
+            # Search for in the tile or original_name
             for result in results:
                 if ManageTitles.fuzzyit(str1=self.query, str2=result.get_title()) > 95:
                     return result
                 if ManageTitles.fuzzyit(str1=self.query, str2=result.get_original()) > 95:
                     return result
+
+            # Search for alternative title
+            for result in results:
+                alternative = self.alternative(media_id=result.id, category=self.category)
+                for alt in alternative:
+                    if ManageTitles.fuzzyit(str1=self.query, str2=alt.title) > 95:
+                        return result
         return False
 
     def results_in_string(self, tmdb_id:int, imdb_id:int)-> MediaResult:
@@ -280,7 +286,7 @@ class DbOnline(TmdbAPI):
         # Printing information could help the user to debug it
         # Sometimes the category is wrong due to the title containing noisy substrings
         custom_console.bot_warning_log(f"Title not found.What the bot has understood:")
-        if self.media.guess_season | self.media.guess_episode:
+        if self.media.guess_season or self.media.guess_episode:
             seasons_details = f"Seasons S{self.media.guess_season}E{self.media.guess_episode}"
         else:
             seasons_details = f"not available"
