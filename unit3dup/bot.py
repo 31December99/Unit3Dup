@@ -2,17 +2,24 @@
 
 import argparse
 import os
+import pprint
 import time
 import shutil
+import bencode2
+import hashlib
+
+import requests
 
 from unit3dup.media_manager.ContentManager import ContentManager
 from unit3dup.media_manager.TorrentManager import TorrentManager
+from unit3dup.torrent import Torrent, View
 
 from common.external_services.ftpx.core.models.list import FTPDirectory
 from common.external_services.Pw.pw_manager import PwManager
 from common.external_services.ftpx.core.menu import Menu
 from common.external_services.ftpx.client import Client
 from common.extractor import Extractor
+
 
 from view import custom_console
 
@@ -87,6 +94,18 @@ class Bot:
         # Run the torrents creations and the upload process
         self.torrent_manager.run(trackers_name_list=self.trackers_name_list)
         return True
+
+    def re_seed(self):
+        tracker_name = self.trackers_name_list[0]
+        torrent_info = Torrent(tracker_name=tracker_name)
+
+        tracker_data = torrent_info.get_dead()
+        for item in tracker_data['data']:
+            url = item['attributes']['download_link']
+            id = item['attributes']['files']
+            print(id)
+
+
 
     def watcher(self, duration: int, watcher_path: str,  destination_path: str)-> bool:
         """
