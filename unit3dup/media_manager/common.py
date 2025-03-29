@@ -39,8 +39,10 @@ class UserContent:
         if preferred_lang == 'ALL':
             return True
 
-        if preferred_lang_to_iso in content.audio_languages:
+        # If an audio lang exists in the preferred list
+        if any(item in content.audio_languages for item in preferred_lang_to_iso):
             return True
+
 
         custom_console.bot_log(f"'{content.file_name}'")
         custom_console.bot_warning_log(
@@ -66,7 +68,6 @@ class UserContent:
 
         announce_list_encoded = []
         # a single tracker in the tracker_list corresponds to the '-tracker' flag from the user's CLI
-        # two or more trackers in the tracker_list correspond to the '-cross' flag from the user's CLI
         for tracker in tracker_name_list:
             # Get data for each tracker
             api_data = trackers_api_data[tracker.upper()]
