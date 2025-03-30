@@ -82,12 +82,11 @@ class GameManager:
                 continue
 
             # Run the seeding process if requested by the user
-            """ only for the video content
             if self.cli.reseed:
-                seed_manager.process(tmdb_id=game_data_results.id)
+                seed_manager.process(media_id=game_data_results.id, category= content.category)
                 seed_manager.run(trackers_name_list=tracker_name_list)
                 continue
-            """
+
 
             # Tracker instance
             unit3d_up = UploadBot(content=content, tracker_name=selected_tracker)

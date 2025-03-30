@@ -79,7 +79,7 @@ class TorrentManager:
 
         for selected_tracker in trackers_name_list:
             # Build the torrent file and upload each GAME to the tracker
-            if self.games and not self.cli.reseed:
+            if self.games:
                 game_manager = GameManager(contents=self.games, cli=self.cli)
                 game_process_results = game_manager.process(selected_tracker=selected_tracker,
                                                             tracker_name_list=trackers_name_list,
