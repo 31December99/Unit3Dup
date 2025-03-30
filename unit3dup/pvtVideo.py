@@ -54,7 +54,7 @@ class Video:
             custom_console.bot_log(f"\n[GENERATING IMAGES..] [HD {'ON' if self.is_hd == 0 else 'OFF'}]")
             extracted_frames, is_hd = self.video_frames.create()
             custom_console.bot_log("Done.")
-            build_description = Build(extracted_frames=extracted_frames)
+            build_description = Build(extracted_frames=extracted_frames, filename = self.file_name)
             self.description = build_description.description()
             self.description += (f"[b][spoiler=Spoiler: PLAY TRAILER][center][youtube]{self.trailer_key}[/youtube]"
                                  f"[/center][/spoiler][/b]")
