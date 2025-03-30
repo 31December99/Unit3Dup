@@ -86,8 +86,14 @@ class Bot:
         # Process the torrents content (files)
         self.torrent_manager.process(contents=contents)
 
-        # Run the torrents creations and the upload process
-        self.torrent_manager.run(trackers_name_list=self.trackers_name_list)
+        # Torrent Seeding
+        if self.cli.seedit:
+            self.torrent_manager.send(self.path, self.trackers_name_list)
+        else:
+            # Run the torrents creations and the upload process
+            self.torrent_manager.run(trackers_name_list=self.trackers_name_list)
+
+
         return True
 
 
@@ -228,7 +234,3 @@ class Bot:
                 exit(1)
 
             self.run()
-
-    def seed_it(self):
-        """ Send a file torrent file for seeding"""
-        self.torrent_manager.send(self.path, self.trackers_name_list)

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import argparse
+import os
 
 from unit3dup.media_manager.VideoManager import VideoManager
 from unit3dup.media_manager.GameManager import GameManager
@@ -24,6 +25,11 @@ class TorrentManager:
         self.videos: list[Media] = []
         self.doc: list[Media] = []
         self.cli = cli
+
+        if config_settings.user_preferences.TORRENT_ARCHIVE_PATH:
+            self.tracker_archive = config_settings.user_preferences.TORRENT_ARCHIVE_PATH
+        else:
+            self.tracker_archive =  '.'
 
     def process(self, contents: list) -> None:
         """
@@ -66,16 +72,9 @@ class TorrentManager:
 
         """
 
-
         game_process_results: list[BittorrentData] = []
         video_process_results: list[BittorrentData] = []
         docu_process_results: list[BittorrentData] = []
-
-        if config_settings.user_preferences.TORRENT_ARCHIVE_PATH:
-            tracker_archive = config_settings.user_preferences.TORRENT_ARCHIVE_PATH
-        else:
-            tracker_archive =  '.'
-
 
         for selected_tracker in trackers_name_list:
             # Build the torrent file and upload each GAME to the tracker
@@ -83,21 +82,21 @@ class TorrentManager:
                 game_manager = GameManager(contents=self.games, cli=self.cli)
                 game_process_results = game_manager.process(selected_tracker=selected_tracker,
                                                             tracker_name_list=trackers_name_list,
-                                                            tracker_archive=tracker_archive)
+                                                            tracker_archive=self.tracker_archive)
 
             # Build the torrent file and upload each VIDEO to the trackers
             if self.videos:
                 video_manager = VideoManager(contents=self.videos, cli=self.cli)
                 video_process_results = video_manager.process(selected_tracker=selected_tracker,
                                                               tracker_name_list=trackers_name_list,
-                                                              tracker_archive=tracker_archive)
+                                                              tracker_archive=self.tracker_archive)
 
             # Build the torrent file and upload each DOC to the tracker
             if self.doc and not self.cli.reseed:
                 docu_manager = DocuManager(contents=self.doc, cli=self.cli)
                 docu_process_results = docu_manager.process(selected_tracker=selected_tracker,
                                                             tracker_name_list=trackers_name_list,
-                                                            tracker_archive=tracker_archive)
+                                                            tracker_archive=self.tracker_archive)
 
             # No seeding
             if self.cli.noseed or self.cli.noup:
@@ -122,17 +121,17 @@ class TorrentManager:
 
     def send(self, this_path: str, trackers_name_list: list):
         # Send a torrent file that has already been created for seeding
-        # you can update the announce list by adding the -tracker or -cross flags
+        client = UserContent.get_client()
 
-        # for each selected tracker we send our tracker list ( default or by -tracker,-cross flags)
         for selected_tracker in trackers_name_list:
-            if UserContent.torrent_file_exists(path=this_path, selected_tracker=selected_tracker,
-                                                               tracker_name_list=trackers_name_list):
-                client = UserContent.get_client()
-                client.send_file_to_client(torrent_path=this_path)
-            else:
-                custom_console.bot_warning_log(f"File torrent not found for '{this_path}'"
-                                               f" in {config_settings.user_preferences.TORRENT_ARCHIVE_PATH}" )
+                custom_console.bot_warning_log(f"Seeding for {selected_tracker}..Please wait")
+                for content in self.videos + self.games + self.doc:
+                    # get the archive path
+                    torrent_filepath = os.path.join(self.tracker_archive, selected_tracker,f"{content.torrent_name}.torrent")
+                    if os.path.exists(torrent_filepath):
+                        client.send_file_to_client(torrent_path=torrent_filepath)
+                        custom_console.bot_log(torrent_filepath)
+
 
 
 
