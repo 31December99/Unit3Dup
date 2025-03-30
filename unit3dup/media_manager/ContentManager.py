@@ -32,9 +32,9 @@ class ContentManager:
         self.file_name: str | None = None
         self.torrent_path: str | None = None
         self.doc_description: str | None = None
-        self.tmdb_id: str | None = None
-        self.imdb_id: str | None = None
-        self.igdb_id: str | None = None
+        self.tmdb_id: int  = 0
+        self.imdb_id: int  = 0
+        self.igdb_id: int  = 0
         self.generate_title: str | None = None
 
         self.path: str = os.path.normpath(path)
@@ -80,10 +80,15 @@ class ContentManager:
             media.torrent_pack = torrent_pack
             media.doc_description = self.doc_description
             media.game_nfo = self.game_nfo
-            media.display_name = self.display_name if not self.cli.title else media.generate_title
+
+            # Add ID if there are one in the title
             media.imdb_id = self.imdb_id
             media.tmdb_id = self.tmdb_id
             media.igdb_id = self.igdb_id
+
+            # The title on the torrent page from the path or generated from the mediainfo
+            media.display_name = self.display_name if not self.cli.title else media.generate_title
+
             return media
         else:
             return False
@@ -96,16 +101,21 @@ class ContentManager:
                 if 'imdb-' in id:
                     self.imdb_id = id.replace('imdb-', '')
                     self.imdb_id = self.imdb_id if self.imdb_id.isdigit() else None
+                    self.display_name = self.display_name.replace(f"imdb-{self.imdb_id}", '')
                 elif 'tmdb-' in id:
                     self.tmdb_id = id.replace('tmdb-', '')
                     self.tmdb_id = self.tmdb_id if self.tmdb_id.isdigit() else None
+                    self.display_name = self.display_name.replace(f"tmdb-{self.tmdb_id}", '')
+
                 elif 'igdb-' in id:
                     self.igdb_id = id.replace('igdb-', '')
                     self.igdb_id = self.igdb_id if self.igdb_id.isdigit() else None
+                    self.display_name = self.display_name.replace(f"igdb-{self.igdb_id}", '')
+
         else:
-            self.imdb_id = None
-            self.tmdb_id = None
-            self.igdb_id = None
+            self.imdb_id = 0
+            self.tmdb_id = 0
+            self.igdb_id = 0
 
     def process_file(self) -> bool:
         """Process individual files and gather metadata"""
