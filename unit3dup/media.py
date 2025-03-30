@@ -174,11 +174,18 @@ class Media:
     def generate_title(self) -> str:
 
         if not self._generate_title:
+            # Read video and audio data from mediainfo
             video_f = self.mediafile.video_track[0]['format']
             video_h = self.mediafile.video_track[0]['height']
             audio_f = self.mediafile.audio_track[0]['format']
             audio_lang = self.mediafile.audio_track[0]['language']
-            self._generate_title =  f"{self.guess_title}.{video_h}.{video_f}.{audio_f}.{audio_lang.upper()}"
+            # Search for Season and Episode o torrent_pack
+            serie = f"S{str(self.guess_season).zfill(2)}" if self.guess_season else ''
+            if not self.torrent_pack:
+                serie+= f"E{str(self.guess_episode).zfill(2)}"
+
+            # Build the title
+            self._generate_title =  f"{self.guess_title}.{serie}.{video_h}.{video_f}.{audio_f}.{audio_lang.upper()}"
         return self._generate_title
 
     @generate_title.setter
@@ -224,7 +231,6 @@ class Media:
         self._guess_title = value
 
 
-
     @property
     def guess_season(self):
         if not self._guess_season:
@@ -234,7 +240,7 @@ class Media:
     @property
     def guess_episode(self):
         if not self._episode:
-           self._episode = self.guess_filename.guessit_season
+           self._episode = self.guess_filename.guessit_episode
         return self._episode
 
     @property
