@@ -19,7 +19,8 @@ class SeedManager:
                 attribute = torrent['attributes']['details_link']
                 name = torrent['attributes']['name']
                 tmdb = torrent['attributes']['tmdb_id']
-                custom_console.bot_warning_log(f"-> Possible seed {name}: {attribute} : TMDB {tmdb}")
+                custom_console.bot_warning_log(f"\n-> Possible seed {name}: {attribute} : TMDB {tmdb}")
+                input("Press enter to continue...")
 
 
     def run(self, trackers_name_list: list):
