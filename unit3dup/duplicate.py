@@ -53,7 +53,10 @@ class CompareTitles:
         return False
 
     def process(self) -> bool:
-        return self.same_season()
+        if self.ratio > 49:
+            return self.same_season()
+        return False
+
 
 
 class Duplicate:
