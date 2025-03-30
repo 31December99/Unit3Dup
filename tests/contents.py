@@ -14,6 +14,7 @@ def test_content_manager():
         noseed=False,
         tracker=None,
         force=False,
+        title=None,
     )
 
     tracker_data = tests.TRACKData.load_from_module(tracker_name='ITT')
