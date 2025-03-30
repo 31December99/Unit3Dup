@@ -87,9 +87,8 @@ class TransmissionClient(TorrClient):
                                              full_path_archive=archive_path)
                 self.client.add_torrent(torrent=torrent_file, download_dir=str(torr_location))
 
-    def send_file_to_client(self, torrent_path, archive_path: str ):
-        self.client.add_torrent(torrent=open(archive_path, "rb"), download_dir=os.path.dirname(torrent_path))
-
+    def send_file_to_client(self, torrent_path: str):
+        self.client.add_torrent(torrent=open(torrent_path, "rb"), download_dir=os.path.dirname(torrent_path))
 
 
 
@@ -162,7 +161,6 @@ class QbittorrentClient(TorrClient):
                 self.client.download_from_file(file_buffer=torrent_file, savepath=str(torr_location))
 
 
-    def send_file_to_client(self, torrent_path, archive_path: str):
-        self.client.download_from_file(file_buffer=open(archive_path, "rb"),
-                                       savepath=os.path.dirname(torrent_path))
+    def send_file_to_client(self, torrent_path: str):
+        self.client.download_from_file(file_buffer=open(torrent_path, "rb"), savepath=os.path.dirname(torrent_path))
 

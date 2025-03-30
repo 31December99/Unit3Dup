@@ -59,8 +59,10 @@ class DocuManager:
             unit3d_up = UploadBot(content=content, tracker_name=selected_tracker)
 
             # Upload
-            tracker_response, tracker_message = unit3d_up.send_docu(document_info=docu_info,
-                                                                    torrent_archive=torrent_filepath)
+            unit3d_up.data_docu(document_info=docu_info)
+
+            # Get the data
+            tracker_response, tracker_message = unit3d_up.send(torrent_archive=torrent_filepath)
 
             bittorrent_list.append(
                 BittorrentData(
