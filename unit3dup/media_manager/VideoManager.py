@@ -5,6 +5,7 @@ import os
 from common.external_services.theMovieDB.core.api import DbOnline
 from common.bittorrent import BittorrentData
 
+from unit3dup.media_manager.SeedManager import SeedManager
 from unit3dup.media_manager.common import UserContent
 from unit3dup.upload import UploadBot
 from unit3dup.pvtVideo import Video
@@ -35,6 +36,9 @@ class VideoManager:
            Returns:
                list: List of Bittorrent objects created for each content
         """
+
+        # Tracker administration
+        seed_manager = SeedManager(cli=self.cli, trackers_name_list=tracker_name_list)
 
         # -multi : no announce_list . One announce for multi tracker
         if self.cli.mt:
@@ -69,23 +73,33 @@ class VideoManager:
                 db_online = DbOnline(media=content,category=content.category)
                 db = db_online.media_result
 
+                # Run the seeding process if requested by the user
+                if self.cli.reseed:
+                    seed_manager.process(media_id = db.video_id, category = content.category)
+                    seed_manager.run(trackers_name_list=tracker_name_list)
+                    continue
+
                 # Get meta from the media video
                 video_info = Video(media=content, tmdb_id=db.video_id, trailer_key=db.trailer_key)
                 video_info.build_info()
+
+                # Tracker instance
+                unit3d_up = UploadBot(content=content, tracker_name=selected_tracker)
+
+                # Get the data
+                unit3d_up.data(show_id=db.video_id, imdb_id=db.imdb_id, show_keywords_list=db.keywords_list,
+                               video_info=video_info)
 
                 # Don't upload if -noup is set to True
                 if self.cli.noup:
                     custom_console.bot_warning_log(f"No Upload active. Done.")
                     continue
 
-                # Tracker payload
-                unit3d_up = UploadBot(content=content, tracker_name=selected_tracker)
+                # Send to the tracker
+                tracker_response, tracker_message =  unit3d_up.send(torrent_archive=torrent_filepath)
 
-                # Send data to the tracker
-                tracker_response, tracker_message =  unit3d_up.send(show_id=db.video_id, imdb_id=db.imdb_id,
-                                                                    show_keywords_list=db.keywords_list,
-                                                                    video_info=video_info,torrent_archive=torrent_filepath)
 
+                # Store response for the torrent clients
                 bittorrent_list.append(
                     BittorrentData(
                         tracker_response=tracker_response,

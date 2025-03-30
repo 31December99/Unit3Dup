@@ -2,13 +2,8 @@
 
 import argparse
 import os
-import pprint
 import time
 import shutil
-import bencode2
-import hashlib
-
-import requests
 
 from unit3dup.media_manager.ContentManager import ContentManager
 from unit3dup.media_manager.TorrentManager import TorrentManager
@@ -88,23 +83,18 @@ class Bot:
         # Print the list of files being processed
         custom_console.bot_process_table_log(contents)
 
-        # Process the contents (files)
+        # Process the torrents content (files)
         self.torrent_manager.process(contents=contents)
 
-        # Run the torrents creations and the upload process
-        self.torrent_manager.run(trackers_name_list=self.trackers_name_list)
+        # Torrent Seeding
+        if self.cli.seedit:
+            self.torrent_manager.send(self.path, self.trackers_name_list)
+        else:
+            # Run the torrents creations and the upload process
+            self.torrent_manager.run(trackers_name_list=self.trackers_name_list)
+
+
         return True
-
-    def re_seed(self):
-        tracker_name = self.trackers_name_list[0]
-        torrent_info = Torrent(tracker_name=tracker_name)
-
-        tracker_data = torrent_info.get_dead()
-        for item in tracker_data['data']:
-            url = item['attributes']['download_link']
-            id = item['attributes']['files']
-            print(id)
-
 
 
     def watcher(self, duration: int, watcher_path: str,  destination_path: str)-> bool:
@@ -244,7 +234,3 @@ class Bot:
                 exit(1)
 
             self.run()
-
-    def seed_it(self):
-        """ Send a file torrent file for seeding"""
-        self.torrent_manager.send(self.path, self.trackers_name_list)

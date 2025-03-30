@@ -110,20 +110,6 @@ def main():
         bot.watcher(duration=config.user_preferences.WATCHER_INTERVAL, watcher_path=config.user_preferences.WATCHER_PATH,
                     destination_path = config.user_preferences.WATCHER_DESTINATION_PATH)
 
-
-    # re_seed the torrent
-    if cli.args.seedit:
-        bot = Bot(path=cli.args.seedit, cli=cli.args, trackers_name_list=tracker_name_list)
-        bot.seed_it()
-
-
-    if cli.args.reseed:
-        print("Not Implemented")
-        exit(1)
-        # bot = Bot(path=cli.args.reseed, cli=cli.args, trackers_name_list=tracker_name_list)
-        # bot.re_seed()
-
-
     # Pw
     if cli.args.pw:
         bot = Bot(path=cli.args.pw,cli=cli.args, trackers_name_list=tracker_name_list)

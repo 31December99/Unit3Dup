@@ -57,7 +57,7 @@ class UploadBot:
         custom_console.rule()
         return {}, error_message
 
-    def send(self,show_id: int , imdb_id: int, show_keywords_list: str, video_info: Video, torrent_archive: str) -> (requests, dict):
+    def data(self,show_id: int , imdb_id: int, show_keywords_list: str, video_info: Video) -> Unit3d | None:
 
         self.tracker.data["name"] = self.content.display_name
         self.tracker.data["tmdb"] = show_id
@@ -73,11 +73,9 @@ class UploadBot:
         self.tracker.data["type_id"] = self.tracker_data.filter_type(self.content.file_name)
         self.tracker.data["season_number"] = self.content.guess_season
         self.tracker.data["episode_number"] = (self.content.guess_episode if not self.content.torrent_pack else 0)
-        tracker_response=self.tracker.upload_t(data=self.tracker.data, torrent_path=self.content.torrent_path,
-                                               torrent_archive_path=torrent_archive)
-        return self.message(tracker_response)
+        return self.tracker
 
-    def send_game(self,igdb: Game, torrent_archive: str, nfo_path = None) -> (requests, dict):
+    def data_game(self,igdb: Game) -> Unit3d | None:
 
         igdb_platform = self.content.platform_list[0].lower() if self.content.platform_list else ''
         self.tracker.data["name"] = self.content.display_name
@@ -87,11 +85,9 @@ class UploadBot:
         self.tracker.data["description"] = igdb.description if igdb else "Sorry, there is no valid IGDB"
         self.tracker.data["type_id"] = self.tracker_data.type_id.get(igdb_platform) if igdb_platform else 1
         self.tracker.data["igdb"] = igdb.id if igdb else 1,  # need zero not one ( fix tracker)
-        tracker_response=self.tracker.upload_t(data=self.tracker.data, torrent_path=self.content.torrent_path,
-                                               torrent_archive_path=torrent_archive, nfo_path=nfo_path)
-        return self.message(tracker_response)
+        return self.tracker
 
-    def send_docu(self, document_info: PdfImages, torrent_archive: str):
+    def data_docu(self, document_info: PdfImages) -> Unit3d | None:
 
         self.tracker.data["name"] = self.content.display_name
         self.tracker.data["tmdb"] = 0
@@ -101,7 +97,11 @@ class UploadBot:
         self.tracker.data["type_id"] = self.tracker_data.filter_type(self.content.file_name)
         self.tracker.data["resolution_id"] = ""
         # tracker.data["torrent-cover"] = "" TODO: not yet implemented
+        return self.tracker
+
+    def send(self, torrent_archive: str, nfo_path = None) -> (requests, dict):
 
         tracker_response=self.tracker.upload_t(data=self.tracker.data, torrent_path=self.content.torrent_path,
-                                        torrent_archive_path = torrent_archive)
+                                        torrent_archive_path = torrent_archive,nfo_path=nfo_path)
         return self.message(tracker_response)
+

@@ -53,7 +53,10 @@ class CompareTitles:
         return False
 
     def process(self) -> bool:
-        return self.same_season()
+        if self.ratio > 49:
+            return self.same_season()
+        return False
+
 
 
 class Duplicate:
@@ -111,17 +114,15 @@ class Duplicate:
         self.INFO_HASH_WIDTH = 40
         self.DELTA_SIZE_WIDTH = 2
 
+        # Media info
+        self.media_info: str = ''
+
     def process(self) -> bool:
         if self.category in {self.movie_category, self.serie_category}:
             audio = f"Audio: {self.content.audio_languages}"
             resolution = self.content.screen_size or self.content.resolution
-            media = f"[{audio + ' - ' + resolution}]"
-        else:
-            media = ""
+            self.media_info = f"{audio + ' - ' + resolution}"
 
-        custom_console.bot_log(f"-> 'Delta < Size_th = duplicate' {self.content.display_name.upper()} - "
-                               f"Size {self.content_size} {self.size_unit} "
-                               f"{media} size_th={self.size_threshold}%\n")
         return self.search()
 
     def search(self) -> bool:
@@ -135,6 +136,10 @@ class Duplicate:
 
         # if a result is found, ask the user or autoskip
             if already_present:
+                custom_console.bot_log(f"-> 'Delta < Size_th = duplicate' {self.content.display_name.upper()} - "
+                                       f"Size {self.content_size} {self.size_unit} "
+                                       f"{self.media_info} size_th={self.size_threshold}%\n")
+
                 if not config_settings.user_preferences.SKIP_DUPLICATE:
                     try:
                         while True:
@@ -196,17 +201,17 @@ class Duplicate:
 
         if tmdb_id != 0:
             output = (
-                f"[TMDB-ID {formatted_tmdb_id}] "
-                f"[{formatted_size} delta={formatted_size_th}%] "
-                f"[{formatted_resolution}]' "
-                f"{formatted_name},"
-                f"[{languages}]'"
+                f"- TMDB-ID {formatted_tmdb_id} "
+                f"{formatted_size} delta={formatted_size_th}% - "
+                f"{formatted_resolution}' "
+                f"{formatted_name} "
+                f"{languages}'"
             )
         else:
             output = (
-                f"[IGDB-ID {formatted_igdb_id}] "
-                f"[{formatted_size} delta={formatted_size_th}%] "
-                f"{formatted_name},"
+                f"- IGDB-ID {formatted_igdb_id} "
+                f"{formatted_size} delta={formatted_size_th}% - "
+                f"{formatted_name}"
             )
 
         custom_console.bot_log(output)
