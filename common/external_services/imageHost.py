@@ -12,9 +12,10 @@ from view import custom_console
 
 
 class ImageUploader(ABC):
-    def __init__(self, image: bytes, key: str):
+    def __init__(self, image: bytes, key: str, image_name: str):
         self.image = base64.b64encode(image)
         self.key = key
+        self.image_name = image_name
 
     @abstractmethod
     def get_endpoint(self):
@@ -90,6 +91,7 @@ class ImgBB(ImageUploader):
     def get_data(self) -> dict:
         return {
             "key": self.key,
+            "name": self.image_name,
         }
 
     def get_field_name(self) -> str:
@@ -106,6 +108,7 @@ class Freeimage(ImageUploader):
         return {
             "key": self.key,
             "format": "json",
+            "name": self.image_name,
         }
 
     def get_field_name(self) -> str:
@@ -121,6 +124,7 @@ class PtScreens(ImageUploader):
     def get_data(self) -> dict:
         return {
             "key": self.key,
+            "title": self.image_name,
         }
 
     def get_field_name(self) -> str:
@@ -136,6 +140,7 @@ class LensDump(ImageUploader):
     def get_data(self) -> dict:
         return {
             "key": self.key,
+            "title": self.image_name,
         }
 
     def get_field_name(self) -> str:
@@ -151,6 +156,7 @@ class ImgFi(ImageUploader):
     def get_data(self) -> dict:
         return {
             "key": self.key,
+            "title": self.image_name,
         }
 
     def get_field_name(self) -> str:
@@ -213,7 +219,10 @@ class Build:
     """
     offline_uploaders = []
 
-    def __init__(self, extracted_frames: list['Image']):
+    def __init__(self, extracted_frames: list['Image'], filename: str):
+
+        # Image filename
+        self.filename = filename
 
         # Host APi keys
         self.IMGBB_KEY = config_settings.tracker_config.IMGBB_KEY
@@ -229,14 +238,17 @@ class Build:
         console_url = []
 
         custom_console.bot_log("Starting image upload..")
+        _number = 0
         for img_bytes in self.extracted_frames:
+            _number = _number + 1
+            image_name = f"{self.filename}.id_{_number}"
 
             master_uploaders = [
-                ImgBB(img_bytes, self.IMGBB_KEY),
-                Freeimage(img_bytes, self.FREE_IMAGE_KEY),
-                PtScreens(img_bytes, self.PTSCREENS_KEY),
-                LensDump(img_bytes, self.LENSDUMP_KEY),
-                ImgFi(img_bytes, self.IMGFI_KEY),
+                ImgBB(img_bytes, self.IMGBB_KEY, image_name=image_name),
+                Freeimage(img_bytes, self.FREE_IMAGE_KEY,image_name=image_name),
+                PtScreens(img_bytes, self.PTSCREENS_KEY,image_name=image_name),
+                LensDump(img_bytes, self.LENSDUMP_KEY,image_name=image_name),
+                ImgFi(img_bytes, self.IMGFI_KEY,image_name=image_name),
             ]
 
             # Sorting list based on priority
