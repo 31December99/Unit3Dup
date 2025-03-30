@@ -75,7 +75,7 @@ class VideoManager:
 
                 # Run the seeding process if requested by the user
                 if self.cli.reseed:
-                    seed_manager.process(tmdb_id = db.video_id)
+                    seed_manager.process(media_id = db.video_id, category = content.category)
                     seed_manager.run(trackers_name_list=tracker_name_list)
                     continue
 
