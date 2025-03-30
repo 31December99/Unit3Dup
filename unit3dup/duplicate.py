@@ -129,17 +129,10 @@ class Duplicate:
 
         # Search torrent by Name
         tracker_search = self.torrent_info.search(self.guess_filename.guessit_title)
-
         # Compare and return a result
         for t_data in tracker_search["data"]:
-            already_present = self._process_tracker_data(t_data)
-
-        # if a result is found, ask the user or autoskip
-            if already_present:
-                custom_console.bot_log(f"-> 'Delta < Size_th = duplicate' {self.content.display_name.upper()} - "
-                                       f"Size {self.content_size} {self.size_unit} "
-                                       f"{self.media_info} size_th={self.size_threshold}%\n")
-
+            # if a result is found, ask the user or autoskip
+            if self._process_tracker_data(t_data):
                 if not config_settings.user_preferences.SKIP_DUPLICATE:
                     try:
                         while True:
@@ -147,7 +140,6 @@ class Duplicate:
                                 "\nPress (C) to continue, (S) to SKIP.. (Q) Quit - "
                             )
                             user_answer = input()
-
                             # Exit
                             if "q" == user_answer.lower():
                                 exit(1)
@@ -163,9 +155,9 @@ class Duplicate:
                         exit(1)
                 else: # if skip_duplicate is on -> autoskip
                     return True
-            else:
-                return False
         return False
+
+
 
     def get_resolution_by_num(self, res_id: int) -> str:
         return next((key for key, value in self.resolutions.items() if value == res_id), None)
@@ -173,10 +165,11 @@ class Duplicate:
     def _calculate_threshold(self, size: int) -> int:
         # Size in GB
         # Skip duplicate check if the size is out of the threshold
+
         size = round(size / (1024 ** 3), 2) if self.size_unit == 'GB' else round(size / (1024 ** 2), 2)
         return round(abs(self.content_size - size) / max(self.content_size, size) * 100)
 
-    def _print_output(self, value: dict, delta_size: int):
+    def _print_output(self, value: dict, delta_size: int, size_th: int):
 
         name = value["name"]
         resolution = value.get("resolution", "[n/a]")
@@ -201,7 +194,7 @@ class Duplicate:
 
         if tmdb_id != 0:
             output = (
-                f"- TMDB-ID {formatted_tmdb_id} "
+                f"-'Duplicate' TMDB-ID {formatted_tmdb_id} - "
                 f"{formatted_size} delta={formatted_size_th}% - "
                 f"{formatted_resolution}' "
                 f"{formatted_name} "
@@ -209,48 +202,27 @@ class Duplicate:
             )
         else:
             output = (
-                f"- IGDB-ID {formatted_igdb_id} "
+                f"- IGDB-ID {formatted_igdb_id} - "
                 f"{formatted_size} delta={formatted_size_th}% - "
                 f"{formatted_name}"
             )
 
+        custom_console.bot_log(f"Your file: '{self.content.display_name}' Size: {self.content_size} GB - "
+                                       f"Size_TH: {size_th}%")
         custom_console.bot_log(output)
 
-    def _process_tracker_data(self, data_from_the_tracker: dict) -> bool:
-        for key, tracker_value in data_from_the_tracker.items():
-            if "attributes" in key:
-                if (
-                        tracker_value["category_id"] == self.movie_category
-                        or tracker_value["category_id"] == self.serie_category
-                        or tracker_value["category_id"] == self.game_category
-                ):
+    def _process_tracker_data(self, data_from_the_tracker) -> bool:
 
-                    delta_size = self._calculate_threshold(size=tracker_value["size"])
-                    if delta_size > config_settings.user_preferences.SIZE_TH:
-                        # Not a duplicate
-                        continue
+        if CompareTitles(tracker_file=title.Guessit(data_from_the_tracker['attributes']['name']),
+                         content_file=self.guess_filename).process():
 
-                    # TH_SIZE = 100 %
-                    # UserFile(GB) - TrackerFile(GB) / max(UserFile,TrackerFile) = DeltaSize  > TH_SIZE ?
-                    #   25.72      -   2.29          /           25.72           =   91.1%    > 100%    NO (duplicate)
-                    #   25.72      -   11.26         /           25.72           =   56.4%    > 100%    NO (duplicate)
-                    #   25.72      -   1.78          /           25.72           =   93.1%    > 100%    NO (duplicate)
-                    # ->>>>>>> Non supera la differenza (Th_size) da noi impostata - è un duplicate
+            delta_size = self._calculate_threshold(size=data_from_the_tracker['attributes']["size"])
+            if delta_size > config_settings.user_preferences.SIZE_TH:
+                # Not a Duplicate
+                return False
+            else:
+                self._print_output(value=data_from_the_tracker['attributes'], delta_size=delta_size,
+                                   size_th = config_settings.user_preferences.SIZE_TH)
+                return True
 
-                    # TH_SIZE = 0 %
-                    # UserFile(GB) - TrackerFile(GB) / max(UserFile,TrackerFile) = DeltaSize   > TH_SIZE ?
-                    #   25.72      -   2.29          /           25.72           =   91.1 %    > 0%     SI (no duplicate)
-                    #   25.72      -   11.26         /           25.72           =   56.4%     > 0%     SI (no duplicate)
-                    #   25.72      -   1.78          /           25.72           =   93.1 %    > 0%     SI (no duplicate)
-                    # ->>>>>>> Supera la differenza (Th_size) da noi impostata - Non è un duplicate
-
-                    # compare the seasons if it is a serie
-                    if self.compare(value=tracker_value, content_file=self.guess_filename):
-                        self._print_output(value=tracker_value, delta_size=delta_size)
-                        self.flag_already = True
-
-        return self.flag_already
-
-    @staticmethod
-    def compare(value: guessit, content_file: guessit) -> bool:
-        return CompareTitles(tracker_file=title.Guessit(value["name"]), content_file=content_file).process()
+        return False
