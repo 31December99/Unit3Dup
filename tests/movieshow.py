@@ -17,6 +17,9 @@ def test_tmdb():
         force=False,
         noup=False,
         noseed=False,
+        mt=False,
+        title=None,
+
     )
 
     test_content_movie = r"C:\test_folder"

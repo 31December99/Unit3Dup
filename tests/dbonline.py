@@ -13,6 +13,7 @@ def test_content_manager():
         noseed=False,
         tracker=None,
         force=False,
+        title=None,
     )
     content_manager = tests.ContentManager(path=test_content_movie, mode='auto', cli=cli_scan)
 
