@@ -286,12 +286,12 @@ class DbOnline(TmdbAPI):
         # Printing information could help the user to debug it
         # Sometimes the category is wrong due to the title containing noisy substrings
         custom_console.bot_warning_log(f"Title not found.What the bot has understood:")
-        if self.media.guess_season or self.media.guess_episode:
-            seasons_details = f"Seasons S{self.media.guess_season}E{self.media.guess_episode}"
-        else:
-            seasons_details = f"not available"
-        custom_console.bot_warning_log(f"Title:   '{self.query}'\ncategory:'{self.category}'\ndetails:"
-                                       f" '{seasons_details}'")
+        serie = f"S{str(self.media.guess_season).zfill(2)}" if self.media.guess_season else ''
+        if not self.media.torrent_pack:
+            serie += f"E{str(self.media.guess_episode).zfill(2)}"
+        custom_console.bot_warning_log(f"Title:   '{self.query}'\ncategory:'{self.category}'"
+                                       f"\ndetails: '{serie}' Pack: '{self.media.torrent_pack}'")
+
         user_tmdb_id  = custom_console.user_input(message=f"Please digit a valid TMDB ID (0=skip)->")
 
         # Try to add IMDB ID if tmdb is not available
