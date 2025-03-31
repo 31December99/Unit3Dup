@@ -4,13 +4,14 @@ import os
 
 from common.external_services.theMovieDB.core.api import DbOnline
 from common.bittorrent import BittorrentData
+from common.utility import System
 
 from unit3dup.media_manager.SeedManager import SeedManager
 from unit3dup.media_manager.common import UserContent
 from unit3dup.upload import UploadBot
+from unit3dup import config_settings
 from unit3dup.pvtVideo import Video
 from unit3dup.media import Media
-from unit3dup import config_settings
 
 from view import custom_console
 
@@ -46,12 +47,16 @@ class VideoManager:
 
         #  Init the torrent list
         bittorrent_list = []
-        for content in self.contents:
+        for content in self.contents :
+
+            # -notitle flags works only with Tv
+            if content.category not in  System.category_list.get(System.TV_SHOW) and self.cli.notitle:
+                continue
+
             # get the archive path
             archive = os.path.join(tracker_archive, selected_tracker)
             os.makedirs(archive, exist_ok=True)
             torrent_filepath = os.path.join(tracker_archive,selected_tracker, f"{content.torrent_name}.torrent")
-
 
             # Filter contents based on existing torrents or duplicates
             if UserContent.is_preferred_language(content=content):
@@ -70,8 +75,25 @@ class VideoManager:
                     continue
 
                 # Search for VIDEO ID
-                db_online = DbOnline(media=content,category=content.category)
+                db_online = DbOnline(media=content,category=content.category, season=self.cli.notitle)
                 db = db_online.media_result
+
+                # If it is 'None' we skipped the imdb search (-notitle)
+                if not db:
+                    continue
+
+                # Update display name with Serie Title when requested by the user (-notitle)
+                if self.cli.notitle:
+                    # Add generated metadata to the display_title
+                    if self.cli.gentitle:
+                        content.display_name = f"{db_online.media_result.result.get_title()}.{db_online.media_result.year}."
+                        content.display_name+= content.generate_title
+                    else:
+                        # otherwise keep the old meta_data and add the new display_title to it
+                         meta_info_title = content.display_name.replace(content.guess_title, "")
+                         content.display_name = (f"{db_online.media_result.result.get_title()}."
+                                                 f"{db_online.media_result.year}.{meta_info_title}")
+
 
                 # Run the seeding process if requested by the user
                 if self.cli.reseed:

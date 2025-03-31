@@ -18,7 +18,7 @@ from common.external_services.trailers.api import YtTrailer
 from common.external_services.sessions.agents import Agent
 from common.external_services.theMovieDB import config
 from common.external_services.imdb import IMDB
-from common.utility import ManageTitles
+from common.utility import ManageTitles, System
 
 from unit3dup.media import Media
 from view import custom_console
@@ -184,11 +184,12 @@ class TmdbAPI(MyHttp):
 
 
 class DbOnline(TmdbAPI):
-    def __init__(self, media: Media, category: str) -> None:
+    def __init__(self, media: Media, category: str, season: bool) -> None:
         super().__init__()
         self.media = media
         self.query = media.guess_title
         self.category = category
+        self.season = season
 
         # Load the cache file
         if config_settings.user_preferences.CACHE_DBONLINE:
@@ -247,7 +248,16 @@ class DbOnline(TmdbAPI):
     def search(self) -> MediaResult | None:
         """
         Search for results based on a tmdb query
+        season: True = search for a season. Title unknown
         """
+
+        if self.season and self.category not in [System.category_list.get(System.TV_SHOW),
+                                                 System.category_list.get(System.MOVIE)]:
+            custom_console.user_input_str("'-notitle' works only with TV.")
+            exit()
+
+        # IMDB new instance
+        imdb = IMDB()
 
         # Search in the cache first if cache is enabled
         if config_settings.user_preferences.CACHE_DBONLINE:
@@ -255,6 +265,15 @@ class DbOnline(TmdbAPI):
             if search_results:
                 self.print_results(results=search_results)
                 return search_results
+
+
+        # Search for the serie title if -notitle flag is active
+        if self.season:
+            # Get the new query string otherwise return None and skip it
+            self.query = imdb.search_keyword(query=self.query)
+            if not self.query:
+                return None
+
 
         # or start an on-line search
         results = self._search(self.query, self.category)
@@ -266,8 +285,8 @@ class DbOnline(TmdbAPI):
                 trailer_key = self.trailer(result.id)
                 keywords_list = self.keywords(result.id)
                 search_results = MediaResult(result, video_id=result.id, imdb_id=imdb_id,
-                                             trailer_key=trailer_key,
-                                             keywords_list=keywords_list)
+                                             trailer_key=trailer_key, keywords_list=keywords_list)
+
                 self.print_results(results=search_results)
 
                 # Write to the cache if it is enabled
@@ -282,7 +301,7 @@ class DbOnline(TmdbAPI):
             exit(1)
 
         # not results found so try to initialize imdb
-        imdb = IMDB()
+        # imdb = IMDB()
         # Printing information could help the user to debug it
         # Sometimes the category is wrong due to the title containing noisy substrings
         custom_console.bot_warning_log(f"Title not found.What the bot has understood:")
