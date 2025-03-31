@@ -95,7 +95,7 @@ class PdfImages:
             extracted_frames = self.extract()
             custom_console.bot_log("Done.")
             # Create a new description
-            build_description = Build(extracted_frames=extracted_frames)
+            build_description = Build(extracted_frames=extracted_frames, filename = self.file_name)
             self.description = build_description.description()
             self.description += f"[url=https://github.com/31December99/Unit3Dup]Uploaded by Unit3Dup[/url]"
 
