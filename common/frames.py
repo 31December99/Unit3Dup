@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import os
 import subprocess
 import io
 
@@ -9,7 +10,7 @@ from common import config_settings
 from view import custom_console
 
 class VideoFrame:
-    def __init__(self, video_path: str, num_screenshots: int, tmdb_id: int):
+    def __init__(self, video_path: str, num_screenshots: int):
         """
         Initialize VideoFrame object
 
@@ -124,11 +125,11 @@ class VideoFrame:
 
     def _extract_frame(self, time_: float) -> Image:
         """
-        Extract a single frame from the video at the specified time.
+        Extract a single frame from the video at the specified time
 
-        :param time: The time to extract the frame.
-        :return: The extracted frame as a PIL Image.
-        :raises RuntimeError: If ffmpeg fails.
+        :param time: The time to extract the frame
+        :return: The extracted frame as a PIL Image
+        :raises RuntimeError: If it fails
         """
         command = [
             "ffmpeg",
@@ -161,5 +162,54 @@ class VideoFrame:
             custom_console.bot_error_log(f"IMAGES Error: {self.video_path}  Cannot identify image file. "
                                          f"Please verify if your file is corrupted")
             exit(1)
+
+    @staticmethod
+    def create_webp_from_video(video_path, start_time, duration, output_path):
+        """
+        Create a webp file
+
+        :param time: The time to extract the frame
+        :param duration: how many sec
+        :return: The extracted frame as a PIL Image
+        :raises RuntimeError: If it fails
+        : https://wsrv.nl/ 71kk pixel limit for the whitelisted in Unit3d
+        """
+
+        command = [
+            "ffmpeg",
+            "-y",
+            "-ss", str(start_time),
+            "-t", str(duration),
+            "-i", video_path,
+            "-vf", "fps=10,scale=800:600", # wsrv.nl !!
+            "-c:v", "libwebp",
+            "-quality", "80",
+            "-loop", "0", # infinite
+            "-f", "webp",
+            output_path
+        ]
+
+        try:
+            subprocess.run(command, capture_output=True, check=True)
+            if not os.path.isfile(output_path):
+                print(f"file {output_path} doesn't exist !")
+                exit(1)
+            webp_file = open(output_path, "rb")
+            webp_file_content = webp_file.read()
+            webp_file.close()
+            os.remove(output_path)
+            custom_console.bot_log(f"webp file {output_path} created")
+            return [webp_file_content]
+
+        except subprocess.CalledProcessError as e:
+            custom_console.bot_error_log(f"IMAGES Error: Please verify if your file is corrupted {e}")
+        except FileNotFoundError:
+            custom_console.bot_error_log(
+                "[FFMPEG not found] - Install ffmpeg or check your system path")
+            exit(1)
+        except Image.UnidentifiedImageError as e:
+            custom_console.bot_error_log(f"IMAGES Error: {output_path}  Cannot identify image file. "
+                                         f"Please verify if your file is corrupted")
+
 
 
