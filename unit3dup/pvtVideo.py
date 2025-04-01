@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 import hashlib
+import os.path
+
 import diskcache
 
 from common.external_services.imageHost import Build
@@ -28,7 +30,7 @@ class Video:
 
         # Load the video frames
         samples_n = max(2, min(config_settings.user_preferences.NUMBER_OF_SCREENSHOTS, 10))
-        self.video_frames: VideoFrame = VideoFrame(self.file_name, num_screenshots=samples_n, tmdb_id=self.tmdb_id)
+        self.video_frames: VideoFrame = VideoFrame(self.file_name, num_screenshots=samples_n)
 
         # Init
         self.is_hd: int = 0
@@ -52,9 +54,18 @@ class Video:
         if not self.description:
             # If no description found generate it
             custom_console.bot_log(f"\n[GENERATING IMAGES..] [HD {'ON' if self.is_hd == 0 else 'OFF'}]")
+            # Extract the frames
             extracted_frames, is_hd = self.video_frames.create()
+            # Create a webp file
+            extracted_frames_webp = self.video_frames.create_webp_from_video(video_path=self.file_name,
+                                                start_time=90,
+                                                duration=10,
+                                                output_path=
+                                                os.path.join(config_settings.user_preferences.CACHE_PATH,"file.webp"))
             custom_console.bot_log("Done.")
-            build_description = Build(extracted_frames=extracted_frames, filename = self.file_name)
+
+            # Build the description
+            build_description = Build(extracted_frames=extracted_frames_webp+extracted_frames, filename = self.file_name)
             self.description = build_description.description()
             self.description += (f"[b][spoiler=Spoiler: PLAY TRAILER][center][youtube]{self.trailer_key}[/youtube]"
                                  f"[/center][/spoiler][/b]")
