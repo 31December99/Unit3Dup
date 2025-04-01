@@ -114,15 +114,7 @@ class Duplicate:
         self.INFO_HASH_WIDTH = 40
         self.DELTA_SIZE_WIDTH = 2
 
-        # Media info
-        self.media_info: str = ''
-
     def process(self) -> bool:
-        if self.category in {self.movie_category, self.serie_category}:
-            audio = f"Audio: {self.content.audio_languages}"
-            resolution = self.content.screen_size or self.content.resolution
-            self.media_info = f"{audio + ' - ' + resolution}"
-
         return self.search()
 
     def search(self) -> bool:
@@ -192,7 +184,7 @@ class Duplicate:
         formatted_resolution = f"{resolution:<{self.RESOLUTION_WIDTH}}" if resolution else ''
         formatted_size_th = f"{delta_size:<{self.DELTA_SIZE_WIDTH}}"
 
-        if tmdb_id != 0:
+        if self.category in {'movie', 'tv'}:
             output = (
                 f"-'Duplicate' TMDB-ID {formatted_tmdb_id} - "
                 f"{formatted_size} delta={formatted_size_th}% - "
