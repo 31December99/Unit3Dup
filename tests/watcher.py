@@ -16,7 +16,8 @@ def test_cli_watcher():
         cross=False,
         upload=False,
         mt=False,
-        title=None,
+        notitle=None,
+        seedit=None,
     )
 
     tests.cli.args = cli_scan
