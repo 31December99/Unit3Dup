@@ -301,9 +301,6 @@ class DbOnline(TmdbAPI):
             exit(1)
 
         # not results found so try to initialize imdb
-        # imdb = IMDB()
-        # Printing information could help the user to debug it
-        # Sometimes the category is wrong due to the title containing noisy substrings
         custom_console.bot_warning_log(f"Title not found.What the bot has understood:")
         serie = f"S{str(self.media.guess_season).zfill(2)}" if self.media.guess_season else ''
         if not self.media.torrent_pack:
