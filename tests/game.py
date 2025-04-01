@@ -24,7 +24,7 @@ def test_game():
         noseed=False,
         tracker=None,
         force=False,
-        title=None,
+        notitle=None,
     )
     content_manager = tests.ContentManager(path=test_content_movie, mode='auto', cli=cli_scan)
 
