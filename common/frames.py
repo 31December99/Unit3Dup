@@ -172,7 +172,7 @@ class VideoFrame:
         :param duration: how many sec
         :return: The extracted frame as a PIL Image
         :raises RuntimeError: If it fails
-        : https://wsrv.nl/ 71kk pixel limit for the whitelisted in Unit3d
+        : https://wsrv.nl/ 71kk pixel limit and 10sec timeout processing for the whitelisted in Unit3d
         """
 
         command = [
@@ -181,9 +181,9 @@ class VideoFrame:
             "-ss", str(start_time),
             "-t", str(duration),
             "-i", video_path,
-            "-vf", "fps=10,scale=800:600", # wsrv.nl !!
+            "-vf", "fps=4,scale=650:270", # wsrv.nl !!
             "-c:v", "libwebp",
-            "-quality", "80",
+            "-quality", "100",
             "-loop", "0", # infinite
             "-f", "webp",
             output_path
