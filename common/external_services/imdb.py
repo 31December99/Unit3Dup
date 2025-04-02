@@ -59,6 +59,7 @@ class IMDB:
     def search_keyword(self, query: str)-> str | None:
         movies = self.api.search_movie(query)
         self.view_results(imdb_results=movies)
-        if index:=self.select_result(results=movies) is not None:
+        index = self.select_result(results=movies)
+        if index is not None:
             selected = movies[index]
             return title.Guessit(selected.data['title']).guessit_title
