@@ -56,7 +56,7 @@ class VideoFrame:
         return buffered.getvalue()
 
     @staticmethod
-    def resize_image(image: Image, width: int = 450) -> Image:
+    def resize_image(image: Image, width: int = 650) -> Image:
         """
         Resize the image while maintaining aspect ratio
 
@@ -164,7 +164,7 @@ class VideoFrame:
             exit(1)
 
     @staticmethod
-    def create_webp_from_video(video_path, start_time, duration, output_path):
+    def create_webp_from_video(video_path, start_time, video_height, duration, output_path):
         """
         Create a webp file
 
@@ -172,18 +172,18 @@ class VideoFrame:
         :param duration: how many sec
         :return: The extracted frame as a PIL Image
         :raises RuntimeError: If it fails
-        : https://wsrv.nl/ 71kk pixel limit and 10sec timeout processing for the whitelisted in Unit3d
+        : remove hostimage from the unit3d whitelist or resize it:
+        :https://wsrv.nl/ 71kk pixel limit and 10sec timeout processing for the whitelisted in Unit3d
         """
-
         command = [
             "ffmpeg",
             "-y",
             "-ss", str(start_time),
             "-t", str(duration),
             "-i", video_path,
-            "-vf", "fps=4,scale=650:270", # wsrv.nl !!
+            "-vf", f"fps=7",
             "-c:v", "libwebp",
-            "-quality", "100",
+            "-quality", "50",
             "-loop", "0", # infinite
             "-f", "webp",
             output_path
