@@ -44,6 +44,11 @@ class Video:
 
     def build_info(self):
         """Build the information to send to the tracker"""
+
+        # media_info
+        media_info = MediaFile(self.file_name)
+        self.mediainfo = media_info.info
+
         if config_settings.user_preferences.CACHE_SCR:
             description = self.cache.get(self.cache_key)
             if description:
@@ -60,6 +65,7 @@ class Video:
             extracted_frames_webp = self.video_frames.create_webp_from_video(video_path=self.file_name,
                                                 start_time=90,
                                                 duration=10,
+                                                video_height = media_info.video_height,
                                                 output_path=
                                                 os.path.join(config_settings.user_preferences.CACHE_PATH,"file.webp"))
             custom_console.bot_log("Done.")
@@ -75,11 +81,3 @@ class Video:
         # Caching
         if config_settings.user_preferences.CACHE_SCR:
             self.cache[self.cache_key] = {'tmdb_id': self.tmdb_id, 'description': self.description, 'is_hd': self.is_hd}
-
-        # media_info
-        self.mediainfo = self._mediainfo()
-
-    def _mediainfo(self) -> str:
-        """Return media_info """
-        media_info = MediaFile(self.file_name)
-        return media_info.info
