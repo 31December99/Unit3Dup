@@ -302,11 +302,13 @@ class DbOnline(TmdbAPI):
 
         # not results found so try to initialize imdb
         custom_console.bot_warning_log(f"Title not found.What the bot has understood:")
-        serie = f"S{str(self.media.guess_season).zfill(2)}" if self.media.guess_season else ''
-        if not self.media.torrent_pack:
-            serie += f"E{str(self.media.guess_episode).zfill(2)}"
-        custom_console.bot_warning_log(f"Title:   '{self.query}'\ncategory:'{self.category}'"
-                                       f"\ndetails: '{serie}' Pack: '{self.media.torrent_pack}'")
+        custom_console.bot_warning_log(f"Title:   '{self.query}'\ncategory:'{self.category}'")
+
+        if self.category in 'tv':
+            serie = f"S{str(self.media.guess_season).zfill(2)}" if self.media.guess_season else ''
+            if not self.media.torrent_pack:
+                serie += f"E{str(self.media.guess_episode).zfill(2)}"
+            custom_console.bot_warning_log(f"details: '{serie}' Pack: '{self.media.torrent_pack}'")
 
         user_tmdb_id  = custom_console.user_input(message=f"Please digit a valid TMDB ID (0=skip)->")
 
@@ -329,6 +331,9 @@ class DbOnline(TmdbAPI):
 
     def youtube_trailer(self) -> str | None:
         # Search trailer on YouTube
+        if 'no_key'  in config_settings.tracker_config.YOUTUBE_KEY:
+            return "not available"
+
         yt_trailer = YtTrailer(self.query)
         result = yt_trailer.get_trailer_link()
         if result:
