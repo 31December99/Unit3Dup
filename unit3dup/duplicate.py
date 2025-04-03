@@ -30,7 +30,7 @@ class CompareTitles:
     def same_season(self) -> bool:
 
         # Compare season and episode only if it is a serie
-        # Return true if they have at least the same season and episode
+        # Return true if they have at least the same season and episode otherwise false
         if self.content_file.guessit_season and self.tracker_file.guessit_season:
             same_season = self.content_file.guessit_season == self.tracker_file.guessit_season
             same_episode = self.content_file.guessit_episode == self.tracker_file.guessit_episode
@@ -53,8 +53,20 @@ class CompareTitles:
         return False
 
     def process(self) -> bool:
-        if self.ratio > 49:
-            return self.same_season()
+        """
+        Return True if they have the same year,seasons,title
+        Returns: boolean
+        """
+
+        # only test the year if both have it
+        if self.content_file.guessit_year and self.tracker_file.guessit_year:
+            same_year = self.content_file.guessit_year == self.tracker_file.guessit_year
+        else:
+            # bypass year test
+            same_year = True
+
+        if self.ratio > 95 and same_year and self.same_season():
+            return True
         return False
 
 
