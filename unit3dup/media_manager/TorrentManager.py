@@ -18,18 +18,14 @@ from view import custom_console
 
 
 class TorrentManager:
-    def __init__(self, cli: argparse.Namespace):
+    def __init__(self, cli: argparse.Namespace, tracker_archive: str):
 
         self.preferred_lang = my_language(config_settings.user_preferences.PREFERRED_LANG)
-        self.games: list[Media] = []
+        self.tracker_archive = tracker_archive
         self.videos: list[Media] = []
+        self.games: list[Media] = []
         self.doc: list[Media] = []
         self.cli = cli
-
-        if config_settings.user_preferences.TORRENT_ARCHIVE_PATH:
-            self.tracker_archive = config_settings.user_preferences.TORRENT_ARCHIVE_PATH
-        else:
-            self.tracker_archive =  '.'
 
     def process(self, contents: list) -> None:
         """
@@ -119,7 +115,7 @@ class TorrentManager:
     custom_console.bot_log(f"Done.")
     custom_console.rule()
 
-    def send(self, this_path: str, trackers_name_list: list):
+    def send(self, trackers_name_list: list):
         # Send a torrent file that has already been created for seeding
         client = UserContent.get_client()
 
@@ -127,8 +123,10 @@ class TorrentManager:
                 custom_console.bot_warning_log(f"Seeding for {selected_tracker}..Please wait")
                 for content in self.videos + self.games + self.doc:
                     # get the archive path
-                    torrent_filepath = os.path.join(self.tracker_archive, selected_tracker,f"{content.torrent_name}.torrent")
+                    torrent_filepath = os.path.join(self.tracker_archive, selected_tracker,
+                                                    f"{content.torrent_name}.torrent")
                     if os.path.exists(torrent_filepath):
+                        # Send
                         client.send_file_to_client(torrent_path=torrent_filepath)
                         custom_console.bot_log(torrent_filepath)
 

@@ -6,7 +6,6 @@ from common.external_services.theMovieDB.core.api import DbOnline
 from common.bittorrent import BittorrentData
 from common.utility import System
 
-from unit3dup.media_manager.SeedManager import SeedManager
 from unit3dup.media_manager.common import UserContent
 from unit3dup.upload import UploadBot
 from unit3dup import config_settings
@@ -37,9 +36,6 @@ class VideoManager:
            Returns:
                list: List of Bittorrent objects created for each content
         """
-
-        # Tracker administration
-        seed_manager = SeedManager(cli=self.cli, trackers_name_list=tracker_name_list)
 
         # -multi : no announce_list . One announce for multi tracker
         if self.cli.mt:
@@ -96,12 +92,6 @@ class VideoManager:
                                                  f"{db_online.media_result.year} "
                                                  f"{content.guess_title} {meta_info_title}")
 
-
-                # Run the seeding process if requested by the user
-                if self.cli.reseed:
-                    seed_manager.process(media_id = db.video_id, category = content.category)
-                    seed_manager.run(trackers_name_list=tracker_name_list)
-                    continue
 
                 # Get meta from the media video
                 video_info = Video(media=content, tmdb_id=db.video_id, trailer_key=db.trailer_key)
