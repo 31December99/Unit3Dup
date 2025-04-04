@@ -185,7 +185,7 @@ class Media:
                 serie+= f"E{str(self.guess_episode).zfill(2)}"
 
             # Build the title
-            self._generate_title =  f"{self.guess_title}.{serie}.{video_h}.{video_f}.{audio_f}.{audio_lang.upper()}"
+            self._generate_title =  f"{self.guess_title} {serie} {video_h} {video_f} {audio_f} {audio_lang.upper()}"
         return self._generate_title
 
     @generate_title.setter
