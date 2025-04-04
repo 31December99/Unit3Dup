@@ -5,11 +5,13 @@ import os
 import time
 import shutil
 
+from unit3dup.media import Media
 from unit3dup.media_manager.ContentManager import ContentManager
 from unit3dup.media_manager.TorrentManager import TorrentManager
-from unit3dup.torrent import Torrent, View
+from unit3dup.media_manager.SeedManager import SeedManager
 
 from common.external_services.ftpx.core.models.list import FTPDirectory
+from common.external_services.theMovieDB.core.api import DbOnline
 from common.external_services.Pw.pw_manager import PwManager
 from common.external_services.ftpx.core.menu import Menu
 from common.external_services.ftpx.client import Client
@@ -31,7 +33,9 @@ class Bot:
         ftp(): Connects to a remote FTP server and processes files
     """
 
-    def __init__(self, path: str, cli: argparse.Namespace, trackers_name_list: list, mode="man"):
+    # Bot Manager
+    def __init__(self, path: str, cli: argparse.Namespace, trackers_name_list: list, mode="man",
+                 torrent_archive_path = None):
         """
         Initializes the Bot instance with path, command-line interface object, and mode
 
@@ -41,20 +45,17 @@ class Bot:
             mode (str): The mode of operation, default is 'man'
         """
         self.trackers_name_list = trackers_name_list
+        self.torrent_archive_path = torrent_archive_path
         self.content_manager = None
         self.path = path
         self.cli = cli
         self.mode = mode
 
-        # Bot Manager
-        self.torrent_manager = TorrentManager(cli=self.cli)
 
-    def run(self) -> bool:
+    def contents(self) -> bool | list[Media]:
         """
-        Start the process of analyzing and processing media files.
-
-        This method retrieves media files, decompresses any `.rar` files if needed,
-        and then processes the files using the TorrentManager
+        Start the process of analyzing and processing media files
+        This method retrieves media files
         """
         custom_console.panel_message("Analyzing your media files... Please wait")
 
@@ -83,18 +84,51 @@ class Bot:
         # Print the list of files being processed
         custom_console.bot_process_table_log(contents)
 
+        return contents
+
+
+    def run(self) -> bool:
+        """
+        processes the files using the TorrentManager and SeedManager
+        """
+
+        # We want to reseed
+        if self.cli.reseed:
+            self.ressed()
+            # Done
+            return True
+
+        # Upload
+        # Get the user content
+        contents = self.contents()
+        # Instance a new run
+        torrent_manager = TorrentManager(cli=self.cli, tracker_archive=self.torrent_archive_path)
         # Process the torrents content (files)
-        self.torrent_manager.process(contents=contents)
-
-        # Torrent Seeding
-        if self.cli.seedit:
-            self.torrent_manager.send(self.path, self.trackers_name_list)
-        else:
-            # Run the torrents creations and the upload process
-            self.torrent_manager.run(trackers_name_list=self.trackers_name_list)
-
-
+        torrent_manager.process(contents=contents)
+        # Run the torrents creations and the upload process
+        torrent_manager.run(trackers_name_list=self.trackers_name_list)
         return True
+
+
+    def ressed(self):
+
+        # Get the user content
+        contents = self.contents()
+        # Instance
+        seed_manager = SeedManager(cli=self.cli, trackers_name_list=self.trackers_name_list)
+        # manage torrent files
+        torrent_manager = TorrentManager(cli=self.cli, tracker_archive=self.torrent_archive_path)
+
+
+        # Iterate user content
+        for content in contents:
+            # Search for tmdb ID
+            db_online = DbOnline(media=content, category=content.category, no_title=self.cli.notitle)
+            db = db_online.media_result
+            # Compare the user's video ID against the tracker tmdb id
+            seed_list = seed_manager.process(media_id=db.video_id, content=content)
+            # torrent_manager.send(trackers_name_list=self.trackers_name_list)
+
 
 
     def watcher(self, duration: int, watcher_path: str,  destination_path: str)-> bool:
