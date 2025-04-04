@@ -121,6 +121,8 @@ class ManageTitles:
         """
         Returns similarity score between two strings
         """
+        str2 = str2.lower().replace("-", "")
+        str2 = ManageTitles.clean(str2)
         return fuzz.ratio(ManageTitles.remove_accent(str1.lower()), ManageTitles.remove_accent(str2.lower()))
 
     @staticmethod
