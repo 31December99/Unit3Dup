@@ -73,17 +73,12 @@ class ManageTitles:
         return " ".join(filename.split())
 
     @staticmethod
-    def accented_remove(string: str) -> str:
+    def remove_accent(my_string: str)-> str:
         """
         Removes accented characters from a string
         """
-        accented_letters = [
-            "à", "è", "é", "ì", "ò", "ù", "á", "í", "ó", "ú", "ñ", "ä", "ö", "ü", "ß", 
-            "â", "ê", "î", "ô", "û", "ë", "ï", "ÿ", "ç", "ã", "ẽ", "ĩ", "õ", "ũ", "å", 
-            "æ", "ø", "ş", "ç", "ğ", "ı", "ą", "ć", "ę", "ł", "ń", "ó", "ś", "ź", "ż", 
-            "š"
-        ]
-        return "".join(char for char in string if char.lower() not in accented_letters)
+        str_tmp = unicodedata.normalize('NFD', my_string)
+        return ''.join(char for char in str_tmp if unicodedata.category(char) != 'Mn')
 
     @staticmethod
     def filter_ext(file: str) -> bool:
@@ -126,7 +121,7 @@ class ManageTitles:
         """
         Returns similarity score between two strings
         """
-        return fuzz.ratio(str1.lower(), str2.lower())
+        return fuzz.ratio(ManageTitles.remove_accent(str1.lower()), ManageTitles.remove_accent(str2.lower()))
 
     @staticmethod
     def normalize_filename(filename):
