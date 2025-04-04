@@ -171,7 +171,8 @@ class Duplicate:
         # Skip duplicate check if the size is out of the threshold
 
         size = round(size / (1024 ** 3), 2) if self.size_unit == 'GB' else round(size / (1024 ** 2), 2)
-        return round(abs(self.content_size - size) / max(self.content_size, size) * 100)
+        return round(abs(self.content_size - size) / max(self.content_size, size) * 100,2)
+
 
     def _print_output(self, value: dict, delta_size: int, size_th: int):
 
@@ -198,11 +199,13 @@ class Duplicate:
 
         if self.category in {'movie', 'tv'}:
             output = (
-                f"-'Duplicate' TMDB-ID {formatted_tmdb_id} - "
-                f"{formatted_size} delta={formatted_size_th}% - "
-                f"{formatted_resolution}' "
+                f"Tracker - size: '{formatted_size}' "
+                f"delta={formatted_size_th}% - "
                 f"{formatted_name} "
-                f"{languages}'"
+                f"{formatted_resolution} "
+                f"{languages}' - "
+                f"TMDB-ID {formatted_tmdb_id}"
+
             )
         else:
             output = (
@@ -211,8 +214,11 @@ class Duplicate:
                 f"{formatted_name}"
             )
 
-        custom_console.bot_log(f"Your file: '{self.content.display_name}' Size: {self.content_size} GB - "
-                                       f"Size_TH: {size_th}%")
+        custom_console.bot_log(f"Size_TH: {size_th}%")
+        custom_console.bot_log(f"Your file - size: '{self.content_size} GB' - "
+                               f"'{self.content.display_name}' - ")
+
+
         custom_console.bot_log(output)
 
     def _process_tracker_data(self, data_from_the_tracker) -> bool:
