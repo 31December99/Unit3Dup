@@ -88,7 +88,7 @@ class TransmissionClient(TorrClient):
                 self.client.add_torrent(torrent=torrent_file, download_dir=str(torr_location))
 
     def send_file_to_client(self, torrent_path: str):
-        self.client.add_torrent(torrent=open(torrent_path, "rb"), download_dir=os.path.dirname(torrent_path))
+        self.client.add_torrent(torrent=open(torrent_path, "rb"), download_dir=str(os.path.dirname(torrent_path)))
 
 
 
