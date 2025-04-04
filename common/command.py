@@ -27,13 +27,13 @@ class CommandLine:
         parser.add_argument("-u", "--upload", type=str, help="Upload path")
         parser.add_argument("-f", "--folder", type=str, help="Upload folder")
         parser.add_argument("-scan", "--scan", type=str, help="Scan folder")
+
         parser.add_argument("-reseed", "--reseed", action="store_true", help="reseed folder")
         parser.add_argument("-seedit", "--seedit", action="store_true", help="")
-        parser.add_argument("-notitle", "--notitle", action="store_true", help="")
         parser.add_argument("-gentitle", "--gentitle", action="store_true", help="")
-
-
         parser.add_argument("-watcher", "--watcher", action="store_true", help="Start watcher")
+
+        parser.add_argument("-notitle", "--notitle", type=str, help="")
         parser.add_argument("-tracker", "--tracker", type=str, default=config.tracker_config.MULTI_TRACKER[0],
                             help="Upload to single tracker")
 

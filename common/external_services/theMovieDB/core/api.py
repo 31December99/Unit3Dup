@@ -184,12 +184,12 @@ class TmdbAPI(MyHttp):
 
 
 class DbOnline(TmdbAPI):
-    def __init__(self, media: Media, category: str, season: bool) -> None:
+    def __init__(self, media: Media, category: str, no_title: str) -> None:
         super().__init__()
         self.media = media
         self.query = media.guess_title
         self.category = category
-        self.season = season
+
 
         # Load the cache file
         if config_settings.user_preferences.CACHE_DBONLINE:
@@ -199,7 +199,10 @@ class DbOnline(TmdbAPI):
             # Skip cache if there is a tmdb id or imdb in the title string
             self.media_result = self.results_in_string(tmdb_id=int(media.tmdb_id), imdb_id=int(media.imdb_id))
         else:
-            # Load cache or search online for a tmdb id or imdb
+            # Load from the cache or search online for a tmdb id or imdb
+            # Search for a video based on the filename or the title from the -notitle flag in the CLI
+            if no_title:
+                self.query = no_title
             self.media_result = self.search()
 
     @staticmethod
@@ -245,19 +248,18 @@ class DbOnline(TmdbAPI):
         self.print_results(results=search_results)
         return search_results
 
+    # use details endpoint
+    def search_id(self, video_id: int) -> str | None:
+        # Search a video based on tmdb ID
+        result = self._videos(video_id, self.category)
+        input("Press Enter to continue...")
+
+
     def search(self) -> MediaResult | None:
         """
         Search for results based on a tmdb query
         season: True = search for a season. Title unknown
         """
-
-        if self.season and self.category not in [System.category_list.get(System.TV_SHOW),
-                                                 System.category_list.get(System.MOVIE)]:
-            custom_console.user_input_str("'-notitle' works only with TV.")
-            exit()
-
-        # IMDB new instance
-        imdb = IMDB()
 
         # Search in the cache first if cache is enabled
         if config_settings.user_preferences.CACHE_DBONLINE:
@@ -265,15 +267,6 @@ class DbOnline(TmdbAPI):
             if search_results:
                 self.print_results(results=search_results)
                 return search_results
-
-
-        # Search for the serie title if -notitle flag is active
-        if self.season:
-            # Get the new query string otherwise return None and skip it
-            self.query = imdb.search_keyword(query=self.query)
-            if not self.query:
-                return None
-
 
         # or start an on-line search
         results = self._search(self.query, self.category)
@@ -288,10 +281,10 @@ class DbOnline(TmdbAPI):
                                              trailer_key=trailer_key, keywords_list=keywords_list)
 
                 self.print_results(results=search_results)
-
                 # Write to the cache if it is enabled
                 if config_settings.user_preferences.CACHE_DBONLINE:
                     self.cache[self.hash_key(self.query)] = search_results
+                # return the result
                 return search_results
 
         # No response from TMDB
@@ -302,32 +295,43 @@ class DbOnline(TmdbAPI):
 
         # not results found so try to initialize imdb
         custom_console.bot_warning_log(f"Title not found.What the bot has understood:")
+        #
         custom_console.bot_warning_log(f"Title:   '{self.query}'\ncategory:'{self.category}'")
-
         if self.category in 'tv':
             serie = f"S{str(self.media.guess_season).zfill(2)}" if self.media.guess_season else ''
             if not self.media.torrent_pack:
                 serie += f"E{str(self.media.guess_episode).zfill(2)}"
             custom_console.bot_warning_log(f"details: '{serie}' Pack: '{self.media.torrent_pack}'")
 
-        user_tmdb_id  = custom_console.user_input(message=f"Please digit a valid TMDB ID (0=skip)->")
+        # Ask user to a TMBD id
+        user_id = custom_console.user_input(message=f"Please digit a valid TMDB ID (0=skip)->")
+        search_results = self.manual_search(user_id=user_id)
+
+        self.cache[self.hash_key(self.query)] = search_results
+        return search_results
+
+
+    def manual_search(self, user_id: int) -> MediaResult | None:
+
+        imdb = IMDB()
+        imdb_id = 0
 
         # Try to add IMDB ID if tmdb is not available
-        if user_tmdb_id==0:
+        if user_id==0:
             imdb_id = imdb.search(query=self.query)
-            trailer_key = "not available"
             keywords_list = []
             # try searching for a YouTube video anyway
             trailer_key = self.youtube_trailer()
         else:
             # Request trailer and keywords
-            trailer_key = self.trailer(user_tmdb_id)
-            keywords_list = self.keywords(user_tmdb_id) if trailer_key else ''
+            trailer_key = self.trailer(user_id)
+            keywords_list = self.keywords(user_id) if trailer_key else ''
 
-        search_results = MediaResult(video_id=user_tmdb_id, imdb_id=imdb_id, trailer_key=trailer_key, keywords_list=keywords_list)
+        search_results = MediaResult(video_id=user_id, imdb_id=imdb_id, trailer_key=trailer_key,
+                                     keywords_list=keywords_list)
         self.print_results(results=search_results)
-        self.cache[self.hash_key(self.query)] = search_results
         return search_results
+
 
     def youtube_trailer(self) -> str | None:
         # Search trailer on YouTube

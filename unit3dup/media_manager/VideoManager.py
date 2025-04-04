@@ -75,7 +75,7 @@ class VideoManager:
                     continue
 
                 # Search for VIDEO ID
-                db_online = DbOnline(media=content,category=content.category, season=self.cli.notitle)
+                db_online = DbOnline(media=content,category=content.category, no_title=self.cli.notitle)
                 db = db_online.media_result
 
                 # If it is 'None' we skipped the imdb search (-notitle)
@@ -86,13 +86,15 @@ class VideoManager:
                 if self.cli.notitle:
                     # Add generated metadata to the display_title
                     if self.cli.gentitle:
-                        content.display_name = f"{db_online.media_result.result.get_title()}.{db_online.media_result.year}."
-                        content.display_name+= content.generate_title
+                        content.display_name = (f"{db_online.media_result.result.get_title()} "
+                                                f"{db_online.media_result.year} ")
+                        content.display_name+= " " + content.generate_title
                     else:
                         # otherwise keep the old meta_data and add the new display_title to it
                          meta_info_title = content.display_name.replace(content.guess_title, "")
-                         content.display_name = (f"{db_online.media_result.result.get_title()}."
-                                                 f"{db_online.media_result.year}.{meta_info_title}")
+                         content.display_name = (f"{db_online.media_result.result.get_title()} "
+                                                 f"{db_online.media_result.year} "
+                                                 f"{content.guess_title} {meta_info_title}")
 
 
                 # Run the seeding process if requested by the user
