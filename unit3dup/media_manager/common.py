@@ -20,6 +20,22 @@ class UserContent:
     """
 
     @staticmethod
+    def tracker_key(tracker_data: dict, value)-> str | None:
+        """
+        read the string Key from tracker data dictionary
+        Args:
+            tracker_data: tracker data dictionary in trackers folder
+            value: key of tracker data
+
+        Returns: value of tracker key
+        """
+
+        for key, val in tracker_data.items():
+            if val == value:
+                return key
+        return None
+
+    @staticmethod
     def is_preferred_language(content: Media) -> bool:
         """
            Compare preferred language with the audio language
