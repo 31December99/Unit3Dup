@@ -45,10 +45,6 @@ class VideoManager:
         bittorrent_list = []
         for content in self.contents :
 
-            # -notitle flags works only with Tv
-            if content.category not in  System.category_list.get(System.TV_SHOW) and self.cli.notitle:
-                continue
-
             # get the archive path
             archive = os.path.join(tracker_archive, selected_tracker)
             os.makedirs(archive, exist_ok=True)
