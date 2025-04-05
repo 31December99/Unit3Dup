@@ -2,7 +2,6 @@
 import os
 import hashlib
 import diskcache
-
 from typing import TypeVar
 
 from common.external_services.theMovieDB.core.models.tvshow.alternative import Alternative
@@ -10,8 +9,8 @@ from common.external_services.theMovieDB.core.models.movie.nowplaying import Now
 from common.external_services.theMovieDB.core.models.tvshow.on_the_air import OnTheAir
 from common.external_services.theMovieDB.core.models.tvshow.tvshow import TvShow
 from common.external_services.theMovieDB.core.models.movie.movie import Movie
-from common.external_services.theMovieDB.core.videos import Videos
 from common.external_services.theMovieDB.core.keywords import Keyword
+from common.external_services.theMovieDB.core.videos import Videos
 from common.external_services.mediaresult import MediaResult
 from common.external_services.sessions.session import MyHttp
 from common.external_services.trailers.api import YtTrailer
@@ -35,9 +34,11 @@ class MovieEndpoint:
     def search(query: str)-> dict:
         return {'url': f'{base_url}/search/movie', 'datatype': Movie, 'query': query, 'results': 'results' }
 
+
     @staticmethod
     def playing()-> dict:
         return {'url': f'{base_url}/movie/now_playing', 'datatype': NowPlaying, 'query': '', 'results': 'results'}
+
 
     @staticmethod
     def alternative(movie_id: int)-> dict:
@@ -50,6 +51,7 @@ class MovieEndpoint:
         return {'url': f'{base_url}/movie/{movie_id}/videos', 'datatype': Videos, 'query': '',
                 'results': 'results'}
 
+
     @staticmethod
     def keywords(movie_id: int)-> dict:
         return {'url': f'{base_url}/movie/{movie_id}/keywords', 'datatype': Keyword, 'query': '',
@@ -61,19 +63,23 @@ class TvEndpoint:
     def search(query: str):
         return {'url': f'{base_url}/search/tv', 'datatype': TvShow, 'query': query, 'results': 'results'}
 
+
     @staticmethod
     def playing():
         return {'url': f'{base_url}/tv/on_the_air', 'datatype': OnTheAir, 'query': '', 'results': 'results'}
+
 
     @staticmethod
     def alternative(serie_id: int) -> dict:
         return {'url': f'{base_url}/tv/{serie_id}/alternative_titles', 'datatype': Alternative, 'query': '',
                 'results': 'results'}
 
+
     @staticmethod
     def videos(serie_id: int)-> dict:
         return {'url': f'{base_url}/tv/{serie_id}/videos', 'datatype': Videos, 'query': '',
                 'results': 'results'}
+
 
     @staticmethod
     def keywords(serie_id: int)-> dict:
@@ -175,6 +181,7 @@ class TmdbAPI(MyHttp):
         """
         params = {**TmdbAPI.params, "query": endpoint['query']}
         response = self.get_url(endpoint['url'], params=params)
+
         if response:
             if response.status_code == 200:
                 response_data = response.json().get(endpoint['results'], [])
@@ -190,14 +197,13 @@ class DbOnline(TmdbAPI):
         self.query = media.guess_title
         self.category = category
 
-
         # Load the cache file
         if config_settings.user_preferences.CACHE_DBONLINE:
             self.cache = diskcache.Cache(str(os.path.join(config_settings.user_preferences.CACHE_PATH, "tmdb.cache")))
 
         if media.tmdb_id or media.imdb_id:
             # Skip cache if there is a tmdb id or imdb in the title string
-            self.media_result = self.results_in_string(tmdb_id=int(media.tmdb_id), imdb_id=int(media.imdb_id))
+            self.media_result = self. results_in_string(tmdb_id=int(media.tmdb_id), imdb_id=int(media.imdb_id))
         else:
             # Load from the cache or search online for a tmdb id or imdb
             # Search for a video based on the filename or the title from the -notitle flag in the CLI
@@ -247,12 +253,6 @@ class DbOnline(TmdbAPI):
                                      keywords_list=keywords_list)
         self.print_results(results=search_results)
         return search_results
-
-    # use details endpoint
-    def search_id(self, video_id: int) -> str | None:
-        # Search a video based on tmdb ID
-        result = self._videos(video_id, self.category)
-        input("Press Enter to continue...")
 
 
     def search(self) -> MediaResult | None:
