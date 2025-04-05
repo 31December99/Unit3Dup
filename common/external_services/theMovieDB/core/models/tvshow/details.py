@@ -3,13 +3,9 @@
 from dataclasses import dataclass, field
 
 
-# 05/09/2024
-# We need to split into more classes because the data is more complex
-# TVSHow is the 'main' class
-# These classes are immutable. Once you create an object and assign values, you cannot change those values again.
+# Tempus fugit
 
-
-@dataclass(frozen=True)
+@dataclass
 class CreatedBy:
     credit_id: str
     gender: int
@@ -19,13 +15,13 @@ class CreatedBy:
     profile_path: str | None = None
 
 
-@dataclass(frozen=True)
+@dataclass
 class Genre:
     id: int
     name: str
 
 
-@dataclass(frozen=True)
+@dataclass
 class LastEpisodeToAir:
     air_date: str
     episode_number: int
@@ -42,7 +38,7 @@ class LastEpisodeToAir:
     still_path: str | None = None
 
 
-@dataclass(frozen=True)
+@dataclass
 class Network:
     id: int
     logo_path: str
@@ -50,7 +46,7 @@ class Network:
     origin_country: str
 
 
-@dataclass(frozen=True)
+@dataclass
 class ProductionCompany:
     id: int
     name: str
@@ -58,13 +54,13 @@ class ProductionCompany:
     logo_path: str | None = None
 
 
-@dataclass(frozen=True)
+@dataclass
 class ProductionCountry:
     iso_3166_1: str
     name: str
 
 
-@dataclass(frozen=True)
+@dataclass
 class Season:
     episode_count: int
     id: int
@@ -83,8 +79,8 @@ class SpokenLanguage:
     name: str
 
 
-@dataclass(frozen=True)
-class TVShow:
+@dataclass
+class TVShowDetails:
     adult: bool
     first_air_date: str
     homepage: str
