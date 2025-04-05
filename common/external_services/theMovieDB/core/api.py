@@ -369,6 +369,8 @@ class DbOnline(TmdbAPI):
         keywords_list = self._keywords(video_id, self.category)
         if keywords_list:
             return ",".join([key.name for key in keywords_list])
+        else:
+            return "not available"
 
 
     def print_results(self,results: MediaResult) -> None:
