@@ -40,7 +40,7 @@ class ImageUploader(ABC):
             try:
                 upload_n += 1
                 response = requests.post(
-                    self.get_endpoint(), data = data, files = files, timeout = 10
+                    self.get_endpoint(), data = data, files = files, timeout = 20
                 )
                 response.raise_for_status()
                 return response.json()
@@ -61,7 +61,7 @@ class ImageUploader(ABC):
             except requests.exceptions.Timeout:
                 custom_console.bot_log(
                     f"[{self.__class__.__name__}] We did not receive a response from the server"
-                    f" within the 10 second limit"
+                    f" within the 20 second limit"
                 )
                 break
 
