@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import argparse
-import os
 
 from unit3dup.media_manager.VideoManager import VideoManager
 from unit3dup.media_manager.GameManager import GameManager
@@ -114,22 +113,3 @@ class TorrentManager:
 
     custom_console.bot_log(f"Done.")
     custom_console.rule()
-
-    def send(self, trackers_name_list: list):
-        # Send a torrent file that has already been created for seeding
-        client = UserContent.get_client()
-
-        for selected_tracker in trackers_name_list:
-                custom_console.bot_warning_log(f"Seeding for {selected_tracker}..Please wait")
-                for content in self.videos + self.games + self.doc:
-                    # get the archive path
-                    torrent_filepath = os.path.join(self.tracker_archive, selected_tracker,
-                                                    f"{content.torrent_name}.torrent")
-                    if os.path.exists(torrent_filepath):
-                        # Send
-                        client.send_file_to_client(torrent_path=torrent_filepath)
-                        custom_console.bot_log(torrent_filepath)
-
-
-
-

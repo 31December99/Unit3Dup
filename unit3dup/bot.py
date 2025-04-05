@@ -94,13 +94,15 @@ class Bot:
 
         # We want to reseed
         if self.cli.reseed:
-            self.ressed()
+            self.reseed()
             # Done
             return True
 
         # Upload
         # Get the user content
         contents = self.contents()
+        if not contents:
+            return False
         # Instance a new run
         torrent_manager = TorrentManager(cli=self.cli, tracker_archive=self.torrent_archive_path)
         # Process the torrents content (files)
@@ -110,27 +112,26 @@ class Bot:
         return True
 
 
-    def ressed(self):
+    def reseed(self):
 
         # Get the user content
         contents = self.contents()
         # Instance
-        seed_manager = SeedManager(cli=self.cli, trackers_name_list=self.trackers_name_list)
-        # manage torrent files
-        torrent_manager = TorrentManager(cli=self.cli, tracker_archive=self.torrent_archive_path)
-
+        seed_manager = SeedManager(cli=self.cli, trackers_name_list=self.trackers_name_list,
+                                   torrent_archive_path=self.torrent_archive_path)
 
         # Iterate user content
-        for content in contents:
-            # Search for tmdb ID
-            db_online = DbOnline(media=content, category=content.category, no_title=self.cli.notitle)
-            db = db_online.media_result
-            # Compare the user's video ID against the tracker tmdb id
-            seed_list = seed_manager.process(media_id=db.video_id, content=content)
-            # torrent_manager.send(trackers_name_list=self.trackers_name_list)
+        if contents:
+            for content in contents:
+                # Search for tmdb ID
+                db_online = DbOnline(media=content, category=content.category, no_title=self.cli.notitle)
+                db = db_online.media_result
+                # Compare the user's video ID against the tracker tmdb id
+                torrent_path = seed_manager.process(media_id=db.video_id, content=content)
+                if torrent_path:
+                    seed_manager.send(torrent_path)
 
-
-
+        input("Press Enter to continue...")
     def watcher(self, duration: int, watcher_path: str,  destination_path: str)-> bool:
         """
         Monitors the watcher path for new files, moves them to the destination folder,
