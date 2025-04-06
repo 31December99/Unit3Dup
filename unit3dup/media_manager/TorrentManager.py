@@ -2,9 +2,13 @@
 
 import argparse
 
+import requests
+
 from unit3dup.media_manager.VideoManager import VideoManager
 from unit3dup.media_manager.GameManager import GameManager
 from unit3dup.media_manager.DocuManager import DocuManager
+from unit3dup.media_manager.SeedManager import SeedManager
+
 from unit3dup import config_settings
 from unit3dup.media import Media
 
@@ -113,3 +117,31 @@ class TorrentManager:
 
     custom_console.bot_log(f"Done.")
     custom_console.rule()
+
+    def reseed(self, trackers_name_list: list) -> None:
+        """
+
+        Reseed : compare local file with remote tracker file. Download if found
+
+        Args:
+            trackers_name_list: list of tracker names
+        Returns:
+
+        """
+
+        for selected_tracker in trackers_name_list:
+            # From the contents
+            if self.videos:
+                # Instance
+                seed_manager = SeedManager(contents=self.videos, cli=self.cli)
+                # Search your content to see if there is a title present in the tracker
+                seed_manager_results = seed_manager.process(selected_tracker=selected_tracker,
+                                                            trackers_name_list=trackers_name_list,
+                                                            tracker_archive=self.tracker_archive)
+
+                #if so download the torrent file from the tracker for seeding
+                if seed_manager_results:
+                    UserContent.download_file(url=seed_manager_results.tracker_response,
+                                              destination_path=seed_manager_results.archive_path)
+                    # Send to the torrent client
+                    UserContent.send_to_bittorrent([seed_manager_results], 'VIDEO')
