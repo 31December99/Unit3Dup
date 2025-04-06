@@ -191,7 +191,6 @@ class Duplicate:
             languages = "[n/a]"
 
         formatted_tmdb_id = f"{tmdb_id:>{self.TMDB_ID_WIDTH}}"
-        formatted_igdb_id = f"{igdb_id:>{self.IGDB_ID_WIDTH}}"
         formatted_size = f"{size:>{self.SIZE_WIDTH}.2f} GB"
         formatted_name = f"{name:<{self.NAME_WIDTH}}"
         formatted_resolution = f"{resolution:<{self.RESOLUTION_WIDTH}}" if resolution else ''
@@ -208,6 +207,7 @@ class Duplicate:
 
             )
         else:
+            formatted_igdb_id = f"{igdb_id:>{self.IGDB_ID_WIDTH}}"
             output = (
                 f"- IGDB-ID {formatted_igdb_id} - "
                 f"{formatted_size} delta={formatted_size_th}% - "
