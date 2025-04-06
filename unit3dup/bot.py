@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from pathlib import Path
 import argparse
 import os
 import time
@@ -8,19 +9,14 @@ import shutil
 from unit3dup.media import Media
 from unit3dup.media_manager.ContentManager import ContentManager
 from unit3dup.media_manager.TorrentManager import TorrentManager
-from unit3dup.media_manager.SeedManager import SeedManager
 
 from common.external_services.ftpx.core.models.list import FTPDirectory
-from common.external_services.theMovieDB.core.api import DbOnline
 from common.external_services.Pw.pw_manager import PwManager
 from common.external_services.ftpx.core.menu import Menu
 from common.external_services.ftpx.client import Client
 from common.extractor import Extractor
 
-
 from view import custom_console
-
-from pathlib import Path
 
 
 class Bot:
@@ -92,46 +88,25 @@ class Bot:
         processes the files using the TorrentManager and SeedManager
         """
 
-        # We want to reseed
-        if self.cli.reseed:
-            self.reseed()
-            # Done
-            return True
-
-        # Upload
         # Get the user content
         contents = self.contents()
         if not contents:
             return False
+
         # Instance a new run
         torrent_manager = TorrentManager(cli=self.cli, tracker_archive=self.torrent_archive_path)
         # Process the torrents content (files)
         torrent_manager.process(contents=contents)
-        # Run the torrents creations and the upload process
-        torrent_manager.run(trackers_name_list=self.trackers_name_list)
+
+        # We want to reseed
+        if self.cli.reseed:
+            torrent_manager.reseed(trackers_name_list=self.trackers_name_list)
+        else:
+            # otherwise run the torrents creations and the upload process
+            torrent_manager.run(trackers_name_list=self.trackers_name_list)
         return True
 
 
-    def reseed(self):
-
-        # Get the user content
-        contents = self.contents()
-        # Instance
-        seed_manager = SeedManager(cli=self.cli, trackers_name_list=self.trackers_name_list,
-                                   torrent_archive_path=self.torrent_archive_path)
-
-        # Iterate user content
-        if contents:
-            for content in contents:
-                # Search for tmdb ID
-                db_online = DbOnline(media=content, category=content.category, no_title=self.cli.notitle)
-                db = db_online.media_result
-                # Compare the user's video ID against the tracker tmdb id
-                torrent_path = seed_manager.process(media_id=db.video_id, content=content)
-                if torrent_path:
-                    seed_manager.send(torrent_path)
-
-        input("Press Enter to continue...")
     def watcher(self, duration: int, watcher_path: str,  destination_path: str)-> bool:
         """
         Monitors the watcher path for new files, moves them to the destination folder,
