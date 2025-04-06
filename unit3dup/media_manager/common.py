@@ -3,6 +3,8 @@ import os
 import bencode2
 from concurrent.futures import ThreadPoolExecutor
 
+import requests
+
 from common.torrent_clients import TransmissionClient, QbittorrentClient
 from common.trackers.data import trackers_api_data
 from common.bittorrent import BittorrentData
@@ -226,19 +228,7 @@ class UserContent:
                                        f"{config_settings.torrent_client_config.TORRENT_CLIENT.upper()} client "
                                        f"... Please wait")
 
-        client = QbittorrentClient()
-
-        if config_settings.torrent_client_config.TORRENT_CLIENT.lower()=='qbittorrent':
-            client = QbittorrentClient()
-            client.connect()
-
-        elif config_settings.torrent_client_config.TORRENT_CLIENT.lower()=='transmission':
-            client = TransmissionClient()
-            client.connect()
-        else:
-            custom_console.bot_error_log(f"{UserContent.__class__.__name__}"
-                                         f" Invalid torrent client '{config_settings.torrent_client_config.TORRENT_CLIENT}'" )
-            exit(1)
+        client = UserContent.get_client()
 
         with ThreadPoolExecutor(max_workers=20) as executor:
             # Submit the torrents
@@ -247,3 +237,13 @@ class UserContent:
             # Wait for all threads to complete
             for future in futures:
                 future.result()
+
+    @staticmethod
+    def download_file(url: str, destination_path: str) -> bool:
+        download = requests.get(url)
+        if download.status_code == 200:
+            # File archived
+            with open(destination_path, "wb") as file:
+                file.write(download.content)
+            return True
+        return False
