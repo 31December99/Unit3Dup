@@ -176,16 +176,14 @@ class Media:
         if not self._generate_title:
             # Read video and audio data from mediainfo
             video_f = self.mediafile.video_track[0]['format']
-            video_h = self.mediafile.video_track[0]['height']
             audio_f = self.mediafile.audio_track[0]['format']
             audio_lang = self.mediafile.audio_track[0]['language']
             # Search for Season and Episode o torrent_pack
             serie = f"S{str(self.guess_season).zfill(2)}" if self.guess_season else ''
             if not self.torrent_pack:
                 serie+= f"E{str(self.guess_episode).zfill(2)}"
-
             # Build the title
-            self._generate_title =  f"{self.guess_title} {serie} {video_h} {video_f} {audio_f} {audio_lang.upper()}"
+            self._generate_title =  f"{self.guess_title} {serie} {self.resolution} {video_f} {audio_f} {audio_lang.upper()}"
         return self._generate_title
 
     @generate_title.setter
