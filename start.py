@@ -54,7 +54,7 @@ def main():
 
 
     # Test both clients only if used
-    if cli.args.noseed is False and cli.args.noup is False:
+    if cli.args.noseed is False and cli.args.noup is False or cli.args.reseed is True:
         # /// Test the torrent clients
         if cli.args.scan or cli.args.upload or cli.args.folder or cli.args.watcher:
 
