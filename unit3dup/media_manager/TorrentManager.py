@@ -139,9 +139,9 @@ class TorrentManager:
                                                             trackers_name_list=trackers_name_list,
                                                             tracker_archive=self.tracker_archive)
 
-                #if so download the torrent file from the tracker for seeding
+                #if so download the torrent files from the tracker for seeding
                 if seed_manager_results:
-                    UserContent.download_file(url=seed_manager_results.tracker_response,
-                                              destination_path=seed_manager_results.archive_path)
-                    # Send to the torrent client
-                    UserContent.send_to_bittorrent([seed_manager_results], 'VIDEO')
+                    for result in seed_manager_results:
+                        UserContent.download_file(url=result.tracker_response, destination_path=result.archive_path)
+                        # Send the data to the torrent client
+                        UserContent.send_to_bittorrent([result], 'VIDEO')
