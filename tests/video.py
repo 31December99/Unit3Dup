@@ -53,7 +53,7 @@ def test_content_manager():
     tests.custom_console.bot_warning_log("\n- CONTENT -")
     for content in contents:
 
-        db_online = DbOnline(media=content, category=content.category,season=cli_scan.notitle)
+        db_online = DbOnline(media=content, category=content.category,no_title=cli_scan.notitle)
         if db:= db_online.media_result:
             assert hasattr(db, 'video_id') and hasattr(db, 'keywords_list') and hasattr(db, 'trailer_key')
 
