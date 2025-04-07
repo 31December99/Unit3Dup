@@ -57,8 +57,8 @@ class SeedManager:
 
         return bittorrent_list
 
-    @staticmethod
-    def death(tmdb_list, content: Media, selected_tracker: str) -> list:
+
+    def death(self, tmdb_list, content: Media, selected_tracker: str) -> list:
 
         for dead in tmdb_list['data']:
             custom_console.bot_log(f"'(Dead)' {dead['attributes']['name']}")
@@ -74,7 +74,7 @@ class SeedManager:
             # Check Season and Episode ( None if it's movie)
             if tracker_title_season == content.guess_season and tracker_title_episode == content.guess_episode:
                 # Search only for duplicates that are torrent files matching the local file to download and reseed
-                if not UserContent.is_duplicate(content=content, tracker_name=selected_tracker):
+                if not UserContent.is_duplicate(content=content, tracker_name=selected_tracker,no_title=self.cli.notitle):
                     custom_console.bot_warning_log(f"'RESEED'........ {dead['attributes']['name']}:"
                                                    f" {dead['attributes']['details_link']}\n")
                     # Create a list of torrent url
