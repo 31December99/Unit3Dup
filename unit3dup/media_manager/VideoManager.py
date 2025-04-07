@@ -61,9 +61,10 @@ class VideoManager:
                 torrent_response = UserContent.torrent(content=content, tracker_name_list=tracker_name_list,
                                                        selected_tracker=selected_tracker, this_path=torrent_filepath)
 
-                # Skip if it is a duplicate
+                # Skip(S) if it is a duplicate or let the user choose to continue (C)
                 if (self.cli.duplicate or config_settings.user_preferences.DUPLICATE_ON
-                        and UserContent.is_duplicate(content=content, tracker_name=selected_tracker)):
+                        and UserContent.is_duplicate(content=content, tracker_name=selected_tracker,
+                                                     no_title=self.cli.notitle)):
                     continue
 
                 # Search for VIDEO ID

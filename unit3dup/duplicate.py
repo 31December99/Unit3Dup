@@ -73,10 +73,13 @@ class CompareTitles:
 
 class Duplicate:
 
-    def __init__(self, content: Media, tracker_name: str):
+    def __init__(self, content: Media, tracker_name: str, no_title: str):
 
         # User content from the scan process
         self.content: Media = content
+
+        # title chosen by the user mainly for seasons without a title
+        self.no_title: str = no_title
 
         # Class to get info about a torrent
         self.torrent_info = Torrent(tracker_name=tracker_name)
@@ -132,7 +135,11 @@ class Duplicate:
     def search(self) -> bool:
 
         # Search torrent by Name
-        tracker_search = self.torrent_info.search(self.guess_filename.guessit_title)
+        if self.no_title:
+            tracker_search = self.torrent_info.search(self.no_title)
+        else:
+            tracker_search = self.torrent_info.search(self.guess_filename.guessit_title)
+
         # Compare and return a result
         for t_data in tracker_search["data"]:
             # if a result is found, ask the user or autoskip
