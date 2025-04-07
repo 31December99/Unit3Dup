@@ -1,9 +1,23 @@
 # -*- coding: utf-8 -*-
 
 from dataclasses import dataclass, field
-
+from abc import ABC, abstractmethod
 
 # Tempus fugit
+
+class Media(ABC):
+
+    @abstractmethod
+    def get_title(self) -> str:
+        pass
+
+    @abstractmethod
+    def get_original(self) -> str:
+        pass
+
+    @abstractmethod
+    def get_date(self) -> str:
+        pass
 
 @dataclass
 class CreatedBy:
@@ -80,7 +94,7 @@ class SpokenLanguage:
 
 
 @dataclass
-class TVShowDetails:
+class TVShowDetails(Media):
     adult: bool
     first_air_date: str
     homepage: str
@@ -113,3 +127,12 @@ class TVShowDetails:
     seasons: list[Season] = field(default_factory=list)
     spoken_languages: list[SpokenLanguage] = field(default_factory=list)
     origin_country: list[str] = field(default_factory=list)
+
+    def get_title(self) -> str:
+        return self.name
+
+    def get_original(self) -> str:
+        return self.original_name
+
+    def get_date(self) -> str:
+        return self.first_air_date
