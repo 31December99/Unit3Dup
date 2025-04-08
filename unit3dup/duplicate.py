@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 import guessit
+import argparse
+import requests
+
 from common.utility import ManageTitles, System
 from common.trackers.trackers import TRACKData
 from common.constants import my_language
@@ -73,13 +76,13 @@ class CompareTitles:
 
 class Duplicate:
 
-    def __init__(self, content: Media, tracker_name: str, no_title: str):
+    def __init__(self, content: Media, tracker_name: str,  cli: argparse.Namespace):
 
         # User content from the scan process
         self.content: Media = content
 
-        # title chosen by the user mainly for seasons without a title
-        self.no_title: str = no_title
+        # Get the user Cli
+        self.cli = cli
 
         # Class to get info about a torrent
         self.torrent_info = Torrent(tracker_name=tracker_name)
@@ -117,6 +120,9 @@ class Duplicate:
         # Determine how much differs from the user's media size
         self.size_threshold = config_settings.user_preferences.SIZE_TH
 
+        # title chosen by the user mainly for seasons without a title
+        self.query = self.cli.notitle if self.cli.notitle else self.guess_filename.guessit_title
+
         # Final result
         self.flag_already = False
 
@@ -129,45 +135,73 @@ class Duplicate:
         self.INFO_HASH_WIDTH = 40
         self.DELTA_SIZE_WIDTH = 2
 
-    def process(self) -> bool:
-        return self.search()
+    def process(self):
+        return self.search(torrent=self.torrent_info.search(self.query))
 
-    def search(self) -> bool:
 
-        # Search torrent by Name
-        if self.no_title:
-            tracker_search = self.torrent_info.search(self.no_title)
-        else:
-            tracker_search = self.torrent_info.search(self.guess_filename.guessit_title)
+    def process_dead_torrents(self, tmdb_id: int)-> list[requests] | None:
+         # Get the dead torrents
+         torrents = self.torrent_info.get_by_tmdb_id(tmdb_id=tmdb_id)
+         dead_torrents = []
 
+         # print a list of dead torrents
+         print()
+         for dead in torrents['data']:
+             custom_console.bot_log(f"'(Dead)' {dead['attributes']['name']}")
+
+         # Iterate through each torrent
+         print()
+         for dead in torrents['data']:
+             # Test if it's a duplicate ( it's fine for reseeding)
+             if self._process_tracker_data(dead):
+                 if not config_settings.user_preferences.SKIP_DUPLICATE:
+                     # (C) it's fine for seeding
+                     if not self.user_choose():
+                         dead_torrents.append(dead)
+                     else:
+                         # (S) Skip
+                         continue
+                 else:
+                     # if skip_duplicate is on -> autoskip user choose
+                     return None
+         return dead_torrents
+
+
+
+    def search(self, torrent: requests) -> bool:
         # Compare and return a result
-        for t_data in tracker_search["data"]:
+        for t_data in torrent["data"]:
             # if a result is found, ask the user or autoskip
             if self._process_tracker_data(t_data):
                 if not config_settings.user_preferences.SKIP_DUPLICATE:
-                    try:
-                        while True:
-                            custom_console.bot_question_log(
-                                "\nPress (C) to continue, (S) to SKIP.. (Q) Quit - "
-                            )
-                            user_answer = input()
-                            # Exit
-                            if "q" == user_answer.lower():
-                                exit(1)
-
-                            # Choice to continue
-                            if "c" == user_answer.lower():
-                                return False
-                            # Skip this media
-                            if "s" == user_answer.lower():
-                                return True
-                    except KeyboardInterrupt:
-                        custom_console.bot_error_log("\nOperation cancelled. Bye !")
-                        exit(1)
-                else: # if skip_duplicate is on -> autoskip
+                    return self.user_choose()
+                else:
+                    # if skip_duplicate is on -> autoskip user choose
                     return True
         return False
 
+
+    @staticmethod
+    def user_choose() -> bool:
+        try:
+            while True:
+                custom_console.bot_question_log(
+                    "\nPress (C) to continue, (S) to SKIP.. (Q) Quit - "
+                )
+                user_answer = input()
+                # Exit
+                if "q" == user_answer.lower():
+                    exit(1)
+
+                # Choice to continue
+                if "c" == user_answer.lower():
+                    return False
+                # Skip this media
+                if "s" == user_answer.lower():
+                    return True
+        except KeyboardInterrupt:
+            custom_console.bot_error_log("\nOperation cancelled. Bye !")
+            exit(1)
 
 
     def get_resolution_by_num(self, res_id: int) -> str:
