@@ -43,8 +43,11 @@ class DocuManager:
 
             # Skip if it is a duplicate
             if ((self.cli.duplicate or config_settings.user_preferences.DUPLICATE_ON)
-                    and UserContent.is_duplicate(content=content, tracker_name=selected_tracker)):
+                    and UserContent.is_duplicate(content=content, tracker_name=selected_tracker, cli=self.cli)):
                 continue
+
+            # print the title will be shown on the torrent page
+            custom_console.bot_log(f"'DISPLAYNAME'...{{{content.display_name}}}\n")
 
             # Don't upload if -noup is set to True
             if self.cli.noup:
@@ -54,6 +57,7 @@ class DocuManager:
             # Get the cover image
             docu_info = PdfImages(content.file_name)
             docu_info.build_info()
+
 
             # Tracker payload
             unit3d_up = UploadBot(content=content, tracker_name=selected_tracker)

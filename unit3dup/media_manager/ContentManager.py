@@ -70,11 +70,6 @@ class ContentManager:
         if process:
             media.file_name = self.file_name
             media.torrent_name = self.torrent_name
-
-            # If the user wants to change the title
-            if self.cli.title:
-                media.guess_title = self.cli.title
-
             media.size = self.size
             media.metainfo = self.meta_info
             media.torrent_pack = torrent_pack
@@ -85,9 +80,7 @@ class ContentManager:
             media.imdb_id = self.imdb_id
             media.tmdb_id = self.tmdb_id
             media.igdb_id = self.igdb_id
-
-            # The title on the torrent page from the path or generated from the mediainfo
-            media.display_name = self.display_name if not self.cli.title else media.generate_title
+            media.display_name = self.display_name
 
             return media
         else:

@@ -5,7 +5,6 @@ import os
 from common.external_services.igdb.client import IGDBClient
 from common.bittorrent import BittorrentData
 
-from unit3dup.media_manager.SeedManager import SeedManager
 from unit3dup.media_manager.common import UserContent
 from unit3dup.upload import UploadBot
 from unit3dup import config_settings
@@ -34,9 +33,6 @@ class GameManager:
         Returns:
             list: List of Bittorrent objects created for each content
         """
-
-        # Tracker administration
-        seed_manager = SeedManager(cli=self.cli, trackers_name_list=tracker_name_list)
 
         login = self.igdb.connect()
         if not login:
@@ -71,22 +67,17 @@ class GameManager:
 
             # Skip if it is a duplicate
             if ((self.cli.duplicate or config_settings.user_preferences.DUPLICATE_ON)
-                    and UserContent.is_duplicate(content=content, tracker_name=selected_tracker)):
+                    and UserContent.is_duplicate(content=content, tracker_name=selected_tracker, cli=self.cli)):
                 continue
 
             # Search for the game on IGDB using the content's title and platform tags
             game_data_results = self.igdb.game(content=content)
+            # print the title will be shown on the torrent page
+            custom_console.bot_log(f"'DISPLAYNAME'...{{{content.display_name}}}\n")
 
             # Skip the upload if there is no valid IGDB
             if not game_data_results:
                 continue
-
-            # Run the seeding process if requested by the user
-            if self.cli.reseed:
-                seed_manager.process(media_id=game_data_results.id, category= content.category)
-                seed_manager.run(trackers_name_list=tracker_name_list)
-                continue
-
 
             # Tracker instance
             unit3d_up = UploadBot(content=content, tracker_name=selected_tracker)
