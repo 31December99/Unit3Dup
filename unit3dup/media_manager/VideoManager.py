@@ -84,11 +84,9 @@ class VideoManager:
                         content.display_name+= " " + content.generate_title
                     else:
                         # otherwise keep the old meta_data and add the new display_title to it
-                         meta_info_title = content.display_name.replace(content.guess_title, "")
-                         content.display_name = (f"{db_online.media_result.result.get_title()} "
-                                                 f"{db_online.media_result.year} "
-                                                 f"{content.guess_title} {meta_info_title}")
-
+                         print()
+                         content.display_name = (f"{db_online.media_result.result.get_title()}"
+                                                 f" {db_online.media_result.year} {content.guess_title}")
 
                 # Get meta from the media video
                 video_info = Video(media=content, tmdb_id=db.video_id, trailer_key=db.trailer_key)
