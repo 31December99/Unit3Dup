@@ -43,8 +43,7 @@ class DocuManager:
 
             # Skip if it is a duplicate
             if ((self.cli.duplicate or config_settings.user_preferences.DUPLICATE_ON)
-                    and UserContent.is_duplicate(content=content, tracker_name=selected_tracker,
-                                                 no_title=self.cli.notitle)):
+                    and UserContent.is_duplicate(content=content, tracker_name=selected_tracker, cli=self.cli)):
                 continue
 
             # Don't upload if -noup is set to True

@@ -5,7 +5,6 @@ import os
 from common.external_services.igdb.client import IGDBClient
 from common.bittorrent import BittorrentData
 
-from unit3dup.media_manager.SeedManager import SeedManager
 from unit3dup.media_manager.common import UserContent
 from unit3dup.upload import UploadBot
 from unit3dup import config_settings
@@ -68,8 +67,7 @@ class GameManager:
 
             # Skip if it is a duplicate
             if ((self.cli.duplicate or config_settings.user_preferences.DUPLICATE_ON)
-                    and UserContent.is_duplicate(content=content, tracker_name=selected_tracker,
-                                                 no_title=self.cli.notitle)):
+                    and UserContent.is_duplicate(content=content, tracker_name=selected_tracker, cli=self.cli)):
                 continue
 
             # Search for the game on IGDB using the content's title and platform tags
