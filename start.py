@@ -30,6 +30,11 @@ def main():
     # /// Initialize command line interface
     cli = CommandLine()
 
+    # Get the torrent archive path
+    if config.user_preferences.TORRENT_ARCHIVE_PATH:
+        tracker_archive = config.user_preferences.TORRENT_ARCHIVE_PATH
+    else:
+        tracker_archive = '.'
 
     # /// Load the list of the registered trackers
     if not config.tracker_config.MULTI_TRACKER:
@@ -49,7 +54,7 @@ def main():
 
 
     # Test both clients only if used
-    if cli.args.noseed is False and cli.args.noup is False:
+    if cli.args.noseed is False and cli.args.noup is False or cli.args.reseed is True:
         # /// Test the torrent clients
         if cli.args.scan or cli.args.upload or cli.args.folder or cli.args.watcher:
 
@@ -85,7 +90,8 @@ def main():
 
     # Manual upload mode
     if cli.args.upload:
-        bot = Bot(path=cli.args.upload, cli=cli.args, trackers_name_list=tracker_name_list)
+        bot = Bot(path=cli.args.upload, cli=cli.args, trackers_name_list=tracker_name_list,
+                  torrent_archive_path=tracker_archive)
         bot.run()
 
     # Manual folder mode
@@ -95,18 +101,19 @@ def main():
             cli=cli.args,
             mode="folder",
             trackers_name_list=tracker_name_list,
+            torrent_archive_path=tracker_archive,
         )
         bot.run()
 
     # Auto mode
     if cli.args.scan and not cli.args.ftp:
-        bot = Bot(path=cli.args.scan, cli=cli.args, mode="auto", trackers_name_list=tracker_name_list)
+        bot = Bot(path=cli.args.scan, cli=cli.args, mode="auto", trackers_name_list=tracker_name_list,
+                  torrent_archive_path=tracker_archive)
         bot.run()
 
     # Watcher
     if cli.args.watcher:
         bot = Bot(path=cli.args.watcher, cli=cli.args, mode="auto", trackers_name_list=tracker_name_list)
-
         bot.watcher(duration=config.user_preferences.WATCHER_INTERVAL, watcher_path=config.user_preferences.WATCHER_PATH,
                     destination_path = config.user_preferences.WATCHER_DESTINATION_PATH)
 

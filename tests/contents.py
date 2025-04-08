@@ -14,7 +14,8 @@ def test_content_manager():
         noseed=False,
         tracker=None,
         force=False,
-        title=None,
+        notitle=None,
+
     )
 
     tracker_data = tests.TRACKData.load_from_module(tracker_name='ITT')
@@ -25,7 +26,7 @@ def test_content_manager():
     for content in contents:
 
         """ TMDB """
-        db_online = tests.DbOnline(media=content, category=content.category)
+        db_online = tests.DbOnline(media=content, category=content.category,no_title=cli_scan.notitle)
         result = db_online.media_result
 
         """ VIDEO INFO """

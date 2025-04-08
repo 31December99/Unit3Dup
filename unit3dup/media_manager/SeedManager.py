@@ -1,46 +1,49 @@
 # -*- coding: utf-8 -*-
 
 import argparse
+import os
 
-from unit3dup.torrent import Torrent
-from view import custom_console
-from common.utility import System
+from common.external_services.theMovieDB.core.api import DbOnline
+from common.bittorrent import BittorrentData
 
+from unit3dup.media_manager.common import UserContent
+from unit3dup.media import Media
 
 class SeedManager:
-    def __init__(self, cli: argparse.Namespace, trackers_name_list: list):
+    def __init__(self, contents: list[Media], cli: argparse.Namespace):
+
+         self.contents = contents
+         # Command line
          self.cli = cli
-         self.trackers_name_list = trackers_name_list
-         self.tracker_name = self.trackers_name_list[0]
-         self.torrent_info = Torrent(tracker_name=self.tracker_name)
 
-    def process(self, media_id: int, category: int) -> None:
+    def process(self, selected_tracker: str, trackers_name_list: list, tracker_archive: str) -> list[BittorrentData] | None:
 
-        no_seeded = self.torrent_info.get_dead()
+        # Data list for the torrent client
+        bittorrent_list = []
 
-        dead_torrent = []
-        if category in [System.category_list.get(System.MOVIE), System.category_list.get(System.TV_SHOW)]:
-            dead_torrent = [torrent for torrent in no_seeded['data'] if media_id == torrent['attributes']['tmdb_id']]
+        # Iterate user content
+        if self.contents:
+            for content in self.contents:
+                # get the archive path
+                archive = os.path.join(tracker_archive, selected_tracker)
+                # Build the path for downloading
+                os.makedirs(archive, exist_ok=True)
+                torrent_filepath = os.path.join(tracker_archive, selected_tracker, f"{content.torrent_name}.torrent")
+                # Search for tmdb ID
+                db_online = DbOnline(media=content, category=content.category, no_title=self.cli.notitle)
+                db = db_online.media_result
 
-        if category in [System.category_list.get(System.GAME)]:
-            dead_torrent = [torrent for torrent in no_seeded['data'] if media_id == torrent['attributes']['igdb_id']]
+                torrents = UserContent.can_ressed(content=content, tracker_name=selected_tracker,cli=self.cli,
+                                                  tmdb_id=db.video_id)
 
+                for t in torrents:
+                    bittorrent_list.append(BittorrentData(
+                        tracker_response=t['attributes']['download_link'],
+                        torrent_response=None,
+                        content=content,
+                        tracker_message={},
+                        archive_path=torrent_filepath,
+                    ))
 
-        for torrent in dead_torrent:
-            attribute = torrent['attributes']['details_link']
-            name = torrent['attributes']['name']
-            tmdb = torrent['attributes']['tmdb_id']
-            igdb = torrent['attributes']['igdb_id']
-            custom_console.bot_warning_log(f"\n-> Possible seed {name}: {attribute} : TMDB {tmdb} IGDB {igdb}")
-            input("Press enter to continue...")
-
-
-
-
-
-
-    def run(self, trackers_name_list: list):
-        pass
-
-
+            return bittorrent_list
 

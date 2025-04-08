@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
 
 import argparse
-import os
+
+import requests
 
 from unit3dup.media_manager.VideoManager import VideoManager
 from unit3dup.media_manager.GameManager import GameManager
 from unit3dup.media_manager.DocuManager import DocuManager
+from unit3dup.media_manager.SeedManager import SeedManager
+
 from unit3dup import config_settings
 from unit3dup.media import Media
 
@@ -18,18 +21,14 @@ from view import custom_console
 
 
 class TorrentManager:
-    def __init__(self, cli: argparse.Namespace):
+    def __init__(self, cli: argparse.Namespace, tracker_archive: str):
 
         self.preferred_lang = my_language(config_settings.user_preferences.PREFERRED_LANG)
-        self.games: list[Media] = []
+        self.tracker_archive = tracker_archive
         self.videos: list[Media] = []
+        self.games: list[Media] = []
         self.doc: list[Media] = []
         self.cli = cli
-
-        if config_settings.user_preferences.TORRENT_ARCHIVE_PATH:
-            self.tracker_archive = config_settings.user_preferences.TORRENT_ARCHIVE_PATH
-        else:
-            self.tracker_archive =  '.'
 
     def process(self, contents: list) -> None:
         """
@@ -119,19 +118,30 @@ class TorrentManager:
     custom_console.bot_log(f"Done.")
     custom_console.rule()
 
-    def send(self, this_path: str, trackers_name_list: list):
-        # Send a torrent file that has already been created for seeding
-        client = UserContent.get_client()
+    def reseed(self, trackers_name_list: list) -> None:
+        """
+
+        Reseed : compare local file with remote tracker file. Download if found
+
+        Args:
+            trackers_name_list: list of tracker names
+        Returns:
+
+        """
 
         for selected_tracker in trackers_name_list:
-                custom_console.bot_warning_log(f"Seeding for {selected_tracker}..Please wait")
-                for content in self.videos + self.games + self.doc:
-                    # get the archive path
-                    torrent_filepath = os.path.join(self.tracker_archive, selected_tracker,f"{content.torrent_name}.torrent")
-                    if os.path.exists(torrent_filepath):
-                        client.send_file_to_client(torrent_path=torrent_filepath)
-                        custom_console.bot_log(torrent_filepath)
+            # From the contents
+            if self.videos:
+                # Instance
+                seed_manager = SeedManager(contents=self.videos, cli=self.cli)
+                # Search your content to see if there is a title present in the tracker
+                seed_manager_results = seed_manager.process(selected_tracker=selected_tracker,
+                                                            trackers_name_list=trackers_name_list,
+                                                            tracker_archive=self.tracker_archive)
 
-
-
-
+                #if so download the torrent files from the tracker for seeding
+                if seed_manager_results:
+                    for result in seed_manager_results:
+                        UserContent.download_file(url=result.tracker_response, destination_path=result.archive_path)
+                        # Send the data to the torrent client
+                        UserContent.send_to_bittorrent([result], 'VIDEO')

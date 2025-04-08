@@ -13,6 +13,10 @@ class Media(ABC):
     def get_original(self) -> str:
         pass
 
+    @abstractmethod
+    def get_date(self) -> str:
+        pass
+
 @dataclass
 class Movie(Media):
     """
@@ -38,3 +42,6 @@ class Movie(Media):
 
     def get_original(self) -> str:
         return self.original_title
+
+    def get_date(self) -> str:
+        return self.release_date

@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 
+from pathlib import Path
 import argparse
 import os
 import time
 import shutil
 
+from unit3dup.media import Media
 from unit3dup.media_manager.ContentManager import ContentManager
 from unit3dup.media_manager.TorrentManager import TorrentManager
-from unit3dup.torrent import Torrent, View
 
 from common.external_services.ftpx.core.models.list import FTPDirectory
 from common.external_services.Pw.pw_manager import PwManager
@@ -15,10 +16,7 @@ from common.external_services.ftpx.core.menu import Menu
 from common.external_services.ftpx.client import Client
 from common.extractor import Extractor
 
-
 from view import custom_console
-
-from pathlib import Path
 
 
 class Bot:
@@ -31,7 +29,9 @@ class Bot:
         ftp(): Connects to a remote FTP server and processes files
     """
 
-    def __init__(self, path: str, cli: argparse.Namespace, trackers_name_list: list, mode="man"):
+    # Bot Manager
+    def __init__(self, path: str, cli: argparse.Namespace, trackers_name_list: list, mode="man",
+                 torrent_archive_path = None):
         """
         Initializes the Bot instance with path, command-line interface object, and mode
 
@@ -41,20 +41,17 @@ class Bot:
             mode (str): The mode of operation, default is 'man'
         """
         self.trackers_name_list = trackers_name_list
+        self.torrent_archive_path = torrent_archive_path
         self.content_manager = None
         self.path = path
         self.cli = cli
         self.mode = mode
 
-        # Bot Manager
-        self.torrent_manager = TorrentManager(cli=self.cli)
 
-    def run(self) -> bool:
+    def contents(self) -> bool | list[Media]:
         """
-        Start the process of analyzing and processing media files.
-
-        This method retrieves media files, decompresses any `.rar` files if needed,
-        and then processes the files using the TorrentManager
+        Start the process of analyzing and processing media files
+        This method retrieves media files
         """
         custom_console.panel_message("Analyzing your media files... Please wait")
 
@@ -83,17 +80,30 @@ class Bot:
         # Print the list of files being processed
         custom_console.bot_process_table_log(contents)
 
+        return contents
+
+
+    def run(self) -> bool:
+        """
+        processes the files using the TorrentManager and SeedManager
+        """
+
+        # Get the user content
+        contents = self.contents()
+        if not contents:
+            return False
+
+        # Instance a new run
+        torrent_manager = TorrentManager(cli=self.cli, tracker_archive=self.torrent_archive_path)
         # Process the torrents content (files)
-        self.torrent_manager.process(contents=contents)
+        torrent_manager.process(contents=contents)
 
-        # Torrent Seeding
-        if self.cli.seedit:
-            self.torrent_manager.send(self.path, self.trackers_name_list)
+        # We want to reseed
+        if self.cli.reseed:
+            torrent_manager.reseed(trackers_name_list=self.trackers_name_list)
         else:
-            # Run the torrents creations and the upload process
-            self.torrent_manager.run(trackers_name_list=self.trackers_name_list)
-
-
+            # otherwise run the torrents creations and the upload process
+            torrent_manager.run(trackers_name_list=self.trackers_name_list)
         return True
 
 

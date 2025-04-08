@@ -1,15 +1,25 @@
 # -*- coding: utf-8 -*-
 
 from dataclasses import dataclass, field
+from abc import ABC, abstractmethod
 
+# Tempus fugit
 
-# 05/09/2024
-# We need to split into more classes because the data is more complex
-# TVSHow is the 'main' class
-# These classes are immutable. Once you create an object and assign values, you cannot change those values again.
+class Media(ABC):
 
+    @abstractmethod
+    def get_title(self) -> str:
+        pass
 
-@dataclass(frozen=True)
+    @abstractmethod
+    def get_original(self) -> str:
+        pass
+
+    @abstractmethod
+    def get_date(self) -> str:
+        pass
+
+@dataclass
 class CreatedBy:
     credit_id: str
     gender: int
@@ -19,13 +29,13 @@ class CreatedBy:
     profile_path: str | None = None
 
 
-@dataclass(frozen=True)
+@dataclass
 class Genre:
     id: int
     name: str
 
 
-@dataclass(frozen=True)
+@dataclass
 class LastEpisodeToAir:
     air_date: str
     episode_number: int
@@ -42,7 +52,7 @@ class LastEpisodeToAir:
     still_path: str | None = None
 
 
-@dataclass(frozen=True)
+@dataclass
 class Network:
     id: int
     logo_path: str
@@ -50,7 +60,7 @@ class Network:
     origin_country: str
 
 
-@dataclass(frozen=True)
+@dataclass
 class ProductionCompany:
     id: int
     name: str
@@ -58,13 +68,13 @@ class ProductionCompany:
     logo_path: str | None = None
 
 
-@dataclass(frozen=True)
+@dataclass
 class ProductionCountry:
     iso_3166_1: str
     name: str
 
 
-@dataclass(frozen=True)
+@dataclass
 class Season:
     episode_count: int
     id: int
@@ -83,8 +93,8 @@ class SpokenLanguage:
     name: str
 
 
-@dataclass(frozen=True)
-class TVShow:
+@dataclass
+class TVShowDetails(Media):
     adult: bool
     first_air_date: str
     homepage: str
@@ -117,3 +127,12 @@ class TVShow:
     seasons: list[Season] = field(default_factory=list)
     spoken_languages: list[SpokenLanguage] = field(default_factory=list)
     origin_country: list[str] = field(default_factory=list)
+
+    def get_title(self) -> str:
+        return self.name
+
+    def get_original(self) -> str:
+        return self.original_name
+
+    def get_date(self) -> str:
+        return self.first_air_date
