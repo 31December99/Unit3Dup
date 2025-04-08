@@ -239,13 +239,15 @@ class Media:
     @property
     def guess_season(self):
         if not self._guess_season:
-            self._guess_season = self.guess_filename.guessit_season
+            if 'tv' in self.category:
+                self._guess_season = self.guess_filename.guessit_season
         return self._guess_season
 
     @property
     def guess_episode(self):
         if not self._episode:
-           self._episode = self.guess_filename.guessit_episode
+            if 'tv' in self.category:
+                self._episode = self.guess_filename.guessit_episode
         return self._episode
 
     @property
