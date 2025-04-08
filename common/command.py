@@ -29,7 +29,6 @@ class CommandLine:
         parser.add_argument("-scan", "--scan", type=str, help="Scan folder")
 
         parser.add_argument("-reseed", "--reseed", action="store_true", help="reseed folder")
-        parser.add_argument("-seedit", "--seedit", action="store_true", help="")
         parser.add_argument("-gentitle", "--gentitle", action="store_true", help="")
         parser.add_argument("-watcher", "--watcher", action="store_true", help="Start watcher")
 
