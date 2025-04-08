@@ -72,6 +72,8 @@ class GameManager:
 
             # Search for the game on IGDB using the content's title and platform tags
             game_data_results = self.igdb.game(content=content)
+            # print the title will be shown on the torrent page
+            custom_console.bot_log(f"'DISPLAYNAME'...{{{content.display_name}}}\n")
 
             # Skip the upload if there is no valid IGDB
             if not game_data_results:
