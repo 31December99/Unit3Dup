@@ -4,7 +4,6 @@ import os
 
 from common.external_services.theMovieDB.core.api import DbOnline
 from common.bittorrent import BittorrentData
-from common.utility import System
 
 from unit3dup.media_manager.common import UserContent
 from unit3dup.upload import UploadBot
@@ -64,7 +63,7 @@ class VideoManager:
                 # Skip(S) if it is a duplicate or let the user choose to continue (C)
                 if (self.cli.duplicate or config_settings.user_preferences.DUPLICATE_ON
                         and UserContent.is_duplicate(content=content, tracker_name=selected_tracker,
-                                                     no_title=self.cli.notitle)):
+                                                     cli=self.cli)):
                     continue
 
                 # Search for VIDEO ID
