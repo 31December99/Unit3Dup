@@ -17,7 +17,6 @@ def test_cli_watcher():
         upload=False,
         mt=False,
         notitle=None,
-        seedit=None,
         reseed=False,
     )
 
