@@ -90,6 +90,8 @@ class VideoManager:
                 # Get meta from the media video
                 video_info = Video(media=content, tmdb_id=db.video_id, trailer_key=db.trailer_key)
                 video_info.build_info()
+                # print the title will be shown on the torrent page
+                custom_console.bot_log(f"'DISPLAYNAME'...{{{content.display_name}}}\n")
 
                 # Tracker instance
                 unit3d_up = UploadBot(content=content, tracker_name=selected_tracker)
