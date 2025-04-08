@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 import os
 import bencode2
-from concurrent.futures import ThreadPoolExecutor
-
+import argparse
 import requests
+
+
+from concurrent.futures import ThreadPoolExecutor
 
 from common.torrent_clients import TransmissionClient, QbittorrentClient
 from common.trackers.data import trackers_api_data
@@ -142,20 +144,18 @@ class UserContent:
         return None
 
     @staticmethod
-    def is_duplicate(content: Media, tracker_name: str, no_title: str) -> bool:
+    def is_duplicate(content: Media, tracker_name: str,  cli: argparse.Namespace) -> bool:
         """
            Search for a duplicate. Delta = config.SIZE_TH
 
            Args:
+               cli: cli flags from the user
                content (Contents): The content object media
                tracker_name: The name of the tracker
-               no_title: replace the original title with 'no_title'
-
            Returns:
                my_torrent object
         """
-
-        duplicate = Duplicate(content=content, tracker_name=tracker_name, no_title=no_title)
+        duplicate = Duplicate(content=content, tracker_name=tracker_name, cli=cli)
         if duplicate.process():
             custom_console.bot_error_log(
                 f"\n*** User chose to skip '{content.display_name}' ***\n"
@@ -164,6 +164,23 @@ class UserContent:
             return True
         else:
             return False
+
+    @staticmethod
+    def can_ressed(content: Media, tracker_name: str,  cli: argparse.Namespace, tmdb_id :int) -> list[requests]:
+        """
+           Search for a duplicate and compare with the user content. Delta = config.SIZE_TH
+
+           Args:
+               tmdb_id: user content tmdb ID
+               cli: cli flags from the user
+               content (Contents): The content object media
+               tracker_name: The name of the tracker
+           Returns:
+               list of requests ( torrents)
+        """
+        duplicate = Duplicate(content=content, tracker_name=tracker_name, cli=cli)
+        return duplicate.process_dead_torrents(tmdb_id=tmdb_id)
+
 
 
     @staticmethod
