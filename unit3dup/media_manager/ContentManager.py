@@ -65,7 +65,14 @@ class ContentManager:
 
         if not self.meta_info:
             return False
-        torrent_pack = bool(re.search(r"S\d+(?!.*E\d+)", self.path))
+
+        # add category filter to the regex result caused by a possible substring (e.g., S06) in the whole path
+        # and not part of the title
+        if media.category=='tv':
+            # Search for the first result (Sx) in self.path
+            torrent_pack = bool(re.search(r"S\d+(?!.*E\d+)", self.path))
+        else:
+            torrent_pack = False
 
         if process:
             media.file_name = self.file_name
