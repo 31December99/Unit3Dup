@@ -121,7 +121,7 @@ class Duplicate:
         self.size_threshold = config_settings.user_preferences.SIZE_TH
 
         # title chosen by the user mainly for seasons without a title
-        self.query = self.cli.notitle if self.cli.notitle else self.guess_filename.guessit_title
+        self.query = title.Guessit(self.cli.notitle) if self.cli.notitle else self.guess_filename
 
         # Final result
         self.flag_already = False
@@ -136,7 +136,7 @@ class Duplicate:
         self.DELTA_SIZE_WIDTH = 2
 
     def process(self):
-        return self.search(torrent=self.torrent_info.search(self.query))
+        return self.search(torrent=self.torrent_info.search(self.query.guessit_title))
 
 
     def process_dead_torrents(self, tmdb_id: int)-> list[requests] | None:
@@ -257,7 +257,7 @@ class Duplicate:
 
         custom_console.bot_log(f"Size_TH: {size_th}%")
         custom_console.bot_log(f"Your file - size: '{self.content_size} GB' - "
-                               f"'{self.content.display_name}' - ")
+                              f"'{self.content.display_name}' - ")
 
 
         custom_console.bot_log(output)
@@ -265,7 +265,8 @@ class Duplicate:
     def _process_tracker_data(self, data_from_the_tracker) -> bool:
 
         if CompareTitles(tracker_file=title.Guessit(data_from_the_tracker['attributes']['name']),
-                         content_file=self.guess_filename).process():
+                         content_file=self.query).process():
+
 
             delta_size = self._calculate_threshold(size=data_from_the_tracker['attributes']["size"])
             if delta_size > config_settings.user_preferences.SIZE_TH:

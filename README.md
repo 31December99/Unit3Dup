@@ -1,5 +1,5 @@
 
-![Version](https://img.shields.io/badge/Unit3Dup-0.7.5-blue)
+![Version](https://img.shields.io/badge/Unit3Dup-0.7.6-blue)
 ![Torrent Status](https://img.shields.io/badge/Online-green)
 ![Project Status](https://img.shields.io/badge/Status-Active-brightgreen)
 ![Python Version](https://img.shields.io/badge/Python-3.10+-blue)
