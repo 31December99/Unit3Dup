@@ -72,7 +72,7 @@ class UploadBot:
         self.tracker.data["sd"] = video_info.is_hd
         self.tracker.data["type_id"] = self.tracker_data.filter_type(self.content.file_name)
         self.tracker.data["season_number"] = self.content.guess_season
-        self.tracker.data["episode_number"] = (self.content.guess_episode if not self.content.torrent_pack else 0)
+        self.tracker.data["episode_number"] = (self.content.guess_episode if not self.content.torrent_pack else None)
         return self.tracker
 
     def data_game(self,igdb: Game) -> Unit3d | None:
