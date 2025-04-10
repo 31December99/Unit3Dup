@@ -76,7 +76,9 @@ class TransmissionClient(TorrClient):
 
         # file torrent already created
         if not torrent:
-            self.client.add_torrent(torrent=open(archive_path, "rb"), download_dir=str(torr_location))
+            with open(archive_path, "rb") as file_buffer:
+                self.client.add_torrent(torrent=file_buffer, download_dir=str(torr_location))
+
         else:
             # Use the new one
             download_torrent_dal_tracker = requests.get(tracker_data_response)
@@ -85,6 +87,8 @@ class TransmissionClient(TorrClient):
                 torrent_file = self.download(tracker_torrent_url=download_torrent_dal_tracker,
                                              full_path_archive=archive_path)
                 self.client.add_torrent(torrent=torrent_file, download_dir=str(torr_location))
+
+
 
     def send_file_to_client(self, torrent_path: str):
         self.client.add_torrent(torrent=open(torrent_path, "rb"), download_dir=str(os.path.dirname(torrent_path)))
