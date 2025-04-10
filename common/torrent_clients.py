@@ -2,6 +2,7 @@
 
 import os
 import time
+import bencode2
 
 import requests
 import qbittorrent
@@ -148,9 +149,8 @@ class QbittorrentClient(TorrClient):
 
         # file torrent already created
         if not torrent:
-            self.client.download_from_file(
-                file_buffer=open(archive_path, "rb"), savepath=str(torr_location)
-            )
+            with open(archive_path, "rb") as file_buffer:
+                self.client.download_from_file(file_buffer=file_buffer, savepath=str(torr_location))
         else:
             # Use the new one
             download_torrent_dal_tracker = requests.get(tracker_data_response)
