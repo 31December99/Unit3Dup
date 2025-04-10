@@ -24,9 +24,8 @@ class Mytorrent:
         self.torrent_path = contents.torrent_path
         self.trackers_list = trackers_list
 
-        # Create and get data for the tracker name if the -tracker flag is set
-        # otherwise the announce will be added by the tracker platform
         announces = []
+        # one tracker at time
         for tracker_name in trackers_list:
             announce = trackers_api_data[tracker_name.upper()]['announce'] if tracker_name else None
             announces.append([announce])
@@ -37,7 +36,9 @@ class Mytorrent:
         self.mytorr.name = contents.torrent_name
         self.mytorr.created_by = "https://github.com/31December99/Unit3Dup"
         self.mytorr.private = True
+        self.mytorr.source= trackers_api_data[trackers_list[0]]['source']
         self.mytorr.segments = 16 * 1024 * 1024
+
 
     def hash(self):
         custom_console.print(f"\n{self.trackers_list} {self.mytorr.name}")

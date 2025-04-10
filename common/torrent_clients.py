@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
-
+import hashlib
 import os
 import time
+import bencode2
 
 import requests
 import qbittorrent
@@ -73,19 +74,17 @@ class TransmissionClient(TorrClient):
             # If no shared_path is specified set it to the path specified in the CLI commands (path)
             torr_location = os.path.dirname(content.torrent_path)
 
-        # Torrent not created
+        # file torrent already created
         if not torrent:
-            self.client.add_torrent(
-                torrent=open(archive_path, "rb"), download_dir=str(torr_location)
-                                    )
+            with open(archive_path, "rb") as file_buffer:
+                self.client.add_torrent(torrent=file_buffer, download_dir=str(torr_location))
+
         else:
             # Use the new one
-            download_torrent_dal_tracker = requests.get(tracker_data_response)
+            with open(archive_path, "rb") as file_buffer:
+                self.client.add_torrent(torrent=file_buffer, download_dir=str(torr_location))
 
-            if download_torrent_dal_tracker.status_code == 200:
-                torrent_file = self.download(tracker_torrent_url=download_torrent_dal_tracker,
-                                             full_path_archive=archive_path)
-                self.client.add_torrent(torrent=torrent_file, download_dir=str(torr_location))
+
 
     def send_file_to_client(self, torrent_path: str):
         self.client.add_torrent(torrent=open(torrent_path, "rb"), download_dir=str(os.path.dirname(torrent_path)))
@@ -148,17 +147,29 @@ class QbittorrentClient(TorrClient):
 
         # file torrent already created
         if not torrent:
-            self.client.download_from_file(
-                file_buffer=open(archive_path, "rb"), savepath=str(torr_location)
-            )
+            with open(archive_path, "rb") as file_buffer:
+                # Get the info_hash
+                torrent_data = file_buffer.read()
+                info = bencode2.bdecode(torrent_data)[b'info']
+                info_hash = hashlib.sha1(bencode2.bencode(info)).hexdigest()
+                # rewind !
+                file_buffer.seek(0)
+                # Send to the client
+                self.client.download_from_file(file_buffer=file_buffer, savepath=str(torr_location))
+                # Set the category in qbittorrent
+                self.client.set_category(infohash_list=[info_hash], category=content.category)
         else:
             # Use the new one
-            download_torrent_dal_tracker = requests.get(tracker_data_response)
-            if download_torrent_dal_tracker.status_code == 200:
-                torrent_file = self.download(tracker_torrent_url=download_torrent_dal_tracker,
-                                             full_path_archive=archive_path)
+            # Get the info_hash from the torf instance
+            info = torrent.mytorr.metainfo['info']
+            info_hash = hashlib.sha1(bencode2.bencode(info)).hexdigest()
 
-                self.client.download_from_file(file_buffer=torrent_file, savepath=str(torr_location))
+            # Read and send
+            with open(archive_path, "rb") as file_buffer:
+                self.client.download_from_file(file_buffer=file_buffer, savepath=str(torr_location))
+
+            # Set the category in qbittorrent
+            self.client.set_category(infohash_list=[info_hash], category=content.category)
 
 
     def send_file_to_client(self, torrent_path: str, media_location: str):
