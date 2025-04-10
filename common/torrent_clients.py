@@ -81,12 +81,8 @@ class TransmissionClient(TorrClient):
 
         else:
             # Use the new one
-            download_torrent_dal_tracker = requests.get(tracker_data_response)
-
-            if download_torrent_dal_tracker.status_code == 200:
-                torrent_file = self.download(tracker_torrent_url=download_torrent_dal_tracker,
-                                             full_path_archive=archive_path)
-                self.client.add_torrent(torrent=torrent_file, download_dir=str(torr_location))
+            with open(archive_path, "rb") as file_buffer:
+                self.client.add_torrent(torrent=file_buffer, download_dir=str(torr_location))
 
 
 
@@ -160,27 +156,19 @@ class QbittorrentClient(TorrClient):
                 file_buffer.seek(0)
                 # Send to the client
                 self.client.download_from_file(file_buffer=file_buffer, savepath=str(torr_location))
-                # Set the category
+                # Set the category in qbittorrent
                 self.client.set_category(infohash_list=[info_hash], category=content.category)
         else:
             # Use the new one
-            """
-            download_torrent_dal_tracker = requests.get(tracker_data_response)
-            if download_torrent_dal_tracker.status_code == 200:
-                torrent_file = self.download(tracker_torrent_url=download_torrent_dal_tracker,
-                                             full_path_archive=archive_path)
-                self.client.download_from_file(file_buffer=torrent_file, savepath=str(torr_location))
-                # Set the category
-                self.client.set_category(infohash_list=[info_hash], category=content.category)
-            """
-
             # Get the info_hash from the torf instance
             info = torrent.mytorr.metainfo['info']
             info_hash = hashlib.sha1(bencode2.bencode(info)).hexdigest()
-            # Read and send to the client
+
+            # Read and send
             with open(archive_path, "rb") as file_buffer:
                 self.client.download_from_file(file_buffer=file_buffer, savepath=str(torr_location))
-            # Set the category
+
+            # Set the category in qbittorrent
             self.client.set_category(infohash_list=[info_hash], category=content.category)
 
 
