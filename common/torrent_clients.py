@@ -6,6 +6,8 @@ import bencode2
 
 import requests
 import qbittorrent
+from qbittorrent import Client as QBClient
+
 import transmission_rpc
 from abc import ABC, abstractmethod
 
@@ -15,6 +17,22 @@ from unit3dup.media import Media
 
 from view import custom_console
 
+class MyQbittorrent(QBClient):
+    """
+    Extends qbittorrent import
+    """
+    def add_tags(self, infohash_list: list):
+
+        return self._post('torrents/addTags', data={
+            'hashes': infohash_list[0],
+            'tags': config_settings.torrent_client_config.TAG,
+        })
+
+    def remove_tags(self, infohash_list: list):
+        return self._post('torrents/removeTags', data={
+            'hashes': infohash_list[0],
+            'tags': config_settings.torrent_client_config.TAG
+        })
 
 class TorrClient(ABC):
 
@@ -29,7 +47,8 @@ class TorrClient(ABC):
     def send_to_client(self, tracker_data_response: str, torrent: Mytorrent, content: Media, archive_path: str):
         pass
 
-    def download(self, tracker_torrent_url: requests, full_path_archive: str):
+    @staticmethod
+    def download(tracker_torrent_url: requests, full_path_archive: str):
         # File archived
         with open(full_path_archive, "wb") as file:
             file.write(tracker_torrent_url.content)
@@ -74,16 +93,9 @@ class TransmissionClient(TorrClient):
             # If no shared_path is specified set it to the path specified in the CLI commands (path)
             torr_location = os.path.dirname(content.torrent_path)
 
-        # file torrent already created
-        if not torrent:
-            with open(archive_path, "rb") as file_buffer:
-                self.client.add_torrent(torrent=file_buffer, download_dir=str(torr_location))
-
-        else:
-            # Use the new one
-            with open(archive_path, "rb") as file_buffer:
-                self.client.add_torrent(torrent=file_buffer, download_dir=str(torr_location))
-
+        # Send to the client
+        with open(archive_path, "rb") as file_buffer:
+            self.client.add_torrent(torrent=file_buffer, download_dir=str(torr_location))
 
 
     def send_file_to_client(self, torrent_path: str):
@@ -95,10 +107,11 @@ class QbittorrentClient(TorrClient):
     def __init__(self):
         super().__init__()
 
-    def connect(self) -> qbittorrent:
+
+    def connect(self) -> MyQbittorrent | None:
         try:
             # Requests the protocol type http
-            self.client = qbittorrent.Client(f"http://"
+            self.client = MyQbittorrent(f"http://"
                                              f"{config_settings.torrent_client_config.QBIT_HOST}:"
                                              f"{config_settings.torrent_client_config.QBIT_PORT}/",  timeout= 10)
 
@@ -156,8 +169,8 @@ class QbittorrentClient(TorrClient):
                 file_buffer.seek(0)
                 # Send to the client
                 self.client.download_from_file(file_buffer=file_buffer, savepath=str(torr_location))
-                # Set the category in qbittorrent
-                self.client.set_category(infohash_list=[info_hash], category=content.category)
+                # Set the TAG in qbittorrent
+                self.client.add_tags([info_hash])
         else:
             # Use the new one
             # Get the info_hash from the torf instance
@@ -168,9 +181,8 @@ class QbittorrentClient(TorrClient):
             with open(archive_path, "rb") as file_buffer:
                 self.client.download_from_file(file_buffer=file_buffer, savepath=str(torr_location))
 
-            # Set the category in qbittorrent
-            self.client.set_category(infohash_list=[info_hash], category=content.category)
-
+            # Set the TAG in qbittorrent
+            self.client.add_tags([info_hash])
 
     def send_file_to_client(self, torrent_path: str, media_location: str):
         self.client.download_from_file(file_buffer=open(torrent_path, "rb"), savepath=media_location)
