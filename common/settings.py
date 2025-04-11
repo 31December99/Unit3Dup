@@ -76,6 +76,7 @@ class TorrentClientConfig(BaseModel):
     TRASM_PORT: int = 9091
     TORRENT_CLIENT: str | None = None
     SHARED_TRASM_PATH: str | None = None
+    TAG: str | None = None
 
 
 
@@ -381,7 +382,7 @@ class Config(BaseModel):
                 if field =='TRASM_PORT':
                     section[field] = Validate.integer(value=section[field], field_name=field)
 
-                if field in ['QBIT_PASS','TRASM_PASS','QBIT_USER','TRASM_USER','TORRENT_CLIENT']:
+                if field in ['QBIT_PASS','TRASM_PASS','QBIT_USER','TRASM_USER','TORRENT_CLIENT', 'TAG']:
                     section[field] = Validate.string(value=section[field], field_name=field)
 
                 if field in ['SHARED_TRASM_PATH', 'SHARED_QBIT_PATH']:
@@ -505,7 +506,8 @@ class Load:
                 "TRASM_HOST": "127.0.0.1",
                 "TRASM_PORT": "9091",
                 "TORRENT_CLIENT": "qbittorrent",
-                "SHARED_TRASM_PATH": "no_path"
+                "SHARED_TRASM_PATH": "no_path",
+                "TAG": "ADDED TORRENTS",
 
             },
             "user_preferences": {
@@ -532,7 +534,6 @@ class Load:
                 "ANON": "False",
                 "CACHE_SCR": "False",
                 "CACHE_DBONLINE": "False",
-
             },
             "options": {
                 "PW_API_KEY": "no_key",
