@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import os
 import hashlib
+from datetime import datetime
+
 import diskcache
 from typing import TypeVar
 
@@ -243,8 +245,15 @@ class DbOnline(TmdbAPI):
         if results:
             # Search for in the tile or original_name
             for result in results:
+                # check date
+                if result.get_date() and self.media.guess_filename.guessit_year:
+                    if not datetime.strptime(result.get_date(), '%Y-%m-%d').year == self.media.guess_filename.guessit_year:
+                       continue
+
+                # Search for title
                 if ManageTitles.fuzzyit(str1=self.query, str2=result.get_title()) > 95:
                     return result
+
                 if ManageTitles.fuzzyit(str1=self.query, str2=result.get_original()) > 95:
                     return result
 
