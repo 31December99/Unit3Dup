@@ -107,16 +107,6 @@ Output:
 
 Every few seconds, it checks the watcher folder, moves the content to the watcher_destination, and uploads everything to the tracker. It won't upload if there's already a torrent file.
 
-***
-
-![Version](https://img.shields.io/badge/seedit-red)
-
-Send the torrent file immediately to the default torrent client.
--seedit expects the media file path, not the torrent file path.
-
-
->**python3 start.py -seedit "/home/uploader/Hello.world.TheMovie**
-***
 
 ![Version](https://img.shields.io/badge/force-red)
 
@@ -260,7 +250,9 @@ The program is functional but still in the early stages, undergoing constant mod
 You can help improve this project or just hang out with us on
 [forum](https://itatorrents.xyz/forums/topics/414?page=1#post-1497)
 
-[![Telegram](https://img.shields.io/badge/Telegram-contact-blue?style=for-the-badge&logo=telegram)](https://t.me/phantomdays)
+[![Telegram](https://img.shields.io/badge/Telegram-contact-blue?style=for-the-badge&logo=telegram)](https://t.me/+hj294GabGWJlMDI8)
+
+
 
 
 Thank you
