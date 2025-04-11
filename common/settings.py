@@ -74,8 +74,13 @@ class TorrentClientConfig(BaseModel):
     TRASM_PASS: str | None = None
     TRASM_HOST: str = "http://localhost"
     TRASM_PORT: int = 9091
-    TORRENT_CLIENT: str | None = None
     SHARED_TRASM_PATH: str | None = None
+    RTORR_USER: str | None = None
+    RTORR_PASS: str | None = None
+    RTORR_HOST: str = "scgi://localhost"
+    RTORR_PORT: int = 5000
+    SHARED_RTORR_PATH: str | None = None
+    TORRENT_CLIENT: str | None = None
     TAG: str | None = None
 
 
@@ -373,19 +378,17 @@ class Config(BaseModel):
             else:
                 field = field.upper()
 
-                if field in  ['QBIT_HOST','TRASM_HOST']:
+                if field in  ['QBIT_HOST','TRASM_HOST', 'RTORR_HOST']:
                     section[field] = Validate.ip(value=section[field], field_name=field, default_value="127.0.0.1")
 
-                if field == 'QBIT_PORT':
+                if field in ['QBIT_PORT', 'TRASM_PORT', 'RTORR_PORT']:
                     section[field] = Validate.integer(value=section[field], field_name=field)
 
-                if field =='TRASM_PORT':
-                    section[field] = Validate.integer(value=section[field], field_name=field)
-
-                if field in ['QBIT_PASS','TRASM_PASS','QBIT_USER','TRASM_USER','TORRENT_CLIENT', 'TAG']:
+                if field in ['QBIT_PASS','TRASM_PASS', 'RTORR_PASS', 'QBIT_USER','TRASM_USER','RTORR_USER',
+                             'TORRENT_CLIENT','TAG']:
                     section[field] = Validate.string(value=section[field], field_name=field)
 
-                if field in ['SHARED_TRASM_PATH', 'SHARED_QBIT_PATH']:
+                if field in ['SHARED_TRASM_PATH', 'SHARED_QBIT_PATH', 'SHARED_RTORR_PATH']:
                     section[field] = Validate.shared_path(path=section[field], field_name=field)
 
         return v
@@ -505,10 +508,14 @@ class Load:
                 "TRASM_PASS": "no_pass",
                 "TRASM_HOST": "127.0.0.1",
                 "TRASM_PORT": "9091",
-                "TORRENT_CLIENT": "qbittorrent",
                 "SHARED_TRASM_PATH": "no_path",
+                "RTORR_USER": "admin",
+                "RTORR_PASS": "no_pass",
+                "RTORR_HOST": "127.0.0.1",
+                "RTORR_PORT": "9091",
+                "SHARED_RTORR_PATH": "no_path",
+                "TORRENT_CLIENT": "qbittorrent",
                 "TAG": "ADDED TORRENTS",
-
             },
             "user_preferences": {
                 "PTSCREENS_PRIORITY": 0,
