@@ -14,74 +14,33 @@ It performs the following tasks:
 - Scan folder and subfolders
 - Compiles various metadata information to create a torrent.
 - Extracts a series of screenshots directly from the video.
+- Add webp to your torrent description page
 - Extracts cover from the pdf documents 
 - Generates meta-info derived from the video or Game.
-- Searches for the corresponding ID on TMDB and IGDB.
+- Searches for the corresponding ID on TMDB and IGDB or IMDB.
 - Add trailer from Tmdb or Youtube
-- Seeding in qbittorrent or transmission
+- Seeding in qbittorrent , transmission or rTorrent
+- Reseeding one or more torrents at a time
+- Seed your torrents across different OS
+- Add a custom title to your seasons
+- Generate info for a title using MediaInfo
 
+ 
 ___
 ![Version](https://img.shields.io/badge/Flag_u-FILES-blue)
 
 > **python3 start.py -u "/home/uploader/myvideos/Hello.world.S04E12.mkv"**
 
-Output:
-
-> Hello.world.S04E12.mkv.torrent
-
-> **python3 start.py -u "/home/uploader/helloworld/Hello.world.book.pdf"**
-
-Output:
-
-> Hello.world.book.pdf.torrent
-
-> **python3 start.py -u "/home/uploader/myvideos/Hello.world.TheMovie.mkv"**
-
-Output:
-
-> Hello.world.TheMovie.mkv.torrent
-
-
-> **python3 start.py -u "/home/uploader/myvideos**
-
-Output (only files):
-
-> Hello.world.S04E12.mkv.torrent
-> 
-> Hello.world.book.pdf.torrent
-> 
-> Hello.world.TheMovie.mkv.torrent
-> 
 ***
 
 ![Version](https://img.shields.io/badge/Flag_f-FOLDERS-blue)
 
 > **python3 start.py -f "/home/uploader/Hello.world.S01**
 
->/home/uploader/Hello.world.S01E01
->
->/home/uploader/Hello.world.S01E02
->
->/home/uploader/Hello.world.S01E03
+> **python3 start.py -f "/home/uploader/Hello.world.TheMovie**
+> 
+> **python3 start.py -f "/home/uploader/Game-789**
 
-Output:
-
-> Hello.world.S01.torrent
-***
-
->python3 start.py -f "/home/uploader/Hello.world.S02E01**
-
-Output:
-
->Hello.world.S02E01.torrent
-***
-
-
-**python3 start.py -f "/home/uploader/Hello.world.TheMovie**
-
-Output:
-
->Hello.world.TheMovie.torrent
 ***
 
 
@@ -89,15 +48,15 @@ Output:
 
 > **python3 start.py -scan "/home/uploader/Archive**
 
-Output:
+***
 
-> Hello.world.TheMovie.torrent
-> 
-> Hello.world.S02E01.torrent
-> 
-> Hello.world.TheBook.pdf.torrent
-> 
-> Hello.world.TheGame.torrent
+![Version](https://img.shields.io/badge/Flag_reseed-RESEED-blue)
+
+> **python3 start.py -ressed -scan "/home/uploader/Archive**
+
+> **python3 start.py -ressed -u "/home/uploader/Hello.Reseed.TheMovie**
+
+> **python3 start.py -ressed -f "/home/uploader/The.Folder**
 ***
 
 
