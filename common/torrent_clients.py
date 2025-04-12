@@ -232,7 +232,7 @@ class RTorrentClient(TorrClient):
                 torr_location = os.path.dirname(content.torrent_path)
 
             # Add the torrent folder needed for rTorrent
-            if os.path.isdir(content.folder):
+            if os.path.isdir(content.subfolder):
                 torr_location =  os.path.join(torr_location, content.torrent_name)
                 # Save path for Windows or Linux.The root directory (/mnt or c:\) is the responsibility of the user
                 # in shared_folder
