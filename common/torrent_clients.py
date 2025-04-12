@@ -116,13 +116,13 @@ class QbittorrentClient(TorrClient):
                                              f"{config_settings.torrent_client_config.QBIT_PORT}/",  timeout= 10)
 
             # return 'None' the login is correct otherwise the login.text error (see client.py python-qbittorrent 0.4.3)
-            login_count = 10
+            login_count = 0
             while True:
                 login_fail = self.client.login(username=config_settings.torrent_client_config.QBIT_USER,
                                   password=config_settings.torrent_client_config.QBIT_PASS)
                 if not login_fail:
                     break
-                if login_count > 10:
+                if login_count > 5:
                     custom_console.bot_error_log("Failed to login.")
                     exit(1)
                 custom_console.bot_warning_log("Qbittorrent failed to login. Retry...Please wait")
@@ -195,7 +195,7 @@ class RTorrentClient(TorrClient):
 
         def connect(self) -> RTorrent | None:
 
-            login_count = 10
+            login_count = 0
             while True:
                 try:
                     self.client = RTorrent(address=f"scgi://"
@@ -205,13 +205,23 @@ class RTorrentClient(TorrClient):
                     self.client.system_list_methods()
                     return self.client
                 except requests.exceptions.HTTPError:
-                    custom_console.bot_warning_log("Failed to login. Retry...Please wait")
+                    custom_console.bot_warning_log("Rtorrent failed to login. Retry...Please wait")
                     time.sleep(2)
                     login_count += 1
-                    if login_count > 10:
+                    if login_count > 5:
                         custom_console.bot_error_log("Rtorrent failed to login.")
-                        exit(1)
+                        exit()
+                except requests.exceptions.ConnectionError:
+                    custom_console.bot_error_log(
+                        f"{self.__class__.__name__} Connection Error. Check IP/port or run rTorrent"
+                    )
+                    exit()
 
+                except TimeoutError:
+                    custom_console.bot_error_log(
+                        f"{self.__class__.__name__} Connection Error. Check IP/port or run rTorrent"
+                    )
+                    exit()
 
         def send_to_client(self, tracker_data_response: str, torrent: Mytorrent, content: Media, archive_path: str):
             # "Translate" files location to shared_path if necessary
@@ -221,21 +231,22 @@ class RTorrentClient(TorrClient):
                 # If no shared_path is specified set it to the path specified in the CLI commands (path)
                 torr_location = os.path.dirname(content.torrent_path)
 
-            # file torrent already created
-            if not torrent:
-                with open(archive_path, "rb") as file:
-                    self.client.add_torrent_by_file(content=file.read(), directory_base=str(torr_location),
-                                                    tags=[config_settings.torrent_client_config.TAG])
+            # Add the torrent folder needed for rTorrent
+            if os.path.isdir(content.folder):
+                torr_location =  os.path.join(torr_location, content.torrent_name)
+                # Save path for Windows or Linux.The root directory (/mnt or c:\) is the responsibility of the user
+                # in shared_folder
+                torr_location = torr_location.replace('\\', '/')
 
-            else:
-                # Read and send
-                with open(archive_path, "rb") as file:
-                    self.client.add_torrent_by_file(content=file.read(), directory_base=str(torr_location),
-                                                    tags=[config_settings.torrent_client_config.TAG])
+            # Read and send
+            with open(archive_path, "rb") as file:
+                self.client.add_torrent_by_file(content=file.read(), directory_base=str(torr_location),
+                                                tags=[config_settings.torrent_client_config.TAG])
+
 
 
         def send_file_to_client(self, torrent_path: str, media_location: str):
             with open(torrent_path, "rb") as file:
-                self.client.add_torrent_by_file(content=file.read(), directory_base=media_location,
+                self.client.add_torrent_by_file(content=file.read(), directory_base=str(media_location),
                                                 tags=[config_settings.torrent_client_config.TAG])
 
