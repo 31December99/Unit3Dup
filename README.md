@@ -3,7 +3,9 @@
 ![Torrent Status](https://img.shields.io/badge/Online-green)
 ![Project Status](https://img.shields.io/badge/Status-Active-brightgreen)
 ![Python Version](https://img.shields.io/badge/Python-3.10+-blue)
-
+![Python Version](https://img.shields.io/badge/Ubuntu-22-blue)
+![Python Version](https://img.shields.io/badge/Debian-12-blue)
+![Python Version](https://img.shields.io/badge/Windows-10-blue)
 
 ## Auto Torrent Generator and Uploader
 
