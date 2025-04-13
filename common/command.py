@@ -114,6 +114,8 @@ class CommandLine:
                                         System.category_list[System.TV_SHOW],
                                         System.category_list[System.DOCUMENTARY]]:
                 self.args.force = None
+                print("Invalid -force category")
+                input("Press enter to continue...")
 
 
         # Check if the upload path is valid
