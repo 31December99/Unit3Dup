@@ -236,6 +236,7 @@ class Duplicate:
         formatted_name = f"{name:<{self.NAME_WIDTH}}"
         formatted_resolution = f"{resolution:<{self.RESOLUTION_WIDTH}}" if resolution else ''
         formatted_size_th = f"{delta_size:<{self.DELTA_SIZE_WIDTH}}"
+        output = 'not available'
 
         if self.category in {'movie', 'tv'}:
             output = (
