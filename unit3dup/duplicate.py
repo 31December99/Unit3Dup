@@ -247,7 +247,15 @@ class Duplicate:
                 f"TMDB-ID {formatted_tmdb_id}"
 
             )
-        else:
+
+        if self.category in {'edicola'}:
+            output = (
+                f"Tracker - size: '{formatted_size}' "
+                f"delta={formatted_size_th}% - "
+                f"{formatted_name} "
+            )
+
+        if self.category in {'game'}:
             formatted_igdb_id = f"{igdb_id:>{self.IGDB_ID_WIDTH}}"
             output = (
                 f"- IGDB-ID {formatted_igdb_id} - "
