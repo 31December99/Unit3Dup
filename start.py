@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from common.torrent_clients import TransmissionClient, QbittorrentClient
+from common.torrent_clients import TransmissionClient, QbittorrentClient, RTorrentClient
 from common.command import CommandLine
 from common.settings import Load,DEFAULT_JSON_PATH
 
@@ -66,6 +66,12 @@ def main():
                 test_client_torrent = TransmissionClient()
                 if not test_client_torrent.connect():
                     exit(1)
+
+            elif config.torrent_client_config.TORRENT_CLIENT.lower()=="rtorrent":
+                test_client_torrent = RTorrentClient()
+                if not test_client_torrent.connect():
+                    exit(1)
+
             else:
                 custom_console.bot_error_log(f"Unknown Torrent Client name '{config.torrent_client_config.TORRENT_CLIENT}'")
                 custom_console.bot_error_log(f"You need to set a favorite 'torrent_client' in the config file")
