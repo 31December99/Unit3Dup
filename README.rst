@@ -1,6 +1,4 @@
 
-.. begin-doc
-
 **Hello !**
 ===============================================
 |version| |online| |status| |python| |ubuntu| |debian| |windows|
