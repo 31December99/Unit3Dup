@@ -71,3 +71,9 @@ Bot Update
 3. Unzip it
 4. No config needed
 5. Done!
+
+Join Us
+----------
+
+`Telegram <https://t.me/+hj294GabGWJlMDI8>`_
+`Forum <https://itatorrents.xyz/forums/topics/414?page=1#post-2160>`_
