@@ -14,5 +14,4 @@ Documentazione di **Unit3Dup**
 
 
 .. include:: ../README.rst
-   :start-after: begin-doc
-   :end-before: end-doc
+   :start-line: 1
