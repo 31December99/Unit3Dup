@@ -1,35 +1,34 @@
 Reseed
 ############
 
-Utilizza sempre **python start.py** quando vuoi inviare un comando al bot
+Always use **python start.py** when you want to send a command to the bot
 
-- Apri la finestra nera della console e accedi alla cartella del bot
-- Il bot può ricevere da te uno o più comandi (**flag**) dipende cosa vuoi fare
+- Open the black console window and navigate to the bot folder
+- The bot can accept one or more commands (**flags**).Depending on what you want to do
+
 
 Flag reseed
 ********************
 
-`-reseed` Cerca fra i tuoi contenuti e li confronta con quelli del tracker
+`-reseed` Searches through your contents and compares them with those on the tracker
 
-
-Come fare il reseed
+How to perform reseed
 ==============================
 
-- Se pensi di avere il file per il reseed di un vecchio torrent con seed pari a zero (dead)
+- If you think you have the file for reseeding an old torrent with zero seeds (dead)
 
 .. code-block:: python
 
-    python start.py -reseed -u "C:\Archivio\The Movie 01.mkv"
+    python start.py -reseed -u "C:\Archive\The Movie 01.mkv"
 
-- Per una singola cartella
-
-.. code-block:: python
-
-    python start.py -reseed -f "C:\Archivio\The Movies"
-
-
-- Per una una o più cartelle
+- Single folder
 
 .. code-block:: python
 
-    python start.py -reseed -scan "C:\Archivio"
+    python start.py -reseed -f "C:\Archive\The Movies"
+
+- For one or more folders
+
+.. code-block:: python
+
+    python start.py -reseed -scan "C:\Archive"

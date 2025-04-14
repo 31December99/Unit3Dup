@@ -1,41 +1,37 @@
 
-Utilizza sempre **python start.py** quando vuoi inviare un comando al bot
+Always use **python start.py** when you want to send a command to the bot
 
-- Apri la finestra nera della console e accedi alla cartella del bot
-- Il bot può ricevere da te uno o più comandi (**flag**) dipende cosa vuoi fare
+- Open the black console window and navigate to the bot folder
+- The bot can accept one or more commands (**flags**).Depending on what you want to do
+
 
 Flag watcher
 ********************
 
-`-watcher` Ogni 60 secondi legge il contenuto di una cartella e lo sposta in un'altra cartella
-di destinazione. Quindi carica tutto sul tracker
+`-watcher` it reads the contents of a folder and moves them to another destination folder, then uploads everything to the tracker
 
-
-Come utilizzare watcher
+How to use watcher
 ==============================
 
-Il flag non accetta parametri
+The flag does not accept parameters
 
 .. code-block:: python
 
     python start.py -watcher
 
-
-Le cartelle di default sono
+The default folders are:
 
 watcher_path
 
 watcher_destination_path
 
-Ogni 60 secondi verifica `watcher_path` allo scadere sposta tutto in `watcher_destination_path`
-quindi carica sul tracker
-
-
-Come configurare il watcher
+How to configure the watcher
 ==============================
 
-Aprire con un editor di testo Unit3D.json e settare con un valore in secondi l'attributo:
+Open the `Unit3D.json` file with a text editor and set the attribute:
 
 WATCHER_INTERVAL
 
-Default è 60 secondi
+Every WATCHER_INTERVAL (seconds), it checks `watcher_path`, then moves everything to `watcher_destination_path`, and uploads it to the tracker
+
+
