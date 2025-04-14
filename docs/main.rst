@@ -1,64 +1,63 @@
 Start.py
 ############
 
-Utilizza sempre **python start.py** quando vuoi inviare un comando al bot
+Always use **python start.py** when you want to send a command to the bot
 
-- Apri la finestra nera della console e accedi alla cartella del bot
-- Il bot può ricevere da te uno o più comandi (**flag**) dipende cosa vuoi fare
+- Open the black console window and navigate to the bot folder
+- The bot can accept one or more commands (**flags**).Depending on what you want to do
+
 
 I Flags principali
 ********************
 
-1. `-u` crea e carica un `File`
+1. `-u` creates and uploads a `File`
 
-2. `-f` crea e carica una `Cartella`
+2. `-f` creates and uploads a `Folder`
 
-3. `-scan` crea e carica ogni `Cartella` **e** `Files`
+3. `-scan` creates and uploads every `Folder` **and** `Files`
 
 
 Creare e caricare torrents
 ==============================
 
-- Se desideri creare un torrent per un singolo file, puoi farlo utilizzando il seguente comando:
+- If you want to create a torrent for a single file:
+
 
 .. code-block:: python
 
     python start.py -u "C:\Archivio\The Movie 01.mkv"
 
-- Per una singola cartella
+- Single folder:
 
 .. code-block:: python
 
     python start.py -f "C:\Archivio\The Movies"
 
 
-- Per una una o pià cartelle
+- For one or more folders
 
 .. code-block:: python
 
     python start.py -scan "C:\Archivio"
 
 
-Creare torrent ma non caricare
-==============================
+Create torrent but do not upload
+================================
 
-aggiungi il flag `-noup`
-
-.. code-block:: python
-
-    python start.py -noup -u "C:\Archivio\The Movie 01.mkv"
-
-- Per una singola cartella
+Add the `-noup` flag
 
 .. code-block:: python
 
-    python start.py -noup -f "C:\Archivio\The Movies"
+    python start.py -noup -u "C:\Archive\The Movie 01.mkv"
 
-
-- Per una una o più cartelle
+- Single folder
 
 .. code-block:: python
 
-    python start.py -noup -scan "C:\Archivio"
+    python start.py -noup -f "C:\Archive\The Movies"
 
+- For one or more folders
 
+.. code-block:: python
+
+    python start.py -noup -scan "C:\Archive"

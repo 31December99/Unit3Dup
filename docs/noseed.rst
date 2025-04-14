@@ -1,35 +1,31 @@
+Always use **python start.py** when you want to send a command to the bot
 
-Utilizza sempre **python start.py** quando vuoi inviare un comando al bot
+- Open the black console window and navigate to the bot folder
+- The bot can accept one or more commands (**flags**).Depending on what you want to do
 
-- Apri la finestra nera della console e accedi alla cartella del bot
-- Il bot può ricevere da te uno o più comandi (**flag**) dipende cosa vuoi fare
 
 Flag noseed
 ********************
 
-`-noseed` Crea e carica il torrent ma non lo invia al client torrent
+`-noseed` Creates and uploads the torrent but does not send it to the torrent client
 
-
-Come utilizzare noseed
+How to use noseed
 ==============================
 
-Il flag non accetta parametri
+The flag does not accept parameters
 
 .. code-block:: python
 
-    python start.py -nseed -u "C:\Archivio\The Movie 01.mkv"
+    python start.py -noseed -u "C:\Archive\The Movie 01.mkv"
 
-- Per una singola cartella
-
-.. code-block:: python
-
-    python start.py -noseed -f "C:\Archivio\The Movies"
-
-
-- Per una una o più cartelle
+- Single folder
 
 .. code-block:: python
 
-    python start.py -noseed -scan "C:\Archivio"
+    python start.py -noseed -f "C:\Archive\The Movies"
 
+- For one or more folders
 
+.. code-block:: python
+
+    python start.py -noseed -scan "C:\Archive"
