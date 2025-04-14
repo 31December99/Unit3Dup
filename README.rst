@@ -1,27 +1,14 @@
 **Unit3Dup**
 ===============================================
+|version| |online| |status| |python| |ubuntu| |debian| |windows|
 
-
-.. image:: https://img.shields.io/badge/Unit3Dup-0.7.10-blue
-   :alt: Version
-
-.. image:: https://img.shields.io/badge/Online-green
-   :alt: Torrent Status
-
-.. image:: https://img.shields.io/badge/Status-Active-brightgreen
-   :alt: Project Status
-
-.. image:: https://img.shields.io/badge/Python-3.10+-blue
-   :alt: Python Version
-
-.. image:: https://img.shields.io/badge/Ubuntu-22-blue
-   :alt: Ubuntu Version
-
-.. image:: https://img.shields.io/badge/Debian-12-blue
-   :alt: Debian Version
-
-.. image:: https://img.shields.io/badge/Windows-10-blue
-   :alt: Windows Version
+.. |version| image:: https://img.shields.io/badge/Unit3Dup-0.7.10-blue
+.. |online| image:: https://img.shields.io/badge/Online-green
+.. |status| image:: https://img.shields.io/badge/Status-Active-brightgreen
+.. |python| image:: https://img.shields.io/badge/Python-3.10+-blue
+.. |ubuntu| image:: https://img.shields.io/badge/Ubuntu-22-blue
+.. |debian| image:: https://img.shields.io/badge/Debian-12-blue
+.. |windows| image:: https://img.shields.io/badge/Windows-10-blue
 
 Auto Torrent Generator and Uploader
 ===================================
