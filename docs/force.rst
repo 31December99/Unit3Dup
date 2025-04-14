@@ -1,32 +1,34 @@
 
-Utilizza sempre **python start.py** quando vuoi inviare un comando al bot
+Always use **python start.py** when you want to send a command to the bot
 
-- Apri la finestra nera della console e accedi alla cartella del bot
-- Il bot può ricevere da te uno o più comandi (**flag**) dipende cosa vuoi fare
+- Open the black console window and navigate to the bot folder
+- The bot can accept one or more commands (**flags**).Depending on what you want to do
 
 Flag force
 ********************
 
-`-force` Se vuoi impostare la categoria al posto del bot
+`-force` If you want to set the category instead of the bot
 
 
-Come utilizzare force
-==============================
+How to use force
+==========================
 
-Aggiungi il flag il quale può essere combinato con -u, -f o -scan
+Add the flag, which can be combined with -u, -f, or -scan
+
+- Single file:
 
 .. code-block:: python
 
     python start.py -force movie -u "C:\Archivio\The Movie 01.mkv"
 
-- Per una singola cartella
+- Single folder
 
 .. code-block:: python
 
     python start.py -force tv -f "C:\Archivio\The Movies"
 
 
-- Per una una o più cartelle
+- For one or more folders:
 
 .. code-block:: python
 
