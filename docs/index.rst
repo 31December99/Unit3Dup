@@ -1,4 +1,4 @@
-Documentazione di **Unit3Dup** v0.07.9
+Documentazione di **Unit3Dup**
 ===============================================
 
 .. toctree::
@@ -11,3 +11,7 @@ Documentazione di **Unit3Dup** v0.07.9
    watcher
    noseed
    working_in_progress
+
+
+.. include:: ../README.rst
+   :start-line: 1
