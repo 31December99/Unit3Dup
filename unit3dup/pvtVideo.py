@@ -75,7 +75,7 @@ class Video:
             self.description = build_description.description()
             self.description += (f"[b][spoiler=Spoiler: PLAY TRAILER][center][youtube]{self.trailer_key}[/youtube]"
                                  f"[/center][/spoiler][/b]")
-            self.description += f"[url=https://github.com/31December99/Unit3Dup]Uploaded by Unit3Dup[/url]"
+            self.description += f"[url=https://github.com/31December99/Unit3Dup]Uploaded with Unit3Dup 0.7.11[/url]"
             self.is_hd = is_hd
 
         # Caching
