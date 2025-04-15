@@ -3,7 +3,7 @@
 ===============================================
 |version| |online| |status| |python| |ubuntu| |debian| |windows|
 
-.. |version| image:: https://img.shields.io/badge/Unit3Dup-0.7.10-blue
+.. |version| image:: https://img.shields.io/badge/Unit3Dup-0.7.11-blue
 .. |online| image:: https://img.shields.io/badge/Online-green
 .. |status| image:: https://img.shields.io/badge/Status-Active-brightgreen
 .. |python| image:: https://img.shields.io/badge/Python-3.10+-blue
