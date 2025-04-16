@@ -378,14 +378,14 @@ class Config(BaseModel):
             else:
                 field = field.upper()
 
-                if field in  ['QBIT_HOST','TRASM_HOST', 'RTORR_HOST']:
+                if field in  ['QBIT_HOST','TRASM_HOST']:
                     section[field] = Validate.ip(value=section[field], field_name=field, default_value="127.0.0.1")
 
                 if field in ['QBIT_PORT', 'TRASM_PORT', 'RTORR_PORT']:
                     section[field] = Validate.integer(value=section[field], field_name=field)
 
                 if field in ['QBIT_PASS','TRASM_PASS', 'RTORR_PASS', 'QBIT_USER','TRASM_USER','RTORR_USER',
-                             'TORRENT_CLIENT','TAG']:
+                             'TORRENT_CLIENT','TAG', 'RTORR_HOST']:
                     section[field] = Validate.string(value=section[field], field_name=field)
 
                 if field in ['SHARED_TRASM_PATH', 'SHARED_QBIT_PATH', 'SHARED_RTORR_PATH']:
