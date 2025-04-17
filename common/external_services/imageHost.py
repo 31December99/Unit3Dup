@@ -213,6 +213,7 @@ class ImageUploaderFallback:
 
         if uploader_host == "ImgFi":
             return response['image']['url']
+        return None
 
 class Build:
     """
@@ -220,7 +221,7 @@ class Build:
     """
     offline_uploaders = []
 
-    def __init__(self, extracted_frames: list['Image'], filename: str):
+    def __init__(self, extracted_frames: list[bytes], filename: str):
 
         # Image filename
         self.filename = filename

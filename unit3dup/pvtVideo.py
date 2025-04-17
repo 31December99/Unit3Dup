@@ -71,7 +71,7 @@ class Video:
             custom_console.bot_log("Done.")
 
             # Build the description
-            build_description = Build(extracted_frames=extracted_frames_webp+extracted_frames, filename = self.file_name)
+            build_description = Build(extracted_frames=extracted_frames_webp+extracted_frames, filename= self.display_name)
             self.description = build_description.description()
             self.description += (f"[b][spoiler=Spoiler: PLAY TRAILER][center][youtube]{self.trailer_key}[/youtube]"
                                  f"[/center][/spoiler][/b]")
