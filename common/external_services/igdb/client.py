@@ -48,7 +48,7 @@ class IGDBViewer:
                 )
                 for game_data in results
             ]
-
+        return None
 
     def select_result(self, results: list) -> int | None:
         # Build a menù and ask user to choice a result
@@ -66,6 +66,7 @@ class IGDBViewer:
 
                 if result >= len(results):
                     return result
+        return None
 
     @staticmethod
     def input_manager(input_message: str) -> int | None:
@@ -126,8 +127,6 @@ class IGDBClient:
         else:
             bbcode+="\nNo trailers available.\n"
 
-        # Sign
-        bbcode += f"[url=https://github.com/31December99/Unit3Dup]Uploaded by Unit3Dup[/url]"
         mygame.description = bbcode
         return mygame
 
@@ -152,6 +151,7 @@ class IGDBClient:
             # Show the results
             self.viewer.view_results(igdb_results=[mygame])
             return mygame
+        return None
 
     def user_enter_igdb(self,igdb_results: list, content: Media, candidate: str)-> Game | None:
         while True:
