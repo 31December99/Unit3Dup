@@ -6,6 +6,10 @@ import unicodedata
 from datetime import datetime
 from thefuzz import fuzz
 
+from common.external_services.igdb.core.tags import (
+    additions,
+)
+
 class ManageTitles:
     """
     Manages file title operations like removing punctuation,
@@ -146,6 +150,31 @@ class ManageTitles:
         filename = filename.rstrip('. ')
 
         return filename
+
+    @staticmethod
+    def filename_sanitized(filename: str)-> str:
+        # Basename of the content path
+        # Remove each addition from the string
+        for addition in additions:
+            filename_sanitized = re.sub(
+                rf"\b{addition}\b", "", filename
+            )
+
+        # Remove v version
+        filename_sanitized = re.sub(
+            r"v\d+(?:[ .]\d+)*", "", filename
+        ).strip()
+
+        # Remove dots, hyphens and extra spaces
+        filename_sanitized = re.sub(
+            r"[.\-_]", " ", filename_sanitized
+        )
+        # remove spaces, tab, newline
+        filename_sanitized = re.sub(r"\s+", " ", filename_sanitized)
+
+        # Remove flag
+        filename_sanitized = re.sub(r'\b(ita|eng)\b', ' ', filename_sanitized, flags=re.IGNORECASE)
+        return filename_sanitized.strip()
 
 class MyString:
     """
