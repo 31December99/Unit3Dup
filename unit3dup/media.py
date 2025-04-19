@@ -228,7 +228,7 @@ class Media:
     @property
     def guess_title(self)-> str:
         if not self._guess_title:
-            self._guess_title = title.Guessit(self.title_sanitized).guessit_title
+            self._guess_title = title.Guessit(self.title_sanitized).guessit_title.strip()
         return self._guess_title
 
     @guess_title.setter
@@ -393,6 +393,9 @@ class Media:
         return self._resolution
 
     def _filename_sanitized_(self):
+        return ManageTitles.filename_sanitized(self.title)
+
+        """
         # Basename of the content path
         filename_sanitized = self.title
         # Remove each addition from the string
@@ -415,6 +418,7 @@ class Media:
         # Remove flag
         filename_sanitized = re.sub(r'\b(ita|eng)\b', ' ', filename_sanitized, flags=re.IGNORECASE)
         return filename_sanitized
+        """
 
 
     @staticmethod
