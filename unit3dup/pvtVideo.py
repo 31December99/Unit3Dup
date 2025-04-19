@@ -71,11 +71,10 @@ class Video:
             custom_console.bot_log("Done.")
 
             # Build the description
-            build_description = Build(extracted_frames=extracted_frames_webp+extracted_frames, filename = self.file_name)
+            build_description = Build(extracted_frames=extracted_frames_webp+extracted_frames, filename= self.display_name)
             self.description = build_description.description()
             self.description += (f"[b][spoiler=Spoiler: PLAY TRAILER][center][youtube]{self.trailer_key}[/youtube]"
                                  f"[/center][/spoiler][/b]")
-            self.description += f"[url=https://github.com/31December99/Unit3Dup]Uploaded by Unit3Dup[/url]"
             self.is_hd = is_hd
 
         # Caching
