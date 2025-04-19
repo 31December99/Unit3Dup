@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import hashlib
 import os
+import stat
 import time
 import bencode2
 import requests
@@ -195,12 +196,24 @@ class RTorrentClient(TorrClient):
 
         def connect(self) -> RTorrent | None:
 
+            # Build the socket string for rTorrent
+            # Tcp or File
+            if os.path.exists(config_settings.torrent_client_config.RTORR_HOST):
+                socket_type = os.stat(config_settings.torrent_client_config.RTORR_HOST).st_mode
+                if stat.S_ISSOCK(socket_type):
+                    socket = f"scgi:///{config_settings.torrent_client_config.RTORR_HOST}"
+                else:
+                    custom_console.bot_error_log("Invalid RTorrent host")
+                    exit(1)
+            else:
+                socket = (f"scgi://{config_settings.torrent_client_config.RTORR_HOST}:"
+                          f"{config_settings.torrent_client_config.RTORR_PORT}")
+
             login_count = 0
             while True:
                 try:
-                    self.client = RTorrent(address=f"scgi://"
-                                                 f"{config_settings.torrent_client_config.RTORR_HOST}:"
-                                                 f"{config_settings.torrent_client_config.RTORR_PORT}",  timeout= 10)
+                    # open
+                    self.client = RTorrent(address=socket, timeout= 10)
                     # Test
                     self.client.system_list_methods()
                     return self.client
@@ -216,12 +229,22 @@ class RTorrentClient(TorrClient):
                         f"{self.__class__.__name__} Connection Error. Check IP/port or run rTorrent"
                     )
                     exit()
-
                 except TimeoutError:
                     custom_console.bot_error_log(
                         f"{self.__class__.__name__} Connection Error. Check IP/port or run rTorrent"
                     )
                     exit()
+                except AttributeError:
+                    custom_console.bot_error_log(
+                        f"{self.__class__.__name__} Socket connection error or wrong OS platform"
+                    )
+                    exit()
+                except ConnectionRefusedError:
+                    custom_console.bot_error_log(
+                        f"{self.__class__.__name__} Connection refused"
+                    )
+                    exit()
+
 
         def send_to_client(self, tracker_data_response: str, torrent: Mytorrent, content: Media, archive_path: str):
             # "Translate" files location to shared_path if necessary

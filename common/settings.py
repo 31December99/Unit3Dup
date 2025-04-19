@@ -13,6 +13,7 @@ from common.utility import ManageTitles
 from common import trackers
 
 config_file = "Unit3Dbot.json"
+version = "0.7.11"
 
 if os.name == "nt":
     PW_TORRENT_ARCHIVE_PATH: Path = Path(os.getenv("LOCALAPPDATA", ".")) / "Unit3Dup_config" / "pw_torrent_archive"
@@ -265,6 +266,8 @@ class Validate:
             else:
                 # // None = invalid dir
                 return None
+        return None
+
 
     @staticmethod
     def colors(value: str | None, field_name: str) -> str:
@@ -378,14 +381,14 @@ class Config(BaseModel):
             else:
                 field = field.upper()
 
-                if field in  ['QBIT_HOST','TRASM_HOST', 'RTORR_HOST']:
+                if field in  ['QBIT_HOST','TRASM_HOST']:
                     section[field] = Validate.ip(value=section[field], field_name=field, default_value="127.0.0.1")
 
                 if field in ['QBIT_PORT', 'TRASM_PORT', 'RTORR_PORT']:
                     section[field] = Validate.integer(value=section[field], field_name=field)
 
                 if field in ['QBIT_PASS','TRASM_PASS', 'RTORR_PASS', 'QBIT_USER','TRASM_USER','RTORR_USER',
-                             'TORRENT_CLIENT','TAG']:
+                             'TORRENT_CLIENT','TAG', 'RTORR_HOST']:
                     section[field] = Validate.string(value=section[field], field_name=field)
 
                 if field in ['SHARED_TRASM_PATH', 'SHARED_QBIT_PATH', 'SHARED_RTORR_PATH']:
@@ -461,6 +464,7 @@ class Config(BaseModel):
 class Load:
 
     _instance = None
+    version = version
 
     def __new__(cls, *args, **kwargs):
         # return the same instance..

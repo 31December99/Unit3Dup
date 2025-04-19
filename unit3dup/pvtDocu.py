@@ -97,7 +97,6 @@ class PdfImages:
             # Create a new description
             build_description = Build(extracted_frames=extracted_frames, filename = self.file_name)
             self.description = build_description.description()
-            self.description += f"[url=https://github.com/31December99/Unit3Dup]Uploaded by Unit3Dup[/url]"
 
         # Write the new description to the cache
         if config_settings.user_preferences.CACHE_SCR:

@@ -6,7 +6,7 @@ from common.trackers.trackers import TRACKData
 
 from unit3dup.pvtTracker import Unit3d
 from unit3dup.pvtDocu import PdfImages
-from unit3dup import config_settings
+from unit3dup import config_settings, Load
 from unit3dup.pvtVideo import Video
 from unit3dup.media import Media
 
@@ -21,6 +21,8 @@ class UploadBot:
         self.tracker_name = tracker_name
         self.tracker_data = TRACKData.load_from_module(tracker_name=tracker_name)
         self.tracker = Unit3d(tracker_name=tracker_name)
+        self.sign = (f"[url=https://github.com/31December99/Unit3Dup]Uploaded with Unit3Dup"
+                     f" {Load.version}[/url]")
 
     def message(self,tracker_response: requests.Response) -> (requests, dict):
 
@@ -68,7 +70,7 @@ class UploadBot:
         self.tracker.data["resolution_id"] = self.tracker_data.resolution[self.content.screen_size]\
             if self.content.screen_size else self.tracker_data.resolution[self.content.resolution]
         self.tracker.data["mediainfo"] = video_info.mediainfo
-        self.tracker.data["description"] = video_info.description
+        self.tracker.data["description"] = video_info.description + self.sign
         self.tracker.data["sd"] = video_info.is_hd
         self.tracker.data["type_id"] = self.tracker_data.filter_type(self.content.file_name)
         self.tracker.data["season_number"] = self.content.guess_season
@@ -82,7 +84,7 @@ class UploadBot:
         self.tracker.data["tmdb"] = 0
         self.tracker.data["category_id"] = self.tracker_data.category.get(self.content.category)
         self.tracker.data["anonymous"] = int(config_settings.user_preferences.ANON)
-        self.tracker.data["description"] = igdb.description if igdb else "Sorry, there is no valid IGDB"
+        self.tracker.data["description"] = igdb.description + self.sign if igdb else "Sorry, there is no valid IGDB"
         self.tracker.data["type_id"] = self.tracker_data.type_id.get(igdb_platform) if igdb_platform else 1
         self.tracker.data["igdb"] = igdb.id if igdb else 1,  # need zero not one ( fix tracker)
         return self.tracker
@@ -93,7 +95,7 @@ class UploadBot:
         self.tracker.data["tmdb"] = 0
         self.tracker.data["category_id"] = self.tracker_data.category.get(self.content.category)
         self.tracker.data["anonymous"] = int(config_settings.user_preferences.ANON)
-        self.tracker.data["description"] = document_info.description
+        self.tracker.data["description"] = document_info.description + self.sign
         self.tracker.data["type_id"] = self.tracker_data.filter_type(self.content.file_name)
         self.tracker.data["resolution_id"] = ""
         # tracker.data["torrent-cover"] = "" TODO: not yet implemented
