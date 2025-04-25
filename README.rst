@@ -38,11 +38,27 @@ It performs the following tasks:
 unit3dup can grab the first page, convert it to an image (using xpdf),
 and then the bot can upload it to an image host, then add the link to the torrent page description.
 
-.. image:: https://img.shields.io/badge/WINDOWS-Install_poppler_tools-gr
-   :alt: Windows Poppler Tools
-
-WINDOWS Installation
+Installation
 --------------------
+1. Download the last release (https://github.com/31December99/Unit3Dup/releases)
+
+2. unzip it
+
+3. pip install -r requirements.txt
+
+4. python start.py
+
+.. image:: https://img.shields.io/badge/LINUX-gr
+
+1. Run: ``sudo apt install poppler-utils``
+2. sudo apt install ffmpeg
+
+
+.. image:: https://img.shields.io/badge/WINDOWS-gr
+
+1. Download and unzip https://www.ffmpeg.org/download.html and add its folder to
+   PATH environment user variable
+
 
 1. Download and unzip poppler for Windows from https://github.com/oschwartz10612/poppler-windows/releases
 2. Unzip it
@@ -50,24 +66,23 @@ WINDOWS Installation
 4. *Close and reopen a new console window*
 5. Test it: Run ``pdftocairo`` in the terminal
 
-.. image:: https://img.shields.io/badge/LINUX-Install_poppler_tools-gr
-   :alt: Linux Poppler Tools
-
-LINUX Installation
-------------------
-
-1. Run: ``sudo apt install poppler-utils``
-2. Test it: Run ``pdftocairo`` in the terminal
 
 
 .. image:: https://img.shields.io/badge/Bot_UPDATE-gr
    :alt: Bot Update
-
-Bot Update
-----------
 
 1. Delete only the bot folder
 2. Download the release zip
 3. Unzip it
 4. No config needed
 5. Done!
+
+Trackers
+========
+
++------------------+----------------------------+
+| **Trackers**     | **Description**            |
++==================+============================+
+| ``ITT``          | https://itatorrents.xyz/   |
++------------------+----------------------------+
+
