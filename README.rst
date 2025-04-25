@@ -86,3 +86,11 @@ Trackers
 +==================+============================+
 | ``ITT``          | https://itatorrents.xyz/   |
 +------------------+----------------------------+
+
+.. image:: https://img.shields.io/discord/1365371442413305918?label=Discord&logo=discord&style=flat
+   :target: https://discord.gg/6x3nJ4EG
+   :alt: Discord Server
+
+.. image:: https://img.shields.io/badge/Telegram-Join-blue?logo=telegram
+   :target: https://t.me/+hj294GabGWJlMDI8
+   :alt: Unisciti su Telegram
