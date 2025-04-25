@@ -2,11 +2,7 @@
 import os
 import re
 
-from common.external_services.igdb.core.tags import (
-    crew_patterns,
-    additions,
-    platform_patterns,
-)
+from common.external_services.igdb.core.tags import crew_patterns, platform_patterns
 from common.utility import ManageTitles, System
 from common.mediainfo import MediaFile
 from common import title
@@ -60,7 +56,7 @@ class Media:
     @property
     def title_sanitized(self)-> str:
         if not self._title_sanitized:
-            self._title_sanitized = self._filename_sanitized_()
+            self._title_sanitized = ManageTitles.filename_sanitized(self.title)
         return self._title_sanitized
 
     @title_sanitized.setter
@@ -391,35 +387,6 @@ class Media:
                 # Game
                 self._resolution = System.NO_RESOLUTION
         return self._resolution
-
-    def _filename_sanitized_(self):
-        return ManageTitles.filename_sanitized(self.title)
-
-        """
-        # Basename of the content path
-        filename_sanitized = self.title
-        # Remove each addition from the string
-        for addition in additions:
-            filename_sanitized = re.sub(
-                rf"\b{addition}\b", "", filename_sanitized
-            )
-
-        # Remove v version
-        filename_sanitized = re.sub(
-            r"v\d+(?:[ .]\d+)*", "", filename_sanitized
-        ).strip()
-
-        # Remove dots, hyphens and extra spaces
-        filename_sanitized = re.sub(
-            r"[.\-_]", " ", filename_sanitized
-        ).strip()
-        filename_sanitized = re.sub(r"\s+", " ", filename_sanitized)
-
-        # Remove flag
-        filename_sanitized = re.sub(r'\b(ita|eng)\b', ' ', filename_sanitized, flags=re.IGNORECASE)
-        return filename_sanitized
-        """
-
 
     @staticmethod
     def _crew(filename: str)-> list[str]:
