@@ -77,6 +77,7 @@ Installation
 4. No config needed
 5. Done!
 
+
 Trackers
 ========
 
@@ -85,4 +86,3 @@ Trackers
 +==================+============================+
 | ``ITT``          | https://itatorrents.xyz/   |
 +------------------+----------------------------+
-
