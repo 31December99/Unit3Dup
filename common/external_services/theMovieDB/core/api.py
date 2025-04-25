@@ -213,7 +213,7 @@ class TmdbAPI(MyHttp):
                 return [endpoint['datatype'](**attribute) for attribute in response_data]
             else:
                 return []
-
+        return None
 
 class DbOnline(TmdbAPI):
     def __init__(self, media: Media, category: str, no_title: str) -> None:
@@ -251,10 +251,10 @@ class DbOnline(TmdbAPI):
                        continue
 
                 # Search for title
-                if ManageTitles.fuzzyit(str1=self.query, str2=result.get_title()) > 95:
+                if ManageTitles.fuzzyit(str1=self.query, str2=ManageTitles.filename_sanitized(result.get_title())) > 95:
                     return result
 
-                if ManageTitles.fuzzyit(str1=self.query, str2=result.get_original()) > 95:
+                if ManageTitles.fuzzyit(str1=self.query, str2=ManageTitles.filename_sanitized(result.get_original())) > 95:
                     return result
 
             # Search for alternative title
