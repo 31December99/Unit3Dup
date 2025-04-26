@@ -171,7 +171,13 @@ class View(Torrent):
 
         for item in data:
             if item['attributes']['tmdb_id'] != 0:
-                media = f"TMDB: {item['attributes']['tmdb_id']} {str(item['attributes']['release_year'])}"
+                if not item['attributes']['release_year']:
+                    release_year = 'release year not available'
+                else:
+                    release_year = item['attributes']['release_year']
+
+                media = f"TMDB: {item['attributes']['tmdb_id']} - {release_year}"
+
             else:
                 media = f"IGDB: {item['attributes']['igdb_id']}"
 
