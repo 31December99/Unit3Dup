@@ -160,7 +160,7 @@ class ManageTitles:
             filename_sanitized = re.sub(rf"\b{addition}\b", "", filename_sanitized)
 
         # Remove v version
-        filename_sanitized = re.sub(r"v\d+(?:[ .]\d+)*", "", filename).strip()
+        filename_sanitized = re.sub(r"v\d+(?:[ .]\d+)*", "", filename_sanitized).strip()
 
         # Remove dots, hyphens and extra spaces
         filename_sanitized = re.sub(r"[.\-_]", " ", filename_sanitized)
