@@ -141,6 +141,12 @@ def main():
 
     torrent_info = View(tracker_name=cli.args.tracker)
 
+    ############################ Filter 'Combo' ##########################
+    if cli.args.tmdb_id and cli.args.resolution:
+        torrent_info.view_tmdb_res(cli.args.tmdb_id, cli.args.resolution)
+        return
+    #####################################################################
+
     # Search by different criteria
     if cli.args.search:
         torrent_info.view_search(cli.args.search)
@@ -174,9 +180,11 @@ def main():
         torrent_info.view_by_types(cli.args.type)
         return
 
+
     if cli.args.resolution:
         torrent_info.view_by_res(cli.args.resolution)
         return
+
 
     if cli.args.filename:
         torrent_info.view_by_filename(cli.args.filename)
@@ -265,6 +273,7 @@ def main():
     if cli.args.personal:
         torrent_info.view_personal()
         return
+
 
     # Handle case with no arguments
     if not cli.args:
