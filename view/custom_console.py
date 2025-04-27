@@ -105,7 +105,7 @@ class CustomConsole(Console):
                 user_tmdb_id = input()
                 if user_tmdb_id.isdigit():
                     user_tmdb_id = int(user_tmdb_id)
-                    return user_tmdb_id if user_tmdb_id < 999999 else 0
+                    return user_tmdb_id if user_tmdb_id < 9999999 else 0
         except KeyboardInterrupt:
             self.bot_error_log("\nOperation cancelled. Bye !")
             exit(0)
