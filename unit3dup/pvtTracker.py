@@ -309,6 +309,15 @@ class filterAPI(Tracker):
         return self._next_page(url=url)
 
 
+    # Filter "Combo"
+    def tmdb_res(self, tmdb_id: int, res_id: str, perPage: int = None) -> requests:
+        self.params["tmdbId"] = tmdb_id
+        self.params["resolutions[]"] = res_id
+        self.params["perPage"] = perPage
+        return self._get(params=self.params)
+
+
+
 class Torrents(Tracker):
     def torrents(self, perPage: int = None) -> requests:
         self.params["perPage"] = perPage
@@ -456,3 +465,10 @@ class Unit3d(filterAPI, Torrents, Uploader):
 
     def get_personal_release(self, personalRelease: bool, perPage: int = None):
         return self.personal_release(personalRelease=personalRelease, perPage=perPage)
+
+
+    # Filter "Combo"
+    def get_tmdb_res(self, tmdb_id: int, res_id: str, perPage: int = None) -> requests:
+        if tmdb_id and res_id:
+            return self.tmdb_res(tmdb_id=tmdb_id, res_id=res_id, perPage=perPage)
+        return None
