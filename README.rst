@@ -87,8 +87,8 @@ Trackers
 | ``ITT``          | https://itatorrents.xyz/   |
 +------------------+----------------------------+
 
-.. image:: https://img.shields.io/discord/1365371442413305918?label=Discord&logo=discord&style=flat
-   :target: https://discord.gg/6x3nJ4EG
+.. image:: https://img.shields.io/discord/1214696147600408698?label=Discord&logo=discord&style=flat
+   :target: https://discord.gg/8hRTjV8Q
    :alt: Discord Server
 
 .. image:: https://img.shields.io/badge/Telegram-Join-blue?logo=telegram
