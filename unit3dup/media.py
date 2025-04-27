@@ -56,7 +56,7 @@ class Media:
     @property
     def title_sanitized(self)-> str:
         if not self._title_sanitized:
-            self._title_sanitized = ManageTitles.filename_sanitized(self.title)
+            self._title_sanitized = ManageTitles.clean_text(self.title)
         return self._title_sanitized
 
     @title_sanitized.setter
