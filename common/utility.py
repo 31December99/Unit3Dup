@@ -18,7 +18,7 @@ class ManageTitles:
 
     marks = [
         ".", ",", ";", ":", "!", "?", '"', "(", ")", "[", "]", "{", "}", "/",
-        "\\", "&", "*", "$", "%", "#", "@", "_", "+"
+        "\\", "&", "*", "$", "%", "#", "@", "_", "+", "|"
     ]
 
     # TAG Audio in title
@@ -152,29 +152,34 @@ class ManageTitles:
         return filename
 
     @staticmethod
-    def filename_sanitized(filename: str)-> str:
-        # Basename of the content path
+    def clean_text(filename: str)-> str:
+
         # Remove each addition from the string
+        filename_sanitized = filename
         for addition in additions:
-            filename_sanitized = re.sub(
-                rf"\b{addition}\b", "", filename
-            )
+            filename_sanitized = re.sub(rf"\b{addition}\b", "", filename_sanitized)
 
         # Remove v version
-        filename_sanitized = re.sub(
-            r"v\d+(?:[ .]\d+)*", "", filename
-        ).strip()
+        filename_sanitized = re.sub(r"v\d+(?:[ .]\d+)*", "", filename_sanitized).strip()
 
         # Remove dots, hyphens and extra spaces
-        filename_sanitized = re.sub(
-            r"[.\-_]", " ", filename_sanitized
-        )
+        filename_sanitized = re.sub(r"[.\-_]", " ", filename_sanitized)
+
         # remove spaces, tab, newline
         filename_sanitized = re.sub(r"\s+", " ", filename_sanitized)
 
         # Remove flag
         filename_sanitized = re.sub(r'\b(ita|eng)\b', ' ', filename_sanitized, flags=re.IGNORECASE)
-        return filename_sanitized.strip()
+
+        # Recover tag
+        filename_sanitized = re.sub(r'(\b5 \b1\b)', r'5.1', filename_sanitized)
+        filename_sanitized = re.sub(r'(\b2 \b0\b)', r'2.0', filename_sanitized)
+
+        # remove double space
+        filename_sanitized = re.sub(r"\s+", " ", filename_sanitized).strip()
+
+        return filename_sanitized
+
 
 class MyString:
     """

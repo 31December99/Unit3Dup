@@ -108,8 +108,10 @@ class UserPreferences(BaseModel):
     TORRENT_COMMENT: str | None = "no_comment"
     PREFERRED_LANG: str | None = "all"
     ANON: bool = False
+    WEBP_ENABLED: bool = False
     CACHE_SCR: bool = False
     CACHE_DBONLINE: bool = False
+    PERSONAL_RELEASE: bool = False
 
 
 
@@ -408,7 +410,8 @@ class Config(BaseModel):
             else:
                 field = field.upper()
 
-                if field in ['DUPLICATE_ON','SKIP_DUPLICATE','RESIZE_SCSHOT','ANON','CACHE_SCR', 'CACHE_DBONLINE']:
+                if field in ['DUPLICATE_ON','SKIP_DUPLICATE','RESIZE_SCSHOT','ANON','WEBP_ENABLED','CACHE_SCR',
+                             'CACHE_DBONLINE', 'PERSONAL_RELEASE']:
                     section[field] = Validate.boolean(value=section[field], field_name=field)
 
                 if field in ['TORRENT_COMMENT','PW_TORRENT_ARCHIVE_PATH','WATCHER_PATH','DEFAULT_TRACKER']:
@@ -527,7 +530,7 @@ class Load:
                 "FREE_IMAGE_PRIORITY": 2,
                 "IMGBB_PRIORITY": 3,
                 "IMGFI_PRIORITY": 4,
-                "NUMBER_OF_SCREENSHOTS": 3,
+                "NUMBER_OF_SCREENSHOTS": 4,
                 "YOUTUBE_FAV_CHANNEL_ID": "UCGCbxpnt25hWPFLSbvwfg_w",
                 "YOUTUBE_CHANNEL_ENABLE": "False",
                 "DUPLICATE_ON": "true",
@@ -543,8 +546,10 @@ class Load:
                 "TORRENT_COMMENT": "no_comment",
                 "PREFERRED_LANG": "all",
                 "ANON": "False",
+                "WEBP_ENABLED": "False",
                 "CACHE_SCR": "False",
                 "CACHE_DBONLINE": "False",
+                "PERSONAL_RELEASE": "False",
             },
             "options": {
                 "PW_API_KEY": "no_key",

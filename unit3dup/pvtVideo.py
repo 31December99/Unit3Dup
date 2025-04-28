@@ -61,13 +61,14 @@ class Video:
             custom_console.bot_log(f"\n[GENERATING IMAGES..] [HD {'ON' if self.is_hd == 0 else 'OFF'}]")
             # Extract the frames
             extracted_frames, is_hd = self.video_frames.create()
-            # Create a webp file
-            extracted_frames_webp = self.video_frames.create_webp_from_video(video_path=self.file_name,
-                                                start_time=90,
-                                                duration=10,
-                                                video_height = media_info.video_height,
-                                                output_path=
-                                                os.path.join(config_settings.user_preferences.CACHE_PATH,"file.webp"))
+            # Create a webp file if it's enabled in the config json
+            extracted_frames_webp = []
+            if config_settings.user_preferences.WEBP_ENABLED:
+                extracted_frames_webp = self.video_frames.create_webp_from_video(video_path=self.file_name,
+                                                    start_time=90,
+                                                    duration=10,
+                                                    output_path=
+                                                    os.path.join(config_settings.user_preferences.CACHE_PATH,"file.webp"))
             custom_console.bot_log("Done.")
 
             # Build the description

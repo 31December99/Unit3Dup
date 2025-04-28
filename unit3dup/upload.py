@@ -21,8 +21,8 @@ class UploadBot:
         self.tracker_name = tracker_name
         self.tracker_data = TRACKData.load_from_module(tracker_name=tracker_name)
         self.tracker = Unit3d(tracker_name=tracker_name)
-        self.sign = (f"[url=https://github.com/31December99/Unit3Dup]Uploaded with Unit3Dup"
-                     f" {Load.version}[/url]")
+        self.sign = (f"[url=https://github.com/31December99/Unit3Dup][code][b][color=#00BFFF][size=14]Uploaded with Unit3Dup"
+                     f" {Load.version}[/size][/color][/b][/code][/url]")
 
     def message(self,tracker_response: requests.Response) -> (requests, dict):
 
@@ -75,6 +75,7 @@ class UploadBot:
         self.tracker.data["type_id"] = self.tracker_data.filter_type(self.content.file_name)
         self.tracker.data["season_number"] = self.content.guess_season
         self.tracker.data["episode_number"] = (self.content.guess_episode if not self.content.torrent_pack else 0)
+        self.tracker.data["personal_release"] = int(config_settings.user_preferences.PERSONAL_RELEASE)
         return self.tracker
 
     def data_game(self,igdb: Game) -> Unit3d | None:

@@ -21,7 +21,7 @@ from common.external_services.trailers.api import YtTrailer
 from common.external_services.sessions.agents import Agent
 from common.external_services.theMovieDB import config
 from common.external_services.imdb import IMDB
-from common.utility import ManageTitles, System
+from common.utility import ManageTitles
 
 from unit3dup.media import Media
 from view import custom_console
@@ -251,10 +251,10 @@ class DbOnline(TmdbAPI):
                        continue
 
                 # Search for title
-                if ManageTitles.fuzzyit(str1=self.query, str2=ManageTitles.filename_sanitized(result.get_title())) > 95:
+                if ManageTitles.fuzzyit(str1=self.query, str2=ManageTitles.clean_text(result.get_title())) > 95:
                     return result
 
-                if ManageTitles.fuzzyit(str1=self.query, str2=ManageTitles.filename_sanitized(result.get_original())) > 95:
+                if ManageTitles.fuzzyit(str1=self.query, str2=ManageTitles.clean_text(result.get_original())) > 95:
                     return result
 
             # Search for alternative title
