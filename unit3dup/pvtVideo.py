@@ -29,6 +29,11 @@ class Video:
         self.cache_key = self.hash_key(self.key)
 
         # Load the video frames
+        # if web_enabled is off set the number of screenshots to an even number
+        if not config_settings.user_preferences.WEBP_ENABLED:
+            if config_settings.user_preferences.NUMBER_OF_SCREENSHOTS % 2 != 0:
+                config_settings.user_preferences.NUMBER_OF_SCREENSHOTS += 1
+
         samples_n = max(2, min(config_settings.user_preferences.NUMBER_OF_SCREENSHOTS, 10))
         self.video_frames: VideoFrame = VideoFrame(self.file_name, num_screenshots=samples_n)
 
@@ -69,11 +74,6 @@ class Video:
                                                     duration=10,
                                                     output_path=
                                                     os.path.join(config_settings.user_preferences.CACHE_PATH,"file.webp"))
-            else:
-                # if screenshot number is odd
-                if config_settings.NUMBER_OF_SCREENSHOTS % 2 != 0:
-                    config_settings.NUMBER_OF_SCREENSHOTS = config_settings.NUMBER_OF_SCREENSHOTS +1
-
             custom_console.bot_log("Done.")
 
             # Build the description
