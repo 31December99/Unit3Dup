@@ -53,7 +53,7 @@ class VideoManager:
             if UserContent.is_preferred_language(content=content):
 
                 if self.cli.watcher:
-                    if os.path.exists(content.torrent_path):
+                    if os.path.exists(torrent_filepath):
                         custom_console.bot_log(f"Watcher Active.. skip the old upload '{content.file_name}'")
                     continue
 
