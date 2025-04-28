@@ -21,8 +21,8 @@ class UploadBot:
         self.tracker_name = tracker_name
         self.tracker_data = TRACKData.load_from_module(tracker_name=tracker_name)
         self.tracker = Unit3d(tracker_name=tracker_name)
-        self.sign = (f"[url=https://github.com/31December99/Unit3Dup][code][b][color=#00BFFF][size=14]Uploaded with Unit3Dup"
-                     f" {Load.version}[/size][/color][/b][/code][/url]")
+        self.sign = (f"[url=https://github.com/31December99/Unit3Dup][code][color=#00BFFF][size=14]Uploaded with Unit3Dup"
+                     f" {Load.version}[/size][/color][/code][/url]")
 
     def message(self,tracker_response: requests.Response) -> (requests, dict):
 
