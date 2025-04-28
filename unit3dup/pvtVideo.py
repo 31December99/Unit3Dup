@@ -69,6 +69,11 @@ class Video:
                                                     duration=10,
                                                     output_path=
                                                     os.path.join(config_settings.user_preferences.CACHE_PATH,"file.webp"))
+            else:
+                # if screenshot number is odd
+                if config_settings.NUMBER_OF_SCREENSHOTS % 2 != 0:
+                    config_settings.NUMBER_OF_SCREENSHOTS = config_settings.NUMBER_OF_SCREENSHOTS +1
+
             custom_console.bot_log("Done.")
 
             # Build the description
