@@ -40,18 +40,11 @@ class CommandLine:
         parser.add_argument('-force', nargs='?', const="movie", type=str, default=None)
         parser.add_argument("-noseed", "--noseed", action="store_true", help="No seeding after upload")
         parser.add_argument("-noup", "--noup", action="store_true", help="Torrent only. No upload")
-
+        parser.add_argument("-duplicate", "--duplicate", action="store_true", help="Find duplicates")
 
 
         parser.add_argument("-pw", "--pw", type=str, help="")
         parser.add_argument("-ftp", "--ftp", action="store_true", help="Connect to FTP")
-
-        parser.add_argument(
-            "-duplicate",
-            "--duplicate",
-            action="store_true",
-            help="Find duplicates"
-        )
 
         # optional
         parser.add_argument("-s", "--search", type=str, help="Search for torrent")

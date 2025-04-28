@@ -3,7 +3,7 @@
 ===============================================
 |version| |online| |status| |python| |ubuntu| |debian| |windows|
 
-.. |version| image:: https://img.shields.io/badge/Unit3Dup-0.7.12-blue
+.. |version| image:: https://img.shields.io/badge/Unit3Dup-0.7.13-blue
 .. |online| image:: https://img.shields.io/badge/Online-green
 .. |status| image:: https://img.shields.io/badge/Status-Active-brightgreen
 .. |python| image:: https://img.shields.io/badge/Python-3.10+-blue
@@ -87,8 +87,8 @@ Trackers
 | ``ITT``          | https://itatorrents.xyz/   |
 +------------------+----------------------------+
 
-.. image:: https://img.shields.io/discord/1365371442413305918?label=Discord&logo=discord&style=flat
-   :target: https://discord.gg/6x3nJ4EG
+.. image:: https://img.shields.io/discord/1214696147600408698?label=Discord&logo=discord&style=flat
+   :target: https://discord.gg/8hRTjV8Q
    :alt: Discord Server
 
 .. image:: https://img.shields.io/badge/Telegram-Join-blue?logo=telegram

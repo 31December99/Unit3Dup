@@ -164,16 +164,22 @@ class VideoFrame:
             exit(1)
 
     @staticmethod
-    def create_webp_from_video(video_path, start_time, video_height, duration, output_path):
+    def create_webp_from_video(video_path, start_time, duration, output_path):
         """
         Create a webp file
 
-        :param time: The time to extract the frame
         :param duration: how many sec
+        :param video_path: The path of the video
+        :start_time: The start time of the video
+        :video_height: The height of the video
+        :param output_path: The path of the output webp file
+
         :return: The extracted frame as a PIL Image
-        :raises RuntimeError: If it fails
-        : remove hostimage from the unit3d whitelist or resize it:
-        :https://wsrv.nl/ 71kk pixel limit and 10sec timeout processing for the whitelisted in Unit3d
+
+        raises RuntimeError: If it fails
+        remove hostimage from the unit3d whitelist:
+        https://wsrv.nl/ 71kk pixel limit and 10sec timeout processing for the whitelisted in Unit3d
+        note for the webp file: https://github.com/weserv/images/wiki/Animated-.gif-and-file-extensions
         """
         command = [
             "ffmpeg",
@@ -211,5 +217,5 @@ class VideoFrame:
             custom_console.bot_error_log(f"IMAGES Error: {output_path}  Cannot identify image file. "
                                          f"Please verify if your file is corrupted")
 
-
+        return None
 

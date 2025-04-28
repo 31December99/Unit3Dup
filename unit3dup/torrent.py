@@ -131,6 +131,12 @@ class Torrent:
         )
 
 
+    # Filter 'Combo'
+    def get_by_tmdb_res(self, tmdb_id: int , resolution_id: str) -> requests:
+        return self.tracker.get_tmdb_res(tmdb_id=tmdb_id, res_id=resolution_id, perPage=self.perPage)
+
+
+
 class View(Torrent):
 
     def __init__(self, tracker_name: str):
@@ -171,9 +177,15 @@ class View(Torrent):
 
         for item in data:
             if item['attributes']['tmdb_id'] != 0:
-                media = f"TMDB: {item['attributes']['tmdb_id']} {str(item['attributes']['release_year'])}"
+                if not item['attributes']['release_year']:
+                    release_year = 'release year not available'
+                else:
+                    release_year = item['attributes']['release_year']
+
+                media = f"[TRACKER] TMDB: {item['attributes']['tmdb_id']} - {release_year}"
+
             else:
-                media = f"IGDB: {item['attributes']['igdb_id']}"
+                media = f"[TRACKER] IGDB: {item['attributes']['igdb_id']}"
 
             custom_console.bot_log(f"\n {media} - {item['attributes']['name']}")
 
@@ -430,3 +442,17 @@ class View(Torrent):
         )
         if tracker_data:
             self.page_view(tracker_data=tracker_data, tracker=self.tracker)
+
+    # Filter 'Combo'
+    def view_tmdb_res(self, tmdb_id: int , res_name: str) -> requests:
+
+        # Filter by TMDB and Resolution
+        if res_name not in self.tracker_data.resolution.keys():
+            custom_console.bot_error_log(f"Resolution not available for '{res_name}' try:")
+            custom_console.bot_warning_log(";".join(list(self.tracker_data.resolution.keys())[:-1]))
+            exit()
+
+        tracker_data = self.get_by_tmdb_res(tmdb_id=tmdb_id,resolution_id=str(self.tracker_data.resolution.get(res_name)))
+        if tracker_data:
+            self.page_view(tracker_data=tracker_data, tracker=self.tracker)
+
