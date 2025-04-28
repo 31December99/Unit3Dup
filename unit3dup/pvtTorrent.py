@@ -41,7 +41,11 @@ class Mytorrent:
 
 
     def hash(self):
-        custom_console.print(f"\n{self.trackers_list} {self.mytorr.name}")
+        # Calculate the torrent size
+        size = round(self.mytorr.size / (1024 ** 3), 2)
+        # Print a message for the user
+        custom_console.print(f"\n{self.trackers_list} {self.mytorr.name} - {size} GB")
+        # Hashing
         with HashProgressBar() as progress:
             try:
                 self.mytorr.generate(threads=4, callback=progress.callback, interval=0)
