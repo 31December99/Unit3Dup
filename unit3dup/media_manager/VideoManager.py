@@ -55,7 +55,7 @@ class VideoManager:
                 if self.cli.watcher:
                     if os.path.exists(torrent_filepath):
                         custom_console.bot_log(f"Watcher Active.. skip the old upload '{content.file_name}'")
-                    continue
+                        continue
 
                 torrent_response = UserContent.torrent(content=content, tracker_name_list=tracker_name_list,
                                                        selected_tracker=selected_tracker, this_path=torrent_filepath)
