@@ -169,13 +169,31 @@ class ManageTitles:
         filename_sanitized = re.sub(r"\s+", " ", filename_sanitized)
 
         # Recover tag
-        filename_sanitized = re.sub(r'(\b5 \b1\b)', r'5.1', filename_sanitized)
-        filename_sanitized = re.sub(r'(\b2 \b0\b)', r'2.0', filename_sanitized)
+        filename_sanitized = ManageTitles.recover_tag(filename_sanitized)
 
         # remove double space
         filename_sanitized = re.sub(r"\s+", " ", filename_sanitized).strip()
 
         return filename_sanitized
+
+    @staticmethod
+    def recover_tag(filename_sanitized: str) -> str:
+
+        # Add the tag
+        replacements = [
+            (r'\b5 \b1\b', '5.1'),
+            (r'\b2 \b0\b', '2.0'),
+            (r'\bWEB \bDL\b', 'WEB-DL'),
+            (r'\bWEB \bDLMUX\b', 'WEB-DLMUX'),
+            (r'\bBD \bUNTOUCHED\b', 'BD-UNTOUCHED'),
+            (r'\bCINEMA \bMD\b', 'CINEMA-MD'),
+        ]
+
+        for tag, replacement in replacements:
+            filename_sanitized = re.sub(tag, replacement, filename_sanitized, flags=re.IGNORECASE)
+        return filename_sanitized
+
+
 
 
 class MyString:
