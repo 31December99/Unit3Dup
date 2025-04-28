@@ -168,9 +168,6 @@ class ManageTitles:
         # remove spaces, tab, newline
         filename_sanitized = re.sub(r"\s+", " ", filename_sanitized)
 
-        # Remove flag
-        filename_sanitized = re.sub(r'\b(ita|eng)\b', ' ', filename_sanitized, flags=re.IGNORECASE)
-
         # Recover tag
         filename_sanitized = re.sub(r'(\b5 \b1\b)', r'5.1', filename_sanitized)
         filename_sanitized = re.sub(r'(\b2 \b0\b)', r'2.0', filename_sanitized)
