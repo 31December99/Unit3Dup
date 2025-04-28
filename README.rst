@@ -94,3 +94,7 @@ Trackers
 .. image:: https://img.shields.io/badge/Telegram-Join-blue?logo=telegram
    :target: https://t.me/+hj294GabGWJlMDI8
    :alt: Unisciti su Telegram
+
+.. image:: https://img.shields.io/badge/StreamingCommunity-blue.svg
+   :target: https://github.com/Arrowar/StreamingCommunity
+   :alt: StreamingCommunity Badge
