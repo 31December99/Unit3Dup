@@ -64,6 +64,7 @@ How to create a service with the watcher
 .. code-block:: ini
 
     parzival@parivalsrv:~/Unit3Dup$ sudo systemctl daemon-reload
+    parzival@parivalsrv:~/Unit3Dup$ sudo systemctl enable unit3dupbot.service
     parzival@parivalsrv:~/Unit3Dup$ sudo systemctl restart unit3dupbot.service
     parzival@parivalsrv:~/Unit3Dup$ sudo systemctl status unit3dupbot.service
     ● unit3dupbot.service - Unit3D bot uploader
