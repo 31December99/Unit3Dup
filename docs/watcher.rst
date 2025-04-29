@@ -1,12 +1,5 @@
-
-Always use **python start.py** when you want to send a command to the bot
-
-- Open the black console window and navigate to the bot folder
-- The bot can accept one or more commands (**flags**).Depending on what you want to do
-
-
 Flag watcher
-********************
+############
 
 `-watcher` it reads the contents of a folder and moves them to another destination folder, then uploads everything to the tracker
 
