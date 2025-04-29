@@ -267,7 +267,7 @@ class View(Torrent):
 
     def view_by_types(self, type_name: str):
         if type_name not in self.tracker_data.type_id.keys():
-            custom_console.bot_error_log(f"Resolution not available for '{type_name}' try:")
+            custom_console.bot_error_log(f"Type not available for '{type_name}' try:")
             custom_console.bot_warning_log(";".join(list(self.tracker_data.type_id.keys())[:-1]))
             exit()
         tracker_data = self.get_by_types(
