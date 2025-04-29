@@ -61,10 +61,9 @@ Installation
 
 
 1. Download and unzip poppler for Windows from https://github.com/oschwartz10612/poppler-windows/releases
-2. Unzip it
-3. Put the folder 'bin' in the system path (e.g. ``C:\poppler-24.08.0\Library\bin``)
-4. *Close and reopen a new console window*
-5. Test it: Run ``pdftocairo`` in the terminal
+2. Put the folder 'bin' in the system path (e.g. ``C:\poppler-24.08.0\Library\bin``)
+3. *Close and reopen a new console window*
+4. Test it: Run ``pdftocairo`` in the terminal
 
 
 
@@ -91,7 +90,6 @@ Trackers
 .. image:: https://img.shields.io/discord/1214696147600408698?label=Discord&logo=discord&style=flat
    :target: https://discord.gg/8hRTjV8Q
    :alt: Discord Server
-
 
 .. image:: https://img.shields.io/badge/Telegram-Join-blue?logo=telegram
    :target: https://t.me/+hj294GabGWJlMDI8
