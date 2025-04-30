@@ -7,6 +7,7 @@ Documentazione di **Unit3Dup**
 
    main
    watcher
+   config
 
 .. include:: ../README.rst
    :start-line: 1
