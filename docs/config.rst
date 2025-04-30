@@ -9,6 +9,7 @@ Windows
 *******
 
 The file is created in
+
 .. code-block:: python
 
     C:\\Users\\[USER]\\AppData\\Local\\Unit3Dup_config
@@ -17,6 +18,7 @@ Debian/Ubuntu
 *************
 
 The file is created in
+
 .. code-block:: python
 
     /home/[user]
