@@ -181,12 +181,15 @@ class ManageTitles:
 
         # Add the tag
         replacements = [
+            (r'\b7 \b1\b', '7.1'),
             (r'\b5 \b1\b', '5.1'),
             (r'\b2 \b0\b', '2.0'),
             (r'\bWEB \bDL\b', 'WEB-DL'),
             (r'\bWEB \bDLMUX\b', 'WEB-DLMUX'),
             (r'\bBD \bUNTOUCHED\b', 'BD-UNTOUCHED'),
             (r'\bCINEMA \bMD\b', 'CINEMA-MD'),
+            (r'\bHEVC \bFHC\b', 'HEVC-FHC'),
+
         ]
 
         for tag, replacement in replacements:
