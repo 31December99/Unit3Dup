@@ -1,7 +1,7 @@
 Configuration file
 ##################
 
-The file config is a json file created the first time you run the Uit3Dup
+The file config is a json file created the first time you run the Unit3Dup
 
 it's named Unit3Dup.json
 
@@ -10,6 +10,7 @@ Windows
 
 The file is created in
 .. code-block:: python
+
     C:\\Users\\[USER]\\AppData\\Local\\Unit3Dup_config
 
 Debian/Ubuntu
@@ -17,6 +18,7 @@ Debian/Ubuntu
 
 The file is created in
 .. code-block:: python
+
     /home/[user]
 
 
@@ -75,12 +77,37 @@ Preferences
 
 .. code-block:: python
 
-   YOUTUBE_KEY": YouTube APIKEY
-   IGDB_CLIENT_ID: IGDB(TWICH) CLIENT_ID
-   IGDB_ID_SECRET: IGDB(TWICH) SECRET_ID
+   IGDB_CLIENT_ID: Client ID used to fetch game media from the IGDB database.
+   IGDB_ID_SECRET: Secret ID
 
-   SHARED_QBIT_PATH: TWO OS shared the same folder
-   SHARED_RTORR_PATH: TWO OS shared the same folder
+   SHARED_QBIT_PATH: Set this if you're running the bot on Linux but seeding with qBittorrent on Windows
+                     or viceversa
+   SHARED_RTORR_PATH: Like above but for rTorrent
+
+
+   YOUTUBE_KEY: YouTube API key used to fetch a trailer if TMDb does not provide one
+   YOUTUBE_FAV_CHANNEL_ID: When enabled, forces the bot to search trailers only within this YouTube channel instead of using a global search
+   YOUTUBE_CHANNEL_ENABLE: Enable youtube channel
+
+   DUPLICATE_ON: Search for a title, check the release year, size, and episode information for duplicates
+   SKIP_DUPLICATE: Automatically skip upload if a duplicate is found
+   SIZE_TH: Set the acceptable size delta between your title and the one present on the tracker
+   SKIP_TMDB: Automatically skip if no TMDb ID is found for the title
+
+   TORRENT_ARCHIVE_PATH: Set the path for the torrent file created by the bot
+   CACHE_PATH: Set the main path for storing cache files
+   COMPRESS_SCSHOT: Compression level for screenshots (0–9) 9 = max
+   RESIZE_SCSHOT: Enable screenshot resizing while preserving aspect ratio
+
+   TORRENT_COMMENT: Add a comment to your torrent file
+   PREFERRED_LANG:  Choose your preferred language (eg ITA-ENG) Skip if the video does not match your selected language
+   ANON: Anonymity
+   CACHE_SCR: Activate cache for the screenshots
+   CACHE_DBONLINE: Activate cache for the TMBD o IMDB search
+   PERSONAL_RELEASE: Set the flag personal release
+   WEBP_ENABLED: In addition to the screenshot create an animated one
+
+
 
 
 Host image priority. Tries the next one if the current fails. 1 = highest priority
