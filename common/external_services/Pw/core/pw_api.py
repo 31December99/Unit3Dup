@@ -56,7 +56,7 @@ class PwAPI(MyHttp):
             with open(os.path.join(config_settings.options.PW_TORRENT_ARCHIVE_PATH,f"{filename}.torrent"), 'wb') as f:
                 f.write(response.content)
 
-    def search(self, query: str) -> ["Search"]:
+    def search(self, query: str) -> list[Search] | None:
         """Get search queue."""
 
         params = {"query": query}
@@ -69,6 +69,7 @@ class PwAPI(MyHttp):
                 return [Search(**result) for result in results_list]
             else:
                 return []
+        return None
 
     def get_torrent_client_ids(self) -> list["TorrentClientConfig"]:
         """Get a list of torrent client configurations"""
