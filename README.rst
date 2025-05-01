@@ -3,7 +3,7 @@
 ===============================================
 |version| |online| |status| |python| |ubuntu| |debian| |windows|
 
-.. |version| image:: https://img.shields.io/badge/Unit3Dup-0.7.15-blue
+.. |version| image:: https://img.shields.io/pypi/v/unit3dup.svg
 .. |online| image:: https://img.shields.io/badge/Online-green
 .. |status| image:: https://img.shields.io/badge/Status-Active-brightgreen
 .. |python| image:: https://img.shields.io/badge/Python-3.10+-blue
@@ -38,8 +38,28 @@ It performs the following tasks:
 unit3dup can grab the first page, convert it to an image (using xpdf),
 and then the bot can upload it to an image host, then add the link to the torrent page description.
 
-Installation
---------------------
+
+Ubuntu/Debian Installation
+--------------------------
+
+pip install unit3dup
+
+Upgrade
+-------
+pip install --upgrade unit3dup
+
+Dependencies
+------------
+sudo apt install ffmpeg
+
+Only for pdf
+------------
+sudo apt install poppler-utils
+
+
+Alternative method
+------------------
+
 1. Download the last release (https://github.com/31December99/Unit3Dup/releases)
 
 2. unzip it
@@ -80,6 +100,9 @@ Installation
 Trackers
 ========
 
+The Italian tracker: a multitude of people from diverse technical and social backgrounds,
+united by a shared passion for torrents and more
+
 +------------------+----------------------------+
 | **Trackers**     | **Description**            |
 +==================+============================+
@@ -87,18 +110,19 @@ Trackers
 +------------------+----------------------------+
 
 
-.. image:: https://img.shields.io/discord/1214696147600408698?label=Discord&logo=discord&style=flat
-   :target: https://discord.gg/8hRTjV8Q
-   :alt: Discord Server
-
 .. image:: https://img.shields.io/badge/Telegram-Join-blue?logo=telegram
    :target: https://t.me/+hj294GabGWJlMDI8
    :alt: Unisciti su Telegram
 
-.. image:: https://img.shields.io/badge/StreamingCommunity-blue.svg
-   :target: https://github.com/Arrowar/StreamingCommunity
-   :alt: StreamingCommunity Badge
+.. image:: https://img.shields.io/discord/1214696147600408698?label=Discord&logo=discord&style=flat
+   :target: https://discord.gg/8hRTjV8Q
+   :alt: Discord Server
 
 
+🎯 Streaming Community
+======================
 
+ `goto GitHub Project <https://github.com/Arrowar/StreamingCommunity>`_
 
+An open-source script for downloading movies, TV shows, and anime from various websites,
+built by a community of people with a shared interest in programming.
