@@ -28,7 +28,7 @@ class VideoManager:
         self.contents: list[Media] = contents
         self.cli: argparse = cli
 
-    def process(self, selected_tracker: str, tracker_name_list: list, tracker_archive: str) -> list[BittorrentData] | None:
+    def process(self, selected_tracker: str, tracker_name_list: list, tracker_archive: str) -> list[BittorrentData]:
         """
            Process the video contents to filter duplicates and create torrents
 
