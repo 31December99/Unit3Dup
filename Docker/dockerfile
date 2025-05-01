@@ -1,0 +1,10 @@
+# 02/05/2025
+# run "build -t unit3dup ." inside the Docker folder
+# Run the batch or sh file
+FROM python:3.11-slim
+
+# Install unit3dup
+RUN pip install unit3dup
+
+# Set unit3dup as entrypoint. Nota: see [project.scripts] in pyproject.toml
+ENTRYPOINT ["unit3dup"]
