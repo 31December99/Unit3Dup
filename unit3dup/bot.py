@@ -56,7 +56,7 @@ class Bot:
         custom_console.panel_message("Analyzing your media files... Please wait")
 
         # Get a Files list with basic attributes and create a content object for each
-        self.content_manager = ContentManager(path=self.path, mode=self.mode, cli=self.cli)
+        self.content_manager: ContentManager = ContentManager(path=self.path, mode=self.mode, cli=self.cli)
         contents = self.content_manager.process()
 
         # -u requires a single file
@@ -193,7 +193,7 @@ class Bot:
         return True
 
 
-    def ftp(self):
+    def ftp(self)-> None:
         """
         Connects to a remote FTP server and interacts with files.
 
@@ -244,3 +244,4 @@ class Bot:
                 exit(1)
 
             self.run()
+        return None
