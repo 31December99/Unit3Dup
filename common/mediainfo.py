@@ -9,7 +9,7 @@ class MediaFile:
     """
     Get attributes from mediainfo
     """
-    def __init__(self, file_path):
+    def __init__(self, file_path: str):
         self.file_path = file_path
 
         self._video_info: list = []
@@ -54,7 +54,7 @@ class MediaFile:
         return self._audio_info
 
     @property
-    def codec_id(self):
+    def codec_id(self) -> str:
         """Returns the codec_id of the first video track"""
         video = self.video_track
         if video:
@@ -62,7 +62,7 @@ class MediaFile:
         return "Unknown"
 
     @property
-    def video_width(self):
+    def video_width(self) -> str:
         """Returns the width of the video"""
         video = self.video_track
         if video:
@@ -70,7 +70,7 @@ class MediaFile:
         return "Unknown"
 
     @property
-    def video_height(self):
+    def video_height(self) -> str | None:
         """Returns the height of the video"""
         video = self.video_track
         if video:
@@ -78,7 +78,7 @@ class MediaFile:
         return None
 
     @property
-    def video_scan_type(self):
+    def video_scan_type(self) -> str | None:
         """Returns the scan type"""
         video = self.video_track
         if video:
@@ -86,7 +86,7 @@ class MediaFile:
         return None
 
     @property
-    def video_aspect_ratio(self):
+    def video_aspect_ratio(self) -> str:
         """Returns the aspect ratio of the video"""
         video = self.video_track
         if video:
@@ -94,7 +94,7 @@ class MediaFile:
         return "Unknown"
 
     @property
-    def video_frame_rate(self):
+    def video_frame_rate(self) -> str:
         """Returns the frame rate of the video"""
         video = self.video_track
         if video:
@@ -102,7 +102,7 @@ class MediaFile:
         return "Unknown"
 
     @property
-    def video_bit_depth(self):
+    def video_bit_depth(self) -> str:
         """Returns the bit depth of the video"""
         video = self.video_track
         if video:
@@ -110,7 +110,7 @@ class MediaFile:
         return "Unknown"
 
     @property
-    def audio_codec_id(self):
+    def audio_codec_id(self) -> str:
         """Returns the codec_id of the first audio track"""
         audio = self.audio_track
         if audio:
@@ -118,7 +118,7 @@ class MediaFile:
         return "Unknown"
 
     @property
-    def audio_bit_rate(self):
+    def audio_bit_rate(self) -> str:
         """Returns the bit rate of the audio"""
         audio = self.audio_track
         if audio:
@@ -126,7 +126,7 @@ class MediaFile:
         return "Unknown"
 
     @property
-    def audio_channels(self):
+    def audio_channels(self) -> str:
         """Returns the number of audio channels"""
         audio = self.audio_track
         if audio:
@@ -134,7 +134,7 @@ class MediaFile:
         return "Unknown"
 
     @property
-    def audio_sampling_rate(self):
+    def audio_sampling_rate(self) -> str:
         """Returns the sampling rate of the audio"""
         audio = self.audio_track
         if audio:
@@ -142,7 +142,7 @@ class MediaFile:
         return "Unknown"
 
     @property
-    def subtitle_track(self):
+    def subtitle_track(self) -> list:
         """Get subtitle track"""
         subtitle_info = []
         for track in self.media_info.tracks:
@@ -151,7 +151,7 @@ class MediaFile:
         return subtitle_info
 
     @property
-    def available_languages(self):
+    def available_languages(self) -> list:
         """Get available languages from audio and subtitle tracks"""
         languages = set()
 
@@ -162,7 +162,7 @@ class MediaFile:
         return list(languages) if len(languages) > 0 else ["not found"]
 
     @property
-    def file_size(self):
+    def file_size(self) -> str:
         """Get the file size"""
         general = self.general_track
         if general:
@@ -174,7 +174,7 @@ class MediaFile:
         return MediaInfo.parse(self.file_path, output="STRING", full=False)
 
     @property
-    def is_interlaced(self):
+    def is_interlaced(self) -> int | None:
         video = self.video_track
         if video:
             encoding_settings = video[0].get("encoding_settings", None)
@@ -192,3 +192,4 @@ class MediaFile:
             _, file_ext =os.path.splitext(self.file_path)
 
             return f"{guess_title}.web-dl.{video_format}.{resolution}.{audio_format}.{file_ext}"
+        return None
