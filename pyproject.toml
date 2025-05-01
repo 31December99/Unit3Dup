@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 dynamic = ["dependencies"]
 name = "Unit3Dup"
-version = "0.8.4"
+version = "0.8.5"
 description = "An uploader for the Unit3D torrent tracker"
 readme = "README.rst"
 requires-python = ">=3.10"
