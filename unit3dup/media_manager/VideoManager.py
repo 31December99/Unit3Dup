@@ -94,7 +94,7 @@ class VideoManager:
                 custom_console.bot_log(f"'DISPLAYNAME'...{{{content.display_name}}}\n")
 
                 # Tracker instance
-                unit3d_up = UploadBot(content=content, tracker_name=selected_tracker)
+                unit3d_up = UploadBot(content=content, tracker_name=selected_tracker, cli = self.cli)
 
                 # Get the data
                 unit3d_up.data(show_id=db.video_id, imdb_id=db.imdb_id, show_keywords_list=db.keywords_list,
