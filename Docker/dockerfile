@@ -1,10 +1,45 @@
 # 02/05/2025
-# run "build -t unit3dup ." inside the Docker folder
-# Run the batch or sh file
+# Build "docker build -t unit3dup ." inside the Docker folder first
+# Remove "docker images", "docker rmi -f unit3dup:latest"
+
 FROM python:3.11-slim
 
-# Install unit3dup
-RUN pip install unit3dup
+# Set enviroment
+ENV VIRTUAL_ENV=/opt/venv
+ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
-# Set unit3dup as entrypoint. Nota: see [project.scripts] in pyproject.toml
+# Install dependencies and clean
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        sudo \
+        ffmpeg \
+        poppler-utils \
+        libmediainfo-dev \
+        build-essential \
+        python3-venv \
+        python3-dev \
+        && rm -rf /var/lib/apt/lists/*
+
+# Create the user 'me'
+RUN useradd -ms /bin/bash me && \
+    echo "unituser ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+
+# A new virtual env
+RUN python3 -m venv $VIRTUAL_ENV
+
+# Copy .whl in the container
+COPY unit3dup-0.8.6-py3-none-any.whl /app/
+
+# Upgrade pip
+RUN pip install --upgrade pip
+
+# Install .whl inside the virtual
+RUN pip install --no-cache-dir /app/unit3dup-0.8.6-py3-none-any.whl
+
+
+# Set the user
+USER me
+WORKDIR /home/me
+
+# Set the entry point ( see pyproject.toml)
 ENTRYPOINT ["unit3dup"]
