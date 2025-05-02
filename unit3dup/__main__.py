@@ -272,10 +272,9 @@ def main():
         torrent_info.view_internal()
         return
 
-    if cli.args.personal:
+    if cli.args.prelease:
         torrent_info.view_personal()
         return
-
 
     # Handle case with no arguments
     if not cli.args:

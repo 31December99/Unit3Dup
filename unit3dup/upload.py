@@ -1,3 +1,4 @@
+import argparse
 import json
 import requests
 
@@ -13,10 +14,11 @@ from unit3dup.media import Media
 from view import custom_console
 
 class UploadBot:
-    def __init__(self, content: Media, tracker_name: str):
+    def __init__(self, content: Media, tracker_name: str, cli: argparse):
 
         self.API_TOKEN = config_settings.tracker_config.ITT_APIKEY
         self.BASE_URL = config_settings.tracker_config.ITT_URL
+        self.cli = cli
         self.content = content
         self.tracker_name = tracker_name
         self.tracker_data = TRACKData.load_from_module(tracker_name=tracker_name)
@@ -75,7 +77,8 @@ class UploadBot:
         self.tracker.data["type_id"] = self.tracker_data.filter_type(self.content.file_name)
         self.tracker.data["season_number"] = self.content.guess_season
         self.tracker.data["episode_number"] = (self.content.guess_episode if not self.content.torrent_pack else 0)
-        self.tracker.data["personal_release"] = int(config_settings.user_preferences.PERSONAL_RELEASE)
+        self.tracker.data["personal_release"] = (int(config_settings.user_preferences.PERSONAL_RELEASE)
+                                                 or int(self.cli.personal))
         return self.tracker
 
     def data_game(self,igdb: Game) -> Unit3d | None:
@@ -88,6 +91,8 @@ class UploadBot:
         self.tracker.data["description"] = igdb.description + self.sign if igdb else "Sorry, there is no valid IGDB"
         self.tracker.data["type_id"] = self.tracker_data.type_id.get(igdb_platform) if igdb_platform else 1
         self.tracker.data["igdb"] = igdb.id if igdb else 1,  # need zero not one ( fix tracker)
+        self.tracker.data["personal_release"] = (int(config_settings.user_preferences.PERSONAL_RELEASE)
+                                                 or int(self.cli.personal))
         return self.tracker
 
     def data_docu(self, document_info: PdfImages) -> Unit3d | None:
@@ -99,7 +104,8 @@ class UploadBot:
         self.tracker.data["description"] = document_info.description + self.sign
         self.tracker.data["type_id"] = self.tracker_data.filter_type(self.content.file_name)
         self.tracker.data["resolution_id"] = ""
-        # tracker.data["torrent-cover"] = "" TODO: not yet implemented
+        self.tracker.data["personal_release"] = (int(config_settings.user_preferences.PERSONAL_RELEASE)
+                                                 or int(self.cli.personal))
         return self.tracker
 
     def send(self, torrent_archive: str, nfo_path = None) -> (requests, dict):

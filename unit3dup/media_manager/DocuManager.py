@@ -60,7 +60,7 @@ class DocuManager:
 
 
             # Tracker payload
-            unit3d_up = UploadBot(content=content, tracker_name=selected_tracker)
+            unit3d_up = UploadBot(content=content, tracker_name=selected_tracker, cli = self.cli)
 
             # Upload
             unit3d_up.data_docu(document_info=docu_info)

@@ -80,7 +80,7 @@ class GameManager:
                 continue
 
             # Tracker instance
-            unit3d_up = UploadBot(content=content, tracker_name=selected_tracker)
+            unit3d_up = UploadBot(content=content, tracker_name=selected_tracker, cli = self.cli)
 
             # Get the data
             unit3d_up.data_game(igdb=game_data_results)
