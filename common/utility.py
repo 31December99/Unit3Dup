@@ -40,7 +40,7 @@ class ManageTitles:
     }
 
     @staticmethod
-    def convert_iso(code):
+    def convert_iso(code)-> list | None:
         """ Convert iso 2 to 3 """
         code = code.upper()
 
@@ -109,7 +109,7 @@ class ManageTitles:
         return subdir
 
     @staticmethod
-    def media_docu_type(file_name: str) -> str:
+    def media_docu_type(file_name: str) -> str | None:
         """
         Returns document type based on file extension
         """
@@ -130,7 +130,7 @@ class ManageTitles:
         return fuzz.ratio(ManageTitles.remove_accent(str1.lower()), ManageTitles.remove_accent(str2.lower()))
 
     @staticmethod
-    def normalize_filename(filename):
+    def normalize_filename(filename)-> str:
         # Remove spaces
         filename = filename.strip()
 
@@ -181,12 +181,15 @@ class ManageTitles:
 
         # Add the tag
         replacements = [
+            (r'\b7 \b1\b', '7.1'),
             (r'\b5 \b1\b', '5.1'),
             (r'\b2 \b0\b', '2.0'),
             (r'\bWEB \bDL\b', 'WEB-DL'),
             (r'\bWEB \bDLMUX\b', 'WEB-DLMUX'),
             (r'\bBD \bUNTOUCHED\b', 'BD-UNTOUCHED'),
             (r'\bCINEMA \bMD\b', 'CINEMA-MD'),
+            (r'\bHEVC \bFHC\b', 'HEVC-FHC'),
+
         ]
 
         for tag, replacement in replacements:

@@ -6,12 +6,9 @@ Documentazione di **Unit3Dup**
    :caption: Contenuti:
 
    main
-   reseed
-   force
    watcher
-   noseed
-   working_in_progress
-
+   config
+   docker
 
 .. include:: ../README.rst
    :start-line: 1

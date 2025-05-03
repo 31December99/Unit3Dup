@@ -19,7 +19,7 @@ class DocuManager:
         self.contents: list['Media'] = contents
         self.cli: argparse = cli
 
-    def process(self, selected_tracker: str, tracker_name_list: list, tracker_archive: str) -> list[BittorrentData] | None:
+    def process(self, selected_tracker: str, tracker_name_list: list, tracker_archive: str) -> list[BittorrentData]:
 
         # -multi : no announce_list . One announce for multi tracker
         if self.cli.mt:
@@ -60,7 +60,7 @@ class DocuManager:
 
 
             # Tracker payload
-            unit3d_up = UploadBot(content=content, tracker_name=selected_tracker)
+            unit3d_up = UploadBot(content=content, tracker_name=selected_tracker, cli = self.cli)
 
             # Upload
             unit3d_up.data_docu(document_info=docu_info)

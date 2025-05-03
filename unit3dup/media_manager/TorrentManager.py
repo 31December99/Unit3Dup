@@ -29,6 +29,11 @@ class TorrentManager:
         self.games: list[Media] = []
         self.doc: list[Media] = []
         self.cli = cli
+        self.fast_load = config_settings.user_preferences.FAST_LOAD
+        if self.fast_load < 1 or self.fast_load > 150:
+            # full list
+            self.fast_load = None
+
 
     def process(self, contents: list) -> None:
         """
@@ -57,6 +62,7 @@ class TorrentManager:
             if content.category in {System.category_list.get(System.MOVIE), System.category_list.get(System.TV_SHOW)}
         ]
 
+
         # // Build a Doc list
         self.doc = [
             content for content in contents if content.category == System.category_list.get(System.DOCUMENTARY)
@@ -78,21 +84,24 @@ class TorrentManager:
         for selected_tracker in trackers_name_list:
             # Build the torrent file and upload each GAME to the tracker
             if self.games:
-                game_manager = GameManager(contents=self.games, cli=self.cli)
+                game_manager = GameManager(contents=self.games[:self.fast_load],
+                                           cli=self.cli)
                 game_process_results = game_manager.process(selected_tracker=selected_tracker,
                                                             tracker_name_list=trackers_name_list,
                                                             tracker_archive=self.tracker_archive)
 
             # Build the torrent file and upload each VIDEO to the trackers
             if self.videos:
-                video_manager = VideoManager(contents=self.videos, cli=self.cli)
+                video_manager = VideoManager(contents=self.videos[:self.fast_load],
+                                             cli=self.cli)
                 video_process_results = video_manager.process(selected_tracker=selected_tracker,
                                                               tracker_name_list=trackers_name_list,
                                                               tracker_archive=self.tracker_archive)
 
             # Build the torrent file and upload each DOC to the tracker
             if self.doc and not self.cli.reseed:
-                docu_manager = DocuManager(contents=self.doc, cli=self.cli)
+                docu_manager = DocuManager(contents=self.doc[:self.fast_load],
+                                           cli=self.cli)
                 docu_process_results = docu_manager.process(selected_tracker=selected_tracker,
                                                             tracker_name_list=trackers_name_list,
                                                             tracker_archive=self.tracker_archive)

@@ -350,12 +350,17 @@ class DbOnline(TmdbAPI):
         """
         imdb = IMDB()
         imdb_id = 0
+        user_id = 0
         while True:
-            try:
-                user_id = custom_console.user_input(message=f"Please digit a valid TMDB ID (0=skip)->")
-            except KeyboardInterrupt:
-                custom_console.bot_error_log("\nOperation cancelled")
-                exit(0)
+            # Check if user wants to skip
+            if not config_settings.user_preferences.SKIP_TMDB:
+                try:
+                    user_id = custom_console.user_input(message=f"Please digit a valid TMDB ID (0=skip)->")
+                except KeyboardInterrupt:
+                    custom_console.bot_error_log("\nOperation cancelled")
+                    exit(0)
+            else:
+                custom_console.bot_warning_log(f"\n ** Auto skip TMDB ID **\n")
 
             # Try to add IMDB ID if tmdb is not available
             if user_id==0:

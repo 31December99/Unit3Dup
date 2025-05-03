@@ -41,7 +41,7 @@ class CommandLine:
         parser.add_argument("-noseed", "--noseed", action="store_true", help="No seeding after upload")
         parser.add_argument("-noup", "--noup", action="store_true", help="Torrent only. No upload")
         parser.add_argument("-duplicate", "--duplicate", action="store_true", help="Find duplicates")
-
+        parser.add_argument("-personal", "--personal", action="store_true", help="Set to personal release")
 
         parser.add_argument("-pw", "--pw", type=str, help="")
         parser.add_argument("-ftp", "--ftp", action="store_true", help="Connect to FTP")
@@ -92,12 +92,22 @@ class CommandLine:
         parser.add_argument(
             "-int", "--internal", action="store_true", help="Internal torrent"
         )
+
         parser.add_argument(
-            "-pers", "--personal", action="store_true", help="Personal release torrent"
+            "-pr", "--prelease", action="store_true", help="Personal release torrent"
         )
 
+
+
+        # Parsing the User cli
         self.args: parser = parser.parse_args()
+
+        # Test user scan path
         self.is_dir = os.path.isdir(self.args.scan) if self.args.scan else None
+
+        # Test the upload path. Expand path home_path with tilde
+        if self.args.upload:
+            self.args.upload = os.path.expanduser(self.args.upload)
 
         # Test -force flag
         if self.args.force:
@@ -109,9 +119,3 @@ class CommandLine:
                 self.args.force = None
                 print("Invalid -force category")
                 exit()
-
-
-        # Check if the upload path is valid
-        # expand path home_path with tilde
-        if self.args.upload:
-            self.args.upload = os.path.expanduser(self.args.upload)
