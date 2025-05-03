@@ -72,5 +72,5 @@ docker run --rm `
     -v "${hostJsonPath}:${DockerJsonPath}" `
     -v "${hostDataPath}:${DockerDataPath}" `
     -p 8081:8080 `
-    unit3dup $dockerFlags
+    unit3dup "$dockerFlags"
 
