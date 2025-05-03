@@ -32,22 +32,22 @@ It performs the following tasks:
 - Add a custom title to your seasons
 - Generate info for a title using MediaInfo
 
-.. image:: https://img.shields.io/badge/Upload_PDF-gr
-   :alt: Install Upload PDF
-
 unit3dup can grab the first page, convert it to an image (using xpdf),
 and then the bot can upload it to an image host, then add the link to the torrent page description.
 
-Ubuntu/Debian/Windows Installation
-----------------------------------
+.. image:: https://img.shields.io/badge/INSTALL-gr
+   :alt: install
+
+Ubuntu/Debian
+-------------
 pip install unit3dup
 
 Upgrade
 -------
 pip install --upgrade unit3dup
 
-Dependencies
-------------
+Ubuntu/Debian Dependencies
+--------------------------
 sudo apt install ffmpeg
 
 Only for pdf
@@ -55,25 +55,8 @@ Only for pdf
 sudo apt install poppler-utils
 
 
-Alternative method
-------------------
-
-1. Download the last release (https://github.com/31December99/Unit3Dup/releases)
-
-2. unzip it
-
-3. pip install -r requirements.txt
-
-4. python start.py
-
-.. image:: https://img.shields.io/badge/LINUX-gr
-
-1. Run: ``sudo apt install poppler-utils``
-2. sudo apt install ffmpeg
-
-
-.. image:: https://img.shields.io/badge/WINDOWS-gr
-
+Windows Dependencies
+--------------------
 1. Download and unzip https://www.ffmpeg.org/download.html and add its folder to
    PATH environment user variable
 
@@ -84,15 +67,41 @@ Alternative method
 4. Test it: Run ``pdftocairo`` in the terminal
 
 
+Alternative method
+------------------
+
+1. Download the last release (https://github.com/31December99/Unit3Dup/releases)
+
+2. unzip it
+
+3. pip install .
+
+4. unit3dup
+
 
 .. image:: https://img.shields.io/badge/Bot_UPDATE-gr
    :alt: Bot Update
 
-1. Delete only the bot folder
-2. Download the release zip
-3. Unzip it
-4. No config needed
-5. Done!
+1. pip install unit3dup --upgrade
+
+
+
+RUN
+======
+
+.. code-block:: python
+
+   unit3dup -u <filepath>
+   unit3dup -f <folderpath>
+   unit3dup -scan <folderpath>
+
+
+
+DOC
+===
+
+Link `Unit3DUP <https://unit3dup.readthedocs.io/en/latest/index.html#>`_
+
 
 
 Trackers
