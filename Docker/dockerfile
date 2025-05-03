@@ -5,7 +5,7 @@
 FROM python:3.11-slim
 
 # Set enviroment
-ENV VIRTUAL_ENV=/opt/venv
+ENV VIRTUAL_ENV=/home/me/venv
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 # Install dependencies and clean
@@ -24,8 +24,15 @@ RUN apt-get update && \
 RUN useradd -ms /bin/bash me && \
     echo "unituser ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
+# Set the user
+USER me
+WORKDIR /home/me
+
 # A new virtual env
 RUN python3 -m venv $VIRTUAL_ENV
+
+# Activate virtual
+RUN . $VIRTUAL_ENV/bin/activate
 
 # Copy .whl in the container
 COPY unit3dup-0.8.6-py3-none-any.whl /app/
@@ -35,11 +42,6 @@ RUN pip install --upgrade pip
 
 # Install .whl inside the virtual
 RUN pip install --no-cache-dir /app/unit3dup-0.8.6-py3-none-any.whl
-
-
-# Set the user
-USER me
-WORKDIR /home/me
 
 # Set the entry point ( see pyproject.toml)
 ENTRYPOINT ["unit3dup"]
