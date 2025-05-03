@@ -23,7 +23,7 @@ $hostJsonPath = "$env:USERPROFILE\AppData\Local\Unit3Dup_config\Unit3Dbot.json"
 $hostDataPath = "c:\vm_share"
 
 # [DOCKER] mounts : NOT Editable
-$DockerDataPath = "/home/me/"
+$DockerDataPath = "/mnt/"
 $DockerJsonPath = "/home/me/Unit3Dup_config/Unit3Dbot.json"
 
 # Check if JSON file exists
@@ -61,8 +61,11 @@ Read-Host "Press any key to continue..."
 # RUN
 # -v mount
 # -p qbittorrent host port 8080
+
 docker run --rm `
+    -u 1000:1000 `
     -v "${hostJsonPath}:${DockerJsonPath}" `
     -v "${hostDataPath}:${DockerDataPath}" `
     -p 8081:8080 `
     unit3dup $dockerFlags
+
