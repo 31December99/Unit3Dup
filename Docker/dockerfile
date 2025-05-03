@@ -5,9 +5,9 @@
 FROM python:3.11-slim
 
 # Set the username as your Host
-ARG USERNAME=parzival
+ARG USERNAME=pc
 
-# Environment
+# environment
 ENV VIRTUAL_ENV=/home/$USERNAME/venv
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
@@ -23,8 +23,7 @@ RUN apt-get update && \
         python3-dev \
         && rm -rf /var/lib/apt/lists/*
 
-# We need to set the same username, UID, and GID
-# on both the host and the container
+# Crea il gruppo con ID 1000 e poi l'utente $USERNAME
 RUN groupadd -g 1000 $USERNAME && \
     useradd $USERNAME -u 1000 -g 1000 -m -s /bin/bash && \
     echo "$USERNAME ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
@@ -34,6 +33,9 @@ RUN groupadd -g 1000 $USERNAME && \
 USER $USERNAME
 WORKDIR /home/$USERNAME
 
+# Upgrade pip
+RUN pip install --upgrade pip
+
 # A new virtual env
 RUN python3 -m venv $VIRTUAL_ENV
 
@@ -41,13 +43,11 @@ RUN python3 -m venv $VIRTUAL_ENV
 RUN . $VIRTUAL_ENV/bin/activate
 
 # Copy .whl in the container
-COPY unit3dup-0.8.6-py3-none-any.whl /app/
+# COPY unit3dup-0.8.6-py3-none-any.whl /app/
 
-# Upgrade pip
-RUN pip install --upgrade pip
-
-# Install .whl inside the virtual
-RUN pip install --no-cache-dir /app/unit3dup-0.8.6-py3-none-any.whl
+# Install .whl
+# RUN pip install --no-cache-dir /app/unit3dup-0.8.6-py3-none-any.whl
+RUN pip install --no-cache-dir unit3dup
 
 # Set the entry point ( see pyproject.toml)
 ENTRYPOINT ["unit3dup"]
