@@ -117,6 +117,7 @@ united by a shared passion for torrents and more
    :alt: Discord Server
 
 
+
 🎯 Streaming Community
 ======================
 
@@ -124,3 +125,12 @@ united by a shared passion for torrents and more
 
 An open-source script for downloading movies, TV shows, and anime from various websites,
 built by a community of people with a shared interest in programming.
+=======
+.. image:: https://img.shields.io/badge/Telegram-Join-blue?logo=telegram
+   :target: https://t.me/+hj294GabGWJlMDI8
+   :alt: Unisciti su Telegram
+
+.. image:: https://img.shields.io/badge/StreamingCommunity-blue.svg
+   :target: https://github.com/Arrowar/StreamingCommunity
+   :alt: StreamingCommunity Badge
+
