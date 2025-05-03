@@ -113,7 +113,7 @@ class UserPreferences(BaseModel):
     CACHE_SCR: bool = False
     CACHE_DBONLINE: bool = False
     PERSONAL_RELEASE: bool = False
-
+    FAST_LOAD: int = 0
 
 
 class Options(BaseModel):
@@ -419,7 +419,7 @@ class Config(BaseModel):
                     section[field] = Validate.string(value=section[field], field_name=field)
 
                 if field in ['NUMBER_OF_SCREENSHOTS','COMPRESS_SCSHOT','IMGBB_PRIORITY','FREE_IMAGE_PRIORITY',
-                             'LENSDUMP_PRIORITY','WATCHER_INTERVAL','SIZE_TH']:
+                             'LENSDUMP_PRIORITY','WATCHER_INTERVAL','SIZE_TH', 'FAST_LOAD']:
                     section[field] = Validate.integer(value=section[field], field_name=field)
 
                 if field == 'PREFERRED_LANG':
@@ -524,6 +524,7 @@ class Load:
                 "SHARED_RTORR_PATH": "no_path",
                 "TORRENT_CLIENT": "qbittorrent",
                 "TAG": "ADDED TORRENTS",
+                "FAST_LOAD": "0",
             },
             "user_preferences": {
                 "PTSCREENS_PRIORITY": 0,
