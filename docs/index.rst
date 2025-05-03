@@ -8,6 +8,7 @@ Documentazione di **Unit3Dup**
    main
    watcher
    config
+   docker
 
 .. include:: ../README.rst
    :start-line: 1
