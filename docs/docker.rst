@@ -14,6 +14,8 @@ Linux
 
    The username must be the same on both the host and the container
    The owner must be the same on both the host and the container
+   Sometimes files appear to be missing in Docker due to permission problems
+
 
 
 3) Build the container
