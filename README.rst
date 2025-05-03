@@ -38,8 +38,8 @@ It performs the following tasks:
 unit3dup can grab the first page, convert it to an image (using xpdf),
 and then the bot can upload it to an image host, then add the link to the torrent page description.
 
-Ubuntu/Debian Installation
---------------------------
+Ubuntu/Debian/Windows Installation
+----------------------------------
 pip install unit3dup
 
 Upgrade
@@ -125,7 +125,7 @@ united by a shared passion for torrents and more
 
 An open-source script for downloading movies, TV shows, and anime from various websites,
 built by a community of people with a shared interest in programming.
-=======
+
 .. image:: https://img.shields.io/badge/Telegram-Join-blue?logo=telegram
    :target: https://t.me/+hj294GabGWJlMDI8
    :alt: Unisciti su Telegram
