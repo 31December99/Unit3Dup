@@ -18,13 +18,14 @@ if (($u -and ($f -or $scan)) -or ($f -and $scan)) {
     exit 1
 }
 
-# [HOST] mounts : Editable
-$hostJsonPath = "$env:USERPROFILE\AppData\Local\Unit3Dup_config\Unit3Dbot.json"
-$hostDataPath = "c:\vm_share"
+# [1]
+$hostJsonPath = "$env:USERPROFILE\AppData\Local\Unit3Dup_config\"
+$DockerJsonPath = "/home/pc/Unit3Dup_config/"
 
-# [DOCKER] mounts : NOT Editable
-$DockerDataPath = "/mnt/"
-$DockerJsonPath = "/home/me/Unit3Dup_config/Unit3Dbot.json"
+# [2]
+$hostDataPath = "c:\vm_share\"
+$DockerDataPath = "/home/pc/data/"
+
 
 # Check if JSON file exists
 if (-not (Test-Path $hostJsonPath)) {
