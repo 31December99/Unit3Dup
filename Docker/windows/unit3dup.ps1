@@ -6,6 +6,19 @@ param(
     [switch]$help
 )
 
+# [EDITABLE] Windows Username Host
+$username = "pc"
+# [EDITABLE] Unit3Dup config path Host
+$hostJsonPath = "$env:USERPROFILE\AppData\Local\Unit3Dup_config\"
+# [EDITABLE] Data Files Path Host
+$hostDataPath = "c:\vm_share\"
+
+# Don't edit
+$DockerJsonPath = "/home/$username/Unit3Dup_config/"
+# Don't edit
+$DockerDataPath = "/home/$username/data/"
+
+
 # Default -help
 if (-not $u -and -not $f -and -not $scan -and -not $help) {
     Write-Host "Usage: .\unit3dup.ps1 -u <path> -f <file> -scan <path> -help"
@@ -17,15 +30,6 @@ if (($u -and ($f -or $scan)) -or ($f -and $scan)) {
     Write-Host "Error: Only one flag can be used at a time"
     exit 1
 }
-
-# [1]
-$hostJsonPath = "$env:USERPROFILE\AppData\Local\Unit3Dup_config\"
-$DockerJsonPath = "/home/pc/Unit3Dup_config/"
-
-# [2]
-$hostDataPath = "c:\vm_share\"
-$DockerDataPath = "/home/pc/data/"
-
 
 # Check if JSON file exists
 if (-not (Test-Path $hostJsonPath)) {

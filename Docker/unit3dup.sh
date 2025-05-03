@@ -38,22 +38,23 @@ if { [[ -n "$u" && ( -n "$f" || -n "$scan" ) ]] || [[ -n "$f" && -n "$scan" ]]; 
     exit 1
 fi
 
-# [1] 
+# [EDITABLE] Linux Username Host
+username="parzival"
+# [EDITABLE] Unit3Dup config path Host
 hostJsonPath="$HOME/Unit3Dup_config/"
-DockerJsonPath="/home/parzival/Unit3Dup_config/"
+# [EDITABLE] Data Files Path Host
+hostDataPath="/mnt/vm_share/"
 
-# [2]
-DockerDataPath="/home/parzival/data"
-hostDataPath="/home/parzival/data"
-
-
-
+# Don't edit
+DockerJsonPath="/home/$username/Unit3Dup_config/"
+# Don't edit
+DockerDataPath="/home/$username/data/"
 
 # Check if JSON file exists
-#if [[ ! -f "$hostJsonPath" ]]; then
-#    echo "Error: configuration file not found : $hostJsonPath"
-#    exit 1
-#fi
+if [[ ! -d "$hostJsonPath" ]]; then
+    echo "Error: configuration folder not found : $hostJsonPath"
+    exit 1
+fi
 
 # Host <--> Docker
 echo "[mount] $hostJsonPath -> $DockerJsonPath"
