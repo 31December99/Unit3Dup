@@ -4,8 +4,11 @@
 
 FROM python:3.11-slim
 
-# Set enviroment
-ENV VIRTUAL_ENV=/home/parzival/venv
+# Set the username as your Host
+ARG USERNAME=parzival
+
+# Environment
+ENV VIRTUAL_ENV=/home/$USERNAME/venv
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 # Install dependencies and clean
@@ -20,15 +23,16 @@ RUN apt-get update && \
         python3-dev \
         && rm -rf /var/lib/apt/lists/*
 
-# Crea il gruppo con ID 1000 e poi l'utente pc
-RUN groupadd -g 1000 parzival && \
-    useradd parzival -u 1000 -g 1000 -m -s /bin/bash && \
-    echo "parzival ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+# We need to set the same username, UID, and GID
+# on both the host and the container
+RUN groupadd -g 1000 $USERNAME && \
+    useradd $USERNAME -u 1000 -g 1000 -m -s /bin/bash && \
+    echo "$USERNAME ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
     
     
 # Set the user
-USER parzival
-WORKDIR /home/parzival
+USER $USERNAME
+WORKDIR /home/$USERNAME
 
 # A new virtual env
 RUN python3 -m venv $VIRTUAL_ENV
