@@ -13,7 +13,7 @@ from common.utility import ManageTitles
 from common import trackers
 
 config_file = "Unit3Dbot.json"
-version = "0.7.14"
+version = "0.8.6"
 
 if os.name == "nt":
     PW_TORRENT_ARCHIVE_PATH: Path = Path(os.getenv("LOCALAPPDATA", ".")) / "Unit3Dup_config" / "pw_torrent_archive"
@@ -97,6 +97,7 @@ class UserPreferences(BaseModel):
     YOUTUBE_CHANNEL_ENABLE: bool = False
     DUPLICATE_ON: bool = False
     SKIP_DUPLICATE: bool = False
+    SKIP_TMDB: bool = False
     SIZE_TH: int = 50
     WATCHER_INTERVAL: int = 60
     WATCHER_PATH: str | None = None
@@ -112,7 +113,7 @@ class UserPreferences(BaseModel):
     CACHE_SCR: bool = False
     CACHE_DBONLINE: bool = False
     PERSONAL_RELEASE: bool = False
-
+    FAST_LOAD: int = 0
 
 
 class Options(BaseModel):
@@ -410,15 +411,15 @@ class Config(BaseModel):
             else:
                 field = field.upper()
 
-                if field in ['DUPLICATE_ON','SKIP_DUPLICATE','RESIZE_SCSHOT','ANON','WEBP_ENABLED','CACHE_SCR',
-                             'CACHE_DBONLINE', 'PERSONAL_RELEASE']:
+                if field in ['DUPLICATE_ON','SKIP_DUPLICATE','SKIP_TMDB','RESIZE_SCSHOT','ANON','WEBP_ENABLED',
+                             'CACHE_SCR','CACHE_DBONLINE', 'PERSONAL_RELEASE']:
                     section[field] = Validate.boolean(value=section[field], field_name=field)
 
                 if field in ['TORRENT_COMMENT','PW_TORRENT_ARCHIVE_PATH','WATCHER_PATH','DEFAULT_TRACKER']:
                     section[field] = Validate.string(value=section[field], field_name=field)
 
                 if field in ['NUMBER_OF_SCREENSHOTS','COMPRESS_SCSHOT','IMGBB_PRIORITY','FREE_IMAGE_PRIORITY',
-                             'LENSDUMP_PRIORITY','WATCHER_INTERVAL','SIZE_TH']:
+                             'LENSDUMP_PRIORITY','WATCHER_INTERVAL','SIZE_TH', 'FAST_LOAD']:
                     section[field] = Validate.integer(value=section[field], field_name=field)
 
                 if field == 'PREFERRED_LANG':
@@ -523,6 +524,7 @@ class Load:
                 "SHARED_RTORR_PATH": "no_path",
                 "TORRENT_CLIENT": "qbittorrent",
                 "TAG": "ADDED TORRENTS",
+                "FAST_LOAD": "0",
             },
             "user_preferences": {
                 "PTSCREENS_PRIORITY": 0,
@@ -535,6 +537,7 @@ class Load:
                 "YOUTUBE_CHANNEL_ENABLE": "False",
                 "DUPLICATE_ON": "true",
                 "SKIP_DUPLICATE": "false",
+                "SKIP_TMDB": "false",
                 "SIZE_TH": 10,
                 "WATCHER_INTERVAL": 60,
                 "WATCHER_PATH": "no_path",

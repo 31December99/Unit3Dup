@@ -11,7 +11,7 @@ class Guessit:
         self.filename = filename
 
     @property
-    def guessit_title(self):
+    def guessit_title(self) -> str:
         """
         Estrae la stringa con il titolo dal nome del file film_title o title(serie ?)
         :return:
@@ -25,7 +25,7 @@ class Guessit:
         return self.guessit.get("film_title", self.guessit.get("title", self.filename))
 
     @property
-    def guessit_alternative(self):
+    def guessit_alternative(self) -> str:
         """
         Estrae la stringa con il titolo dal nome del file film_title o title(serie ?)
         :return:
@@ -35,7 +35,7 @@ class Guessit:
         )
 
     @property
-    def guessit_year(self):
+    def guessit_year(self) -> str | None:
         """
         Estrae l'anno di pubblicazione dal titolo
         :return:
@@ -43,7 +43,7 @@ class Guessit:
         return self.guessit["year"] if "year" in self.guessit else None
 
     @property
-    def guessit_episode(self):
+    def guessit_episode(self) -> str | None:
         """
         Estrae il numero di episodio dal titolo
         :return:
@@ -51,7 +51,7 @@ class Guessit:
         return self.guessit["episode"] if "episode" in self.guessit else None
 
     @property
-    def guessit_season(self):
+    def guessit_season(self) -> str | None:
         """
         Estrae il numero di stagione dal titolo
         :return:
@@ -60,7 +60,7 @@ class Guessit:
         return self.guessit["season"] if "season" in self.guessit else None
 
     @property
-    def guessit_episode_title(self):
+    def guessit_episode_title(self) -> str:
         """
         Get the episode title
         :return:
@@ -69,7 +69,7 @@ class Guessit:
 
 
     @property
-    def type(self):
+    def type(self) -> str | None:
         """
         Determina se è una serie verificando la presenza di un numero di stagione
         :return:
@@ -77,7 +77,7 @@ class Guessit:
         return self.guessit["type"] if "type" in self.guessit else None
 
     @property
-    def source(self):
+    def source(self) -> str | None:
         """
         Grab the source
         :return:
@@ -85,7 +85,7 @@ class Guessit:
         return self.guessit["source"] if "source" in self.guessit else None
 
     @property
-    def other(self):
+    def other(self) -> str | None:
         """
         Grab the 'other' info
         :return:
@@ -93,7 +93,7 @@ class Guessit:
         return self.guessit["other"] if "other" in self.guessit else None
 
     @property
-    def audio_codec(self):
+    def audio_codec(self) -> str | None:
         """
         Grab the 'other' info
         :return:
@@ -101,7 +101,7 @@ class Guessit:
         return self.guessit["audio_codec"] if "audio_codec" in self.guessit else None
 
     @property
-    def subtitle(self):
+    def subtitle(self) -> str | None:
         """
         Grab the 'other' subtitle
         :return:
@@ -109,7 +109,7 @@ class Guessit:
         return self.guessit["subtitle"] if "subtitle" in self.guessit else None
 
     @property
-    def release_group(self):
+    def release_group(self) -> str | None:
         """
         Grab the 'release_group'
         :return:
@@ -119,7 +119,7 @@ class Guessit:
         )
 
     @property
-    def screen_size(self):
+    def screen_size(self) -> str | None:
         """
         Grab the 'screen_size'
         :return:

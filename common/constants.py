@@ -13,5 +13,5 @@ language_dict = {
 }
 
 
-def my_language(iso639_1: str):
+def my_language(iso639_1: str)-> str | None:
     return language_dict.get(iso639_1.upper(), '')

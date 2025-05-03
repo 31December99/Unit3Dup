@@ -11,13 +11,13 @@ class PwService:
     def __init__(self):
         self.pw_api = PwAPI()
 
-    def get_indexers(self) -> ['Indexer']:
+    def get_indexers(self) -> [Indexer]:
         return self.pw_api.get_indexers()
 
-    def search(self, query: str) -> ['Search']:
+    def search(self, query: str) -> list[Search]:
         return self.pw_api.search(query=query)
 
-    def get_torrent_client_ids(self) -> ['TorrentClientConfig']:
+    def get_torrent_client_ids(self) -> list[TorrentClientConfig]:
         return self.pw_api.get_torrent_client_ids()
 
     def send_torrent_to_client(self, payload):

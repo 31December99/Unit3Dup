@@ -26,7 +26,7 @@ class GameManager:
         self.cli: argparse = cli
         self.igdb = IGDBClient()
 
-    def process(self, selected_tracker: str, tracker_name_list: list,  tracker_archive: str) -> list[BittorrentData] | None:
+    def process(self, selected_tracker: str, tracker_name_list: list,  tracker_archive: str) -> list[BittorrentData]:
         """
         Process the game contents to filter duplicates and create torrents
 
@@ -80,7 +80,7 @@ class GameManager:
                 continue
 
             # Tracker instance
-            unit3d_up = UploadBot(content=content, tracker_name=selected_tracker)
+            unit3d_up = UploadBot(content=content, tracker_name=selected_tracker, cli = self.cli)
 
             # Get the data
             unit3d_up.data_game(igdb=game_data_results)

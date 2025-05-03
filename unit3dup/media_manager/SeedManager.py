@@ -46,4 +46,4 @@ class SeedManager:
                     ))
 
             return bittorrent_list
-
+        return None
