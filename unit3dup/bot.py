@@ -43,7 +43,7 @@ class Bot:
         self.trackers_name_list = trackers_name_list
         self.torrent_archive_path = torrent_archive_path
         self.content_manager = None
-        self.path = path
+        self.path = path.strip()
         self.cli = cli
         self.mode = mode
 
