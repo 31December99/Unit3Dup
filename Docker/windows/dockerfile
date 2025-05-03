@@ -5,7 +5,7 @@
 FROM python:3.11-slim
 
 # Set enviroment
-ENV VIRTUAL_ENV=/home/parzival/venv
+ENV VIRTUAL_ENV=/home/pc/venv
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 # Install dependencies and clean
@@ -21,14 +21,14 @@ RUN apt-get update && \
         && rm -rf /var/lib/apt/lists/*
 
 # Crea il gruppo con ID 1000 e poi l'utente pc
-RUN groupadd -g 1000 parzival && \
-    useradd parzival -u 1000 -g 1000 -m -s /bin/bash && \
+RUN groupadd -g 1000 pc && \
+    useradd pc -u 1000 -g 1000 -m -s /bin/bash && \
     echo "parzival ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
     
     
 # Set the user
-USER parzival
-WORKDIR /home/parzival
+USER pc
+WORKDIR /home/pc
 
 # A new virtual env
 RUN python3 -m venv $VIRTUAL_ENV
