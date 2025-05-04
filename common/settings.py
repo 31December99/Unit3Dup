@@ -46,6 +46,14 @@ def get_default_path(field: str)-> str:
     return str(default_paths[field])
 
 
+
+class Ccolors:
+    OKCYAN = '\033[96m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+
 class TrackerConfig(BaseModel):
     ITT_URL: str
     ITT_APIKEY: str | None = None
@@ -741,10 +749,11 @@ class JsonConfig:
                 return json.loads(json_data)
 
         except json.JSONDecodeError as e:
-            print(f"Config Loading error.. {e}")
-            print(r"Try to Check '\\ characters. Example: ")
-            print(r"C:\myfolder -> not correct ")
-            print(r"C:/myfolder -> CORRECT ")
+            print(f"* Please fix the error{Ccolors.WARNING} near Line {e.lineno}{Ccolors.ENDC}"
+                  f" and {Ccolors.WARNING}Column {e.colno}{Ccolors.ENDC} in the config file: *\n")
+            print(f"{e.msg}\n")
+            # Seek And...
+            self.aim(line=e.lineno,col=e.colno)
             exit(1)
         except FileNotFoundError:
             print(f"Configuration '{self.default_json_path}' not found")
@@ -797,3 +806,34 @@ class JsonConfig:
 
         print(message)
 
+    def aim(self, line: int, col: int):
+        """
+             Try to identify the exact location of json error
+        Args:
+            line: Error line from the try block
+            col:  Error line from the try block
+        Returns:
+              None
+        """
+
+        # Open the configuration file
+        with open(self.default_json_path, 'r') as file:
+            lines = file.readlines()
+
+        # Test the line value
+        if line <= len(lines):
+            # Create a "context" around the error....
+            line_context1 = lines[line -2].rstrip('\n')
+            line_context2 = lines[line + 1].rstrip('\n')
+
+            # Try to identify the position
+            line_text = lines[line - 1].rstrip('\n')
+            print(f"{line_context1}")
+            print(f"{Ccolors.WARNING}>>> {line_text}{Ccolors.ENDC}")
+
+            # Put the cursor under the error
+            cursor = ' ' * (col-1) + '^'
+            print(f"{Ccolors.WARNING}    {cursor}{Ccolors.ENDC}")
+            print(f"{line_context2}")
+        else:
+            print("Line number is out of range !")
