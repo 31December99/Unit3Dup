@@ -35,8 +35,8 @@ class UploadBot(ABC):
 
         if tracker_response.status_code == 200:
             tracker_response_body = json.loads(tracker_response.text)
-            custom_console.bot_log(f"\n[RESPONSE]-> '{self.tracker_name}'.....{tracker_response_body['message'].upper()}\n\n")
-            custom_console.rule()
+            custom_console.bot_log(f"\n[RESPONSE]-> '{self.tracker_name}'.....{self.torrent.content.file_name} "
+                                   f"{tracker_response_body['message'].upper()}\n")
             return tracker_response_body["data"],{}
 
         elif tracker_response.status_code == 401:
