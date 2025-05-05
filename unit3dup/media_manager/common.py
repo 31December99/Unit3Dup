@@ -293,11 +293,9 @@ class UserContent:
                 unit3d_up = Games(torrent=torrent)
                 torrent.tracker_response, torrent.tracker_message = unit3d_up.send(path=torrent.archive_path,
                                                                                nfo_path=torrent.content.game_nfo)
-
-            if torrent.content.category in 'docu':
+            if torrent.content.category in 'edicola':
                 unit3d_up = Doc(torrent=torrent)
                 torrent.tracker_response, torrent.tracker_message = unit3d_up.send(path=torrent.archive_path)
-
         return torrents
 
 

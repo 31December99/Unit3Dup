@@ -60,7 +60,7 @@ class DocuManager:
                 video_info=None,
                 imdb_id=None,
                 igdb= None,
-                docu_info= None
+                docu_info= docu_info
             )
 
             # Store response for the torrent clients
