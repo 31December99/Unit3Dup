@@ -12,9 +12,13 @@ from common.trackers.data import trackers_api_data
 from common.bittorrent import BittorrentData
 from common.utility import ManageTitles
 from common import config_settings
+
 from unit3dup.pvtTorrent import Mytorrent
 from unit3dup.duplicate import Duplicate
+from unit3dup.upload import UploadBot, Show, Games, Doc
 from unit3dup.media import Media
+
+
 
 from view import custom_console
 
@@ -234,7 +238,7 @@ class UserContent:
         return client
 
     @staticmethod
-    def send_to_bittorrent(bittorrent_list: list[BittorrentData], message: str) -> None:
+    def send_to_bittorrent(bittorrent_list: list[BittorrentData]) -> None:
         """
         Sends a list of torrents to Bittorrent using threads
 
@@ -246,7 +250,7 @@ class UserContent:
         if not bittorrent_list:
             return None
 
-        custom_console.bot_warning_log(f"\nSending {message} torrents to the "
+        custom_console.bot_warning_log(f"\nSending torrents to the "
                                        f"{config_settings.torrent_client_config.TORRENT_CLIENT.upper()} client "
                                        f"... Please wait")
 
@@ -259,6 +263,7 @@ class UserContent:
             # Wait for all threads to complete
             for future in futures:
                 future.result()
+        return None
 
     @staticmethod
     def download_file(url: str, destination_path: str) -> bool:
@@ -269,3 +274,45 @@ class UserContent:
                 file.write(download.content)
             return True
         return False
+
+    @staticmethod
+    def send(torrents: list[BittorrentData]) -> list[BittorrentData]:
+
+        for torrent in torrents:
+            # Don't upload if -noup is set to True
+            if torrent.payload.cli.noup:
+                custom_console.bot_warning_log(f"No Upload active. Done.")
+                continue
+
+            if torrent.content.category in {'movie','tv'}:
+                unit3d_up = Show(torrent=torrent)
+                torrent.tracker_response, torrent.tracker_message =  unit3d_up.send(path=torrent.archive_path)
+
+
+            if torrent.content.category in 'game':
+                unit3d_up = Games(torrent=torrent)
+                torrent.tracker_response, torrent.tracker_message = unit3d_up.send(path=torrent.archive_path,
+                                                                               nfo_path=torrent.content.game_nfo)
+
+            if torrent.content.category in 'docu':
+                unit3d_up = Doc(torrent=torrent)
+                torrent.tracker_response, torrent.tracker_message = unit3d_up.send(path=torrent.archive_path)
+
+        return torrents
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

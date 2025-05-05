@@ -106,21 +106,26 @@ class TorrentManager:
                                                             tracker_name_list=trackers_name_list,
                                                             tracker_archive=self.tracker_archive)
 
-            # No seeding
-            if self.cli.noseed or self.cli.noup:
+            # No Upload
+            if self.cli.noup:
                 custom_console.bot_warning_log(f"No seeding active. Done.")
                 custom_console.rule()
                 continue
 
 
-            if game_process_results:
-                UserContent.send_to_bittorrent(game_process_results, 'GAME')
+            if not self.cli.noseed:
+                # // GAME
+                torrents_list =UserContent.send(torrents=game_process_results)
+                UserContent.send_to_bittorrent(bittorrent_list=torrents_list)
 
-            if video_process_results:
-                UserContent.send_to_bittorrent(video_process_results, 'VIDEO')
+                # // VIDEO
+                torrents_list =UserContent.send(torrents=video_process_results)
+                UserContent.send_to_bittorrent(bittorrent_list=torrents_list)
 
-            if docu_process_results:
-                UserContent.send_to_bittorrent(docu_process_results, 'DOCUMENTARY')
+                # // DOCUMENTS
+                torrents_list =UserContent.send(torrents=docu_process_results)
+                UserContent.send_to_bittorrent(bittorrent_list=torrents_list)
+
             custom_console.bot_log(f"Tracker '{selected_tracker}' Done.")
             custom_console.rule()
 
@@ -153,4 +158,4 @@ class TorrentManager:
                     for result in seed_manager_results:
                         UserContent.download_file(url=result.tracker_response, destination_path=result.archive_path)
                         # Send the data to the torrent client
-                        UserContent.send_to_bittorrent([result], 'VIDEO')
+                        UserContent.send_to_bittorrent([result])

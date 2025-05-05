@@ -2,12 +2,10 @@
 import argparse
 import os
 
-from common.bittorrent import BittorrentData
+from common.bittorrent import BittorrentData, Payload
 
 from unit3dup.media_manager.common import UserContent
 from unit3dup.pvtDocu import PdfImages
-from unit3dup.upload import UploadBot
-from unit3dup import config_settings
 from unit3dup.media import Media
 
 from view import custom_console
@@ -41,10 +39,6 @@ class DocuManager:
             torrent_response = UserContent.torrent(content=content, tracker_name_list=tracker_name_list,
                                                    selected_tracker=selected_tracker, this_path=torrent_filepath)
 
-            # Skip if it is a duplicate
-            if ((self.cli.duplicate or config_settings.user_preferences.DUPLICATE_ON)
-                    and UserContent.is_duplicate(content=content, tracker_name=selected_tracker, cli=self.cli)):
-                continue
 
             # print the title will be shown on the torrent page
             custom_console.bot_log(f"'DISPLAYNAME'...{{{content.display_name}}}\n")
@@ -58,23 +52,27 @@ class DocuManager:
             docu_info = PdfImages(content.file_name)
             docu_info.build_info()
 
+            payload = Payload(
+                tracker_name=selected_tracker,
+                cli=self.cli,
+                show_id=None,
+                show_keywords=None,
+                video_info=None,
+                imdb_id=None,
+                igdb= None,
+                docu_info= None
+            )
 
-            # Tracker payload
-            unit3d_up = UploadBot(content=content, tracker_name=selected_tracker, cli = self.cli)
-
-            # Upload
-            unit3d_up.data_docu(document_info=docu_info)
-
-            # Get the data
-            tracker_response, tracker_message = unit3d_up.send(torrent_archive=torrent_filepath)
-
+            # Store response for the torrent clients
             bittorrent_list.append(
                 BittorrentData(
-                    tracker_response=tracker_response,
+                    tracker_response= None, # tracker_response,
                     torrent_response=torrent_response,
                     content=content,
-                    tracker_message=tracker_message,
+                    tracker_message = None, # tracker_message,
                     archive_path=torrent_filepath,
+                    payload=payload
                 ))
 
+        # // end content
         return bittorrent_list

@@ -3,11 +3,9 @@ import argparse
 import os
 
 from common.external_services.igdb.client import IGDBClient
-from common.bittorrent import BittorrentData
+from common.bittorrent import BittorrentData, Payload
 
 from unit3dup.media_manager.common import UserContent
-from unit3dup.upload import UploadBot
-from unit3dup import config_settings
 from unit3dup.media import Media
 
 from view import custom_console
@@ -64,12 +62,6 @@ class GameManager:
             torrent_response = UserContent.torrent(content=content, tracker_name_list=tracker_name_list,
                                                        selected_tracker=selected_tracker, this_path=torrent_filepath)
 
-
-            # Skip if it is a duplicate
-            if ((self.cli.duplicate or config_settings.user_preferences.DUPLICATE_ON)
-                    and UserContent.is_duplicate(content=content, tracker_name=selected_tracker, cli=self.cli)):
-                continue
-
             # Search for the game on IGDB using the content's title and platform tags
             game_data_results = self.igdb.game(content=content)
             # print the title will be shown on the torrent page
@@ -79,27 +71,27 @@ class GameManager:
             if not game_data_results:
                 continue
 
-            # Tracker instance
-            unit3d_up = UploadBot(content=content, tracker_name=selected_tracker, cli = self.cli)
+            payload = Payload(
+                tracker_name=selected_tracker,
+                cli=self.cli,
+                show_id=None,
+                show_keywords=None,
+                video_info=None,
+                imdb_id=None,
+                igdb=game_data_results,
+                docu_info= None
+            )
 
-            # Get the data
-            unit3d_up.data_game(igdb=game_data_results)
-
-            # Don't upload if -noup is set to True
-            if self.cli.noup:
-                custom_console.bot_warning_log(f"No Upload active. Done.")
-                continue
-
-            # Send to the tracker
-            tracker_response, tracker_message = unit3d_up.send(torrent_archive=torrent_filepath, nfo_path=content.game_nfo)
-
+            # Store response for the torrent clients
             bittorrent_list.append(
                 BittorrentData(
-                    tracker_response=tracker_response,
+                    tracker_response= None, # tracker_response,
                     torrent_response=torrent_response,
                     content=content,
-                    tracker_message=tracker_message,
-                    archive_path = torrent_filepath,
+                    tracker_message = None, # tracker_message,
+                    archive_path=torrent_filepath,
+                    payload=payload
                 ))
-        return bittorrent_list
 
+        # // end content
+        return bittorrent_list

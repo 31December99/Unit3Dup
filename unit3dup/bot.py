@@ -6,15 +6,19 @@ import os
 import time
 import shutil
 
-from unit3dup.media import Media
 from unit3dup.media_manager.ContentManager import ContentManager
 from unit3dup.media_manager.TorrentManager import TorrentManager
+from unit3dup.media_manager.common import UserContent
+from unit3dup import config_settings
+from unit3dup.media import Media
+
 
 from common.external_services.ftpx.core.models.list import FTPDirectory
 from common.external_services.Pw.pw_manager import PwManager
 from common.external_services.ftpx.core.menu import Menu
 from common.external_services.ftpx.client import Client
 from common.extractor import Extractor
+
 
 from view import custom_console
 
@@ -77,11 +81,20 @@ class Bot:
             custom_console.bot_error_log(f"There are no Files to process. Try using -scan")
             exit(1)
 
+
+        # Check for duplicates
+        for selected_tracker in self.trackers_name_list:
+            for content in contents:
+                # Skip(S) if it is a duplicate or let the user choose to continue (C)
+                if (self.cli.duplicate or config_settings.user_preferences.DUPLICATE_ON
+                        and UserContent.is_duplicate(content=content, tracker_name=selected_tracker,
+                                                     cli=self.cli)):
+                    contents.remove(content)
+
         # Print the list of files being processed
         custom_console.bot_process_table_log(contents)
 
         return contents
-
 
     def run(self) -> bool:
         """

@@ -3,11 +3,9 @@ import argparse
 import os
 
 from common.external_services.theMovieDB.core.api import DbOnline
-from common.bittorrent import BittorrentData
+from common.bittorrent import BittorrentData, Payload
 
 from unit3dup.media_manager.common import UserContent
-from unit3dup.upload import UploadBot
-from unit3dup import config_settings
 from unit3dup.pvtVideo import Video
 from unit3dup.media import Media
 
@@ -49,7 +47,7 @@ class VideoManager:
             os.makedirs(archive, exist_ok=True)
             torrent_filepath = os.path.join(tracker_archive,selected_tracker, f"{content.torrent_name}.torrent")
 
-            # Filter contents based on existing torrents or duplicates
+            # Filter contents based on existing torrents
             if UserContent.is_preferred_language(content=content):
 
                 if self.cli.watcher:
@@ -60,11 +58,6 @@ class VideoManager:
                 torrent_response = UserContent.torrent(content=content, tracker_name_list=tracker_name_list,
                                                        selected_tracker=selected_tracker, this_path=torrent_filepath)
 
-                # Skip(S) if it is a duplicate or let the user choose to continue (C)
-                if (self.cli.duplicate or config_settings.user_preferences.DUPLICATE_ON
-                        and UserContent.is_duplicate(content=content, tracker_name=selected_tracker,
-                                                     cli=self.cli)):
-                    continue
 
                 # Search for VIDEO ID
                 db_online = DbOnline(media=content,category=content.category, no_title=self.cli.notitle)
@@ -93,30 +86,26 @@ class VideoManager:
                 # print the title will be shown on the torrent page
                 custom_console.bot_log(f"'DISPLAYNAME'...{{{content.display_name}}}\n")
 
-                # Tracker instance
-                unit3d_up = UploadBot(content=content, tracker_name=selected_tracker, cli = self.cli)
-
-                # Get the data
-                unit3d_up.data(show_id=db.video_id, imdb_id=db.imdb_id, show_keywords_list=db.keywords_list,
-                               video_info=video_info)
-
-                # Don't upload if -noup is set to True
-                if self.cli.noup:
-                    custom_console.bot_warning_log(f"No Upload active. Done.")
-                    continue
-
-                # Send to the tracker
-                tracker_response, tracker_message =  unit3d_up.send(torrent_archive=torrent_filepath)
-
+                payload = Payload(
+                    tracker_name=selected_tracker,
+                    cli=self.cli,
+                    show_id=db.video_id,
+                    show_keywords=db.keywords_list,
+                    video_info=video_info,
+                    imdb_id=db.imdb_id,
+                    igdb= None,
+                    docu_info= None
+                )
 
                 # Store response for the torrent clients
                 bittorrent_list.append(
                     BittorrentData(
-                        tracker_response=tracker_response,
+                        tracker_response= None, # tracker_response,
                         torrent_response=torrent_response,
                         content=content,
-                        tracker_message = tracker_message,
+                        tracker_message = None, # tracker_message,
                         archive_path=torrent_filepath,
+                        payload=payload
                     ))
 
         # // end content
