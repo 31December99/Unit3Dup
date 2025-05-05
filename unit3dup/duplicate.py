@@ -7,11 +7,11 @@ from common.utility import ManageTitles, System
 from common.trackers.trackers import TRACKData
 from common.constants import my_language
 from common import title
+from unit3dup.torrent import View
 
 from view import custom_console
 
 from unit3dup.media_manager.MediaInfoManager import MediaInfoManager
-from unit3dup.torrent import Torrent
 from unit3dup import config_settings
 from unit3dup.media import Media
 
@@ -85,7 +85,7 @@ class Duplicate:
         self.cli = cli
 
         # Class to get info about a torrent
-        self.torrent_info = Torrent(tracker_name=tracker_name)
+        self.torrent_info = View(tracker_name=cli.args.tracker)
 
         # Load the constant tracker
         tracker_data = TRACKData.load_from_module(tracker_name=tracker_name)
@@ -136,12 +136,12 @@ class Duplicate:
         self.DELTA_SIZE_WIDTH = 2
 
     def process(self):
-        return self.search(torrent=self.torrent_info.search(self.query.guessit_title))
+        return self.search(torrent=self.torrent_info.tracker.filter_by(search=self.query.guessit_title))
 
 
     def process_dead_torrents(self, tmdb_id: int)-> list[requests] | None:
          # Get the dead torrents
-         torrents = self.torrent_info.get_by_tmdb_id(tmdb_id=tmdb_id)
+         torrents = self.torrent_info.tracker.filter_by(tmdbId=tmdb_id)
          dead_torrents = []
 
          # print a list of dead torrents
