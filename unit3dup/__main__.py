@@ -147,7 +147,7 @@ def main():
 
     # SEARCH
     if cli.args.search:
-        results = torrent_info.tracker.filter_by(search=cli.args.search)
+        results = torrent_info.tracker.filter_by(name=cli.args.search)
         custom_console.bot_log(f"Filter by '{cli.args.search.upper()}'")
         torrent_info.page_view(tracker_data=results, tracker=cli.args.tracker)
 
