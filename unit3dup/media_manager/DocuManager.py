@@ -14,10 +14,10 @@ class DocuManager:
 
     def __init__(self, contents: list[Media], cli: argparse.Namespace):
         self._my_tmdb = None
-        self.contents: list['Media'] = contents
+        self.contents: list[Media] = contents
         self.cli: argparse = cli
 
-    def process(self, selected_tracker: str, tracker_name_list: list, tracker_archive: str) -> list[BittorrentData]:
+    async def process(self, selected_tracker: str, tracker_name_list: list, tracker_archive: str) -> list[BittorrentData]:
 
         # -multi : no announce_list . One announce for multi tracker
         if self.cli.mt:
@@ -36,7 +36,7 @@ class DocuManager:
                     custom_console.bot_log(f"Watcher Active.. skip the old upload '{content.file_name}'")
                 continue
 
-            torrent_response = UserContent.torrent(content=content, tracker_name_list=tracker_name_list,
+            torrent_response = await UserContent.torrent(content=content, tracker_name_list=tracker_name_list,
                                                    selected_tracker=selected_tracker, this_path=torrent_filepath)
 
 

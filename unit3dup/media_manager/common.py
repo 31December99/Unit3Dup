@@ -28,7 +28,7 @@ class UserContent:
     """
 
     @staticmethod
-    def tracker_key(tracker_data: dict, value)-> str | None:
+    async def tracker_key(tracker_data: dict, value)-> str | None:
         """
         read the string Key from tracker data dictionary
         Args:
@@ -44,7 +44,7 @@ class UserContent:
         return None
 
     @staticmethod
-    def is_preferred_language(content: Media) -> bool:
+    async def is_preferred_language(content: Media) -> bool:
         """
            Compare preferred language with the audio language
 
@@ -78,7 +78,7 @@ class UserContent:
 
 
     @staticmethod
-    def torrent_announces(torrent_path: str, tracker_name_list: list,selected_tracker: str) -> bool:
+    async def torrent_announces(torrent_path: str, tracker_name_list: list,selected_tracker: str) -> bool:
         """ Add announces to a torrent file"""
 
         if not tracker_name_list:
@@ -111,7 +111,7 @@ class UserContent:
         return create_torrent
 
     @staticmethod
-    def torrent(content: Media, tracker_name_list: list, selected_tracker: str, this_path: str) -> Mytorrent | None:
+    async def torrent(content: Media, tracker_name_list: list, selected_tracker: str, this_path: str) -> Mytorrent | None:
         """
         Check if a torrent file for the given content already exists
 
@@ -130,7 +130,7 @@ class UserContent:
             custom_console.bot_warning_log(f"\n<> Reusing the existing torrent file..'{content.torrent_path}'\n")
 
             # Compare the exists announces and return True if it's/they are different from the request -tracker flags
-            different = UserContent.torrent_announces(torrent_path=this_path,
+            different = await UserContent.torrent_announces(torrent_path=this_path,
                                           tracker_name_list=tracker_name_list,
                                           selected_tracker=selected_tracker)
             # False if we need Update the torrent file
@@ -148,7 +148,7 @@ class UserContent:
         return None
 
     @staticmethod
-    def is_duplicate(content: Media, tracker_name: str,  cli: argparse.Namespace) -> bool:
+    async def is_duplicate(content: Media, tracker_name: str,  cli: argparse.Namespace) -> bool:
         """
            Search for a duplicate. Delta = config.SIZE_TH
 
@@ -170,7 +170,7 @@ class UserContent:
             return False
 
     @staticmethod
-    def can_ressed(content: Media, tracker_name: str,  cli: argparse.Namespace, tmdb_id :int) -> list[requests]:
+    async def can_ressed(content: Media, tracker_name: str,  cli: argparse.Namespace, tmdb_id :int) -> list[requests]:
         """
            Search for a duplicate and compare with the user content. Delta = config.SIZE_TH
 
@@ -215,7 +215,7 @@ class UserContent:
 
 
     @staticmethod
-    def get_client() -> QbittorrentClient | TransmissionClient:
+    async def get_client() -> QbittorrentClient | TransmissionClient:
 
         client = QbittorrentClient()
 
@@ -238,7 +238,7 @@ class UserContent:
         return client
 
     @staticmethod
-    def send_to_bittorrent(bittorrent_list: list[BittorrentData]) -> None:
+    async def send_to_bittorrent(bittorrent_list: list[BittorrentData]) -> None:
         """
         Sends a list of torrents to Bittorrent using threads
 
@@ -254,7 +254,7 @@ class UserContent:
                                        f"{config_settings.torrent_client_config.TORRENT_CLIENT.upper()} client "
                                        f"... Please wait")
 
-        client = UserContent.get_client()
+        client = await UserContent.get_client()
 
         with ThreadPoolExecutor(max_workers=20) as executor:
             # Submit the torrents
@@ -266,7 +266,7 @@ class UserContent:
         return None
 
     @staticmethod
-    def download_file(url: str, destination_path: str) -> bool:
+    async def download_file(url: str, destination_path: str) -> bool:
         download = requests.get(url)
         if download.status_code == 200:
             # File archived
@@ -276,7 +276,7 @@ class UserContent:
         return False
 
     @staticmethod
-    def send(torrents: list[BittorrentData]) -> list[BittorrentData]:
+    async def send(torrents: list[BittorrentData]) -> list[BittorrentData]:
 
         for torrent in torrents:
             # Don't upload if -noup is set to True
@@ -286,16 +286,16 @@ class UserContent:
 
             if torrent.content.category in {'movie','tv'}:
                 unit3d_up = Show(torrent=torrent)
-                torrent.tracker_response, torrent.tracker_message =  unit3d_up.send(path=torrent.archive_path)
+                torrent.tracker_response, torrent.tracker_message = await unit3d_up.send(path=torrent.archive_path)
 
 
             if torrent.content.category in 'game':
                 unit3d_up = Games(torrent=torrent)
-                torrent.tracker_response, torrent.tracker_message = unit3d_up.send(path=torrent.archive_path,
+                torrent.tracker_response, torrent.tracker_message = await unit3d_up.send(path=torrent.archive_path,
                                                                                nfo_path=torrent.content.game_nfo)
             if torrent.content.category in 'edicola':
                 unit3d_up = Doc(torrent=torrent)
-                torrent.tracker_response, torrent.tracker_message = unit3d_up.send(path=torrent.archive_path)
+                torrent.tracker_response, torrent.tracker_message = await unit3d_up.send(path=torrent.archive_path)
         return torrents
 
 

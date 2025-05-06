@@ -2,8 +2,6 @@
 
 import argparse
 
-import requests
-
 from unit3dup.media_manager.VideoManager import VideoManager
 from unit3dup.media_manager.GameManager import GameManager
 from unit3dup.media_manager.DocuManager import DocuManager
@@ -35,7 +33,7 @@ class TorrentManager:
             self.fast_load = None
 
 
-    def process(self, contents: list) -> None:
+    async def process(self, contents: list) -> None:
         """
         Send content to each selected tracker with the trackers_name_list.
         trackers_name_list can be a list of tracker names or the current tracker for the upload process
@@ -68,7 +66,7 @@ class TorrentManager:
             content for content in contents if content.category == System.category_list.get(System.DOCUMENTARY)
         ]
 
-    def run(self, trackers_name_list: list):
+    async def run(self, trackers_name_list: list):
         """
 
         Args:
@@ -86,7 +84,7 @@ class TorrentManager:
             if self.games:
                 game_manager = GameManager(contents=self.games[:self.fast_load],
                                            cli=self.cli)
-                game_process_results = game_manager.process(selected_tracker=selected_tracker,
+                game_process_results = await game_manager.process(selected_tracker=selected_tracker,
                                                             tracker_name_list=trackers_name_list,
                                                             tracker_archive=self.tracker_archive)
 
@@ -94,7 +92,7 @@ class TorrentManager:
             if self.videos:
                 video_manager = VideoManager(contents=self.videos[:self.fast_load],
                                              cli=self.cli)
-                video_process_results = video_manager.process(selected_tracker=selected_tracker,
+                video_process_results = await video_manager.process(selected_tracker=selected_tracker,
                                                               tracker_name_list=trackers_name_list,
                                                               tracker_archive=self.tracker_archive)
 
@@ -102,7 +100,7 @@ class TorrentManager:
             if self.doc and not self.cli.reseed:
                 docu_manager = DocuManager(contents=self.doc[:self.fast_load],
                                            cli=self.cli)
-                docu_process_results = docu_manager.process(selected_tracker=selected_tracker,
+                docu_process_results = await docu_manager.process(selected_tracker=selected_tracker,
                                                             tracker_name_list=trackers_name_list,
                                                             tracker_archive=self.tracker_archive)
 
@@ -115,16 +113,16 @@ class TorrentManager:
 
             if not self.cli.noseed:
                 # // GAME
-                torrents_list =UserContent.send(torrents=game_process_results)
-                UserContent.send_to_bittorrent(bittorrent_list=torrents_list)
+                torrents_list = await UserContent.send(torrents=game_process_results)
+                await UserContent.send_to_bittorrent(bittorrent_list=torrents_list)
 
                 # // VIDEO
-                torrents_list =UserContent.send(torrents=video_process_results)
-                UserContent.send_to_bittorrent(bittorrent_list=torrents_list)
+                torrents_list = await UserContent.send(torrents=video_process_results)
+                await UserContent.send_to_bittorrent(bittorrent_list=torrents_list)
 
                 # // DOCUMENTS
-                torrents_list =UserContent.send(torrents=docu_process_results)
-                UserContent.send_to_bittorrent(bittorrent_list=torrents_list)
+                torrents_list = await UserContent.send(torrents=docu_process_results)
+                await UserContent.send_to_bittorrent(bittorrent_list=torrents_list)
 
             custom_console.bot_log(f"Tracker '{selected_tracker}' Done.")
             custom_console.rule()
@@ -132,7 +130,7 @@ class TorrentManager:
     custom_console.bot_log(f"Done.")
     custom_console.rule()
 
-    def reseed(self, trackers_name_list: list) -> None:
+    async def reseed(self, trackers_name_list: list) -> None:
         """
 
         Reseed : compare local file with remote tracker file. Download if found
@@ -155,7 +153,7 @@ class TorrentManager:
 
                 #if so download the torrent files from the tracker for seeding
                 if seed_manager_results:
-                    for result in seed_manager_results:
-                        UserContent.download_file(url=result.tracker_response, destination_path=result.archive_path)
+                    for result in await seed_manager_results:
+                        await UserContent.download_file(url=result.tracker_response, destination_path=result.archive_path)
                         # Send the data to the torrent client
-                        UserContent.send_to_bittorrent([result])
+                        await UserContent.send_to_bittorrent([result])

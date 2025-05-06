@@ -52,7 +52,7 @@ class Bot:
         self.mode = mode
 
 
-    def contents(self) -> bool | list[Media]:
+    async def contents(self) -> bool | list[Media]:
         """
         Start the process of analyzing and processing media files
         This method retrieves media files
@@ -96,31 +96,31 @@ class Bot:
 
         return contents
 
-    def run(self) -> bool:
+    async def run(self) -> bool:
         """
         processes the files using the TorrentManager and SeedManager
         """
 
         # Get the user content
-        contents = self.contents()
+        contents = await self.contents()
         if not contents:
             return False
 
         # Instance a new run
         torrent_manager = TorrentManager(cli=self.cli, tracker_archive=self.torrent_archive_path)
         # Process the torrents content (files)
-        torrent_manager.process(contents=contents)
+        await torrent_manager.process(contents=contents)
 
         # We want to reseed
         if self.cli.reseed:
-            torrent_manager.reseed(trackers_name_list=self.trackers_name_list)
+            await torrent_manager.reseed(trackers_name_list=self.trackers_name_list)
         else:
             # otherwise run the torrents creations and the upload process
-            torrent_manager.run(trackers_name_list=self.trackers_name_list)
+            await torrent_manager.run(trackers_name_list=self.trackers_name_list)
         return True
 
 
-    def watcher(self, duration: int, watcher_path: str,  destination_path: str)-> bool:
+    async def watcher(self, duration: int, watcher_path: str,  destination_path: str)-> bool:
         """
         Monitors the watcher path for new files, moves them to the destination folder,
         then uploads them to the tracker
@@ -186,13 +186,13 @@ class Bot:
 
                 # Start uploading
                 print()
-                self.run()
+                await self.run()
 
         except KeyboardInterrupt:
             custom_console.bot_log("Exiting...")
         return True
 
-    def pw(self)-> bool:
+    async def pw(self)-> bool:
         """
         Interacts with the PW service to search for torrent files
 
@@ -206,7 +206,7 @@ class Bot:
         return True
 
 
-    def ftp(self)-> None:
+    async def ftp(self)-> None:
         """
         Connects to a remote FTP server and interacts with files.
 
@@ -256,5 +256,5 @@ class Bot:
                 custom_console.bot_error_log("Unrar Exit")
                 exit(1)
 
-            self.run()
+            await self.run()
         return None

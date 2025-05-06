@@ -1,5 +1,4 @@
-import json
-import requests
+import aiohttp
 
 from common.trackers.trackers import TRACKData
 from common.bittorrent import BittorrentData
@@ -9,6 +8,7 @@ from unit3dup import config_settings, Load
 
 from abc import ABC, abstractmethod
 from view import custom_console
+
 
 
 class UploadBot(ABC):
@@ -21,57 +21,35 @@ class UploadBot(ABC):
         self.content = torrent.content
         self.tracker_name = torrent.payload.tracker_name
         self.tracker_data = TRACKData.load_from_module(tracker_name=torrent.payload.tracker_name)
-        self.tracker = Unit3d(tracker_name=torrent.payload.tracker_name)
         self.sign = (f"[url=https://github.com/31December99/Unit3Dup][code][color=#00BFFF][size=14]Uploaded with Unit3Dup"
                      f" {Load.version}[/size][/color][/code][/url]")
 
-    def message(self,tracker_response: requests.Response) -> (requests, dict):
 
-        name_error = ''
-        info_hash_error = ''
-        _message = json.loads(tracker_response.text)
-        if 'data' in _message:
-            _message = _message['data']
+    async def message(self, tracker_response: dict) -> (dict, dict):
 
-        if tracker_response.status_code == 200:
-            tracker_response_body = json.loads(tracker_response.text)
-            custom_console.bot_log(f"\n[RESPONSE]-> '{self.tracker_name}'.....{self.torrent.content.display_name} "
-                                   f"{tracker_response_body['message'].upper()}\n")
-            return tracker_response_body["data"],{}
+        success = tracker_response.get('success', False)
+        data = tracker_response.get('data', {})
+        message = tracker_response.get('message', '')
 
-        elif tracker_response.status_code == 401:
-            custom_console.bot_error_log(_message)
-            exit(_message['message'])
+        custom_console.bot_log(f"\n[RESPONSE]-> '{self.tracker_name}'.....{self.torrent.content.display_name} "
+                               f"{message.upper()}\n")
 
-        elif tracker_response.status_code == 404:
-            if _message.get("type_id",None):
-                name_error =  _message["type_id"]
-            else:
-                name_error = _message
-            error_message = f"{self.__class__.__name__} - {name_error}"
-        else:
-            if _message.get("name",None):
-                name_error =  _message["name"][0]
-            if _message.get("info_hash",None):
-                info_hash_error = _message["info_hash"][0]
-            error_message =f"{self.__class__.__name__} - {name_error} : {info_hash_error}"
+        return data, {}
 
-        custom_console.bot_error_log(f"\n[RESPONSE]-> '{error_message}\n\n")
-        custom_console.rule()
-        return {}, error_message
-
-    def _send(self, torrent_archive: str, data: dict, nfo_path = None) -> (requests, dict):
-        tracker_response=self.tracker.upload_t(data=data, torrent_archive_path = torrent_archive,nfo_path=nfo_path)
-        return self.message(tracker_response)
+    async def _send(self, torrent_archive: str, data: dict, nfo_path = None) -> (aiohttp.ClientResponse, dict):
+        async with Unit3d(tracker_name=self.torrent.payload.tracker_name) as tracker:
+            tracker_response = await tracker.upload_t(data=data, torrent_archive_path = torrent_archive,nfo_path=nfo_path)
+            response = await self.message(tracker_response)
+        return response
 
 
     @abstractmethod
-    def send(self, torrent_archive: str, nfo_path = None) -> (requests, dict):
+    def send(self, torrent_archive: str, nfo_path = None) -> (aiohttp.ClientResponse, dict):
         pass
 
 
 class Show(UploadBot):
-    def send(self, path: str, nfo_path = None) -> (requests, dict):
+    async def send(self, path: str, nfo_path = None) -> (aiohttp.ClientResponse, dict):
 
         data = {}
         data["name"] = self.content.display_name
@@ -90,10 +68,10 @@ class Show(UploadBot):
         data["episode_number"] = (self.content.guess_episode if not self.content.torrent_pack else 0)
         data["personal_release"] = (int(config_settings.user_preferences.PERSONAL_RELEASE)
                                                  or int(self.cli.personal))
-        return self._send(torrent_archive=path,data=data)
+        return await self._send(torrent_archive=path,data=data)
 
 class Games(UploadBot):
-    def send(self, path: str, nfo_path=None) -> (requests, dict):
+    async def send(self, path: str, nfo_path=None) -> (aiohttp.ClientResponse, dict):
 
         igdb_platform = self.content.platform_list[0].lower() if self.content.platform_list else ''
         data = {}
@@ -106,11 +84,11 @@ class Games(UploadBot):
         data["igdb"] = self.torrent.payload.igdb.id if self.torrent.payload.igdb else 1,  # need zero not one ( fix tracker)
         data["personal_release"] = (int(config_settings.user_preferences.PERSONAL_RELEASE)
                                              or int(self.cli.personal))
-        return self._send(torrent_archive=path, data=data, nfo_path=nfo_path)
+        return await self._send(torrent_archive=path, data=data, nfo_path=nfo_path)
 
 
 class Doc(UploadBot):
-    def send(self, path: str, nfo_path=None) -> (requests, dict):
+    async def send(self, path: str, nfo_path=None) -> (aiohttp.ClientResponse, dict):
 
         data = {}
         data["name"] = self.content.display_name
@@ -122,4 +100,4 @@ class Doc(UploadBot):
         data["resolution_id"] = ""
         data["personal_release"] = (int(config_settings.user_preferences.PERSONAL_RELEASE)
                                                      or int(self.cli.personal))
-        return self._send(torrent_archive=path,data=data)
+        return await self._send(torrent_archive=path,data=data)

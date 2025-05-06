@@ -26,7 +26,7 @@ class VideoManager:
         self.contents: list[Media] = contents
         self.cli: argparse = cli
 
-    def process(self, selected_tracker: str, tracker_name_list: list, tracker_archive: str) -> list[BittorrentData]:
+    async def process(self, selected_tracker: str, tracker_name_list: list, tracker_archive: str) -> list[BittorrentData]:
         """
            Process the video contents to filter duplicates and create torrents
 
@@ -48,14 +48,14 @@ class VideoManager:
             torrent_filepath = os.path.join(tracker_archive,selected_tracker, f"{content.torrent_name}.torrent")
 
             # Filter contents based on existing torrents
-            if UserContent.is_preferred_language(content=content):
+            if await UserContent.is_preferred_language(content=content):
 
                 if self.cli.watcher:
                     if os.path.exists(torrent_filepath):
                         custom_console.bot_log(f"Watcher Active.. skip the old upload '{content.file_name}'")
                         continue
 
-                torrent_response = UserContent.torrent(content=content, tracker_name_list=tracker_name_list,
+                torrent_response = await UserContent.torrent(content=content, tracker_name_list=tracker_name_list,
                                                        selected_tracker=selected_tracker, this_path=torrent_filepath)
 
 

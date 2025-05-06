@@ -1,41 +1,41 @@
 # -*- coding: utf-8 -*-
-import time
-import requests
+import os
+import aiohttp
+import asyncio
+import aiofiles
 
-from urllib.parse import urljoin
+import json
+import hashlib
+import diskcache
+
 from view import custom_console
 from common.trackers.data import trackers_api_data
+from urllib.parse import urljoin
+
+
+
+class TrackerAPIError(Exception):
+    pass
 
 
 class Myhttp:
     def __init__(self, tracker_name: str, pass_key=''):
-
-        # Load the tracker data
         api_data = trackers_api_data.get(tracker_name.upper())
         if not api_data:
             custom_console.bot_error_log(
                 f"Tracker '{tracker_name}' not found. Please check your configuration or set it using the '-t' flag.")
             raise TrackerAPIError("Invalid tracker name")
 
-        # Load the baseurl
         self.base_url = api_data['url']
-
-        # Load the api_key
         self.api_token = api_data['api_key']
 
-        # Build the endpoints
-        # // UPLOAD
         self.upload_url = urljoin(self.base_url, "api/torrents/upload")
-        # // Filter
         self.filter_url = urljoin(self.base_url, "api/torrents/filter?")
-        # // TORRENT
         self.fetch_url = urljoin(self.base_url, "api/torrents/")
-        # // ANNOUNCE
         self.tracker_announce_url = urljoin(self.base_url, f"announce/{pass_key}")
 
-        # Create the Agent...
         self.headers = {
-            "User-Agent": "Unit3D-up/0.0 (Linux 5.10.0-23-amd64)",
+            "User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko",
             "Accept": "application/json",
         }
 
@@ -44,15 +44,14 @@ class Myhttp:
             "api_token": self.api_token,
         }
 
-        # Initialize the Payload
         self.default_data = {
             "name": "TEST.torrent",
-            "description": "",    # mandatory
+            "description": "",
             "mediainfo": "",
             "bdinfo": " ",
             "type_id": "1",
-            "resolution_id": 10,  # mandatory
-            "tmdb": "",           # mandatory
+            "resolution_id": 10,
+            "tmdb": "",
             "imdb": "0",
             "tvdb": "0",
             "mal": "0",
@@ -69,81 +68,108 @@ class Myhttp:
             "sticky": 0,
         }
 
-        # Create a new session and keep it up
-        self.session = requests.Session()
-        # Add the header to new http session
-        self.session.headers.update(self.headers)
-        # The default params
         self.default_params = {"api_token": self.api_token}
+        self.session = aiohttp.ClientSession(headers=self.headers)
+
+
+    async def init_session(self):
+        if not self.session:
+            self.session = aiohttp.ClientSession(headers=self.headers)
+
+    async def close(self):
+        if self.session:
+            await self.session.close()
+            self.session = None
 
 
 class Tracker(Myhttp):
-    def _get(self, extra_params: dict) -> dict:
+    def __init__(self, tracker_name: str, pass_key=''):
+        super().__init__(tracker_name, pass_key)
+        self._cache = diskcache.Cache('./tracker_cache')
+        self._cache_duration = 30
+
+    async def _get(self, extra_params: dict) -> dict:
         params = self.default_params.copy()
         params.update(extra_params)
 
+        key_string = json.dumps(params, sort_keys=True)
+        cache_key = hashlib.sha256(key_string.encode('utf-8')).hexdigest()
+
+        if cache_key in self._cache:
+            return self._cache[cache_key]
+
         while True:
             try:
-                response = self.session.get(self.filter_url, params=params, timeout=10)
-                response.raise_for_status()
-                return response.json()
-            except requests.exceptions.HTTPError as e:
-                status = e.response.status_code
-                if status == 429:
-                    custom_console.bot_error_log("Rate limit hit. Waiting 60 seconds...")
-                    time.sleep(60)
-                else:
-                    custom_console.bot_error_log(f"HTTP Error {status}")
-                    raise TrackerAPIError(f"HTTP Error {status}") from e
-            except (requests.exceptions.ConnectionError, requests.exceptions.ReadTimeout) as e:
+                async with self.session.get(self.filter_url, params=params, timeout=10) as response:
+                    if response.status == 429:
+                        custom_console.bot_error_log("Rate limit hit. Waiting 60 seconds...")
+                        await asyncio.sleep(60)
+                        continue
+
+                    response.raise_for_status()
+
+                    text = await response.text(encoding='utf-8', errors='ignore')
+
+                    try:
+                        data = json.loads(text)
+                        self._cache.set(cache_key, data, expire=self._cache_duration)
+                        return data
+                    except json.JSONDecodeError as e:
+                        custom_console.bot_error_log(f"Invalid response from the server {e}")
+                        raise TrackerAPIError("Invalid Json") from e
+
+            except aiohttp.ClientResponseError as e:
+                custom_console.bot_error_log(f"HTTP Error {e.status}")
+                raise TrackerAPIError(f"HTTP Error {e.status}") from e
+
+            except (aiohttp.ClientConnectionError, asyncio.TimeoutError) as e:
                 custom_console.bot_error_log("Tracker connection error or timeout.")
                 raise TrackerAPIError("Tracker offline") from e
 
-    def _post(self, file: dict, extra_data: dict, extra_params: dict):
-
-        # Create a copy of the default data to initialize it on the next call
-        # prima chiamava e usciva dal programma
+    async def _post(self, file: dict, extra_data: dict, extra_params: dict):
         data = self.default_data.copy()
         data.update(extra_data)
         params = self.default_params.copy()
         params.update(extra_params)
+        form = aiohttp.FormData()
 
-        # Open the torrent file
-        with open(file['torrent'], "rb") as torrent:
-            # Fill the attribute
-            files = {"torrent": ("filename.torrent", torrent, "application/octet-stream")}
-            # Add the .NFO file if it exists
-            if file.get("nfo"):
-                files["nfo"] = ("filename.nfo", file["nfo"], "text/plain")
+        async with aiofiles.open(file['torrent'], 'rb') as tf:
+            torrent_data = await tf.read()
+            filename = os.path.basename(file['torrent'])
+            form.add_field('torrent',
+                           torrent_data,
+                           filename=filename,
+                           content_type='application/octet-stream')
 
-            try:
-                # // UP
-                response = self.session.post(
-                    self.upload_url,
-                    files=files,
-                    data=data,
-                    params=params,
-                    timeout=10
-                )
-                response.raise_for_status()
-                return response
-            except requests.exceptions.ReadTimeout as e:
-                custom_console.bot_error_log(f"Timeout: {e}")
-                raise TrackerAPIError("Upload timeout") from e
+        if file.get('nfo'):
+            async with aiofiles.open(file['nfo'], 'rb') as nf:
+                nfo_data = await nf.read()
+                nfo_name = os.path.basename(file['nfo'])
+                form.add_field('nfo',
+                               nfo_data,
+                               filename=nfo_name,
+                               content_type='text/plain')
 
+        for key, value in data.items():
+            if value is not None:
+                form.add_field(key, str(value))
+
+        async with self.session.post(self.upload_url, data=form, params=params, timeout=10) as response:
+            return await response.json()
 
 class Uploader(Tracker):
-    def upload_t(self, data: dict, torrent_archive_path: str, nfo_path=None) -> requests:
+    async def upload_t(self, data: dict, torrent_archive_path: str, nfo_path=None) -> aiohttp.ClientResponse:
         file_torrent = {"torrent": torrent_archive_path}
         if nfo_path:
-            file_torrent.update({"nfo": self.encode_utf8(file_path=nfo_path)})
-        return self._post(file=file_torrent, extra_data=data, extra_params=self.params)
+            file_torrent.update({"nfo": await self.encode_utf8(file_path=nfo_path)})
+
+        return await self._post(file=file_torrent, extra_data=data, extra_params=self.params)
 
     @staticmethod
-    def encode_utf8(file_path: str) -> str:
+    async def encode_utf8(file_path: str) -> str:
         encodings = ['utf-8', 'iso-8859-1', 'windows-1252', 'latin1']
-        with open(file_path, 'rb') as f:
-            raw_data = f.read()
+        async with aiofiles.open(file_path, 'rb') as f:
+            raw_data = await f.read()
 
         for encoding in encodings:
             try:
@@ -155,15 +181,15 @@ class Uploader(Tracker):
 
 
 class FilterAPI(Tracker):
-    def filter_by(self, **filters) -> dict:
+    async def filter_by(self, **filters) -> dict:
         if "perPage" not in filters:
             filters["perPage"] = 100
-        return self._get(filters)
+        return await self._get(filters)
 
 
 class Unit3d(FilterAPI, Uploader):
-    pass
+    async def __aenter__(self):
+        return self
 
-
-class TrackerAPIError(Exception):
-    pass
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        await self.close()

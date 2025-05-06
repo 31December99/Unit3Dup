@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import asyncio
 
 from common.torrent_clients import TransmissionClient, QbittorrentClient, RTorrentClient
 from common.command import CommandLine
@@ -6,12 +7,14 @@ from common.settings import Load,DEFAULT_JSON_PATH
 
 from unit3dup.torrent import View
 from unit3dup import pvtTracker
+
+
 from unit3dup.bot import Bot
 from common.trackers.trackers import TRACKData
 
 from view import custom_console
 
-def main():
+async def start():
     """
     Main function to handle the command line interface (CLI)
     """
@@ -45,13 +48,13 @@ def main():
 
     # /// Test the Trackers
     for tracker_data in config.tracker_config.MULTI_TRACKER:
-        tracker = pvtTracker.Unit3d(tracker_name=tracker_data)
-        if tracker.filter_by(alive=True, perPage=1):
-            custom_console.bot_log(f"Tracker -> '{tracker_data.upper()}' Online")
-        else:
-            if cli.args.tracker == tracker_data:
-                custom_console.bot_error_log(f"Your default tracker '{tracker_data}' is offline")
-                exit()
+            async with pvtTracker.Unit3d(tracker_name=tracker_data) as tracker:
+                if await tracker.filter_by(alive='True', perPage=1):
+                    custom_console.bot_log(f"Tracker -> '{tracker_data.upper()}' Online")
+                else:
+                    if cli.args.tracker == tracker_data:
+                        custom_console.bot_error_log(f"Your default tracker '{tracker_data}' is offline")
+                        exit()
 
 
     # Test both clients only if used
@@ -99,7 +102,7 @@ def main():
     if cli.args.upload:
         bot = Bot(path=cli.args.upload, cli=cli.args, trackers_name_list=tracker_name_list,
                   torrent_archive_path=tracker_archive)
-        bot.run()
+        await bot.run()
 
     # Manual folder mode
     if cli.args.folder:
@@ -110,32 +113,32 @@ def main():
             trackers_name_list=tracker_name_list,
             torrent_archive_path=tracker_archive,
         )
-        bot.run()
+        await bot.run()
 
     # Auto mode
     if cli.args.scan and not cli.args.ftp:
         bot = Bot(path=cli.args.scan, cli=cli.args, mode="auto", trackers_name_list=tracker_name_list,
                   torrent_archive_path=tracker_archive)
-        bot.run()
+        await bot.run()
 
     # Watcher
     if cli.args.watcher:
         bot = Bot(path=cli.args.watcher, cli=cli.args, mode="auto", trackers_name_list=tracker_name_list,
                   torrent_archive_path=tracker_archive)
 
-        bot.watcher(duration=config.user_preferences.WATCHER_INTERVAL, watcher_path=config.user_preferences.WATCHER_PATH,
+        await bot.watcher(duration=config.user_preferences.WATCHER_INTERVAL, watcher_path=config.user_preferences.WATCHER_PATH,
                     destination_path = config.user_preferences.WATCHER_DESTINATION_PATH)
 
     # Pw
     if cli.args.pw:
         bot = Bot(path=cli.args.pw,cli=cli.args, trackers_name_list=tracker_name_list)
-        bot.pw()
+        await bot.pw()
 
 
     # ftp and upload
     if cli.args.ftp:
         bot = Bot(path='', cli=cli.args, mode="folder", trackers_name_list=tracker_name_list)
-        bot.ftp()
+        await bot.ftp()
 
 
     # Commands list: commands not necessary for upload but may be useful
@@ -164,5 +167,6 @@ def main():
         custom_console.print("Syntax error! Please check your commands")
         return
 
-if __name__ == "__main__":
-    main()
+
+def main():
+    asyncio.run(start())

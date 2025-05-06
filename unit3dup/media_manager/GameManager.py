@@ -12,7 +12,7 @@ from view import custom_console
 
 class GameManager:
 
-    def __init__(self, contents: list["Media"], cli: argparse.Namespace):
+    def __init__(self, contents: list[Media], cli: argparse.Namespace):
         """
         Initialize the GameManager with the given contents
 
@@ -24,7 +24,7 @@ class GameManager:
         self.cli: argparse = cli
         self.igdb = IGDBClient()
 
-    def process(self, selected_tracker: str, tracker_name_list: list,  tracker_archive: str) -> list[BittorrentData]:
+    async def process(self, selected_tracker: str, tracker_name_list: list,  tracker_archive: str) -> list[BittorrentData]:
         """
         Process the game contents to filter duplicates and create torrents
 
@@ -59,7 +59,7 @@ class GameManager:
                     custom_console.bot_log(f"Watcher Active.. skip the old upload '{content.file_name}'")
                 continue
 
-            torrent_response = UserContent.torrent(content=content, tracker_name_list=tracker_name_list,
+            torrent_response = await UserContent.torrent(content=content, tracker_name_list=tracker_name_list,
                                                        selected_tracker=selected_tracker, this_path=torrent_filepath)
 
             # Search for the game on IGDB using the content's title and platform tags
