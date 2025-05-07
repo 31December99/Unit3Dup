@@ -160,7 +160,7 @@ async def start():
         custom_console.bot_log(f"Filter by '{cli.args.tmdb_id} and  {cli.args.resolution}'")
         torrent_info.page_view(tracker_data=results, tracker=cli.args.tracker)
 
-
+    await torrent_info.tracker.close()
 
     # Handle case with no arguments
     if not cli.args:
