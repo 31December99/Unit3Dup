@@ -35,24 +35,19 @@ It performs the following tasks:
 unit3dup can grab the first page, convert it to an image (using xpdf),
 and then the bot can upload it to an image host, then add the link to the torrent page description.
 
-.. image:: https://img.shields.io/badge/INSTALL-gr
-   :alt: install
 
-Ubuntu/Debian
--------------
-pip install unit3dup
+Install and Upgrade
+===================
 
-Upgrade
--------
-pip install unit3dup --upgrade
+- pip install unit3dup --upgrade
 
 Ubuntu/Debian Dependencies
 --------------------------
-sudo apt install ffmpeg
+- sudo apt install ffmpeg
 
 Only for pdf
 ------------
-sudo apt install poppler-utils
+- sudo apt install poppler-utils
 
 
 Windows Dependencies
@@ -77,12 +72,6 @@ Alternative method
 3. pip install .
 
 4. unit3dup
-
-
-.. image:: https://img.shields.io/badge/Bot_UPDATE-gr
-   :alt: Bot Update
-
-1. pip install unit3dup --upgrade
 
 
 
