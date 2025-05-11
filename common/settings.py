@@ -68,6 +68,7 @@ class TrackerConfig(BaseModel):
     LENSDUMP_KEY: str | None = None
     PTSCREENS_KEY: str | None = None
     IMGFI_KEY: str | None = None
+    PASSIMA_KEY: str | None = None
     YOUTUBE_KEY: str | None = None
     IGDB_CLIENT_ID: str | None = None
     IGDB_ID_SECRET: str | None = None
@@ -100,6 +101,7 @@ class UserPreferences(BaseModel):
     FREE_IMAGE_PRIORITY: int = 2
     IMGBB_PRIORITY: int = 3
     IMGFI_PRIORITY: int = 4
+    PASSIMA_PRIORITY: int = 5
     NUMBER_OF_SCREENSHOTS: int = 4
     YOUTUBE_FAV_CHANNEL_ID: str | None = None
     YOUTUBE_CHANNEL_ENABLE: bool = False
@@ -427,7 +429,7 @@ class Config(BaseModel):
                     section[field] = Validate.string(value=section[field], field_name=field)
 
                 if field in ['NUMBER_OF_SCREENSHOTS','COMPRESS_SCSHOT','IMGBB_PRIORITY','FREE_IMAGE_PRIORITY',
-                             'LENSDUMP_PRIORITY','WATCHER_INTERVAL','SIZE_TH', 'FAST_LOAD']:
+                             'LENSDUMP_PRIORITY','PASSIMA_PRIORITY','WATCHER_INTERVAL','SIZE_TH', 'FAST_LOAD']:
                     section[field] = Validate.integer(value=section[field], field_name=field)
 
                 if field == 'PREFERRED_LANG':
@@ -510,6 +512,7 @@ class Load:
                 "LENSDUMP_KEY": "no_key",
                 "PTSCREENS_KEY": "no_key",
                 "IMGFI_KEY": "no_key",
+                "PASSIMA_KEY": "no_key",
                 "YOUTUBE_KEY": "no_key",
                 "IGDB_CLIENT_ID": "no_key",
                 "IGDB_ID_SECRET": "no_key",
@@ -540,6 +543,7 @@ class Load:
                 "FREE_IMAGE_PRIORITY": 2,
                 "IMGBB_PRIORITY": 3,
                 "IMGFI_PRIORITY": 4,
+                "PASSIMA_PRIORITY": 5,
                 "NUMBER_OF_SCREENSHOTS": 4,
                 "YOUTUBE_FAV_CHANNEL_ID": "UCGCbxpnt25hWPFLSbvwfg_w",
                 "YOUTUBE_CHANNEL_ENABLE": "False",
