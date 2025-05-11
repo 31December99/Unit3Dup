@@ -44,7 +44,7 @@ pip install unit3dup
 
 Upgrade
 -------
-pip install --upgrade unit3dup
+pip install unit3dup --upgrade
 
 Ubuntu/Debian Dependencies
 --------------------------

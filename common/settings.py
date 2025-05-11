@@ -13,7 +13,7 @@ from common.utility import ManageTitles
 from common import trackers
 
 config_file = "Unit3Dbot.json"
-version = "0.8.7"
+version = "0.8.8"
 
 if os.name == "nt":
     PW_TORRENT_ARCHIVE_PATH: Path = Path(os.getenv("LOCALAPPDATA", ".")) / "Unit3Dup_config" / "pw_torrent_archive"
@@ -46,6 +46,14 @@ def get_default_path(field: str)-> str:
     return str(default_paths[field])
 
 
+
+class Ccolors:
+    OKCYAN = '\033[96m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+
 class TrackerConfig(BaseModel):
     ITT_URL: str
     ITT_APIKEY: str | None = None
@@ -60,6 +68,7 @@ class TrackerConfig(BaseModel):
     LENSDUMP_KEY: str | None = None
     PTSCREENS_KEY: str | None = None
     IMGFI_KEY: str | None = None
+    PASSIMA_KEY: str | None = None
     YOUTUBE_KEY: str | None = None
     IGDB_CLIENT_ID: str | None = None
     IGDB_ID_SECRET: str | None = None
@@ -92,6 +101,7 @@ class UserPreferences(BaseModel):
     FREE_IMAGE_PRIORITY: int = 2
     IMGBB_PRIORITY: int = 3
     IMGFI_PRIORITY: int = 4
+    PASSIMA_PRIORITY: int = 5
     NUMBER_OF_SCREENSHOTS: int = 4
     YOUTUBE_FAV_CHANNEL_ID: str | None = None
     YOUTUBE_CHANNEL_ENABLE: bool = False
@@ -419,7 +429,7 @@ class Config(BaseModel):
                     section[field] = Validate.string(value=section[field], field_name=field)
 
                 if field in ['NUMBER_OF_SCREENSHOTS','COMPRESS_SCSHOT','IMGBB_PRIORITY','FREE_IMAGE_PRIORITY',
-                             'LENSDUMP_PRIORITY','WATCHER_INTERVAL','SIZE_TH', 'FAST_LOAD']:
+                             'LENSDUMP_PRIORITY','PASSIMA_PRIORITY','WATCHER_INTERVAL','SIZE_TH', 'FAST_LOAD']:
                     section[field] = Validate.integer(value=section[field], field_name=field)
 
                 if field == 'PREFERRED_LANG':
@@ -502,6 +512,7 @@ class Load:
                 "LENSDUMP_KEY": "no_key",
                 "PTSCREENS_KEY": "no_key",
                 "IMGFI_KEY": "no_key",
+                "PASSIMA_KEY": "no_key",
                 "YOUTUBE_KEY": "no_key",
                 "IGDB_CLIENT_ID": "no_key",
                 "IGDB_ID_SECRET": "no_key",
@@ -532,6 +543,7 @@ class Load:
                 "FREE_IMAGE_PRIORITY": 2,
                 "IMGBB_PRIORITY": 3,
                 "IMGFI_PRIORITY": 4,
+                "PASSIMA_PRIORITY": 5,
                 "NUMBER_OF_SCREENSHOTS": 4,
                 "YOUTUBE_FAV_CHANNEL_ID": "UCGCbxpnt25hWPFLSbvwfg_w",
                 "YOUTUBE_CHANNEL_ENABLE": "False",
@@ -741,10 +753,11 @@ class JsonConfig:
                 return json.loads(json_data)
 
         except json.JSONDecodeError as e:
-            print(f"Config Loading error.. {e}")
-            print(r"Try to Check '\\ characters. Example: ")
-            print(r"C:\myfolder -> not correct ")
-            print(r"C:/myfolder -> CORRECT ")
+            print(f"* Please fix the error{Ccolors.WARNING} near Line {e.lineno}{Ccolors.ENDC}"
+                  f" and {Ccolors.WARNING}Column {e.colno}{Ccolors.ENDC} in the config file: *\n")
+            print(f"{e.msg}\n")
+            # Seek And...
+            self.aim(line=e.lineno,col=e.colno)
             exit(1)
         except FileNotFoundError:
             print(f"Configuration '{self.default_json_path}' not found")
@@ -797,3 +810,34 @@ class JsonConfig:
 
         print(message)
 
+    def aim(self, line: int, col: int):
+        """
+             Try to identify the exact location of json error
+        Args:
+            line: Error line from the try block
+            col:  Error line from the try block
+        Returns:
+              None
+        """
+
+        # Open the configuration file
+        with open(self.default_json_path, 'r') as file:
+            lines = file.readlines()
+
+        # Test the line value
+        if line <= len(lines):
+            # Create a "context" around the error....
+            line_context1 = lines[line -2].rstrip('\n')
+            line_context2 = lines[line + 1].rstrip('\n')
+
+            # Try to identify the position
+            line_text = lines[line - 1].rstrip('\n')
+            print(f"{line_context1}")
+            print(f"{Ccolors.WARNING}>>> {line_text}{Ccolors.ENDC}")
+
+            # Put the cursor under the error
+            cursor = ' ' * (col-1) + '^'
+            print(f"{Ccolors.WARNING}    {cursor}{Ccolors.ENDC}")
+            print(f"{line_context2}")
+        else:
+            print("Line number is out of range !")

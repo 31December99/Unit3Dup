@@ -5,7 +5,6 @@ import json
 import time
 import requests
 
-from PIL import Image
 from abc import ABC, abstractmethod
 from common import config_settings
 from view import custom_console
@@ -163,6 +162,20 @@ class ImgFi(ImageUploader):
     def get_field_name(self) -> str:
         return 'source'
 
+class PassIMA(ImageUploader):
+
+    priority= config_settings.user_preferences.PASSIMA_PRIORITY
+    def get_endpoint(self) -> str:
+        return "https://passtheima.ge/api/1/upload"
+
+    def get_data(self) -> dict:
+        return {
+            "key": self.key,
+            "title": self.image_name,
+        }
+
+    def get_field_name(self) -> str:
+        return 'source'
 
 
 class ImageUploaderFallback:
@@ -213,6 +226,10 @@ class ImageUploaderFallback:
 
         if uploader_host == "ImgFi":
             return response['image']['url']
+
+        if uploader_host == "PassIMA":
+            return response['image']['url']
+
         return None
 
 class Build:
@@ -232,6 +249,7 @@ class Build:
         self.LENSDUMP_KEY= config_settings.tracker_config.LENSDUMP_KEY
         self.PTSCREENS_KEY= config_settings.tracker_config.PTSCREENS_KEY
         self.IMGFI_KEY = config_settings.tracker_config.IMGFI_KEY
+        self.PASSIMA_KEY = config_settings.tracker_config.PASSIMA_KEY
         self.extracted_frames = extracted_frames
 
 
@@ -251,6 +269,7 @@ class Build:
                 PtScreens(img_bytes, self.PTSCREENS_KEY,image_name=image_name),
                 LensDump(img_bytes, self.LENSDUMP_KEY,image_name=image_name),
                 ImgFi(img_bytes, self.IMGFI_KEY,image_name=image_name),
+                PassIMA(img_bytes, self.PASSIMA_KEY, image_name=image_name),
             ]
 
             # Sorting list based on priority
