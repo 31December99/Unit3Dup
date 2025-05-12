@@ -37,7 +37,7 @@ class PwAPI(MyHttp):
             custom_console.bot_question_log("No PW_API_KEY provided\n")
             exit(1)
 
-    def get_indexers(self) -> ["Indexer"]:
+    def get_indexers(self) -> list[type[[Indexer]]]:
         """Get all indexers."""
 
         response = self.get_url(url=f"{self.base_url}/indexer", params={})
@@ -46,7 +46,7 @@ class PwAPI(MyHttp):
             indexers_list = response.json()
             return [Indexer(**indexer) for indexer in indexers_list]
         else:
-            return []
+            return [Indexer]
 
     def get_torrent_url(self, url: str, filename: str):
 

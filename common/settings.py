@@ -40,7 +40,7 @@ def get_default_path(field: str)-> str:
             "CACHE_PATH": CACHE_PATH,
             "WATCHER_DESTINATION_PATH": WATCHER_DESTINATION_PATH,
             "WATCHER_PATH": WATCHER_PATH,
-            "PW_DOWNLOAD": PW_DOWNLOAD_PATH,
+            "PW_DOWNLOAD_PATH": PW_DOWNLOAD_PATH,
             "PW_TORRENT_ARCHIVE_PATH": PW_TORRENT_ARCHIVE_PATH
     }
     return str(default_paths[field])
@@ -130,7 +130,7 @@ class Options(BaseModel):
     PW_API_KEY: str | None = None
     PW_URL: str = "http://localhost:9696/api/v1"
     PW_TORRENT_ARCHIVE_PATH: str | None = None
-    PW_DOWNLOAD: str | None = None
+    PW_DOWNLOAD_PATH: str | None = None
     FTPX_USER: str = "user"
     FTPX_PASS: str = "pass"
     FTPX_IP: str = "127.0.0.1"
@@ -425,7 +425,7 @@ class Config(BaseModel):
                              'CACHE_SCR','CACHE_DBONLINE', 'PERSONAL_RELEASE']:
                     section[field] = Validate.boolean(value=section[field], field_name=field)
 
-                if field in ['TORRENT_COMMENT','PW_TORRENT_ARCHIVE_PATH','WATCHER_PATH','DEFAULT_TRACKER']:
+                if field in ['TORRENT_COMMENT','WATCHER_PATH','DEFAULT_TRACKER']:
                     section[field] = Validate.string(value=section[field], field_name=field)
 
                 if field in ['NUMBER_OF_SCREENSHOTS','COMPRESS_SCSHOT','IMGBB_PRIORITY','FREE_IMAGE_PRIORITY',
@@ -451,11 +451,29 @@ class Config(BaseModel):
                     section[field] =Validate.unit3dup_path(path=section[field],field_name=field,
                                                            default_path=get_default_path(field=field))
 
+
         return v
 
     @model_validator(mode='before')
     def set_default_options(cls, v):
-        return v or Options()
+        section = v['options']
+
+        for field, value in section.items():
+            if value is None:
+                print(f"Please fix the '{field}' value")
+                exit(1)
+            else:
+                field = field.upper()
+
+                if field == 'PW_TORRENT_ARCHIVE_PATH':
+                    section[field] = Validate.unit3dup_path(path=section[field], field_name=field,
+                                                    default_path=get_default_path(field=field))
+
+                if field == 'PW_DOWNLOAD_PATH':
+                    section[field] = Validate.unit3dup_path(path=section[field], field_name=field,
+                                                    default_path=get_default_path(field=field))
+
+        return v
 
     @model_validator(mode='before')
     def set_default_console_options(cls, v):
@@ -570,7 +588,7 @@ class Load:
                 "PW_API_KEY": "no_key",
                 "PW_URL": "http://localhost:9696/api/v1",
                 "PW_TORRENT_ARCHIVE_PATH": ".",
-                "PW_DOWNLOAD": ".",
+                "PW_DOWNLOAD_PATH": ".",
                 "FTPX_USER": "user",
                 "FTPX_PASS": "pass",
                 "FTPX_IP": "127.0.0.1",

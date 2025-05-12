@@ -22,25 +22,34 @@ class PwManager:
 
     def process(self):
 
-        # a new qbittorent instance
-        qb = Client(f"http://{config_settings.tracker_config.QBIT_HOST}:{config_settings.tracker_config.QBIT_PORT}/")
+        # a new qbittorrent instance
+        qb = Client(f"http://{config_settings.torrent_client_config.QBIT_HOST}:{config_settings.torrent_client_config.QBIT_PORT}/")
         # a new pw instance
         pw_service = PwService()
         # Query the indexers
         search = pw_service.search(query=self.search)
 
+
+
+        content = []
         if search:
             for index, s in enumerate(search):
-                if s.seeders > 0:
-                    torrent_file = search[index]
-                    custom_console.log(torrent_file.downloadUrl)
-                    pw_service.get_torrent_from_pw(torrent_url=torrent_file.downloadUrl,download_filename=self.filename)
+                    if s.seeders > 0:
+                        category = s.categories[0]['name']
+                        if category in ['Movies','TV','TV/HD']:
+                            content.append(s)
+            custom_console.bot_process_table_pw(content=content)
 
-                    qb.login(username=config_settings.tracker_config.QBIT_USER,
-                             password=config_settings.tracker_config.QBIT_PASS)
+            qb.login(username=config_settings.torrent_client_config.QBIT_USER,
+                     password=config_settings.torrent_client_config.QBIT_PASS)
 
-                    qb.download_from_file(
-                        file_buffer=open(os.path.join(config_settings.options.PW_TORRENT_ARCHIVE_PATH,
-                                                      f"{self.filename}.torrent"), "rb"),
-                        savepath=config_settings.options.PW_DOWNLOAD_PATH,
-                    )
+            for torrent in content:
+                print(torrent.title)
+                pw_service.get_torrent_from_pw(torrent_url=torrent.downloadUrl,download_filename=torrent.fileName)
+
+                qb.download_from_file(
+                    file_buffer=open(os.path.join(config_settings.options.PW_TORRENT_ARCHIVE_PATH,
+                                                  f"{torrent.fileName}.torrent"), "rb"),
+                    savepath=config_settings.options.PW_DOWNLOAD,
+                )
+
