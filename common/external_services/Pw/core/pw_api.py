@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import os.path
 
+import httpx
+
 from common.external_services.Pw.core.models.torrent_client_config import (
     TorrentClientConfig,
 )
@@ -48,13 +50,8 @@ class PwAPI(MyHttp):
         else:
             return [Indexer]
 
-    def get_torrent_url(self, url: str, filename: str):
-
-        response = self.get_url(url=url)
-        if response.status_code == 200:
-            # Write the torrent to file
-            with open(os.path.join(config_settings.options.PW_TORRENT_ARCHIVE_PATH,f"{filename}.torrent"), 'wb') as f:
-                f.write(response.content)
+    def get_torrent_url(self, url: str, filename: str)-> httpx.Response :
+        return self.get_url(url=url)
 
     def search(self, query: str) -> list[Search] | None:
         """Get search queue."""
