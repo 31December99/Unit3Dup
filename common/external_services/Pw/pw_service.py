@@ -23,7 +23,12 @@ class PwService:
     def send_torrent_to_client(self, payload):
         return self.pw_api.send_torrent_to_client(payload)
 
-    def get_torrent_from_pw(self, torrent_url: str, download_filename: str):
-        return self.pw_api.get_torrent_url(url=torrent_url, filename=download_filename)
+    def get_torrent_from_pw(self, torrent_url: str, download_filename: str)-> str | None:
+        response = self.pw_api.get_torrent_url(url=torrent_url, filename=download_filename)
+        # Redirect (PW)
+        if response.status_code == 301:
+            return response.headers.get('Location')
+        return None
+
 
 

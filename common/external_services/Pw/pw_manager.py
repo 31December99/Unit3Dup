@@ -44,12 +44,8 @@ class PwManager:
                      password=config_settings.torrent_client_config.QBIT_PASS)
 
             for torrent in content:
-                print(torrent.title)
-                pw_service.get_torrent_from_pw(torrent_url=torrent.downloadUrl,download_filename=torrent.fileName)
-
-                qb.download_from_file(
-                    file_buffer=open(os.path.join(config_settings.options.PW_TORRENT_ARCHIVE_PATH,
-                                                  f"{torrent.fileName}.torrent"), "rb"),
-                    savepath=config_settings.options.PW_DOWNLOAD,
-                )
+                filename = str(os.path.join(config_settings.options.PW_TORRENT_ARCHIVE_PATH,torrent.fileName))
+                print(filename)
+                magnet = pw_service.get_torrent_from_pw(torrent_url=torrent.downloadUrl,download_filename=filename)
+                qb.download_from_link(magnet, savepath=config_settings.options.PW_DOWNLOAD_PATH)
 
