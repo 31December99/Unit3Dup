@@ -154,6 +154,11 @@ def main():
         torrent_info.view_search(cli.args.search)
         return
 
+    # Dump
+    if cli.args.dump:
+        torrent_info.view_search(cli.args.dump,inkey=False)
+        return
+
     if cli.args.info:
         torrent_info.view_search(cli.args.info, info=True)
         return
