@@ -5,7 +5,10 @@ import os
 
 from common.external_services.Pw.pw_service import PwService
 from common.utility import ManageTitles
+from common.database import Database
 from common import config_settings
+from unit3dup.media import Media
+
 
 from qbittorrent import Client
 from view import custom_console
@@ -19,6 +22,9 @@ class PwManager:
         # filename for the new download
         self.filename = ManageTitles.normalize_filename(self.search)
 
+        # Select the tracker database
+        self.database = Database(db_file=cli.tracker)
+
 
     def process(self):
 
@@ -29,8 +35,6 @@ class PwManager:
         # Query the indexers
         search = pw_service.search(query=self.search)
 
-
-
         content = []
         if search:
             for index, s in enumerate(search):
@@ -40,6 +44,14 @@ class PwManager:
                             content.append(s)
             custom_console.bot_process_table_pw(content=content)
 
+
+            for c in content:
+                test = Media(folder=f"c:\\test\\{c.fileName}", subfolder=f"c:\\test\\{c.fileName}")
+                print(f"[Prowlarr] {c.fileName}")
+                self.database.search(test.guess_title)
+
+
+            """"
             qb.login(username=config_settings.torrent_client_config.QBIT_USER,
                      password=config_settings.torrent_client_config.QBIT_PASS)
 
@@ -48,4 +60,4 @@ class PwManager:
                 print(filename)
                 magnet = pw_service.get_torrent_from_pw(torrent_url=torrent.downloadUrl,download_filename=filename)
                 qb.download_from_link(magnet, savepath=config_settings.options.PW_DOWNLOAD_PATH)
-
+            """
