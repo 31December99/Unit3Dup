@@ -39,7 +39,7 @@ class ImageUploader(ABC):
             try:
                 upload_n += 1
                 response = requests.post(
-                    self.get_endpoint(), data = data, files = files, timeout = 20
+                    self.get_endpoint(), data = data, files = files, timeout = 30
                 )
                 response.raise_for_status()
                 return response.json()
