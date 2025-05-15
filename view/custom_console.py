@@ -69,6 +69,31 @@ class CustomConsole(Console):
 
         self.print(Align.center(table))
 
+    def bot_process_table_pw(self, content: list):
+
+        table = Table(
+            title="Here is your files list" if content else "There are no files here",
+            border_style="bold blue",
+            header_style="red blue",
+        )
+
+        table.add_column("Category", style="dim")
+        table.add_column("Indexer", justify="left", style="bold green")
+        table.add_column("Title", justify="left", style="bold green")
+        table.add_column("Size", justify="left", style="bold green")
+        table.add_column("Seeders", justify="left", style="bold green")
+
+        for item in content:
+            table.add_row(
+                item.categories[0]['name'],
+                item.indexer,
+                item.title,
+                str(item.size),
+                str(item.seeders),
+            )
+
+        self.print(Align.center(table))
+
     def bot_tmdb_table_log(self, result, title: str, media_info_language: str):
 
         self.print("\n")

@@ -47,6 +47,7 @@ class CommandLine:
         parser.add_argument("-ftp", "--ftp", action="store_true", help="Connect to FTP")
 
         # optional
+        parser.add_argument("-dump", "--dump", type=str, help="Download all torrent files")
         parser.add_argument("-s", "--search", type=str, help="Search for torrent")
         parser.add_argument("-i", "--info", type=str, help="Get info on torrent")
         parser.add_argument("-up", "--uploader", type=str, help="Search by uploader")

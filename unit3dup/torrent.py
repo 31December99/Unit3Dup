@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 import re
+import time
 import requests
 
 from common.trackers.trackers import TRACKData
+from common.database import Database
 from unit3dup import pvtTracker
 from view import custom_console
 
@@ -10,8 +12,9 @@ class Torrent:
 
     def __init__(self, tracker_name: str):
 
-        self.perPage = 130
+        self.perPage = 100
         self.tracker = pvtTracker.Unit3d(tracker_name=tracker_name)
+        self.database = Database(db_file=tracker_name)
 
     def get_unique_id(self, media_info: str) -> str:
         # Divido per campi
@@ -142,7 +145,6 @@ class View(Torrent):
     def __init__(self, tracker_name: str):
         super().__init__(tracker_name=tracker_name)
 
-        self.perPage = 130
         # Load the constant tracker
         self.tracker_data = TRACKData.load_from_module(tracker_name=tracker_name)
         print()
@@ -171,10 +173,8 @@ class View(Torrent):
                 f" -> {item['attributes']['name']}"
             )
 
-    @staticmethod
-    def print_normal(tracker_data: dict):
+    def print_normal(self, tracker_data: dict):
         data = [item for item in tracker_data["data"]]
-
         for item in data:
             if item['attributes']['tmdb_id'] != 0:
                 if not item['attributes']['release_year']:
@@ -184,14 +184,18 @@ class View(Torrent):
 
                 media = f"[TRACKER] TMDB: {item['attributes']['tmdb_id']} - {release_year}"
 
+            elif item['attributes']['igdb_id'] !=0:
+                    media = f"[TRACKER] IGDB: {item['attributes']['igdb_id']}"
             else:
-                media = f"[TRACKER] IGDB: {item['attributes']['igdb_id']}"
+                media = f"[TRACKER] DOC:"
 
+            # Print a data to the console
             custom_console.bot_log(f"\n {media} - {item['attributes']['name']}")
+            # Save torrent data into database
+            self.database.write(item['attributes'])
 
 
-
-    def page_view(self, tracker_data: dict, tracker: pvtTracker, info=False):
+    def page_view(self, tracker_data: dict, tracker: pvtTracker, info=False, inkey=True):
 
         self.print_normal(tracker_data) if not info else self.print_info(tracker_data)
         page = 0
@@ -199,12 +203,17 @@ class View(Torrent):
             if not tracker_data["links"]["next"]:
                 break
 
+            # Wait for user input if inkey is True
             page += 1
-            custom_console.bot_question_log(
-                f"\n Prossima Pagina '{page}' - Premi un tasto per continuare, Q(quit) - "
-            )
-            if input().lower() == "q":
-                break
+            if inkey:
+                custom_console.bot_question_log(
+                    f"\n Prossima Pagina '{page}' - Premi un tasto per continuare, Q(quit) - "
+                )
+                if input().lower() == "q":
+                    break
+            else:
+                # otherwise wait for 2 seconds ( 30 request/ 60sec max) dirty
+                time.sleep(2)
             print()
             custom_console.rule(f"\n[bold blue]'Page -> {page}'", style="#ea00d9")
             tracker_data = tracker.next(url=tracker_data["links"]["next"])
@@ -214,11 +223,11 @@ class View(Torrent):
                 else self.print_info(tracker_data)
             )
 
-    def view_search(self, keyword: str, info=False):
+    def view_search(self, keyword: str, info=False, inkey=True):
         tracker_data = self.search(keyword=keyword)
         custom_console.log(f"Searching.. '{keyword}'")
         (
-            self.page_view(tracker_data=tracker_data, tracker=self.tracker)
+            self.page_view(tracker_data=tracker_data, tracker=self.tracker,inkey=inkey)
             if not info
             else self.page_view(
                 tracker_data=tracker_data, tracker=self.tracker, info=True
