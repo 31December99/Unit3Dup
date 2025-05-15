@@ -15,6 +15,7 @@ class ImageUploader(ABC):
         self.image = base64.b64encode(image)
         self.key = key
         self.image_name = image_name
+        self.timeout = 30
 
     @abstractmethod
     def get_endpoint(self):
@@ -39,7 +40,7 @@ class ImageUploader(ABC):
             try:
                 upload_n += 1
                 response = requests.post(
-                    self.get_endpoint(), data = data, files = files, timeout = 20
+                    self.get_endpoint(), data = data, files = files, timeout = self.timeout
                 )
                 response.raise_for_status()
                 return response.json()
@@ -60,7 +61,7 @@ class ImageUploader(ABC):
             except requests.exceptions.Timeout:
                 custom_console.bot_log(
                     f"[{self.__class__.__name__}] We did not receive a response from the server"
-                    f" within the 20 second limit"
+                    f" within the {self.timeout} second limit"
                 )
                 break
 

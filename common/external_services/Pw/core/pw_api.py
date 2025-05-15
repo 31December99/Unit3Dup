@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import os.path
 
+import httpx
+
 from common.external_services.Pw.core.models.torrent_client_config import (
     TorrentClientConfig,
 )
@@ -37,7 +39,7 @@ class PwAPI(MyHttp):
             custom_console.bot_question_log("No PW_API_KEY provided\n")
             exit(1)
 
-    def get_indexers(self) -> ["Indexer"]:
+    def get_indexers(self) -> list[type[[Indexer]]]:
         """Get all indexers."""
 
         response = self.get_url(url=f"{self.base_url}/indexer", params={})
@@ -46,15 +48,10 @@ class PwAPI(MyHttp):
             indexers_list = response.json()
             return [Indexer(**indexer) for indexer in indexers_list]
         else:
-            return []
+            return [Indexer]
 
-    def get_torrent_url(self, url: str, filename: str):
-
-        response = self.get_url(url=url)
-        if response.status_code == 200:
-            # Write the torrent to file
-            with open(os.path.join(config_settings.options.PW_TORRENT_ARCHIVE_PATH,f"{filename}.torrent"), 'wb') as f:
-                f.write(response.content)
+    def get_torrent_url(self, url: str, filename: str)-> httpx.Response :
+        return self.get_url(url=url)
 
     def search(self, query: str) -> list[Search] | None:
         """Get search queue."""
