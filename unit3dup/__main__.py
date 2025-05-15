@@ -127,8 +127,10 @@ def main():
 
     # Pw
     if cli.args.pw:
-        bot = Bot(path=cli.args.pw,cli=cli.args, trackers_name_list=tracker_name_list)
-        bot.pw()
+        print("Not yet implemented")
+        # bot = Bot(path=cli.args.pw,cli=cli.args, trackers_name_list=tracker_name_list)
+        # bot.pw()
+        return
 
 
     # ftp and upload
@@ -156,7 +158,8 @@ def main():
 
     # Dump
     if cli.args.dump:
-        torrent_info.view_search(cli.args.dump,inkey=False)
+        print("Not yet implemented")
+        # torrent_info.view_search(cli.args.dump,inkey=False)
         return
 
     if cli.args.info:
