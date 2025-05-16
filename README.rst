@@ -41,38 +41,27 @@ Install and Upgrade
 
 - pip install unit3dup --upgrade
 
-Ubuntu/Debian Dependencies
---------------------------
-- sudo apt install ffmpeg
-
-Only for pdf
-------------
-- sudo apt install poppler-utils
-
-
 Windows Dependencies
 --------------------
 1. Download and unzip https://www.ffmpeg.org/download.html and add its folder to
    PATH environment user variable
 
 
+Only for pdf
+~~~~~~~~~~~~
 1. Download and unzip poppler for Windows from https://github.com/oschwartz10612/poppler-windows/releases
 2. Put the folder 'bin' in the system path (e.g. ``C:\poppler-24.08.0\Library\bin``)
 3. *Close and reopen a new console window*
 4. Test it: Run ``pdftocairo`` in the terminal
 
 
-Alternative method
-------------------
+Ubuntu/Debian Dependencies
+--------------------------
+- sudo apt install ffmpeg
 
-1. Download the last release (https://github.com/31December99/Unit3Dup/releases)
-
-2. unzip it
-
-3. pip install .
-
-4. unit3dup
-
+Only for pdf
+~~~~~~~~~~~~
+- sudo apt install poppler-utils
 
 
 RUN
