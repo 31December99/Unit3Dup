@@ -162,8 +162,8 @@ class ManageTitles:
         # Remove v version
         filename_sanitized = re.sub(r"v\d+(?:[ .]\d+)*", "", filename_sanitized).strip()
 
-        # Remove dots, hyphens and extra spaces
-        filename_sanitized = re.sub(r"[.\-_]", " ", filename_sanitized)
+        # Remove dots, extra spaces
+        filename_sanitized = re.sub(r"[._]", " ", filename_sanitized)
 
         # remove spaces, tab, newline
         filename_sanitized = re.sub(r"\s+", " ", filename_sanitized)
@@ -183,6 +183,7 @@ class ManageTitles:
         replacements = [
             (r'\b7 \b1\b', '7.1'),
             (r'\b5 \b1\b', '5.1'),
+            (r'\bDDP5 \b1\b', 'DDP5.1'),
             (r'\b2 \b0\b', '2.0'),
             (r'\bWEB \bDL\b', 'WEB-DL'),
             (r'\bWEB \bDLMUX\b', 'WEB-DLMUX'),
