@@ -70,7 +70,7 @@ class ContentManager:
         # and not part of the title
         if media.category=='tv':
             # Search for the first result (Sx) in self.path
-            torrent_pack = bool(re.search(r"S\d+(?!.*E\d+)", self.path))
+            torrent_pack = bool(re.search(r"(S\d+(?!.*E\d+))|(S\d+E\d+-E?\d+)", self.path))
         else:
             torrent_pack = False
 
