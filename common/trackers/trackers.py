@@ -30,6 +30,8 @@ class TRACKData:
     def filter_type(self, file_name: str) -> int:
 
         file_name = ManageTitles.clean(file_name)
+        # Remove '-' from the releaser or unknown encoder
+        file_name = file_name.replace("-", " ")
         word_list = file_name.lower().strip().split(" ")
 
         # Caso 1: Cerca un TYPE_ID nel nome del file
@@ -41,5 +43,4 @@ class TRACKData:
         for word in word_list:
             if word in self.codec:
                 return self.type_id.get("encode", -1)
-
         return self.type_id.get("altro", -1)
