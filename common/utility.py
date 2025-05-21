@@ -190,6 +190,7 @@ class ManageTitles:
             (r'\bBD \bUNTOUCHED\b', 'BD-UNTOUCHED'),
             (r'\bCINEMA \bMD\b', 'CINEMA-MD'),
             (r'\bHEVC \bFHC\b', 'HEVC-FHC'),
+            (r'\bCBR \bCBZ\b', 'CBR-CBZ'),
 
         ]
 
