@@ -1,15 +1,14 @@
 # -*- coding: utf-8 -*-
 import os.path
+import pprint
 
 import httpx
 
-from common.external_services.Pw.core.models.torrent_client_config import (
-    TorrentClientConfig,
-)
+from common.external_services.Pw.core.models.torrent_client_config import  TorrentClientConfig
 from common.external_services.Pw.core.models.indexers import Indexer
 from common.external_services.Pw.core.models.search import Search
-from common.external_services.sessions.session import MyHttp
-from common.external_services.sessions.agents import Agent
+from common.external_services.Pw.sessions.session import MyHttp
+from common.external_services.Pw.sessions.agents import Agent
 from common import config_settings
 
 from view import custom_console
@@ -39,10 +38,10 @@ class PwAPI(MyHttp):
             custom_console.bot_question_log("No PW_API_KEY provided\n")
             exit(1)
 
-    def get_indexers(self) -> list[type[[Indexer]]]:
+    async def get_indexers(self) -> list[type[[Indexer]]]:
         """Get all indexers."""
 
-        response = self.get_url(url=f"{self.base_url}/indexer", params={})
+        response = await self.get_url(url=f"{self.base_url}/indexer", params={})
 
         if response.status_code == 200:
             indexers_list = response.json()
@@ -50,29 +49,21 @@ class PwAPI(MyHttp):
         else:
             return [Indexer]
 
-    def get_torrent_url(self, url: str, filename: str)-> httpx.Response :
-        return self.get_url(url=url)
-
-    def search(self, query: str) -> list[Search] | None:
+    async def search(self, query: str) -> list[Search] | None:
         """Get search queue."""
 
         params = {"query": query}
         url = f"{self.base_url}/search?"
-
-        response = self.get_url(url=url, params=params)
+        response = await self.get_url(url=url, params=params)
         if response:
-            if response.status_code == 200:
-                results_list = response.json()
-                return [Search(**result) for result in results_list]
-            else:
-                return []
+            return [Search(**result) for result in response]
         return None
 
-    def get_torrent_client_ids(self) -> list["TorrentClientConfig"]:
+    async def get_torrent_client_ids(self) -> list["TorrentClientConfig"]:
         """Get a list of torrent client configurations"""
 
         url = f"{self.base_url}/downloadclient"
-        response = self.get_url(url=url, params={})
+        response = await self.get_url(url=url, params={})
 
         if response.status_code == 200:
             configurations_list = response.json()
@@ -83,14 +74,15 @@ class PwAPI(MyHttp):
         else:
             return []
 
-    def send_torrent_to_client(self, payload):
+    async def send_torrent_to_client(self, payload):
         """send torrent to client"""
 
         url = f"{self.base_url}/downloadclient/1"
-        response = self.get_url(url=url, body=payload, get_method=False)
+        response = await self.get_url(url=url, body=payload, get_method=False)
 
         # TODO: Test again - get_url() updated 21/09/2024
         if response.status_code == 202 or response.status_code == 200:
             result = response.json()
         else:
             return []
+

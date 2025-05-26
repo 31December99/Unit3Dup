@@ -74,14 +74,11 @@ class Database:
         self.cursor.execute(sql, values)
         self.database.commit()
 
-    def search(self, query: str):
+    def search(self, query: str)-> list:
         # Search a substring in 'name'
         self.cursor.execute("SELECT name FROM torrents WHERE name LIKE ?", ('%' + query + '%',))
-        results = self.cursor.fetchall()
-        # print the results
-        for r in results:
-            print(f"[database]{r}")
-        input("[DATABASE] Press Enter to continue...")
+        return self.cursor.fetchall()
+
 
 
 
