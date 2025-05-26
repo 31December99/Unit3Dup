@@ -30,6 +30,8 @@ class TRACKData:
     def filter_type(self, file_name: str) -> int:
 
         file_name = ManageTitles.clean(file_name)
+        # >Clean the releaser sign
+        file_name = file_name.replace("-", " ")
         word_list = file_name.lower().strip().split(" ")
 
         # Caso 1: Cerca un TYPE_ID nel nome del file
