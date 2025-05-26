@@ -11,7 +11,6 @@ from unit3dup.media_manager.ContentManager import ContentManager
 from unit3dup.media_manager.TorrentManager import TorrentManager
 
 from common.external_services.ftpx.core.models.list import FTPDirectory
-from common.external_services.Pw.pw_manager import PwManager
 from common.external_services.ftpx.core.menu import Menu
 from common.external_services.ftpx.client import Client
 from common.extractor import Extractor
@@ -177,19 +176,6 @@ class Bot:
 
         except KeyboardInterrupt:
             custom_console.bot_log("Exiting...")
-        return True
-
-    def pw(self)-> bool:
-        """
-        Interacts with the PW service to search for torrent files
-
-        This method performs a search query and logs the results for torrents with
-        a certain number of seeders
-        """
-        # PW service
-        pw_manager = PwManager(cli=self.cli)
-        pw_manager.process()
-        custom_console.panel_message("Searching... Please wait")
         return True
 
 
