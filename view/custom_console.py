@@ -80,16 +80,23 @@ class CustomConsole(Console):
         table.add_column("Category", style="dim")
         table.add_column("Indexer", justify="left", style="bold green")
         table.add_column("Title", justify="left", style="bold green")
-        table.add_column("Size", justify="left", style="bold green")
+        table.add_column("Size (GB)", justify="left", style="bold green")
         table.add_column("Seeders", justify="left", style="bold green")
+        table.add_column("Type_id", justify="left", style="bold green")
+        table.add_column("Resolution", justify="left", style="bold green")
 
-        for item in content:
+        for item, type_id, resolution in content:
+            size = round(item.size / (1024 ** 3), 2)
+
+
             table.add_row(
                 item.categories[0]['name'],
                 item.indexer,
                 item.title,
-                str(item.size),
+                str(size),
                 str(item.seeders),
+                str(type_id),
+                str(resolution),
             )
 
         self.print(Align.center(table))
