@@ -22,7 +22,6 @@ itt_data = {
                 "fullhd": 3,
                 "hevc": 3,
                 "hdrip": 3,
-                "uhd": 3,
                 "vu": 2,
                 "web-dl": 4,
                 "webdl": 4,
