@@ -27,7 +27,7 @@ class TRACKData:
             codec=tracker_data.get("CODEC"),
         )
 
-    def filter_type(self, file_name: str) -> int:
+    def filter_type(self, file_name: str, return_tag=False) -> int:
 
         file_name = ManageTitles.clean(file_name)
         # >Clean the releaser sign
@@ -37,10 +37,10 @@ class TRACKData:
         # Caso 1: Cerca un TYPE_ID nel nome del file
         for word in word_list:
             if word in self.type_id:
-                return self.type_id[word]
+                return self.type_id[word] if return_tag is False else word
 
         # Caso 2: Se non trova un TYPE_ID, cerca un codec e ritorna 'encode'
         for word in word_list:
             if word in self.codec:
-                return self.type_id.get("encode", -1)
-        return self.type_id.get("altro", -1)
+                return self.type_id.get("encode", -1) if return_tag is False else word
+        return self.type_id.get("altro", -1) if return_tag is False else "altro"
