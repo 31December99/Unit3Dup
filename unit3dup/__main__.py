@@ -119,7 +119,7 @@ def main():
 
     # Watcher
     if cli.args.watcher:
-        bot = Bot(path=cli.args.watcher, cli=cli.args, mode="auto", trackers_name_list=tracker_name_list,
+        bot = Bot(path='', cli=cli.args, mode="auto", trackers_name_list=tracker_name_list,
                   torrent_archive_path=tracker_archive)
 
         bot.watcher(duration=config.user_preferences.WATCHER_INTERVAL, watcher_path=config.user_preferences.WATCHER_PATH,
