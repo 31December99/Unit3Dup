@@ -8,6 +8,7 @@ from common.database import Database
 from unit3dup.media import Media
 from common import config_settings
 from common.trackers.trackers import TRACKData
+from common.page import Page
 
 
 
@@ -50,7 +51,16 @@ class Prowlarr:
             return None
 
         # Filter based on movie and serie
-        filtered_results = await self.filter(results=results) # todo occorre accedere alla pagina web infoUrl e estrarre il bitrate se esiste
+        filtered_results = await self.filter(results=results)
+
+        for f in filtered_results:
+            print(f)
+            await self.pw_service.get_page(url=f)
+
+
+        input("END Press Enter to continue...")
+        await self.pw_service.close()
+        return
 
         custom_console.bot_process_table_pw(filtered_results)
 
@@ -86,9 +96,7 @@ class Prowlarr:
         for index, s in enumerate(results):
             # with seeders
             if s.seeders > 0:
-                print(s.infoUrl)
-                input("Press Enter to continue...")
-
+                content.append(s.infoUrl)
                 category = s.categories[0]['name']
                 # and categories
                 if category in ['Movies', 'TV', 'TV/HD', 'Movies/HD', 'Movies/UHD']:

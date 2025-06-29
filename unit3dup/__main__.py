@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import asyncio
 
 from common.torrent_clients import TransmissionClient, QbittorrentClient, RTorrentClient
 from common.command import CommandLine
@@ -8,7 +7,6 @@ from common.settings import Load,DEFAULT_JSON_PATH
 from unit3dup.torrent import View
 from unit3dup import pvtTracker
 from unit3dup.bot import Bot
-from unit3dup.ProwlarrManager import async_pw
 
 from view import custom_console
 
@@ -129,7 +127,11 @@ def main():
 
     # Pw
     if cli.args.pw:
-        asyncio.run(async_pw(title=cli.args.pw))
+        bot = Bot(path=cli.args.pw, cli=cli.args, trackers_name_list=tracker_name_list,
+                  torrent_archive_path=tracker_archive)
+        bot.prowlarr()
+
+        # asyncio.run(async_pw(title=cli.args.pw))
         return
 
 

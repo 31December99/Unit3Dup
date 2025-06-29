@@ -14,7 +14,7 @@ class PwService:
     async def init(self):
         await self.pw_api.init_session()
 
-    async def get_indexers(self) -> [Indexer]:
+    async def get_indexers(self) ->  list[type[[Indexer]]]:
         return await self.pw_api.get_indexers()
 
     async def search(self, query: str) -> list[Search]:
@@ -25,6 +25,10 @@ class PwService:
 
     async def send_torrent_to_client(self, payload):
         return await self.pw_api.send_torrent_to_client(payload)
+
+
+    async def get_page(self, url: str):
+            return await self.pw_api.get_content(url=url)
 
     async def close(self):
         await self.pw_api.close()

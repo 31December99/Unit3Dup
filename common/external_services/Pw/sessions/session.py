@@ -54,7 +54,7 @@ class MyHttp:
             async with self.session.post(url, params=params, headers=headers, data=data) as response:
                 content = await response.read()
 
-            # Decodifica il contenuto in bytes in formato JSON
+        # Decodifica il contenuto in bytes in formato JSON
         decoded_content = content.decode('utf-8')  # Decodifica bytes in stringa
         try:
             # Parsifica la stringa JSON in un dizionario
@@ -67,6 +67,21 @@ class MyHttp:
             self.cache[cache_key] = json_data  # Salva i dati JSON nel cache
 
         return json_data  # Restituisci i dati parsificati come dizionario JSON
+
+    async def get_page(
+        self,
+        url: str,
+        headers: dict = None,
+        use_cache: bool = False,
+    ):
+        """Richiesta GET o POST asincrona"""
+        #         await self.init_session()
+
+        async with self.session.get(url, headers=headers) as response:
+            content = await response.read()
+        print(content)
+        input("Pression")
+
 
 
     @exception_handler(log_errors=ENABLE_LOG)

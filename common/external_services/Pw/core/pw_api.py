@@ -15,7 +15,7 @@ from view import custom_console
 
 class PwAPI(MyHttp):
 
-    def __init__(self):
+    def     __init__(self):
         """
         Initialize the PwApi instance
         """
@@ -85,4 +85,7 @@ class PwAPI(MyHttp):
             result = response.json()
         else:
             return []
+
+    async def get_content(self, url: str):
+        return await self.get_page(url=url)
 

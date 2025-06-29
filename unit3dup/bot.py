@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+import asyncio
 from pathlib import Path
 import argparse
 import os
@@ -9,6 +9,7 @@ import shutil
 from unit3dup.media import Media
 from unit3dup.media_manager.ContentManager import ContentManager
 from unit3dup.media_manager.TorrentManager import TorrentManager
+from unit3dup.media_manager.ProwlarrManager import async_pw
 
 from common.external_services.ftpx.core.models.list import FTPDirectory
 from common.external_services.ftpx.core.menu import Menu
@@ -231,3 +232,11 @@ class Bot:
 
             self.run()
         return None
+
+    def prowlarr(self):
+        asyncio.run(async_pw(title=self.cli.pw))
+
+
+
+
+
