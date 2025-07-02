@@ -14,7 +14,7 @@ class Media:
         self.folder: str = folder
         self.subfolder: str = subfolder
         self.title: str = os.path.basename(os.path.join(self.folder, self.subfolder))
-        self._is_tv: bool = False
+        self._not_title_lang = False
 
         # // Media
         self._crew_list: list[str] | None = None
@@ -52,6 +52,10 @@ class Media:
         self._imdb_id: int | None = None
         self._igdb_id: int | None = None
         self._generate_title: str | None = None
+
+    @property
+    def no_title_lang(self) -> bool:
+        return self._not_title_lang
 
     @property
     def title_sanitized(self)-> str:
@@ -279,6 +283,8 @@ class Media:
                 if converted_code := ManageTitles.convert_iso(code):
                     self._audio_languages = converted_code
                     return self._audio_languages
+            # no language found in title
+            self._not_title_lang = True
             # get from the audio track
             self._audio_languages = self.languages
         return self._audio_languages

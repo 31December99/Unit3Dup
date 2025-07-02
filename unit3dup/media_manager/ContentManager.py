@@ -51,6 +51,10 @@ class ContentManager:
             content = self.get_data(media=media)
             if content:
                 contents.append(content)
+
+            # Add language to the title from the media file when it's absent
+            if not media._not_title_lang:
+                media.display_name = " ".join([media.display_name] + media.audio_languages)
         return contents
 
     def get_data(self, media: Media) -> Media | bool:
