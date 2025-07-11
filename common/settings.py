@@ -13,7 +13,7 @@ from common.utility import ManageTitles
 from common import trackers
 
 config_file = "Unit3Dbot.json"
-version = "0.9.0"
+version = "0.8.15"
 
 if os.name == "nt":
     PW_TORRENT_ARCHIVE_PATH: Path = Path(os.getenv("LOCALAPPDATA", ".")) / "Unit3Dup_config" / "pw_torrent_archive"
