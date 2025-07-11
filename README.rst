@@ -31,6 +31,9 @@ It performs the following tasks:
 - Seed your torrents across different OS
 - Add a custom title to your seasons
 - Generate info for a title using MediaInfo
+- Search keywords and save the results in a sqlite database
+- Dump the tracker to the sqlite database
+
 
 unit3dup can grab the first page, convert it to an image (using xpdf),
 and then the bot can upload it to an image host, then add the link to the torrent page description.
@@ -64,6 +67,12 @@ Only for pdf
 - sudo apt install poppler-utils
 
 
+DATABASE
+========
+
+- You can use the handy SQLiteStudio to read the database https://sqlitestudio.pl
+
+
 RUN
 ======
 
@@ -72,7 +81,8 @@ RUN
    unit3dup -u <filepath>
    unit3dup -f <folderpath>
    unit3dup -scan <folderpath>
-
+   unit3dup -s <yourtitle>
+   unit3dup -dump
 
 
 DOC
