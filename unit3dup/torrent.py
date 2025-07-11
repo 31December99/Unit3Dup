@@ -147,6 +147,7 @@ class View(Torrent):
 
         # Load the constant tracker
         self.tracker_data = TRACKData.load_from_module(tracker_name=tracker_name)
+        self.tracker_name = tracker_name
         print()
 
     def get_unique_id(self, media_info: str) -> str:
@@ -182,12 +183,12 @@ class View(Torrent):
                 else:
                     release_year = item['attributes']['release_year']
 
-                media = f"[TRACKER] TMDB: {item['attributes']['tmdb_id']} - {release_year}"
+                media = f"{self.tracker_name} - TMDB: {item['attributes']['tmdb_id']} - {release_year}"
 
             elif item['attributes']['igdb_id'] !=0:
-                    media = f"[TRACKER] IGDB: {item['attributes']['igdb_id']}"
+                    media = f"{self.tracker_name} IGDB: {item['attributes']['igdb_id']}"
             else:
-                media = f"[TRACKER] DOC:"
+                media = f"{self.tracker_name} DOC:"
 
             # Print a data to the console
             custom_console.bot_log(f"\n {media} - {item['attributes']['name']}")
