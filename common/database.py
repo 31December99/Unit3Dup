@@ -1,5 +1,7 @@
 import json
+import os
 import sqlite3
+from unit3dup import config_settings
 
 # Torrent attributes
 create_table_sql = ('\n'
@@ -53,13 +55,16 @@ class Database:
 
     def __init__(self, db_file):
         self.filename = db_file
-        self.database = sqlite3.connect(f"{db_file}.db")
+        self.CACHE_PATH = config_settings.user_preferences.CACHE_PATH
+        self.database = sqlite3.connect(os.path.join(self.CACHE_PATH,f"{db_file}.db"))
         self.cursor = self.database.cursor()
         self.build()
 
     def build(self):
+        self.cursor.execute("DROP TABLE IF EXISTS torrents")
         self.cursor.execute(create_table_sql)
         self.database.commit()
+
 
     def write(self, data: dict):
         for key, value in data.items():
@@ -69,26 +74,6 @@ class Database:
         keys = ', '.join(data.keys())
         placeholders = ', '.join(['?'] * len(data))
         values = tuple(data.values())
-
         sql = f'''INSERT INTO torrents ({keys}) VALUES ({placeholders})'''
         self.cursor.execute(sql, values)
         self.database.commit()
-
-    def search(self, query: str):
-        # Search a substring in 'name'
-        self.cursor.execute("SELECT name FROM torrents WHERE name LIKE ?", ('%' + query + '%',))
-        results = self.cursor.fetchall()
-        # print the results
-        for r in results:
-            print(f"[database]{r}")
-        input("[DATABASE] Press Enter to continue...")
-
-
-
-
-
-
-
-
-
-

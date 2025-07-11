@@ -125,14 +125,6 @@ def main():
         bot.watcher(duration=config.user_preferences.WATCHER_INTERVAL, watcher_path=config.user_preferences.WATCHER_PATH,
                     destination_path = config.user_preferences.WATCHER_DESTINATION_PATH)
 
-    # Pw
-    if cli.args.pw:
-        print("Not yet implemented")
-        # bot = Bot(path=cli.args.pw,cli=cli.args, trackers_name_list=tracker_name_list)
-        # bot.pw()
-        return
-
-
     # ftp and upload
     if cli.args.ftp:
         bot = Bot(path='', cli=cli.args, mode="folder", trackers_name_list=tracker_name_list)
@@ -153,13 +145,14 @@ def main():
 
     # Search by different criteria
     if cli.args.search:
-        torrent_info.view_search(cli.args.search)
+        print("NOT YET IMPLEMENTED")
+        # torrent_info.view_search(cli.args.search)
         return
 
     # Dump
     if cli.args.dump:
-        print("Not yet implemented")
-        # torrent_info.view_search(cli.args.dump,inkey=False)
+        print("NOT YET IMPLEMENTED")
+        # torrent_info.view_search(" ", inkey=False)
         return
 
     if cli.args.info:

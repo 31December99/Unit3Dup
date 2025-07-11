@@ -11,7 +11,6 @@ from unit3dup.media_manager.ContentManager import ContentManager
 from unit3dup.media_manager.TorrentManager import TorrentManager
 
 from common.external_services.ftpx.core.models.list import FTPDirectory
-from common.external_services.Pw.pw_manager import PwManager
 from common.external_services.ftpx.core.menu import Menu
 from common.external_services.ftpx.client import Client
 from common.extractor import Extractor
