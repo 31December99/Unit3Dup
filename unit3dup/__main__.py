@@ -150,8 +150,7 @@ def main():
 
     # Dump
     if cli.args.dump:
-        print("NOT YET IMPLEMENTED")
-        # torrent_info.view_search(" ", inkey=False)
+        torrent_info.view_search(" ", inkey=False)
         return
 
     if cli.args.info:
