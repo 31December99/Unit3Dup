@@ -43,11 +43,10 @@ class CommandLine:
         parser.add_argument("-duplicate", "--duplicate", action="store_true", help="Find duplicates")
         parser.add_argument("-personal", "--personal", action="store_true", help="Set to personal release")
 
-        parser.add_argument("-pw", "--pw", type=str, help="")
         parser.add_argument("-ftp", "--ftp", action="store_true", help="Connect to FTP")
 
         # optional
-        parser.add_argument("-dump", "--dump", type=str, help="Download all torrent files")
+        parser.add_argument("-dump", "--dump", action="store_true", help="Download all torrent titles")
         parser.add_argument("-s", "--search", type=str, help="Search for torrent")
         parser.add_argument("-i", "--info", type=str, help="Get info on torrent")
         parser.add_argument("-up", "--uploader", type=str, help="Search by uploader")
