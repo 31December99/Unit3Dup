@@ -178,19 +178,6 @@ class Bot:
             custom_console.bot_log("Exiting...")
         return True
 
-    def pw(self)-> bool:
-        """
-        Interacts with the PW service to search for torrent files
-
-        This method performs a search query and logs the results for torrents with
-        a certain number of seeders
-        """
-        # PW service
-        pw_manager = PwManager(cli=self.cli)
-        pw_manager.process()
-        custom_console.panel_message("Searching... Please wait")
-        return True
-
 
     def ftp(self)-> None:
         """
