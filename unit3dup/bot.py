@@ -54,6 +54,10 @@ class Bot:
         """
         custom_console.panel_message("Analyzing your media files... Please wait")
 
+        if not os.path.exists(self.path):
+            custom_console.bot_error_log("Path doesn't exist")
+            return False
+
         # Get a Files list with basic attributes and create a content object for each
         self.content_manager: ContentManager = ContentManager(path=self.path, mode=self.mode, cli=self.cli)
         contents = self.content_manager.process()
@@ -61,10 +65,6 @@ class Bot:
         # -u requires a single file
         if not contents:
             custom_console.bot_error_log("There are no Media to process")
-            return False
-
-        if not os.path.exists(self.path):
-            custom_console.bot_error_log("Path doesn't exist")
             return False
 
         # we got a handled exception
