@@ -174,7 +174,7 @@ class View(Torrent):
                 f" -> {item['attributes']['name']}"
             )
 
-    def print_normal(self, tracker_data: dict):
+    def print_normal(self, tracker_data: dict, save= False):
         data = [item for item in tracker_data["data"]]
         for item in data:
             if item['attributes']['tmdb_id'] != 0:
@@ -192,13 +192,14 @@ class View(Torrent):
 
             # Print a data to the console
             custom_console.bot_log(f"\n {media} - {item['attributes']['name']}")
-            # Save torrent data into database
-            self.database.write(item['attributes'])
+            # Save torrent data into database by -db flag
+            if save:
+                self.database.write(item['attributes'])
 
 
-    def page_view(self, tracker_data: dict, tracker: pvtTracker, info=False, inkey=True):
+    def page_view(self, tracker_data: dict, tracker: pvtTracker, info=False, inkey=True, save=False):
 
-        self.print_normal(tracker_data) if not info else self.print_info(tracker_data)
+        self.print_normal(tracker_data,save=save) if not info else self.print_info(tracker_data)
         page = 0
         while True:
             if not tracker_data["links"]["next"]:
@@ -219,16 +220,16 @@ class View(Torrent):
             custom_console.rule(f"\n[bold blue]'Page -> {page}'", style="#ea00d9")
             tracker_data = tracker.next(url=tracker_data["links"]["next"])
             (
-                self.print_normal(tracker_data)
+                self.print_normal(tracker_data, save=save)
                 if not info
                 else self.print_info(tracker_data)
             )
 
-    def view_search(self, keyword: str, info=False, inkey=True):
+    def view_search(self, keyword: str, info=False, inkey=True, save=False):
         tracker_data = self.search(keyword=keyword)
         custom_console.log(f"Searching.. '{keyword}'")
         (
-            self.page_view(tracker_data=tracker_data, tracker=self.tracker,inkey=inkey)
+            self.page_view(tracker_data=tracker_data, tracker=self.tracker,inkey=inkey, save=save)
             if not info
             else self.page_view(
                 tracker_data=tracker_data, tracker=self.tracker, info=True
