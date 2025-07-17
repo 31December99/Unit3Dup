@@ -191,6 +191,7 @@ class ManageTitles:
             (r'\bCINEMA \bMD\b', 'CINEMA-MD'),
             (r'\bHEVC \bFHC\b', 'HEVC-FHC'),
             (r'\bCBR \bCBZ\b', 'CBR-CBZ'),
+            (r'\bH \b264\b', 'H.264'),
 
         ]
 
