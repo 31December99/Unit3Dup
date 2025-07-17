@@ -51,10 +51,6 @@ class ContentManager:
             content = self.get_data(media=media)
             if content:
                 contents.append(content)
-
-            # Add language to the title from the media file when it's absent
-            if not media._not_title_lang:
-                media.display_name = " ".join([media.display_name] + media.audio_languages)
         return contents
 
     def get_data(self, media: Media) -> Media | bool:
@@ -93,6 +89,10 @@ class ContentManager:
             media.igdb_id = self.igdb_id
             media.display_name = self.display_name
 
+            # Add language to the title from the media file when it's absent
+            for found_languages in media.audio_languages:
+                if found_languages not in media.display_name:
+                    media.display_name = f"{media.display_name}  {found_languages}"
             return media
         else:
             return False
