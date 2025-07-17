@@ -48,6 +48,7 @@ class CommandLine:
         # optional
         parser.add_argument("-dump", "--dump", action="store_true", help="Download all torrent titles")
         parser.add_argument("-s", "--search", type=str, help="Search for torrent")
+        parser.add_argument("-db", "--dbsave", action="store_true", help="Save the search results")
         parser.add_argument("-i", "--info", type=str, help="Get info on torrent")
         parser.add_argument("-up", "--uploader", type=str, help="Search by uploader")
         parser.add_argument("-desc", "--description", type=str, help="Search by description")
