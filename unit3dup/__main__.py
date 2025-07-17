@@ -145,8 +145,7 @@ def main():
 
     # Search by different criteria
     if cli.args.search:
-        print("NOT YET IMPLEMENTED")
-        # torrent_info.view_search(cli.args.search)
+        torrent_info.view_search(cli.args.search, save=cli.args.dbsave)
         return
 
     # Dump
