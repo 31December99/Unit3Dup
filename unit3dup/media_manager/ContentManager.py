@@ -91,7 +91,7 @@ class ContentManager:
 
             # Add language to the title from the media file when it's absent
             for found_languages in media.audio_languages:
-                if found_languages not in media.display_name:
+                if found_languages not in media.display_name.upper():
                     media.display_name = f"{media.display_name}  {found_languages}"
             return media
         else:
