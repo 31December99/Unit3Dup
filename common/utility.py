@@ -37,6 +37,11 @@ class ManageTitles:
         "BR": "BRA",
         "RU": "RUS",
         "CN": "CHN",
+        "EN-US": "ENG",
+        "EN-GB": "ENG",
+        "EN-AU": "ENG",
+        "ES-ES": "ESP",
+        "ES-MX": "ESP"
     }
 
     @staticmethod
