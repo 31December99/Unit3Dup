@@ -45,6 +45,7 @@ class Auto:
             if self.auto == "folder":
                 # -f command (single folder series or 'saga')
                 return self._lists(files_path=[], subfolders_path=[self.path])
+            return None
         else:
             return self._lists(files_path=[self.path], subfolders_path=[])
 
