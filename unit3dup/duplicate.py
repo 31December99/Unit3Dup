@@ -139,7 +139,7 @@ class Duplicate:
         return self.search(torrent=self.torrent_info.search(self.query.guessit_title))
 
 
-    def process_dead_torrents(self, tmdb_id: int)-> list[requests] | None:
+    def process_dead_torrents(self, tmdb_id: int)-> list[requests.Response] | None:
          # Get the dead torrents
          torrents = self.torrent_info.get_by_tmdb_id(tmdb_id=tmdb_id)
          dead_torrents = []
