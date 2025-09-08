@@ -15,9 +15,6 @@ from view import custom_console
 
 class UploadBot:
     def __init__(self, content: Media, tracker_name: str, cli: argparse):
-
-        self.API_TOKEN = config_settings.tracker_config.ITT_APIKEY
-        self.BASE_URL = config_settings.tracker_config.ITT_URL
         self.cli = cli
         self.content = content
         self.tracker_name = tracker_name
@@ -112,5 +109,30 @@ class UploadBot:
 
         tracker_response=self.tracker.upload_t(data=self.tracker.data, torrent_path=self.content.torrent_path,
                                         torrent_archive_path = torrent_archive,nfo_path=nfo_path)
-        return self.message(tracker_response)
 
+        # https://github.com/HDInnovations/UNIT3D/pull/4910/files
+        # 08/09/2025
+        # We have to download the torrent file to get the new random info_hash generated
+
+        if tracker_response.status_code == 200:
+            response_dict = json.loads(tracker_response.text)
+
+            print("Success:", response_dict["success"])
+            print("Data (URL):", response_dict["data"])
+            print("Message:", response_dict["message"])
+
+            # Overwrites local torrent file
+            self.download_file(url=response_dict["data"],destination_path=torrent_archive)
+            return self.message(tracker_response)
+        # TODO : return None
+        return None
+
+
+    def download_file(self, url: str, destination_path: str) -> bool:
+        download = requests.get(url)
+        if download.status_code == 200:
+            # File archived
+            with open(destination_path, "wb") as file:
+                file.write(download.content)
+            return True
+        return False

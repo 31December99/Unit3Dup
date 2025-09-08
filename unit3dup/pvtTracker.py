@@ -327,10 +327,28 @@ class Torrents(Tracker):
 
 
 class Uploader(Tracker):
+    def upload_t2(self, data: dict, torrent_path: str, torrent_archive_path: str, nfo_path=None) -> requests.Response:
+        files = {}
+        # Binary mode
+        with open(torrent_archive_path, 'rb') as torrent_file:
+            files['torrent'] = ('upload.torrent', torrent_file, 'application/x-bittorrent')
+
+            # Add the info file
+            if nfo_path:
+                with open(nfo_path, 'rb') as nfo_file:
+                    files['nfo'] = ('file.nfo', nfo_file, 'text/plain')
+                    # Post both
+                    response = self._post(file=files, data=data, params=self.params)
+            else:
+                # Post the torrent
+                response = self._post(file=files, data=data, params=self.params)
+
+        return response
+
     def upload_t(self, data: dict, torrent_path: str, torrent_archive_path: str, nfo_path = None) -> requests:
         file_torrent = {"torrent": torrent_archive_path}
         if nfo_path:
-            file_torrent.update({"nfo": self.encode_utf8(file_path=nfo_path)})
+            file_torrent.update({"nfo": self.encode_utf8(file_path=nfo_path)}) #  <- to do
 
         return self._post(file=file_torrent, data=data, params=self.params)
 
