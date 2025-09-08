@@ -166,7 +166,7 @@ class UserContent:
             return False
 
     @staticmethod
-    def can_ressed(content: Media, tracker_name: str,  cli: argparse.Namespace, tmdb_id :int) -> list[requests]:
+    def can_ressed(content: Media, tracker_name: str,  cli: argparse.Namespace, tmdb_id :int) -> list[requests.Response]:
         """
            Search for a duplicate and compare with the user content. Delta = config.SIZE_TH
 
