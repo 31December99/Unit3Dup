@@ -90,12 +90,14 @@ class ContentManager:
             media.display_name = self.display_name
 
             # Add language to the title from the media file when it's absent
-            for found_languages in media.audio_languages:
-                if found_languages not in media.display_name.upper():
-                    media.display_name = f"{media.display_name}  {found_languages}"
+            if media.category == 'tv':
+                for found_languages in media.audio_languages:
+                    if found_languages not in media.display_name.upper():
+                        media.display_name = f"{media.display_name}  {found_languages}"
             return media
         else:
             return False
+
 
     def search_ids(self):
         _id = re.findall(r"\{(imdb-\d+|tmdb-\d+|igdb-\d+)}", self.file_name, re.IGNORECASE)
