@@ -97,21 +97,10 @@ class Tracker(Myhttp):
                 exit(1)
 
     def _post(self, file: dict, data: dict, params: dict):
-        with open(file['torrent'], "rb") as torrent:
-
-            # // Send content and mime type
-            file_ = {
-                "torrent": ("filename.torrent", torrent, "application/octet-stream"),
-            }
-
-            # // Send nfo
-            if file.get('nfo', None):
-                file_.update({"nfo": ("filename.nfo", file['nfo'], "text/plain")})
-
             try:
                 return requests.post(
                     url=self.upload_url,
-                    files=file_,
+                    files=file,
                     data=data,
                     headers=self.headers,
                     params=params,
@@ -327,7 +316,7 @@ class Torrents(Tracker):
 
 
 class Uploader(Tracker):
-    def upload_t2(self, data: dict, torrent_path: str, torrent_archive_path: str, nfo_path=None) -> requests.Response:
+    def upload_t(self, data: dict, torrent_archive_path: str, nfo_path=None) -> requests.Response:
         files = {}
         # Binary mode
         with open(torrent_archive_path, 'rb') as torrent_file:
@@ -345,12 +334,6 @@ class Uploader(Tracker):
 
         return response
 
-    def upload_t(self, data: dict, torrent_path: str, torrent_archive_path: str, nfo_path = None) -> requests:
-        file_torrent = {"torrent": torrent_archive_path}
-        if nfo_path:
-            file_torrent.update({"nfo": self.encode_utf8(file_path=nfo_path)}) #  <- to do
-
-        return self._post(file=file_torrent, data=data, params=self.params)
 
     @staticmethod
     def encode_utf8(file_path:str) -> bytes | io.BytesIO:
