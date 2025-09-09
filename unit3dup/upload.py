@@ -15,9 +15,6 @@ from view import custom_console
 
 class UploadBot:
     def __init__(self, content: Media, tracker_name: str, cli: argparse):
-
-        self.API_TOKEN = config_settings.tracker_config.ITT_APIKEY
-        self.BASE_URL = config_settings.tracker_config.ITT_URL
         self.cli = cli
         self.content = content
         self.tracker_name = tracker_name
@@ -26,7 +23,7 @@ class UploadBot:
         self.sign = (f"[url=https://github.com/31December99/Unit3Dup][code][color=#00BFFF][size=14]Uploaded with Unit3Dup"
                      f" {Load.version}[/size][/color][/code][/url]")
 
-    def message(self,tracker_response: requests.Response) -> (requests, dict):
+    def message(self,tracker_response: requests.Response, torrent_archive: str) -> (requests, dict):
 
         name_error = ''
         info_hash_error = ''
@@ -38,6 +35,10 @@ class UploadBot:
             tracker_response_body = json.loads(tracker_response.text)
             custom_console.bot_log(f"\n[RESPONSE]-> '{self.tracker_name}'.....{tracker_response_body['message'].upper()}\n\n")
             custom_console.rule()
+            # https://github.com/HDInnovations/UNIT3D/pull/4910/files
+            # 08/09/2025
+            # We have to download the torrent file to get the new random info_hash generated
+            self.download_file(url=tracker_response_body["data"],destination_path=torrent_archive)
             return tracker_response_body["data"],{}
 
         elif tracker_response.status_code == 401:
@@ -110,7 +111,17 @@ class UploadBot:
 
     def send(self, torrent_archive: str, nfo_path = None) -> (requests, dict):
 
-        tracker_response=self.tracker.upload_t(data=self.tracker.data, torrent_path=self.content.torrent_path,
-                                        torrent_archive_path = torrent_archive,nfo_path=nfo_path)
-        return self.message(tracker_response)
+        tracker_response=self.tracker.upload_t(data=self.tracker.data,torrent_archive_path = torrent_archive,
+                                               nfo_path=nfo_path)
+        return self.message(tracker_response=tracker_response, torrent_archive=torrent_archive)
 
+
+    @staticmethod
+    def download_file(url: str, destination_path: str) -> bool:
+        download = requests.get(url)
+        if download.status_code == 200:
+            # File archived
+            with open(destination_path, "wb") as file:
+                file.write(download.content)
+            return True
+        return False
