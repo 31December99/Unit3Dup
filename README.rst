@@ -122,7 +122,7 @@ united by a shared passion for torrents and more
    :alt: Unisciti su Telegram
 
 .. image:: https://img.shields.io/discord/1214696147600408698?label=Discord&logo=discord&style=flat
-   :target: https://discord.gg/8hRTjV8Q
+   :target: https://discord.gg/4GHdbFAAdz
    :alt: Discord Server
 
 
