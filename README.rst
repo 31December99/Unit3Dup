@@ -81,6 +81,30 @@ DOC
 Link `Unit3DUP <https://unit3dup.readthedocs.io/en/latest/index.html#>`_
 
 
+ImageHost
+=========
+
+The Italian tracker: a multitude of people from diverse technical and social backgrounds,
+united by a shared passion for torrents and more
+
++------------------+----------------------------+
+| **Trackers**     | **Description**            |
++==================+============================+
+| ``ImgBB``        | https://imgbb.com          |
++==================+============================+
+| ``FreeImage``    | https://freeimage.host     |
++==================+============================+
+| ``PtScreens``    | https://ptscreens.com      |
++==================+============================+
+| ``LensDump``     | https://lensdump.com       |
++==================+============================+
+| ``ImgFI``        | https://imgfi.com          |
++==================+============================+
+| ``PassIMA``      | https://passtheima.ge      |
++==================+============================+
+| ``ImaRide``      | https://www.imageride.net  |
++------------------+----------------------------+
+
 
 Trackers
 ========
