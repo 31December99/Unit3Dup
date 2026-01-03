@@ -81,6 +81,28 @@ DOC
 Link `Unit3DUP <https://unit3dup.readthedocs.io/en/latest/index.html#>`_
 
 
+ImageHost
+=========
+
+The bot can upload images to the following image hosting platforms:
+
++------------------+----------------------------+
+| **Image Host**   | **URL**                    |
++==================+============================+
+| ``ImgBB``        | https://imgbb.com          |
++------------------+----------------------------+
+| ``FreeImage``    | https://freeimage.host     |
++------------------+----------------------------+
+| ``PtScreens``    | https://ptscreens.com      |
++------------------+----------------------------+
+| ``LensDump``     | https://lensdump.com       |
++------------------+----------------------------+
+| ``ImgFI``        | https://imgfi.com          |
++------------------+----------------------------+
+| ``PassIMA``      | https://passtheima.ge      |
++------------------+----------------------------+
+| ``ImaRide``      | https://www.imageride.net  |
++------------------+----------------------------+
 
 Trackers
 ========
@@ -100,7 +122,7 @@ united by a shared passion for torrents and more
    :alt: Unisciti su Telegram
 
 .. image:: https://img.shields.io/discord/1214696147600408698?label=Discord&logo=discord&style=flat
-   :target: https://discord.gg/8hRTjV8Q
+   :target: https://discord.gg/Skvune9P
    :alt: Discord Server
 
 

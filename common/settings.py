@@ -13,7 +13,7 @@ from common.utility import ManageTitles
 from common import trackers
 
 config_file = "Unit3Dbot.json"
-version = "0.8.19"
+version = "0.8.20"
 
 if os.name == "nt":
     PW_TORRENT_ARCHIVE_PATH: Path = Path(os.getenv("LOCALAPPDATA", ".")) / "Unit3Dup_config" / "pw_torrent_archive"
@@ -69,6 +69,7 @@ class TrackerConfig(BaseModel):
     PTSCREENS_KEY: str | None = None
     IMGFI_KEY: str | None = None
     PASSIMA_KEY: str | None = None
+    IMARIDE_KEY: str | None = None
     YOUTUBE_KEY: str | None = None
     IGDB_CLIENT_ID: str | None = None
     IGDB_ID_SECRET: str | None = None
@@ -102,6 +103,8 @@ class UserPreferences(BaseModel):
     IMGBB_PRIORITY: int = 3
     IMGFI_PRIORITY: int = 4
     PASSIMA_PRIORITY: int = 5
+    IMARIDE_PRIORITY: int = 6
+
     NUMBER_OF_SCREENSHOTS: int = 4
     YOUTUBE_FAV_CHANNEL_ID: str | None = None
     YOUTUBE_CHANNEL_ENABLE: bool = False
@@ -429,7 +432,8 @@ class Config(BaseModel):
                     section[field] = Validate.string(value=section[field], field_name=field)
 
                 if field in ['NUMBER_OF_SCREENSHOTS','COMPRESS_SCSHOT','IMGBB_PRIORITY','FREE_IMAGE_PRIORITY',
-                             'LENSDUMP_PRIORITY','PASSIMA_PRIORITY','WATCHER_INTERVAL','SIZE_TH', 'FAST_LOAD']:
+                             'LENSDUMP_PRIORITY','PASSIMA_PRIORITY','IMARIDE_PRIORITY', 'WATCHER_INTERVAL','SIZE_TH',
+                             'FAST_LOAD']:
                     section[field] = Validate.integer(value=section[field], field_name=field)
 
                 if field == 'PREFERRED_LANG':
@@ -531,6 +535,7 @@ class Load:
                 "PTSCREENS_KEY": "no_key",
                 "IMGFI_KEY": "no_key",
                 "PASSIMA_KEY": "no_key",
+                "IMARIDE_KEY": "no_key",
                 "YOUTUBE_KEY": "no_key",
                 "IGDB_CLIENT_ID": "no_key",
                 "IGDB_ID_SECRET": "no_key",
@@ -562,6 +567,7 @@ class Load:
                 "IMGBB_PRIORITY": 3,
                 "IMGFI_PRIORITY": 4,
                 "PASSIMA_PRIORITY": 5,
+                "IMARIDE_PRIORITY": 6,
                 "NUMBER_OF_SCREENSHOTS": 4,
                 "YOUTUBE_FAV_CHANNEL_ID": "UCGCbxpnt25hWPFLSbvwfg_w",
                 "YOUTUBE_CHANNEL_ENABLE": "False",
