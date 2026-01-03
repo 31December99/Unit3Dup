@@ -179,6 +179,21 @@ class PassIMA(ImageUploader):
         return 'source'
 
 
+class ImaRide(ImageUploader):
+
+    priority= config_settings.user_preferences.IMARIDE_PRIORITY
+    def get_endpoint(self) -> str:
+        return "https://www.imageride.net/api/1/upload"
+
+    def get_data(self) -> dict:
+        return {
+            "key": self.key,
+            "title": self.image_name,
+        }
+
+    def get_field_name(self) -> str:
+        return 'source'
+
 class ImageUploaderFallback:
     def __init__(self, uploader):
         self.uploader = uploader
@@ -231,6 +246,9 @@ class ImageUploaderFallback:
         if uploader_host == "PassIMA":
             return response['image']['url']
 
+        if uploader_host == "ImaRide":
+            return response['image']['url']
+
         return None
 
 class Build:
@@ -251,6 +269,7 @@ class Build:
         self.PTSCREENS_KEY= config_settings.tracker_config.PTSCREENS_KEY
         self.IMGFI_KEY = config_settings.tracker_config.IMGFI_KEY
         self.PASSIMA_KEY = config_settings.tracker_config.PASSIMA_KEY
+        self.IMARIDE_KEY = config_settings.tracker_config.IMARIDE_KEY
         self.extracted_frames = extracted_frames
 
 
@@ -271,6 +290,7 @@ class Build:
                 LensDump(img_bytes, self.LENSDUMP_KEY,image_name=image_name),
                 ImgFi(img_bytes, self.IMGFI_KEY,image_name=image_name),
                 PassIMA(img_bytes, self.PASSIMA_KEY, image_name=image_name),
+                ImaRide(img_bytes, self.IMARIDE_KEY, image_name=image_name),
             ]
 
             # Sorting list based on priority
