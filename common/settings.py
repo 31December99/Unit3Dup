@@ -13,7 +13,7 @@ from common.utility import ManageTitles
 from common import trackers
 
 config_file = "Unit3Dbot.json"
-version = "0.8.20"
+version = "0.8.21"
 
 if os.name == "nt":
     PW_TORRENT_ARCHIVE_PATH: Path = Path(os.getenv("LOCALAPPDATA", ".")) / "Unit3Dup_config" / "pw_torrent_archive"
@@ -111,6 +111,7 @@ class UserPreferences(BaseModel):
     DUPLICATE_ON: bool = False
     SKIP_DUPLICATE: bool = False
     SKIP_TMDB: bool = False
+    SKIP_YOUTUBE: bool = False
     SIZE_TH: int = 50
     WATCHER_INTERVAL: int = 60
     WATCHER_PATH: str | None = None
@@ -424,8 +425,8 @@ class Config(BaseModel):
             else:
                 field = field.upper()
 
-                if field in ['DUPLICATE_ON','SKIP_DUPLICATE','SKIP_TMDB','RESIZE_SCSHOT','ANON','WEBP_ENABLED',
-                             'CACHE_SCR','CACHE_DBONLINE', 'PERSONAL_RELEASE']:
+                if field in ['DUPLICATE_ON','SKIP_DUPLICATE','SKIP_TMDB','SKIP_YOUTUBE','RESIZE_SCSHOT','ANON',
+                             'WEBP_ENABLED', 'CACHE_SCR','CACHE_DBONLINE', 'PERSONAL_RELEASE']:
                     section[field] = Validate.boolean(value=section[field], field_name=field)
 
                 if field in ['TORRENT_COMMENT','WATCHER_PATH','DEFAULT_TRACKER']:
@@ -574,6 +575,7 @@ class Load:
                 "DUPLICATE_ON": "true",
                 "SKIP_DUPLICATE": "false",
                 "SKIP_TMDB": "false",
+                "SKIP_YOUTUBE" :'true',
                 "SIZE_TH": 10,
                 "WATCHER_INTERVAL": 60,
                 "WATCHER_PATH": "no_path",
