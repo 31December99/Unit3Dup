@@ -79,8 +79,10 @@ class Video:
             # Build the description
             build_description = Build(extracted_frames=extracted_frames_webp+extracted_frames, filename= self.display_name)
             self.description = build_description.description()
-            self.description += (f"[b][spoiler=Spoiler: PLAY TRAILER][center][youtube]{self.trailer_key}[/youtube]"
-                                 f"[/center][/spoiler][/b]")
+
+            if self.trailer_key:
+                self.description += (f"[b][spoiler=Spoiler: PLAY TRAILER][center][youtube]{self.trailer_key}[/youtube]"
+                                     f"[/center][/spoiler][/b]")
             self.is_hd = is_hd
 
         # Caching

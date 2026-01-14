@@ -129,6 +129,7 @@ class ContentManager:
         # Display name on webpage
         self.display_name, _ = os.path.splitext(os.path.basename(self.file_name))
         self.display_name = ManageTitles.clean_text(self.display_name)
+        self.display_name = re.sub(r'[\[\]()]', '', self.display_name)
         # current media path
         self.torrent_path = self.path
         # Try to get video ID from the string title
@@ -153,6 +154,7 @@ class ContentManager:
         self.file_name = os.path.join(self.path, files_list[0])
         # Display name on webpage
         self.display_name = ManageTitles.clean_text(os.path.basename(self.path))
+        self.display_name = re.sub(r'[\[\]()]', '', self.display_name)
         # current media path
         self.torrent_path = self.path
         # Torrent name

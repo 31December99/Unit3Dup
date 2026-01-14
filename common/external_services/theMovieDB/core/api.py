@@ -395,11 +395,13 @@ class DbOnline(TmdbAPI):
             # todo compare against the media title especially for the favorite channel
             return result[0].items[0].id.videoId
         else:
-            user_youtube_id = custom_console.user_input_str(message="Title not found."
-                                                                    " Please digit a valid Youtube ID (0=skip)->")
-            if user_youtube_id==0:
-                return "not available"
-            return user_youtube_id
+            if not config_settings.user_preferences.SKIP_YOUTUBE:
+                user_youtube_id = custom_console.user_input_str(message="Title not found."
+                                                                        " Please digit a valid Youtube ID (0=skip)->")
+                if user_youtube_id==0:
+                    return "not available"
+                return user_youtube_id
+            return None
 
     def trailer(self, video_id: int) -> str | None:
         # Search for tmdb trailer
