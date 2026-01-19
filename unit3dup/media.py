@@ -3,6 +3,7 @@ import os
 import re
 
 from common.external_services.igdb.core.tags import crew_patterns, platform_patterns
+from common.title import Guessit
 from common.utility import ManageTitles, System
 from common.mediainfo import MediaFile
 from common import title
@@ -21,7 +22,7 @@ class Media:
         self._platform_list: list[str] | None = None
         self._title_sanitized: str | None = None
         self._guess_title: str | None = None
-        self._guess_filename: str | None = None
+        self._guess_filename: Guessit | None = None
         self._guess_season: int | None = None
         self._episode: str | None = None
         self._source: str | None = None
@@ -49,6 +50,7 @@ class Media:
         self._game_nfo: str | None = None
         self._tmdb_id: int | None = None
         self._imdb_id: int | None = None
+        self._tvdb_id: int | None = None
         self._igdb_id: int | None = None
         self._generate_title: str | None = None
 
@@ -157,6 +159,14 @@ class Media:
     @imdb_id.setter
     def imdb_id(self, value):
         self._imdb_id = value
+
+    @property
+    def tvdb_id(self) -> int:
+        return self._tvdb_id
+
+    @tvdb_id.setter
+    def tvdb_id(self, value):
+        self._tvdb_id = value
 
     @property
     def igdb_id(self) -> int:

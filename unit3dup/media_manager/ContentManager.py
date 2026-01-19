@@ -34,6 +34,7 @@ class ContentManager:
         self.doc_description: str | None = None
         self.tmdb_id: int  = 0
         self.imdb_id: int  = 0
+        self.tvdb_id: int  = 0
         self.igdb_id: int  = 0
         self.generate_title: str | None = None
 
@@ -85,6 +86,7 @@ class ContentManager:
 
             # Add ID if there are one in the title
             media.imdb_id = self.imdb_id
+            media.tvdb_id = self.tvdb_id
             media.tmdb_id = self.tmdb_id
             media.igdb_id = self.igdb_id
             media.display_name = self.display_name
@@ -112,7 +114,10 @@ class ContentManager:
                     self.tmdb_id = id.replace('tmdb-', '')
                     self.tmdb_id = self.tmdb_id if self.tmdb_id.isdigit() else None
                     self.display_name = self.display_name.replace(f"tmdb-{self.tmdb_id}", '')
-
+                elif 'tvdb-' in id:
+                    self.tvdb_id = id.replace('tvdb-', '')
+                    self.tvdb_id = self.tvdb_id if self.tvdb_id.isdigit() else None
+                    self.display_name = self.display_name.replace(f"tvdb-{self.tvdb_id}", '')
                 elif 'igdb-' in id:
                     self.igdb_id = id.replace('igdb-', '')
                     self.igdb_id = self.igdb_id if self.igdb_id.isdigit() else None
@@ -121,6 +126,7 @@ class ContentManager:
         else:
             self.imdb_id = 0
             self.tmdb_id = 0
+            self.tvdb_id = 0
             self.igdb_id = 0
 
     def process_file(self) -> bool:

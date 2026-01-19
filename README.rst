@@ -24,7 +24,7 @@ It performs the following tasks:
 - Add webp to your torrent description page
 - Extracts cover from the PDF documents
 - Generates meta-info derived from the video or game
-- Searches for the corresponding ID on TMDB, IGDB or IMDB
+- Searches for the corresponding ID on TMDB, IGDB, IMDB,TVDB
 - Add trailer from TMDB or YouTube
 - Seeding in qBittorrent, Transmission or rTorrent
 - Reseeding one or more torrents at a time
