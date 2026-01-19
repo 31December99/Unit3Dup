@@ -107,7 +107,9 @@ class ManageTitles:
         """
         Replaces hyphens with dots and removes video resolutions
         """
-        resolutions = ["4320", "2160", "1080", "720", "576", "480"]
+        # resolutions = ["4320", "2160", "1080", "720", "576", "480"]
+        resolutions = ["4320p", "2160p", "1080p", "720p", "576p", "480p"]
+
         subdir = subdir.replace("-", ".")
         for res in resolutions:
             subdir = subdir.replace(res, " ")

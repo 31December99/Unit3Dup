@@ -21,6 +21,7 @@ from common.external_services.trailers.api import YtTrailer
 from common.external_services.sessions.agents import Agent
 from common.external_services.theMovieDB import config
 from common.external_services.imdb import IMDB
+from common.external_services.tvdb import TVDB
 from common.utility import ManageTitles
 
 from unit3dup.media import Media
@@ -35,33 +36,29 @@ T = TypeVar('T')
 
 class MovieEndpoint:
     @staticmethod
-    def search(query: str)-> dict:
-        return {'url': f'{base_url}/search/movie', 'datatype': Movie, 'query': query, 'results': 'results' }
-
+    def search(query: str) -> dict:
+        return {'url': f'{base_url}/search/movie', 'datatype': Movie, 'query': query, 'results': 'results'}
 
     @staticmethod
-    def playing()-> dict:
+    def playing() -> dict:
         return {'url': f'{base_url}/movie/now_playing', 'datatype': NowPlaying, 'query': '', 'results': 'results'}
 
-
     @staticmethod
-    def alternative(movie_id: int)-> dict:
+    def alternative(movie_id: int) -> dict:
         return {'url': f'{base_url}/movie/{movie_id}/alternative_titles', 'datatype': Alternative, 'query': '',
                 'results': 'titles'}
 
-
     @staticmethod
-    def videos(movie_id: int)-> dict:
+    def videos(movie_id: int) -> dict:
         return {'url': f'{base_url}/movie/{movie_id}/videos', 'datatype': Videos, 'query': '',
                 'results': 'results'}
 
     @staticmethod
-    def details(movie_id: int)-> dict:
+    def details(movie_id: int) -> dict:
         return {'url': f'{base_url}/movie/{movie_id}', 'datatype': MovieDetails, 'query': ''}
 
-
     @staticmethod
-    def keywords(movie_id: int)-> dict:
+    def keywords(movie_id: int) -> dict:
         return {'url': f'{base_url}/movie/{movie_id}/keywords', 'datatype': Keyword, 'query': '',
                 'results': 'keywords'}
 
@@ -71,38 +68,31 @@ class TvEndpoint:
     def search(query: str):
         return {'url': f'{base_url}/search/tv', 'datatype': TvShow, 'query': query, 'results': 'results'}
 
-
     @staticmethod
     def playing():
         return {'url': f'{base_url}/tv/on_the_air', 'datatype': OnTheAir, 'query': '', 'results': 'results'}
-
 
     @staticmethod
     def alternative(serie_id: int) -> dict:
         return {'url': f'{base_url}/tv/{serie_id}/alternative_titles', 'datatype': Alternative, 'query': '',
                 'results': 'results'}
 
-
     @staticmethod
-    def videos(serie_id: int)-> dict:
+    def videos(serie_id: int) -> dict:
         return {'url': f'{base_url}/tv/{serie_id}/videos', 'datatype': Videos, 'query': '',
                 'results': 'results'}
 
     @staticmethod
-    def details(serie_id: int)-> dict:
+    def details(serie_id: int) -> dict:
         return {'url': f'{base_url}/tv/{serie_id}', 'datatype': TVShowDetails, 'query': ''}
 
-
-
     @staticmethod
-    def keywords(serie_id: int)-> dict:
+    def keywords(serie_id: int) -> dict:
         return {'url': f'{base_url}/tv/{serie_id}/keywords', 'datatype': Keyword, 'query': '',
                 'results': 'results'}
 
 
-
 class TmdbAPI(MyHttp):
-
     params = {
         "api_key": config.TMDB_APIKEY,
         "language": "it-IT",
@@ -147,7 +137,7 @@ class TmdbAPI(MyHttp):
         :return: list of T or None
         """
 
-        if endpoint_class:=self.ENDPOINTS.get(category):
+        if endpoint_class := self.ENDPOINTS.get(category):
             request = endpoint_class.playing()
             return self.request(endpoint=request)
         else:
@@ -161,7 +151,7 @@ class TmdbAPI(MyHttp):
         :param category: category of the search query, e.g., 'movie' or 'tv'
         :return: list of T or None
         """
-        if endpoint_class:=self.ENDPOINTS.get(category):
+        if endpoint_class := self.ENDPOINTS.get(category):
             request = endpoint_class.alternative(media_id)
             return self.request(endpoint=request)
         else:
@@ -169,7 +159,7 @@ class TmdbAPI(MyHttp):
             return []
 
     def _videos(self, video_id: int, category: str) -> list[T] | None:
-        if endpoint_class:=self.ENDPOINTS.get(category):
+        if endpoint_class := self.ENDPOINTS.get(category):
             request = endpoint_class.videos(video_id)
             return self.request(endpoint=request)
         else:
@@ -177,22 +167,20 @@ class TmdbAPI(MyHttp):
             return []
 
     def details(self, video_id: int, category: str) -> list[T] | None:
-        if endpoint_class:=self.ENDPOINTS.get(category):
+        if endpoint_class := self.ENDPOINTS.get(category):
             request = endpoint_class.details(video_id)
             return self.request(endpoint=request)
         else:
             print(f"Endpoint for category '{category}' not found.")
             return []
 
-
     def _keywords(self, video_id: int, category: str) -> list[T] | None:
-        if endpoint_class:=self.ENDPOINTS.get(category):
+        if endpoint_class := self.ENDPOINTS.get(category):
             request = endpoint_class.keywords(video_id)
             return self.request(endpoint=request)
         else:
             print(f"Endpoint for category '{category}' not found.")
             return []
-
 
     def request(self, endpoint: dict) -> list[T] | None:
         """
@@ -215,20 +203,24 @@ class TmdbAPI(MyHttp):
                 return []
         return None
 
+
 class DbOnline(TmdbAPI):
     def __init__(self, media: Media, category: str, no_title: str) -> None:
         super().__init__()
         self.media = media
         self.query = media.guess_title
         self.category = category
+        self.imdb_id = None
+        self.tvdb_id = None
 
         # Load the cache file
         if config_settings.user_preferences.CACHE_DBONLINE:
             self.cache = diskcache.Cache(str(os.path.join(config_settings.user_preferences.CACHE_PATH, "tmdb.cache")))
 
-        if media.tmdb_id or media.imdb_id:
+        if media.tmdb_id or media.imdb_id or media.tmdb_id:
             # Skip cache if there is a tmdb id or imdb in the title string
-            self.media_result = self. results_in_string(tmdb_id=int(media.tmdb_id), imdb_id=int(media.imdb_id))
+            self.media_result = self.results_in_string(tmdb_id=int(media.tmdb_id), imdb_id=int(media.imdb_id),
+                                                       tvdb_id=int(media.tvdb_id))
         else:
             # Load from the cache or search online for a tmdb id or imdb
             # Search for a video based on the filename or the title from the -notitle flag in the CLI
@@ -247,8 +239,9 @@ class DbOnline(TmdbAPI):
             for result in results:
                 # check date
                 if result.get_date() and self.media.guess_filename.guessit_year:
-                    if not datetime.strptime(result.get_date(), '%Y-%m-%d').year == self.media.guess_filename.guessit_year:
-                       continue
+                    if not datetime.strptime(result.get_date(),
+                                             '%Y-%m-%d').year == self.media.guess_filename.guessit_year:
+                        continue
 
                 # Search for title
                 if ManageTitles.fuzzyit(str1=self.query, str2=ManageTitles.clean_text(result.get_title())) > 95:
@@ -265,7 +258,7 @@ class DbOnline(TmdbAPI):
                         return result
         return False
 
-    def results_in_string(self, tmdb_id:int, imdb_id:int)-> MediaResult:
+    def results_in_string(self, tmdb_id: int, imdb_id: int, tvdb_id: int) -> MediaResult:
         """
         Use id from the string filename or name folder
         Cache disabled
@@ -281,11 +274,10 @@ class DbOnline(TmdbAPI):
         else:
             tmdb_id = 0
 
-        search_results = MediaResult(video_id=tmdb_id, imdb_id=imdb_id, trailer_key=trailer_key,
+        search_results = MediaResult(video_id=tmdb_id, imdb_id=self.imdb_id, tvdb_id=tvdb_id, trailer_key=trailer_key,
                                      keywords_list=keywords_list)
         self.print_results(results=search_results)
         return search_results
-
 
     def search(self) -> MediaResult | None:
         """
@@ -303,13 +295,16 @@ class DbOnline(TmdbAPI):
         # or start an on-line search
         results = self._search(self.query, self.category)
         # Use imdb_id when tmdb_id is not available
-        imdb_id = 0
+
+        if 'tv' in self.category:
+            self.tvdb_id = self.tvdb_search()
+        self.imdb_id = self.imdb_search()
         if results:
-            if result:=self.is_like(results):
+            if result := self.is_like(results):
                 # Get the trailer
                 trailer_key = self.trailer(result.id)
                 keywords_list = self.keywords(result.id)
-                search_results = MediaResult(result, video_id=result.id, imdb_id=imdb_id,
+                search_results = MediaResult(result, video_id=result.id, imdb_id=self.imdb_id, tvdb_id=self.tvdb_id,
                                              trailer_key=trailer_key, keywords_list=keywords_list)
 
                 self.print_results(results=search_results)
@@ -340,6 +335,13 @@ class DbOnline(TmdbAPI):
         self.cache[self.hash_key(self.query)] = search_results
         return search_results
 
+    def imdb_search(self) -> int:
+        imdb = IMDB()
+        return imdb.search(query=self.query)
+
+    def tvdb_search(self) -> int:
+        tvdb = TVDB(category=self.category)
+        return tvdb.search(query=self.query)
 
     def manual_search(self) -> MediaResult | None:
         """
@@ -348,8 +350,6 @@ class DbOnline(TmdbAPI):
                  Returns:
                      MediaResult
         """
-        imdb = IMDB()
-        imdb_id = 0
         user_id = 0
         while True:
             # Check if user wants to skip
@@ -363,11 +363,10 @@ class DbOnline(TmdbAPI):
                 custom_console.bot_warning_log(f"\n ** Auto skip TMDB ID **\n")
 
             # Try to add IMDB ID if tmdb is not available
-            if user_id==0:
-                imdb_id = imdb.search(query=self.query)
+            if user_id == 0:
                 # try searching for a YouTube video anyway
                 trailer_key = self.youtube_trailer()
-                search_results = MediaResult(video_id=user_id, imdb_id=imdb_id, trailer_key=trailer_key,
+                search_results = MediaResult(video_id=user_id, imdb_id=self.imdb_id, trailer_key=trailer_key,
                                              keywords_list='not available')
                 self.print_results(results=search_results)
                 return search_results
@@ -377,15 +376,15 @@ class DbOnline(TmdbAPI):
                     # Request trailer and keywords
                     trailer_key = self.trailer(user_id)
                     keywords_list = self.keywords(user_id) if trailer_key else ''
-                    search_results = MediaResult(result=result, video_id=user_id, imdb_id=imdb_id, trailer_key=trailer_key,
+                    search_results = MediaResult(result=result, video_id=user_id, imdb_id=self.imdb_id,
+                                                 trailer_key=trailer_key,
                                                  keywords_list=keywords_list)
                     self.print_results(results=search_results)
                     return search_results
 
-
     def youtube_trailer(self) -> str | None:
         # Search trailer on YouTube
-        if 'no_key'  in config_settings.tracker_config.YOUTUBE_KEY:
+        if 'no_key' in config_settings.tracker_config.YOUTUBE_KEY:
             return "not available"
 
         yt_trailer = YtTrailer(self.query)
@@ -398,7 +397,7 @@ class DbOnline(TmdbAPI):
             if not config_settings.user_preferences.SKIP_YOUTUBE:
                 user_youtube_id = custom_console.user_input_str(message="Title not found."
                                                                         " Please digit a valid Youtube ID (0=skip)->")
-                if user_youtube_id==0:
+                if user_youtube_id == 0:
                     return "not available"
                 return user_youtube_id
             return None
@@ -424,17 +423,17 @@ class DbOnline(TmdbAPI):
         else:
             return "not available"
 
+    def print_results(self, results: MediaResult) -> None:
+        custom_console.bot_log(f"'TMDB TITLE'..... {self.query}")
+        custom_console.bot_log(f"'TMDB ID'........ {results.video_id}")
+        if results.imdb_id:
+            custom_console.bot_warning_log(f"'IMDB ID'........ '{results.imdb_id}'")
+        if results.tvdb_id:
+            custom_console.bot_warning_log(f"'TVDB ID'........ '{results.tvdb_id}'")
+        custom_console.bot_log(f"'TMDB KEYWORDS'.. {results.keywords_list}")
+        custom_console.bot_log(f"'TRAILER CODE' .. {results.trailer_key}")
 
-    def print_results(self,results: MediaResult) -> None:
-            custom_console.bot_log(f"'TMDB TITLE'..... {self.query}")
-            custom_console.bot_log(f"'TMDB ID'........ {results.video_id}")
-            if results.imdb_id:
-                custom_console.bot_warning_log(f"_'IMDB ID'_........ '{results.imdb_id}'")
-            custom_console.bot_log(f"'TMDB KEYWORDS'.. {results.keywords_list}")
-            custom_console.bot_log(f"'TRAILER CODE' .. {results.trailer_key}")
-
-
-    def load_cache(self, query: str)-> MediaResult | None:
+    def load_cache(self, query: str) -> MediaResult | None:
         # Check if the item is in the cache
         if query not in self.cache:
             return None
@@ -448,7 +447,6 @@ class DbOnline(TmdbAPI):
             custom_console.bot_error_log("Cached frame not found or cache file corrupted")
             custom_console.bot_error_log("Proceed to extract the screenshot again. Please wait..")
             return None
-
 
     def search_id(self, video_id: int) -> list[T] | None:
         """

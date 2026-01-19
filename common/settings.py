@@ -13,7 +13,7 @@ from common.utility import ManageTitles
 from common import trackers
 
 config_file = "Unit3Dbot.json"
-version = "0.8.21"
+version = "0.8.22"
 
 if os.name == "nt":
     PW_TORRENT_ARCHIVE_PATH: Path = Path(os.getenv("LOCALAPPDATA", ".")) / "Unit3Dup_config" / "pw_torrent_archive"
@@ -63,6 +63,7 @@ class TrackerConfig(BaseModel):
     SIS_PID: str | None = None
     MULTI_TRACKER: list[str] | None = None
     TMDB_APIKEY: str | None = None
+    TVDB_APIKEY: str | None = None
     IMGBB_KEY: str | None = None
     FREE_IMAGE_KEY: str | None = None
     LENSDUMP_KEY: str | None = None
@@ -530,6 +531,7 @@ class Load:
                 "SIS_PID": "no_key",
                 "MULTI_TRACKER" : ["itt"],
                 "TMDB_APIKEY": "no_key",
+                "TVDB_APIKEY": "no_key",
                 "IMGBB_KEY": "no_key",
                 "FREE_IMAGE_KEY": "no_key",
                 "LENSDUMP_KEY": "no_key",
@@ -558,8 +560,7 @@ class Load:
                 "RTORR_PORT": "9091",
                 "SHARED_RTORR_PATH": "no_path",
                 "TORRENT_CLIENT": "qbittorrent",
-                "TAG": "ADDED TORRENTS",
-                "FAST_LOAD": "0",
+                "TAG": "ADDED TORRENTS"
             },
             "user_preferences": {
                 "PTSCREENS_PRIORITY": 0,
@@ -591,6 +592,7 @@ class Load:
                 "CACHE_SCR": "False",
                 "CACHE_DBONLINE": "False",
                 "PERSONAL_RELEASE": "False",
+                "FAST_LOAD": "0"
             },
             "options": {
                 "PW_API_KEY": "no_key",
