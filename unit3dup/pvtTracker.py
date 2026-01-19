@@ -29,10 +29,10 @@ class Myhttp:
         self.headers = {
             "User-Agent": "Unit3D-up/0.0 (Linux 5.10.0-23-amd64)",
             "Accept": "application/json",
+            "Authorization": f"Bearer {self.api_token}"
         }
-        self.params = {
-            "api_token": self.api_token,
-        }
+
+        self.params = {}
 
         self.data = {
             "name": "TEST.torrent",
@@ -43,7 +43,7 @@ class Myhttp:
             "resolution_id": 10,  # mandatory
             "tmdb": "",  # mandatory
             "imdb": "0",
-            "tvdb": "0",  # no ancora implementato
+            "tvdb": "0",
             "mal": "0",  # no ancora implementato
             "igdb": "0",
             "anonymous": 0,
@@ -56,7 +56,6 @@ class Myhttp:
             "free": 0,
             "doubleup": 0,
             "sticky": 0,
-            "torrent-cover": "",  # no ancora implementato
         }
 
 
