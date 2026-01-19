@@ -62,11 +62,13 @@ class UploadBot:
         custom_console.rule()
         return {}, error_message
 
-    def data(self,show_id: int , imdb_id: int, show_keywords_list: str, video_info: Video) -> Unit3d | None:
+    def data(self,show_id: int , imdb_id: int, tvdb_id: int, show_keywords_list: str, video_info: Video) -> Unit3d | None:
 
         self.tracker.data["name"] = self.content.display_name
         self.tracker.data["tmdb"] = show_id
         self.tracker.data["imdb"] = imdb_id if imdb_id else 0
+        self.tracker.data["tvdb"] = tvdb_id if tvdb_id else 0
+
         self.tracker.data["keywords"] = show_keywords_list
         self.tracker.data["category_id"] = self.tracker_data.category.get(self.content.category)
         self.tracker.data["anonymous"] = int(config_settings.user_preferences.ANON)

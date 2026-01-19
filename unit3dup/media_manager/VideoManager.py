@@ -26,7 +26,7 @@ class VideoManager:
 
         self.torrent_found:bool = False
         self.contents: list[Media] = contents
-        self.cli: argparse = cli
+        self.cli: argparse.Namespace = cli
 
     def process(self, selected_tracker: str, tracker_name_list: list, tracker_archive: str) -> list[BittorrentData]:
         """
@@ -97,8 +97,8 @@ class VideoManager:
                 unit3d_up = UploadBot(content=content, tracker_name=selected_tracker, cli = self.cli)
 
                 # Get the data
-                unit3d_up.data(show_id=db.video_id, imdb_id=db.imdb_id, show_keywords_list=db.keywords_list,
-                               video_info=video_info)
+                unit3d_up.data(show_id=db.video_id, imdb_id=db.imdb_id, tvdb_id = db.tvdb_id,
+                               show_keywords_list=db.keywords_list, video_info=video_info)
 
                 # Don't upload if -noup is set to True
                 if self.cli.noup:
