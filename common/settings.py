@@ -63,6 +63,7 @@ class TrackerConfig(BaseModel):
     SIS_PID: str | None = None
     MULTI_TRACKER: list[str] | None = None
     TMDB_APIKEY: str | None = None
+    TVDB_APIKEY: str | None = None
     IMGBB_KEY: str | None = None
     FREE_IMAGE_KEY: str | None = None
     LENSDUMP_KEY: str | None = None
@@ -530,6 +531,7 @@ class Load:
                 "SIS_PID": "no_key",
                 "MULTI_TRACKER" : ["itt"],
                 "TMDB_APIKEY": "no_key",
+                "TVDB_APIKEY": "no_key",
                 "IMGBB_KEY": "no_key",
                 "FREE_IMAGE_KEY": "no_key",
                 "LENSDUMP_KEY": "no_key",

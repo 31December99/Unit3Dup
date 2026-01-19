@@ -49,6 +49,7 @@ class Media:
         self._game_nfo: str | None = None
         self._tmdb_id: int | None = None
         self._imdb_id: int | None = None
+        self._tvdb_id: int | None = None
         self._igdb_id: int | None = None
         self._generate_title: str | None = None
 
@@ -157,6 +158,14 @@ class Media:
     @imdb_id.setter
     def imdb_id(self, value):
         self._imdb_id = value
+
+    @property
+    def tvdb_id(self) -> int:
+        return self._tvdb_id
+
+    @tvdb_id.setter
+    def tvdb_id(self, value):
+        self._tvdb_id = value
 
     @property
     def igdb_id(self) -> int:
