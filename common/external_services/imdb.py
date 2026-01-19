@@ -17,8 +17,6 @@ class IMDB:
     def search(self, query: str)-> int | None:
         # Search for a tv or movie
         movies = self.api.search_movie(query)
-        print(query, movies)
-
         for movie in movies:
             if ManageTitles.fuzzyit(str1=query, str2=movie.data['title']) > 95:
                 return movie.movieID

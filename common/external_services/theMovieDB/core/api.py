@@ -221,6 +221,7 @@ class DbOnline(TmdbAPI):
         self.media = media
         self.query = media.guess_title
         self.category = category
+        self.imdb_id = None
 
         # Load the cache file
         if config_settings.user_preferences.CACHE_DBONLINE:
@@ -305,8 +306,6 @@ class DbOnline(TmdbAPI):
         # Use imdb_id when tmdb_id is not available
         tvdb_id = 0
         imdb_id = self.imdb_search()
-        print(imdb_id)
-        input("Press Enter to continue...")
         if results:
             if result:=self.is_like(results):
                 # Get the trailer
@@ -356,8 +355,6 @@ class DbOnline(TmdbAPI):
                  Returns:
                      MediaResult
         """
-        # imdb = IMDB()
-        imdb_id = 0
         user_id = 0
         while True:
             # Check if user wants to skip
@@ -372,10 +369,9 @@ class DbOnline(TmdbAPI):
 
             # Try to add IMDB ID if tmdb is not available
             if user_id==0:
-                # imdb_id = imdb.search(query=self.query) # todo non serve più perchè sempre richiesto
                 # try searching for a YouTube video anyway
                 trailer_key = self.youtube_trailer()
-                search_results = MediaResult(video_id=user_id, imdb_id=imdb_id, trailer_key=trailer_key,
+                search_results = MediaResult(video_id=user_id, imdb_id=self.imdb_id, trailer_key=trailer_key,
                                              keywords_list='not available')
                 self.print_results(results=search_results)
                 return search_results

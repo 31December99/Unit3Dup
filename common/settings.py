@@ -558,8 +558,7 @@ class Load:
                 "RTORR_PORT": "9091",
                 "SHARED_RTORR_PATH": "no_path",
                 "TORRENT_CLIENT": "qbittorrent",
-                "TAG": "ADDED TORRENTS",
-                "FAST_LOAD": "0",
+                "TAG": "ADDED TORRENTS"
             },
             "user_preferences": {
                 "PTSCREENS_PRIORITY": 0,
@@ -591,6 +590,7 @@ class Load:
                 "CACHE_SCR": "False",
                 "CACHE_DBONLINE": "False",
                 "PERSONAL_RELEASE": "False",
+                "FAST_LOAD": "0"
             },
             "options": {
                 "PW_API_KEY": "no_key",
