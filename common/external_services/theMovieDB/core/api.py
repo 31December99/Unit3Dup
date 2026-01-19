@@ -21,6 +21,7 @@ from common.external_services.trailers.api import YtTrailer
 from common.external_services.sessions.agents import Agent
 from common.external_services.theMovieDB import config
 from common.external_services.imdb import IMDB
+from common.external_services.tvdb import TVDB
 from common.utility import ManageTitles
 
 from unit3dup.media import Media
@@ -222,14 +223,16 @@ class DbOnline(TmdbAPI):
         self.query = media.guess_title
         self.category = category
         self.imdb_id = None
+        self.tvdb_id = None
 
         # Load the cache file
         if config_settings.user_preferences.CACHE_DBONLINE:
             self.cache = diskcache.Cache(str(os.path.join(config_settings.user_preferences.CACHE_PATH, "tmdb.cache")))
 
-        if media.tmdb_id or media.imdb_id:
+        if media.tmdb_id or media.imdb_id or media.tmdb_id:
             # Skip cache if there is a tmdb id or imdb in the title string
-            self.media_result = self. results_in_string(tmdb_id=int(media.tmdb_id), imdb_id=int(media.imdb_id))
+            self.media_result = self. results_in_string(tmdb_id=int(media.tmdb_id), imdb_id=int(media.imdb_id),
+                                                        tvdb_id=int(media.tvdb_id))
         else:
             # Load from the cache or search online for a tmdb id or imdb
             # Search for a video based on the filename or the title from the -notitle flag in the CLI
@@ -266,7 +269,7 @@ class DbOnline(TmdbAPI):
                         return result
         return False
 
-    def results_in_string(self, tmdb_id:int, imdb_id:int)-> MediaResult:
+    def results_in_string(self, tmdb_id:int, imdb_id:int, tvdb_id: int)-> MediaResult:
         """
         Use id from the string filename or name folder
         Cache disabled
@@ -282,7 +285,7 @@ class DbOnline(TmdbAPI):
         else:
             tmdb_id = 0
 
-        search_results = MediaResult(video_id=tmdb_id, imdb_id=imdb_id, trailer_key=trailer_key,
+        search_results = MediaResult(video_id=tmdb_id, imdb_id=imdb_id, tvdb_id=tvdb_id, trailer_key=trailer_key,
                                      keywords_list=keywords_list)
         self.print_results(results=search_results)
         return search_results
@@ -304,8 +307,9 @@ class DbOnline(TmdbAPI):
         # or start an on-line search
         results = self._search(self.query, self.category)
         # Use imdb_id when tmdb_id is not available
-        tvdb_id = 0
+        tvdb_id = self.tvdb_search()
         imdb_id = self.imdb_search()
+
         if results:
             if result:=self.is_like(results):
                 # Get the trailer
@@ -346,6 +350,10 @@ class DbOnline(TmdbAPI):
     def imdb_search(self) -> int:
         imdb = IMDB()
         return imdb.search(query=self.query)
+
+    def tvdb_search(self) -> int:
+        tvdb = TVDB(category=self.category)
+        return tvdb.search(query=self.query)
 
 
     def manual_search(self) -> MediaResult | None:
@@ -433,7 +441,9 @@ class DbOnline(TmdbAPI):
             custom_console.bot_log(f"'TMDB TITLE'..... {self.query}")
             custom_console.bot_log(f"'TMDB ID'........ {results.video_id}")
             if results.imdb_id:
-                custom_console.bot_warning_log(f"_'IMDB ID'_........ '{results.imdb_id}'")
+                custom_console.bot_warning_log(f"'IMDB ID'........ '{results.imdb_id}'")
+            if results.tvdb_id:
+                custom_console.bot_warning_log(f"'TVDB ID'........ '{results.tvdb_id}'")
             custom_console.bot_log(f"'TMDB KEYWORDS'.. {results.keywords_list}")
             custom_console.bot_log(f"'TRAILER CODE' .. {results.trailer_key}")
 
