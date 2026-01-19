@@ -303,13 +303,16 @@ class DbOnline(TmdbAPI):
         # or start an on-line search
         results = self._search(self.query, self.category)
         # Use imdb_id when tmdb_id is not available
-        imdb_id = 0
+        tvdb_id = 0
+        imdb_id = self.imdb_search()
+        print(imdb_id)
+        input("Press Enter to continue...")
         if results:
             if result:=self.is_like(results):
                 # Get the trailer
                 trailer_key = self.trailer(result.id)
                 keywords_list = self.keywords(result.id)
-                search_results = MediaResult(result, video_id=result.id, imdb_id=imdb_id,
+                search_results = MediaResult(result, video_id=result.id, imdb_id=imdb_id, tvdb_id=tvdb_id,
                                              trailer_key=trailer_key, keywords_list=keywords_list)
 
                 self.print_results(results=search_results)
@@ -341,6 +344,11 @@ class DbOnline(TmdbAPI):
         return search_results
 
 
+    def imdb_search(self) -> int:
+        imdb = IMDB()
+        return imdb.search(query=self.query)
+
+
     def manual_search(self) -> MediaResult | None:
         """
                  User digits valid TMDB id or wait
@@ -348,7 +356,7 @@ class DbOnline(TmdbAPI):
                  Returns:
                      MediaResult
         """
-        imdb = IMDB()
+        # imdb = IMDB()
         imdb_id = 0
         user_id = 0
         while True:
@@ -364,7 +372,7 @@ class DbOnline(TmdbAPI):
 
             # Try to add IMDB ID if tmdb is not available
             if user_id==0:
-                imdb_id = imdb.search(query=self.query)
+                # imdb_id = imdb.search(query=self.query) # todo non serve più perchè sempre richiesto
                 # try searching for a YouTube video anyway
                 trailer_key = self.youtube_trailer()
                 search_results = MediaResult(video_id=user_id, imdb_id=imdb_id, trailer_key=trailer_key,

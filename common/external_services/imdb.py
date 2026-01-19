@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from imdb import Cinemagoer
+from imdb import Cinemagoer # Installato da github , su pipy non ancora disponibile la versione 2025
 from view import custom_console
 from rich.table import Table
 from rich.align import Align
@@ -17,6 +17,8 @@ class IMDB:
     def search(self, query: str)-> int | None:
         # Search for a tv or movie
         movies = self.api.search_movie(query)
+        print(query, movies)
+
         for movie in movies:
             if ManageTitles.fuzzyit(str1=query, str2=movie.data['title']) > 95:
                 return movie.movieID
