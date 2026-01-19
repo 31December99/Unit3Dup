@@ -274,7 +274,7 @@ class DbOnline(TmdbAPI):
         else:
             tmdb_id = 0
 
-        search_results = MediaResult(video_id=tmdb_id, imdb_id=imdb_id, tvdb_id=tvdb_id, trailer_key=trailer_key,
+        search_results = MediaResult(video_id=tmdb_id, imdb_id=self.imdb_id, tvdb_id=tvdb_id, trailer_key=trailer_key,
                                      keywords_list=keywords_list)
         self.print_results(results=search_results)
         return search_results
@@ -295,14 +295,16 @@ class DbOnline(TmdbAPI):
         # or start an on-line search
         results = self._search(self.query, self.category)
         # Use imdb_id when tmdb_id is not available
-        tvdb_id = self.tvdb_search()
-        imdb_id = self.imdb_search()
+
+        if 'tv' in self.category:
+            self.tvdb_id = self.tvdb_search()
+        self.imdb_id = self.imdb_search()
         if results:
             if result := self.is_like(results):
                 # Get the trailer
                 trailer_key = self.trailer(result.id)
                 keywords_list = self.keywords(result.id)
-                search_results = MediaResult(result, video_id=result.id, imdb_id=imdb_id, tvdb_id=tvdb_id,
+                search_results = MediaResult(result, video_id=result.id, imdb_id=self.imdb_id, tvdb_id=self.tvdb_id,
                                              trailer_key=trailer_key, keywords_list=keywords_list)
 
                 self.print_results(results=search_results)
@@ -374,7 +376,7 @@ class DbOnline(TmdbAPI):
                     # Request trailer and keywords
                     trailer_key = self.trailer(user_id)
                     keywords_list = self.keywords(user_id) if trailer_key else ''
-                    search_results = MediaResult(result=result, video_id=user_id, imdb_id=imdb_id,
+                    search_results = MediaResult(result=result, video_id=user_id, imdb_id=self.imdb_id,
                                                  trailer_key=trailer_key,
                                                  keywords_list=keywords_list)
                     self.print_results(results=search_results)
