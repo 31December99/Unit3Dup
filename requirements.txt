@@ -20,5 +20,11 @@ bencode2==0.3.24
 rtorrent-rpc==0.9.4
 tvdb_v4_official==1.1.0
 
+# New features dependencies
+mutagen==1.47.0
+flask==3.0.0
+flask-cors==4.0.0
+psutil==5.9.6
+
 
 
