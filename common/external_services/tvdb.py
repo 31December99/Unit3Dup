@@ -10,17 +10,18 @@ class TVDB:
         self.category = category
         self.filtered_results = []
 
-    def search(self, query: str) -> int | None:
-        results = self.api.search(query=query)
-
-        if 'tv' in self.category.lower():
-            self.filtered_results = [item for item in results if item['type'] == 'series']
-        elif 'movie' in self.category.lower():
-            self.filtered_results = [item for item in results if item['type'] == 'movie']
+    def search(self, query: str) -> dict | None:
+        results = self.api.search(query=query, type='series')
+        self.filtered_results = [item for item in results]
 
         for item in self.filtered_results:
             title = item.get('name', '') or item.get('extended_title', '')
+            remote_ids = item.get('remote_ids', [])
+            imdb_id = None
+            for remote_id in remote_ids:
+                if 'IMDB' in remote_id.get('sourceName').upper():
+                    imdb_id = remote_id.get('id').lower().replace('tt', '')
             score = ManageTitles.fuzzyit(str1=query, str2=title)
             if score > 95:
-                return item.get('tvdb_id')
+                return {'tvdb_id' : item.get('tvdb_id'), 'imdb_id': imdb_id}
         return None
