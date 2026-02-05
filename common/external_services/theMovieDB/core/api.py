@@ -20,7 +20,6 @@ from common.external_services.sessions.session import MyHttp
 from common.external_services.trailers.api import YtTrailer
 from common.external_services.sessions.agents import Agent
 from common.external_services.theMovieDB import config
-from common.external_services.imdb import IMDB
 from common.external_services.tvdb import TVDB
 from common.utility import ManageTitles
 
@@ -297,8 +296,11 @@ class DbOnline(TmdbAPI):
         # Use imdb_id when tmdb_id is not available
 
         if 'tv' in self.category:
-            self.tvdb_id = self.tvdb_search()
-        self.imdb_id = self.imdb_search()
+            result = self.tvdb_search()
+            if result:
+                self.tvdb_id = result.get('tvdb_id', None)
+                self.imdb_id = result.get('imdb_id', None)
+
         if results:
             if result := self.is_like(results):
                 # Get the trailer
@@ -335,11 +337,7 @@ class DbOnline(TmdbAPI):
         self.cache[self.hash_key(self.query)] = search_results
         return search_results
 
-    def imdb_search(self) -> int:
-        imdb = IMDB()
-        return imdb.search(query=self.query)
-
-    def tvdb_search(self) -> int:
+    def tvdb_search(self) -> dict | None:
         tvdb = TVDB(category=self.category)
         return tvdb.search(query=self.query)
 
