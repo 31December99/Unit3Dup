@@ -11,7 +11,12 @@ class TVDB:
         self.filtered_results = []
 
     def search(self, query: str) -> dict | None:
-        results = self.api.search(query=query, type='series')
+        show_type=''
+        if self.category == "tv":
+            show_type='series'
+        if self.category == "movie":
+            show_type='movie'
+        results = self.api.search(query=query, type=show_type)
         self.filtered_results = [item for item in results]
 
         for item in self.filtered_results:

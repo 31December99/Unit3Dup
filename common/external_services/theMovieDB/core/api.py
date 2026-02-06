@@ -295,11 +295,10 @@ class DbOnline(TmdbAPI):
         results = self._search(self.query, self.category)
         # Use imdb_id when tmdb_id is not available
 
-        if 'tv' in self.category:
-            result = self.tvdb_search()
-            if result:
-                self.tvdb_id = result.get('tvdb_id', None)
-                self.imdb_id = result.get('imdb_id', None)
+        tvdb_result = self.tvdb_search()
+        if tvdb_result:
+            self.tvdb_id = tvdb_result.get('tvdb_id', None)
+            self.imdb_id = tvdb_result.get('imdb_id', None)
 
         if results:
             if result := self.is_like(results):
