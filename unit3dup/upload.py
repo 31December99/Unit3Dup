@@ -67,7 +67,7 @@ class UploadBot:
         self.tracker.data["name"] = self.content.display_name
         self.tracker.data["tmdb"] = show_id
         self.tracker.data["imdb"] = imdb_id if imdb_id else 0
-        self.tracker.data["tvdb"] = tvdb_id if tvdb_id else None
+        self.tracker.data["tvdb"] = tvdb_id if tvdb_id and self.content.category=='tv' else None
 
         self.tracker.data["keywords"] = show_keywords_list
         self.tracker.data["category_id"] = self.tracker_data.category.get(self.content.category)
