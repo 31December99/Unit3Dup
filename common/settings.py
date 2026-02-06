@@ -129,6 +129,16 @@ class UserPreferences(BaseModel):
     CACHE_DBONLINE: bool = False
     PERSONAL_RELEASE: bool = False
     FAST_LOAD: int = 0
+    
+    # New features settings
+    ENABLE_NOTIFICATIONS: bool = False
+    ENABLE_WEB_DASHBOARD: bool = False
+    WEB_DASHBOARD_PORT: int = 5000
+    PARALLEL_UPLOADS: bool = False
+    MAX_UPLOAD_WORKERS: int = 4
+    ENABLE_ADVANCED_DUPLICATE_DETECTION: bool = True
+    MEMORY_LIMIT_MB: int = 512
+    ENABLE_STATISTICS_TRACKING: bool = True
 
 
 class Options(BaseModel):
@@ -143,6 +153,31 @@ class Options(BaseModel):
     FTPX_LOCAL_PATH: str | None = None
     FTPX_ROOT: str = "."
     FTPX_KEEP_ALIVE: bool = False
+
+
+class NotificationConfig(BaseModel):
+    # Email notifications
+    EMAIL_ENABLED: bool = False
+    EMAIL_SMTP_SERVER: str | None = None
+    EMAIL_SMTP_PORT: int = 587
+    EMAIL_SMTP_USER: str | None = None
+    EMAIL_SMTP_PASSWORD: str | None = None
+    EMAIL_FROM: str | None = None
+    EMAIL_TO: list[str] = []
+    
+    # Telegram notifications
+    TELEGRAM_ENABLED: bool = False
+    TELEGRAM_BOT_TOKEN: str | None = None
+    TELEGRAM_CHAT_ID: str | None = None
+    
+    # Discord notifications
+    DISCORD_ENABLED: bool = False
+    DISCORD_WEBHOOK_URL: str | None = None
+    
+    # Pushover notifications
+    PUSHOVER_ENABLED: bool = False
+    PUSHOVER_USER_KEY: str | None = None
+    PUSHOVER_APP_TOKEN: str | None = None
 
 
 class ConsoleOptions(BaseModel):
@@ -360,6 +395,7 @@ class Config(BaseModel):
     user_preferences: UserPreferences
     options: Options
     console_options: ConsoleOptions
+    notification_config: NotificationConfig = NotificationConfig()
 
     @model_validator(mode='before')
     def set_default_tracker_config(cls, v):
