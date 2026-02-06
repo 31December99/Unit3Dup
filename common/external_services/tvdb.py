@@ -18,9 +18,9 @@ class TVDB:
             show_type='movie'
         results = self.api.search(query=query, type=show_type)
         self.filtered_results = [item for item in results]
-
         for item in self.filtered_results:
             title = item.get('name', '') or item.get('extended_title', '')
+            translations = item.get('translations', [])
             remote_ids = item.get('remote_ids', [])
             imdb_id = None
             for remote_id in remote_ids:
@@ -29,4 +29,11 @@ class TVDB:
             score = ManageTitles.fuzzyit(str1=query, str2=title)
             if score > 95:
                 return {'tvdb_id' : item.get('tvdb_id'), 'imdb_id': imdb_id}
+            if translations:
+                title_ita = translations.get('ita', None)
+                if title_ita:
+                    score = ManageTitles.fuzzyit(str1=query, str2=title_ita)
+                    if score > 95:
+                        return {'tvdb_id': item.get('tvdb_id'), 'imdb_id': imdb_id}
+
         return None
