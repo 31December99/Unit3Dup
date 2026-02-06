@@ -13,6 +13,7 @@ from unit3dup.media import Media
 
 from view import custom_console
 
+
 class UploadBot:
     def __init__(self, content: Media, tracker_name: str, cli: argparse):
         self.cli = cli
@@ -20,10 +21,11 @@ class UploadBot:
         self.tracker_name = tracker_name
         self.tracker_data = TRACKData.load_from_module(tracker_name=tracker_name)
         self.tracker = Unit3d(tracker_name=tracker_name)
-        self.sign = (f"[url=https://github.com/31December99/Unit3Dup][code][color=#00BFFF][size=14]Uploaded with Unit3Dup"
-                     f" {Load.version}[/size][/color][/code][/url]")
+        self.sign = (
+            f"[url=https://github.com/31December99/Unit3Dup][code][color=#00BFFF][size=14]Uploaded with Unit3Dup"
+            f" {Load.version}[/size][/color][/code][/url]")
 
-    def message(self,tracker_response: requests.Response, torrent_archive: str) -> (requests, dict):
+    def message(self, tracker_response: requests.Response, torrent_archive: str):
 
         name_error = ''
         info_hash_error = ''
@@ -33,46 +35,48 @@ class UploadBot:
 
         if tracker_response.status_code == 200:
             tracker_response_body = json.loads(tracker_response.text)
-            custom_console.bot_log(f"\n[RESPONSE]-> '{self.tracker_name}'.....{tracker_response_body['message'].upper()}\n\n")
+            custom_console.bot_log(
+                f"\n[RESPONSE]-> '{self.tracker_name}'.....{tracker_response_body['message'].upper()}\n\n")
             custom_console.rule()
             # https://github.com/HDInnovations/UNIT3D/pull/4910/files
             # 08/09/2025
             # We have to download the torrent file to get the new random info_hash generated
-            self.download_file(url=tracker_response_body["data"],destination_path=torrent_archive)
-            return tracker_response_body["data"],{}
+            self.download_file(url=tracker_response_body["data"], destination_path=torrent_archive)
+            return tracker_response_body["data"], {}
 
         elif tracker_response.status_code == 401:
             custom_console.bot_error_log(_message)
             exit(_message['message'])
 
         elif tracker_response.status_code == 404:
-            if _message.get("type_id",None):
-                name_error =  _message["type_id"]
+            if _message.get("type_id", None):
+                name_error = _message["type_id"]
             else:
                 name_error = _message
             error_message = f"{self.__class__.__name__} - {name_error}"
         else:
-            if _message.get("name",None):
-                name_error =  _message["name"][0]
-            if _message.get("info_hash",None):
+            if _message.get("name", None):
+                name_error = _message["name"][0]
+            if _message.get("info_hash", None):
                 info_hash_error = _message["info_hash"][0]
-            error_message =f"{self.__class__.__name__} - {name_error} : {info_hash_error}"
+            error_message = f"{self.__class__.__name__} - {name_error} : {info_hash_error}"
 
         custom_console.bot_error_log(f"\n[RESPONSE]-> '{error_message}\n\n")
         custom_console.rule()
         return {}, error_message
 
-    def data(self,show_id: int , imdb_id: int, tvdb_id: int, show_keywords_list: str, video_info: Video) -> Unit3d | None:
+    def data(self, show_id: int, imdb_id: int, tvdb_id: int, show_keywords_list: str,
+             video_info: Video) -> Unit3d | None:
 
         self.tracker.data["name"] = self.content.display_name
         self.tracker.data["tmdb"] = show_id
         self.tracker.data["imdb"] = imdb_id if imdb_id else 0
-        self.tracker.data["tvdb"] = tvdb_id if tvdb_id and self.content.category=='tv' else None
+        self.tracker.data["tvdb"] = tvdb_id if tvdb_id and self.content.category == 'tv' else None
 
         self.tracker.data["keywords"] = show_keywords_list
         self.tracker.data["category_id"] = self.tracker_data.category.get(self.content.category)
         self.tracker.data["anonymous"] = int(config_settings.user_preferences.ANON)
-        self.tracker.data["resolution_id"] = self.tracker_data.resolution[self.content.screen_size]\
+        self.tracker.data["resolution_id"] = self.tracker_data.resolution[self.content.screen_size] \
             if self.content.screen_size else self.tracker_data.resolution[self.content.resolution]
         self.tracker.data["mediainfo"] = video_info.mediainfo
         self.tracker.data["description"] = video_info.description + self.sign
@@ -84,7 +88,7 @@ class UploadBot:
                                                  or int(self.cli.personal))
         return self.tracker
 
-    def data_game(self,igdb: Game) -> Unit3d | None:
+    def data_game(self, igdb: Game) -> Unit3d | None:
 
         igdb_platform = self.content.platform_list[0].lower() if self.content.platform_list else ''
         self.tracker.data["name"] = self.content.display_name
@@ -111,12 +115,11 @@ class UploadBot:
                                                  or int(self.cli.personal))
         return self.tracker
 
-    def send(self, torrent_archive: str, nfo_path = None) -> (requests, dict):
+    def send(self, torrent_archive: str, nfo_path=None):
 
-        tracker_response=self.tracker.upload_t(data=self.tracker.data,torrent_archive_path = torrent_archive,
-                                               nfo_path=nfo_path)
+        tracker_response = self.tracker.upload_t(data=self.tracker.data, torrent_archive_path=torrent_archive,
+                                                 nfo_path=nfo_path)
         return self.message(tracker_response=tracker_response, torrent_archive=torrent_archive)
-
 
     @staticmethod
     def download_file(url: str, destination_path: str) -> bool:
