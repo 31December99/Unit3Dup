@@ -191,9 +191,9 @@ class ManageTitles:
             (r'\b7 \b1\b', '7.1'),
             (r'\b5 \b1\b', '5.1'),
             (r'\bDDP5 \b1\b', 'DDP5.1'),
-            (r'\bDDP2 \b1\b', 'DDP2.0'),
+            (r'\bDDP2 \b0\b', 'DDP2.0'),
             (r'\bDD5 \b1\b', 'DD5.1'),
-            (r'\bDD2 \b1\b', 'DD2.0'),
+            (r'\bDD2 \b0\b', 'DD2.0'),
             (r'\b2 \b0\b', '2.0'),
             (r'\bWEB \bDL\b', 'WEB-DL'),
             (r'\bWEB \bDLMUX\b', 'WEB-DLMUX'),
@@ -203,6 +203,7 @@ class ManageTitles:
             (r'\bCBR \bCBZ\b', 'CBR-CBZ'),
             (r'\bH \b264\b', 'H.264'),
             (r'\bH \b265\b', 'H.265'),
+            (r'\bAAC2 \b0\b', 'AAC2.0'),
         ]
 
         for tag, replacement in replacements:
