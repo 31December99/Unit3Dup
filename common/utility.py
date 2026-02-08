@@ -203,6 +203,7 @@ class ManageTitles:
             (r'\bCBR \bCBZ\b', 'CBR-CBZ'),
             (r'\bH \b264\b', 'H.264'),
             (r'\bH \b265\b', 'H.265'),
+            (r'\bAAC2 \b0\b', 'AAC2.0'),
         ]
 
         for tag, replacement in replacements:
