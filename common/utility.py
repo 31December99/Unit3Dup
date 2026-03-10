@@ -6,9 +6,7 @@ import unicodedata
 from datetime import datetime
 from thefuzz import fuzz
 
-from common.external_services.igdb.core.tags import (
-    additions,
-)
+from common.external_services.igdb.core.tags import additions
 
 
 class ManageTitles:
@@ -107,7 +105,6 @@ class ManageTitles:
         """
         Replaces hyphens with dots and removes video resolutions
         """
-        # resolutions = ["4320", "2160", "1080", "720", "576", "480"]
         resolutions = ["4320p", "2160p", "1080p", "720p", "576p", "480p"]
 
         subdir = subdir.replace("-", ".")
@@ -211,8 +208,10 @@ class ManageTitles:
         return filename_sanitized
 
     @staticmethod
-    def categorize(filename: str, title: str, year: str, resolution: str, season: int, episode: int) -> str:
+    def categorize(filename: str, title: str, year: str, resolution: str, season: int, episode: int,
+                   releaser_sign: str) -> str:
         parser = Parser(filename=filename, resolution=resolution)
+
 
         se_str = ''
         if season is not None and episode is not None:
@@ -222,10 +221,20 @@ class ManageTitles:
         elif episode is not None:
             se_str = f"E{episode:02d}"
 
+        if not releaser_sign:
+            # Search for a sign in the title
+            search_sign = os.path.basename(filename).split('-')
+            if len(search_sign) > 1:
+                # uses the sign from the filename
+                releaser_sign = search_sign[-1]
+
+
         parts = [title, str(year), se_str]
         filtered_parts = [p for p in parts if p]
         title = ' '.join(filtered_parts)
-        return f"{title} {''.join(parser.start())}"
+        if releaser_sign:
+            releaser_sign = f"-{releaser_sign.lower().upper()}"
+        return f"{title} {''.join(parser.start())}{releaser_sign}"
 
 
 class MyString:

@@ -7,7 +7,7 @@ from common.title import Guessit
 from common.utility import ManageTitles, System
 from common.mediainfo import MediaFile
 from common import title
-
+from unit3dup import config_settings
 from view import custom_console
 
 
@@ -226,7 +226,8 @@ class Media:
                                                          year=guess.get("year", None),
                                                          resolution=self.resolution,
                                                          season=self.guess_season,
-                                                         episode=self.guess_episode
+                                                         episode=self.guess_episode,
+                                                         releaser_sign=config_settings.user_preferences.RELEASER_SIGN
                                                          )
         return self._display_name
 
