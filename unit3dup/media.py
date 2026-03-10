@@ -10,6 +10,7 @@ from common import title
 
 from view import custom_console
 
+
 class Media:
     def __init__(self, folder: str, subfolder: str):
         self.folder: str = folder
@@ -24,7 +25,7 @@ class Media:
         self._guess_title: str | None = None
         self._guess_filename: Guessit | None = None
         self._guess_season: int | None = None
-        self._episode: str | None = None
+        self._episode: int | None = None
         self._source: str | None = None
         self._screen_size: int | None = None
         self._audio_codec: str | None = None
@@ -38,7 +39,7 @@ class Media:
         self._audio_languages: list[str] | None = None
         self._media_file: MediaFile | None = None
         self._languages: list[str] | None = None
-        self._resolution: int | None = None
+        self._resolution: str | None = None
         self._tracker_name: str | None = None
 
         # // Contents dall'esterno
@@ -54,9 +55,8 @@ class Media:
         self._igdb_id: int | None = None
         self._generate_title: str | None = None
 
-
     @property
-    def title_sanitized(self)-> str:
+    def title_sanitized(self) -> str:
         if not self._title_sanitized:
             self._title_sanitized = ManageTitles.clean_text(self.title)
         return self._title_sanitized
@@ -95,9 +95,8 @@ class Media:
             self._game_title = _game_tmp.strip()
         return self._game_title
 
-
     @property
-    def torrent_name(self)-> str:
+    def torrent_name(self) -> str:
         return self._torrent_name
 
     @torrent_name.setter
@@ -105,7 +104,7 @@ class Media:
         self._torrent_name = value
 
     @property
-    def size(self)-> int:
+    def size(self) -> int:
         return self._size
 
     @size.setter
@@ -113,7 +112,7 @@ class Media:
         self._size = value
 
     @property
-    def metainfo(self)-> str:
+    def metainfo(self) -> str:
         return self._metainfo
 
     @metainfo.setter
@@ -190,13 +189,13 @@ class Media:
             if 'tv' in self.category:
                 serie = f"S{str(self.guess_season).zfill(2)}" if self.guess_season else ''
                 if not self.torrent_pack:
-                    serie+= f"E{str(self.guess_episode).zfill(2)}"
+                    serie += f"E{str(self.guess_episode).zfill(2)}"
             else:
-                serie =''
+                serie = ''
 
             # Build the title
-            self._generate_title =  (f"{self.guess_title} {serie} {self.resolution} {video_f} "
-                                     f"{available_lang} {audio_f} {audio_lang.upper()}")
+            self._generate_title = (f"{self.guess_title} {serie} {self.resolution} {video_f} "
+                                    f"{available_lang} {audio_f} {audio_lang.upper()}")
         return self._generate_title
 
     @generate_title.setter
@@ -214,11 +213,24 @@ class Media:
         return self._file_name
 
     @file_name.setter
-    def file_name(self,value):
+    def file_name(self, value):
         self._file_name = value
+
+    # @property
+    # def display_name(self):
+    #     return self._display_name
 
     @property
     def display_name(self):
+        if not self._display_name:
+            self._guess_filename = title.Guessit(self.title_sanitized)
+            guess = self._guess_filename.guessit
+            self._display_name = ManageTitles.categorize(filename=self.file_name,
+                                                      title=guess.get("title", None),
+                                                      resolution=self.resolution,
+                                                      season=self.guess_season,
+                                                      episode=self.guess_episode
+                                                      )
         return self._display_name
 
     @display_name.setter
@@ -232,7 +244,7 @@ class Media:
                 )
 
     @property
-    def guess_title(self)-> str:
+    def guess_title(self) -> str:
         if not self._guess_title:
             self._guess_title = title.Guessit(self.title_sanitized).guessit_title.strip()
         return self._guess_title
@@ -240,7 +252,6 @@ class Media:
     @guess_title.setter
     def guess_title(self, value):
         self._guess_title = value
-
 
     @property
     def guess_season(self):
@@ -262,7 +273,6 @@ class Media:
             self._source = self.guess_filename.source
         return self._source
 
-
     @property
     def screen_size(self):
         if not self._screen_size:
@@ -272,13 +282,11 @@ class Media:
                     self._screen_size = screen
         return self._screen_size
 
-
     @property
     def audio_codec(self):
         if not self._audio_codec:
             self._audio_codec = self.guess_filename.audio_codec
         return self._audio_codec
-
 
     @property
     def audio_languages(self):
@@ -350,7 +358,6 @@ class Media:
             self._languages = self.mediafile.available_languages
         return self._languages
 
-
     @property
     def resolution(self):
         if not self._resolution:
@@ -371,7 +378,6 @@ class Media:
 
                     # Get scan type: progressive or interlaced
                     scan_type = self.mediafile.video_scan_type
-
                     if scan_type:
                         if scan_type.lower() == "progressive":
                             closest_resolution = f"{closest_resolution}p"
@@ -396,10 +402,11 @@ class Media:
             else:
                 # Game
                 self._resolution = System.NO_RESOLUTION
+
         return self._resolution
 
     @staticmethod
-    def _crew(filename: str)-> list[str]:
+    def _crew(filename: str) -> list[str]:
         # Get the crew name only if the substr is at end of the string
         crew_regex = (
                 r"\b(" + "|".join(re.escape(pattern) for pattern in crew_patterns) + r")\b$"
