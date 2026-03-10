@@ -302,6 +302,7 @@ class Parser:
             "WEB-DLMUX": "source",
             "WEBRIP": "source",
             "BD-UNTOUCHED": "source",
+            "SUB": "subtitle",
             "ITA": "flag",
             "ENG": "flag",
             "FRA": "flag",
@@ -314,6 +315,7 @@ class Parser:
             "DD2.0": "audio",
             "AAC2.0": "audio",
             "AAC5.1": "audio",
+            "AC3": "audio",
 
             "7.1": "audio",
             "5.1": "audio",
@@ -344,8 +346,11 @@ class Parser:
             "CBR-CBZ",
             "DDP5.1",
             "DDP2.0",
+            "DTS-HD",
             "DD5.1",
             "DD2.0",
+            "DTS",
+            "TrueHD",
             "4320p",
             "2160p",
             "1080p",
@@ -354,6 +359,7 @@ class Parser:
             "480p",
             "AAC5.1",
             "AAC2.0",
+            "AC3",
             "H.265",
             "H.264",
             "X.264",
@@ -362,6 +368,7 @@ class Parser:
             "7.1",
             "5.1",
             "2.0",
+            "SUB",
             "ITA",
             "ENG",
             "GER",
@@ -369,7 +376,7 @@ class Parser:
             "ESP"
         ]
 
-        self.precedence = ["resolution", "source", "video", "audio", "flag"]
+        self.precedence = ["resolution", "source", "audio", "flag","subtitle", "video"]
 
     def _process(self) -> dict:
         # Regex zone
