@@ -127,10 +127,10 @@ united by a shared passion for torrents and more
 
 
 
-🎯 Streaming Community
+# AstraeLabs
 ======================
 
- `goto GitHub Project <https://github.com/Arrowar/StreamingCommunity>`_
+ `GitHub Project <https://github.com/AstraeLabs/VibraVid>`_
 
 An open-source script for downloading movies, TV shows, and anime from various websites,
 built by a community of people with a shared interest in programming.
@@ -139,7 +139,7 @@ built by a community of people with a shared interest in programming.
    :target: https://t.me/+hj294GabGWJlMDI8
    :alt: Unisciti su Telegram
 
-.. image:: https://img.shields.io/badge/StreamingCommunity-blue.svg
-   :target: https://github.com/Arrowar/StreamingCommunity
-   :alt: StreamingCommunity Badge
+.. image:: https://img.shields.io/badge/AstraeLabs-blue.svg
+   :target: https://github.com/AstraeLabs/VibraVid
+   :alt: AstraeLabs Badge
 
