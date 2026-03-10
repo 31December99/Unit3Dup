@@ -19,7 +19,8 @@ class Media:
 
         # // Media
         self._crew_list: list[str] | None = None
-        self._game_title: list[str] | None = None
+        # self._game_title: list[str] | None = None
+        self._game_title: str | None = None
         self._platform_list: list[str] | None = None
         self._title_sanitized: str | None = None
         self._guess_title: str | None = None
@@ -27,7 +28,7 @@ class Media:
         self._guess_season: int | None = None
         self._episode: int | None = None
         self._source: str | None = None
-        self._screen_size: int | None = None
+        self._screen_size: str | None = None
         self._audio_codec: str | None = None
         self._subtitle: str | None = None
         self._torrent_path: str | None = None
