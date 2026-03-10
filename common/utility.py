@@ -391,16 +391,19 @@ class Parser:
         tags_match = pattern.findall(self.filename)
         found_resolution = False
         for tag in tags_match:
-            category = self.TAG_TYPES.get(tag.upper())
+            tag = tag.upper()
+            category = self.TAG_TYPES.get(tag)
             if category and category == 'resolution':
                 found_resolution = True
             if category and category not in result:
                 result[category] = tag
+            else:
+                if tag not in result[category]:
+                        result[category] = f"{result[category]} {tag}"
 
         # Use 'resolution' from mediainfo if not found in the title string
         if not found_resolution:
             result["resolution"] = self.resolution
-
         return result
 
     def _order(self, data: dict) -> list[str]:
