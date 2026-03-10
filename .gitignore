@@ -11,6 +11,7 @@ __pycache__/
 *.so
 
 *.note
+notes
 
 # Distribution / packaging
 .Python
