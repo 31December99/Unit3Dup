@@ -221,7 +221,7 @@ class ManageTitles:
             se_str = f"S{season:02d}"
         elif episode is not None:
             se_str = f"E{episode:02d}"
-        return f"{title} {se_str} {''.join(parser.start())}"
+        return f"{title} {se_str} {''.join(parser.start())}" if se_str else f"{title} {''.join(parser.start())}"
 
 
 class MyString:
@@ -316,6 +316,7 @@ class Parser:
             "AAC2.0": "audio",
             "AAC5.1": "audio",
             "AC3": "audio",
+            "AAC": "audio",
 
             "7.1": "audio",
             "5.1": "audio",
@@ -360,6 +361,7 @@ class Parser:
             "AAC5.1",
             "AAC2.0",
             "AC3",
+            "AAC",
             "H.265",
             "H.264",
             "X.264",
