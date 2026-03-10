@@ -15,7 +15,7 @@ from view import custom_console
 
 
 class UploadBot:
-    def __init__(self, content: Media, tracker_name: str, cli: argparse):
+    def __init__(self, content: Media, tracker_name: str, cli: argparse.ArgumentParser):
         self.cli = cli
         self.content = content
         self.tracker_name = tracker_name
@@ -68,7 +68,7 @@ class UploadBot:
     def data(self, show_id: int, imdb_id: int, tvdb_id: int, show_keywords_list: str,
              video_info: Video) -> Unit3d | None:
 
-        self.tracker.data["name"] = f"{self.content.display_name}-{config_settings.user_preferences.RELEASER_SIGN}"
+        self.tracker.data["name"] = self.content.display_name
         self.tracker.data["tmdb"] = show_id
         self.tracker.data["imdb"] = imdb_id if imdb_id else 0
         self.tracker.data["tvdb"] = tvdb_id if tvdb_id and self.content.category == 'tv' else None
