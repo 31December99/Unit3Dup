@@ -4,6 +4,8 @@ import ipaddress
 import json
 import os
 import shutil
+import re
+import unicodedata
 
 from pydantic import BaseModel, model_validator
 from urllib.parse import urlparse
@@ -123,6 +125,7 @@ class UserPreferences(BaseModel):
     RESIZE_SCSHOT: bool = False
     TORRENT_COMMENT: str | None = "no_comment"
     PREFERRED_LANG: str | None = "all"
+    RELEASER_SIGN: str | None = None
     ANON: bool = False
     WEBP_ENABLED: bool = False
     CACHE_SCR: bool = False
@@ -329,6 +332,16 @@ class Validate:
             exit(1)
 
     @staticmethod
+    def sign(sign: str)-> str | None:
+
+            title = unicodedata.normalize("NFKD", sign)
+            title = title.encode("ascii", "ignore").decode()
+
+            title = re.sub(r'[^A-Za-z0-9.\-_\[\]() ]', '', title)
+            title = re.sub(r'\s+', ' ', title).strip()
+            return title[:20]
+
+    @staticmethod
     def integer(value: int | str, field_name: str) -> int:
         """
         Validates integer
@@ -456,6 +469,9 @@ class Config(BaseModel):
                 if field == 'TORRENT_ARCHIVE_PATH':
                     section[field] =Validate.unit3dup_path(path=section[field],field_name=field,
                                                            default_path=get_default_path(field=field))
+
+                if field == 'RELEASER_SIGN':
+                    section[field] = Validate.sign(sign=section[field])
 
 
         return v
