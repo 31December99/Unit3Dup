@@ -19,7 +19,6 @@ class Media:
 
         # // Media
         self._crew_list: list[str] | None = None
-        # self._game_title: list[str] | None = None
         self._game_title: str | None = None
         self._platform_list: list[str] | None = None
         self._title_sanitized: str | None = None
@@ -217,21 +216,18 @@ class Media:
     def file_name(self, value):
         self._file_name = value
 
-    # @property
-    # def display_name(self):
-    #     return self._display_name
-
     @property
     def display_name(self):
         if not self._display_name:
             self._guess_filename = title.Guessit(self.title_sanitized)
             guess = self._guess_filename.guessit
             self._display_name = ManageTitles.categorize(filename=self.file_name,
-                                                      title=guess.get("title", None),
-                                                      resolution=self.resolution,
-                                                      season=self.guess_season,
-                                                      episode=self.guess_episode
-                                                      )
+                                                         title=guess.get("title", None),
+                                                         year=guess.get("year", None),
+                                                         resolution=self.resolution,
+                                                         season=self.guess_season,
+                                                         episode=self.guess_episode
+                                                         )
         return self._display_name
 
     @display_name.setter
