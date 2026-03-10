@@ -223,7 +223,10 @@ class ManageTitles:
 
         if not releaser_sign:
             # Search for a sign in the title
-            search_sign = os.path.basename(filename).split('-')
+            base_name = os.path.basename(filename)
+            filename, file_ext = os.path.splitext(base_name)
+            search_sign = filename.split('-')
+
             if len(search_sign) > 1:
                 # uses the sign from the filename
                 releaser_sign = search_sign[-1]
