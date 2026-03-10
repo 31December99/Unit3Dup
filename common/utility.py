@@ -268,7 +268,7 @@ class System:
     NO_RESOLUTION = 'altro'
 
     @staticmethod
-    def get_size(folder_path: str) -> (float, str):
+    def get_size(folder_path: str) -> tuple[float, str]:
         """
         Returns the size of a folder or file in GB or MB
         """
