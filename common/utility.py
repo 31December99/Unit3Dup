@@ -211,7 +211,7 @@ class ManageTitles:
         return filename_sanitized
 
     @staticmethod
-    def categorize(filename: str, title: str, resolution: str, season: int, episode: int) -> str:
+    def categorize(filename: str, title: str, year: str, resolution: str, season: int, episode: int) -> str:
         parser = Parser(filename=filename, resolution=resolution)
 
         se_str = ''
@@ -221,7 +221,11 @@ class ManageTitles:
             se_str = f"S{season:02d}"
         elif episode is not None:
             se_str = f"E{episode:02d}"
-        return f"{title} {se_str} {''.join(parser.start())}" if se_str else f"{title} {''.join(parser.start())}"
+
+        parts = [title, str(year), se_str]
+        filtered_parts = [p for p in parts if p]
+        title = ' '.join(filtered_parts)
+        return f"{title} {''.join(parser.start())}"
 
 
 class MyString:
@@ -380,7 +384,7 @@ class Parser:
             "ESP"
         ]
 
-        self.precedence = ["resolution", "source", "audio", "flag","subtitle", "video"]
+        self.precedence = ["resolution", "source", "audio", "flag", "subtitle", "video"]
 
     def _process(self) -> dict:
         # Regex zone
@@ -401,7 +405,7 @@ class Parser:
                 result[category] = tag
             else:
                 if tag not in result[category]:
-                        result[category] = f"{result[category]} {tag}"
+                    result[category] = f"{result[category]} {tag}"
 
         # Use 'resolution' from mediainfo if not found in the title string
         if not found_resolution:
