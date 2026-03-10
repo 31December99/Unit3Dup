@@ -294,6 +294,8 @@ class Parser:
 
     def __init__(self, filename: str, resolution: str):
         self.filename = filename
+        self.basename = os.path.basename(filename)
+
         # Use 'resolution' from mediainfo if not found in the title string
         self.resolution = resolution
         # a "weight" assigned to each tag type..
@@ -388,7 +390,7 @@ class Parser:
             re.IGNORECASE
         )
 
-        tags_match = pattern.findall(self.filename)
+        tags_match = pattern.findall(self.basename)
         found_resolution = False
         for tag in tags_match:
             tag = tag.upper()
