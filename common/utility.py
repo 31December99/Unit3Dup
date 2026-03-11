@@ -212,7 +212,6 @@ class ManageTitles:
                    releaser_sign: str) -> str:
         parser = Parser(filename=filename, resolution=resolution)
 
-
         se_str = ''
         if season is not None and episode is not None:
             se_str = f"S{season:02d}E{episode:02d}"
@@ -231,12 +230,11 @@ class ManageTitles:
                 # uses the sign from the filename
                 releaser_sign = search_sign[-1]
 
-
         parts = [title, str(year), se_str]
         filtered_parts = [p for p in parts if p]
         title = ' '.join(filtered_parts)
         if releaser_sign:
-            releaser_sign = f"-{releaser_sign.lower().upper()}"
+            releaser_sign = f"-{releaser_sign}"
         return f"{title} {''.join(parser.start())}{releaser_sign}"
 
 
@@ -327,6 +325,7 @@ class Parser:
             "GER": "flag",
             "ESP": "flag",
 
+            "TRUEHD": "audio",
             "DDP5.1": "audio",
             "DDP2.0": "audio",
             "DD5.1": "audio",
@@ -416,13 +415,13 @@ class Parser:
         found_resolution = False
         for tag in tags_match:
             tag = tag.upper()
-            category = self.TAG_TYPES.get(tag)
+            category = self.TAG_TYPES.get(tag.upper())
             if category and category == 'resolution':
                 found_resolution = True
             if category and category not in result:
                 result[category] = tag
             else:
-                if tag not in result[category]:
+                if tag.upper() not in result[category]:
                     result[category] = f"{result[category]} {tag}"
 
         # Use 'resolution' from mediainfo if not found in the title string
