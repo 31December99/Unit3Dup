@@ -6,9 +6,8 @@ import unicodedata
 from datetime import datetime
 from thefuzz import fuzz
 
-from common.external_services.igdb.core.tags import (
-    additions,
-)
+from common.external_services.igdb.core.tags import additions
+
 
 class ManageTitles:
     """
@@ -22,7 +21,7 @@ class ManageTitles:
     ]
 
     # TAG Audio in title
-    iso_3166_alpha3= [ "ENG", "USA","ITA", "DEU",  "FRA",  "GBR", "ESP", "JPN", "BRA", "RUS", "CHN"]
+    iso_3166_alpha3 = ["ENG", "USA", "ITA", "DEU", "FRA", "GBR", "ESP", "JPN", "BRA", "RUS", "CHN"]
 
     # TAG Audio in title
     iso_3166_alpha2_to_alpha3 = {
@@ -45,7 +44,7 @@ class ManageTitles:
     }
 
     @staticmethod
-    def convert_iso(code)-> list | None:
+    def convert_iso(code) -> list | None:
         """ Convert iso 2 to 3 """
         code = code.upper()
 
@@ -70,7 +69,6 @@ class ManageTitles:
                             result.append(iso_code)
         return result
 
-
     @staticmethod
     def clean(filename: str) -> str:
         """
@@ -82,7 +80,7 @@ class ManageTitles:
         return " ".join(filename.split())
 
     @staticmethod
-    def remove_accent(my_string: str)-> str:
+    def remove_accent(my_string: str) -> str:
         """
         Removes accented characters from a string
         """
@@ -96,8 +94,8 @@ class ManageTitles:
         Returns True if the file is a video
         """
         video_ext = [
-            ".mp4", ".mkv", ".avi", ".mov", ".wmv", ".flv", ".webm", ".3gp", ".ogg", 
-            ".mpg", ".mpeg", ".m4v", ".rm", ".rmvb", ".vob", ".ts", ".m2ts", ".divx", 
+            ".mp4", ".mkv", ".avi", ".mov", ".wmv", ".flv", ".webm", ".3gp", ".ogg",
+            ".mpg", ".mpeg", ".m4v", ".rm", ".rmvb", ".vob", ".ts", ".m2ts", ".divx",
             ".asf", ".swf", ".ogv", ".drc", ".m3u8", ".pdf", ".epub", ".rar"
         ]
         return os.path.splitext(file)[1].lower() in video_ext
@@ -107,7 +105,6 @@ class ManageTitles:
         """
         Replaces hyphens with dots and removes video resolutions
         """
-        # resolutions = ["4320", "2160", "1080", "720", "576", "480"]
         resolutions = ["4320p", "2160p", "1080p", "720p", "576p", "480p"]
 
         subdir = subdir.replace("-", ".")
@@ -124,7 +121,7 @@ class ManageTitles:
         type_ = {
             ".pdf": "edicola",
             ".epub": "edicola",
-            }
+        }
         return type_.get(ext, None)
 
     @staticmethod
@@ -137,7 +134,7 @@ class ManageTitles:
         return fuzz.ratio(ManageTitles.remove_accent(str1.lower()), ManageTitles.remove_accent(str2.lower()))
 
     @staticmethod
-    def normalize_filename(filename)-> str:
+    def normalize_filename(filename) -> str:
         # Remove spaces
         filename = filename.strip()
 
@@ -159,7 +156,7 @@ class ManageTitles:
         return filename
 
     @staticmethod
-    def clean_text(filename: str)-> str:
+    def clean_text(filename: str) -> str:
 
         # Remove each addition from the string
         filename_sanitized = filename
@@ -210,7 +207,37 @@ class ManageTitles:
             filename_sanitized = re.sub(tag, replacement, filename_sanitized, flags=re.IGNORECASE)
         return filename_sanitized
 
+    @staticmethod
+    def categorize(filename: str, title: str, year: str, resolution: str, season: int, episode: int,
+                   releaser_sign: str) -> str:
+        parser = Parser(filename=filename, resolution=resolution)
 
+
+        se_str = ''
+        if season is not None and episode is not None:
+            se_str = f"S{season:02d}E{episode:02d}"
+        elif season is not None:
+            se_str = f"S{season:02d}"
+        elif episode is not None:
+            se_str = f"E{episode:02d}"
+
+        if not releaser_sign:
+            # Search for a sign in the title
+            base_name = os.path.basename(filename)
+            filename, file_ext = os.path.splitext(base_name)
+            search_sign = filename.split('-')
+
+            if len(search_sign) > 1:
+                # uses the sign from the filename
+                releaser_sign = search_sign[-1]
+
+
+        parts = [title, str(year), se_str]
+        filtered_parts = [p for p in parts if p]
+        title = ' '.join(filtered_parts)
+        if releaser_sign:
+            releaser_sign = f"-{releaser_sign.lower().upper()}"
+        return f"{title} {''.join(parser.start())}{releaser_sign}"
 
 
 class MyString:
@@ -250,14 +277,14 @@ class System:
     MOVIE = 1
     GAME = 3
 
-    category_list = {MOVIE: 'movie', TV_SHOW: 'tv', GAME : 'game', DOCUMENTARY: 'edicola'}
+    category_list = {MOVIE: 'movie', TV_SHOW: 'tv', GAME: 'game', DOCUMENTARY: 'edicola'}
 
-    RESOLUTIONS= [ "8640", "4320",  "2160", "1080", "720", "576", "480"]
+    RESOLUTIONS = ["8640", "4320", "2160", "1080", "720", "576", "480"]
     RESOLUTION_labels = ["8640p", "4320p", "2160p", "1080p", "1080i", "720p", "720i", "576p", "576i", "480p", "480i"]
     NO_RESOLUTION = 'altro'
 
     @staticmethod
-    def get_size(folder_path: str) -> (float, str):
+    def get_size(folder_path: str) -> tuple[float, str]:
         """
         Returns the size of a folder or file in GB or MB
         """
@@ -271,7 +298,148 @@ class System:
                     if not os.path.islink(file_path):
                         total_size += os.path.getsize(file_path)
 
-        return (round(total_size / (1024 ** 3), 2), 'GB') if total_size > 1024 ** 3\
+        return (round(total_size / (1024 ** 3), 2), 'GB') if total_size > 1024 ** 3 \
             else (round(total_size / (1024 ** 2), 2), 'MB')
 
 
+class Parser:
+    """
+        Identify tags based on video,audio,language and source
+        ordered based on self.precedence
+    """
+
+    def __init__(self, filename: str, resolution: str):
+        self.filename = filename
+        self.basename = os.path.basename(filename)
+
+        # Use 'resolution' from mediainfo if not found in the title string
+        self.resolution = resolution
+        # a "weight" assigned to each tag type..
+        self.TAG_TYPES = {
+            "WEB-DL": "source",
+            "WEB-DLMUX": "source",
+            "WEBRIP": "source",
+            "BD-UNTOUCHED": "source",
+            "SUB": "subtitle",
+            "ITA": "flag",
+            "ENG": "flag",
+            "FRA": "flag",
+            "GER": "flag",
+            "ESP": "flag",
+
+            "DDP5.1": "audio",
+            "DDP2.0": "audio",
+            "DD5.1": "audio",
+            "DD2.0": "audio",
+            "AAC2.0": "audio",
+            "AAC5.1": "audio",
+            "AC3": "audio",
+            "AAC": "audio",
+
+            "7.1": "audio",
+            "5.1": "audio",
+            "2.0": "audio",
+
+            "H.264": "video",
+            "X.264": "video",
+            "X264": "video",
+            "H264": "video",
+            "H.265": "video",
+            "X.265": "video",
+            "X265": "video",
+            "H265": "video",
+            "HEVC-FHC": "video",
+            "4320P": "resolution",
+            "2160P": "resolution",
+            "1080P": "resolution",
+            "720P": "resolution",
+            "576p": "resolution",
+            "480P": "resolution",
+        }
+
+        # /// Ordered
+        self.search_tags = [
+            "BD-UNTOUCHED",
+            "WEB-DLMUX",
+            "HEVC-FHC",
+            "WEB-DL",
+            "WEBRIP",
+            "CINEMA-MD",
+            "CBR-CBZ",
+            "DDP5.1",
+            "DDP2.0",
+            "DTS-HD",
+            "DD5.1",
+            "DD2.0",
+            "DTS",
+            "TrueHD",
+            "4320p",
+            "2160p",
+            "1080p",
+            "720p",
+            "576p",
+            "480p",
+            "AAC5.1",
+            "AAC2.0",
+            "AC3",
+            "AAC",
+            "H.265",
+            "H.264",
+            "X.264",
+            "X.265",
+            "X264",
+            "X265",
+            "H264",
+            "H265",
+            "7.1",
+            "5.1",
+            "2.0",
+            "SUB",
+            "ITA",
+            "ENG",
+            "GER",
+            "FRA",
+            "ESP"
+        ]
+
+        self.precedence = ["resolution", "source", "audio", "flag", "subtitle", "video"]
+
+    def _process(self) -> dict:
+        # Regex zone
+        result = {}
+        pattern = re.compile(
+            r'\b(?:' + '|'.join(map(re.escape, self.search_tags)) + r')\b',
+            re.IGNORECASE
+        )
+
+        tags_match = pattern.findall(self.basename)
+        found_resolution = False
+        for tag in tags_match:
+            tag = tag.upper()
+            category = self.TAG_TYPES.get(tag)
+            if category and category == 'resolution':
+                found_resolution = True
+            if category and category not in result:
+                result[category] = tag
+            else:
+                if tag not in result[category]:
+                    result[category] = f"{result[category]} {tag}"
+
+        # Use 'resolution' from mediainfo if not found in the title string
+        if not found_resolution:
+            result["resolution"] = self.resolution
+        return result
+
+    def _order(self, data: dict) -> list[str]:
+        ordered = []
+
+        # Create an ordered list
+        for category in self.precedence:
+            if category in data:
+                ordered.append(data[category])
+
+        return ordered
+
+    def start(self) -> str:
+        result = self._process()
+        return ' '.join(self._order(result))

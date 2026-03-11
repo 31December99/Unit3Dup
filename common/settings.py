@@ -4,6 +4,8 @@ import ipaddress
 import json
 import os
 import shutil
+import re
+import unicodedata
 
 from pydantic import BaseModel, model_validator
 from urllib.parse import urlparse
@@ -13,11 +15,9 @@ from common.utility import ManageTitles
 from common import trackers
 
 config_file = "Unit3Dbot.json"
-version = "0.8.29"
+version = "0.9.0"
 
 if os.name == "nt":
-    PW_TORRENT_ARCHIVE_PATH: Path = Path(os.getenv("LOCALAPPDATA", ".")) / "Unit3Dup_config" / "pw_torrent_archive"
-    PW_DOWNLOAD_PATH: Path = Path(os.getenv("LOCALAPPDATA", ".")) / "Unit3Dup_config" / "pw_download"
     WATCHER_DESTINATION_PATH: Path = Path(os.getenv("LOCALAPPDATA", ".")) / "Unit3Dup_config" / "watcher_destination_path"
     WATCHER_PATH: Path = Path(os.getenv("LOCALAPPDATA", ".")) / "Unit3Dup_config" / "watcher_path"
     CACHE_PATH: Path = Path(os.getenv("LOCALAPPDATA", ".")) / "Unit3Dup_config" / "cache_path"
@@ -25,8 +25,6 @@ if os.name == "nt":
     DEFAULT_JSON_PATH: Path = Path(os.getenv("LOCALAPPDATA", ".")) / "Unit3Dup_config" / f"{config_file}"
 
 else:
-    PW_TORRENT_ARCHIVE_PATH: Path = Path.home() / "Unit3Dup_config" / "pw_torrent_archive"
-    PW_DOWNLOAD_PATH: Path = Path.home() / "Unit3Dup_config" / "pw_download"
     WATCHER_DESTINATION_PATH: Path = Path.home() / "Unit3Dup_config" / "watcher_destination_path"
     WATCHER_PATH: Path = Path.home() / "Unit3Dup_config" / "watcher_path"
     CACHE_PATH: Path = Path.home() / "Unit3Dup_config" / "cache_path"
@@ -40,8 +38,6 @@ def get_default_path(field: str)-> str:
             "CACHE_PATH": CACHE_PATH,
             "WATCHER_DESTINATION_PATH": WATCHER_DESTINATION_PATH,
             "WATCHER_PATH": WATCHER_PATH,
-            "PW_DOWNLOAD_PATH": PW_DOWNLOAD_PATH,
-            "PW_TORRENT_ARCHIVE_PATH": PW_TORRENT_ARCHIVE_PATH
     }
     return str(default_paths[field])
 
@@ -123,6 +119,7 @@ class UserPreferences(BaseModel):
     RESIZE_SCSHOT: bool = False
     TORRENT_COMMENT: str | None = "no_comment"
     PREFERRED_LANG: str | None = "all"
+    RELEASER_SIGN: str | None = None
     ANON: bool = False
     WEBP_ENABLED: bool = False
     CACHE_SCR: bool = False
@@ -132,10 +129,6 @@ class UserPreferences(BaseModel):
 
 
 class Options(BaseModel):
-    PW_API_KEY: str | None = None
-    PW_URL: str = "http://localhost:9696/api/v1"
-    PW_TORRENT_ARCHIVE_PATH: str | None = None
-    PW_DOWNLOAD_PATH: str | None = None
     FTPX_USER: str = "user"
     FTPX_PASS: str = "pass"
     FTPX_IP: str = "127.0.0.1"
@@ -329,6 +322,16 @@ class Validate:
             exit(1)
 
     @staticmethod
+    def sign(sign: str)-> str | None:
+
+            title = unicodedata.normalize("NFKD", sign)
+            title = title.encode("ascii", "ignore").decode()
+
+            title = re.sub(r'[^A-Za-z0-9.\-_\[\]() ]', '', title)
+            title = re.sub(r'\s+', ' ', title).strip()
+            return title[:20]
+
+    @staticmethod
     def integer(value: int | str, field_name: str) -> int:
         """
         Validates integer
@@ -457,27 +460,9 @@ class Config(BaseModel):
                     section[field] =Validate.unit3dup_path(path=section[field],field_name=field,
                                                            default_path=get_default_path(field=field))
 
+                if field == 'RELEASER_SIGN':
+                    section[field] = Validate.sign(sign=section[field])
 
-        return v
-
-    @model_validator(mode='before')
-    def set_default_options(cls, v):
-        section = v['options']
-
-        for field, value in section.items():
-            if value is None:
-                print(f"Please fix the '{field}' value")
-                exit(1)
-            else:
-                field = field.upper()
-
-                if field == 'PW_TORRENT_ARCHIVE_PATH':
-                    section[field] = Validate.unit3dup_path(path=section[field], field_name=field,
-                                                    default_path=get_default_path(field=field))
-
-                if field == 'PW_DOWNLOAD_PATH':
-                    section[field] = Validate.unit3dup_path(path=section[field], field_name=field,
-                                                    default_path=get_default_path(field=field))
 
         return v
 
@@ -592,13 +577,10 @@ class Load:
                 "CACHE_SCR": "False",
                 "CACHE_DBONLINE": "False",
                 "PERSONAL_RELEASE": "False",
-                "FAST_LOAD": "0"
-            },
+                "FAST_LOAD": "0",
+                "RELEASER_SIGN": ""
+        },
             "options": {
-                "PW_API_KEY": "no_key",
-                "PW_URL": "http://localhost:9696/api/v1",
-                "PW_TORRENT_ARCHIVE_PATH": ".",
-                "PW_DOWNLOAD_PATH": ".",
                 "FTPX_USER": "user",
                 "FTPX_PASS": "pass",
                 "FTPX_IP": "127.0.0.1",
@@ -647,14 +629,6 @@ class Load:
         if not DEFAULT_JSON_PATH.exists():
             print(f"Create default configuration file: {DEFAULT_JSON_PATH}")
             Load.create_default_json_file(DEFAULT_JSON_PATH)
-
-        if not PW_TORRENT_ARCHIVE_PATH.exists():
-            print(f"Create default pw torrent archive path: {PW_TORRENT_ARCHIVE_PATH}")
-            os.makedirs(PW_TORRENT_ARCHIVE_PATH)
-
-        if not PW_DOWNLOAD_PATH.exists():
-            print(f"Create default pw download path: {PW_DOWNLOAD_PATH}")
-            os.makedirs(PW_DOWNLOAD_PATH)
 
         # Since the last bot version there might are new attributes
         # Load the json file, find the difference between json file and the code. Update the user's json file

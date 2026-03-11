@@ -15,7 +15,7 @@ from view import custom_console
 
 
 class UploadBot:
-    def __init__(self, content: Media, tracker_name: str, cli: argparse):
+    def __init__(self, content: Media, tracker_name: str, cli: argparse.ArgumentParser):
         self.cli = cli
         self.content = content
         self.tracker_name = tracker_name
