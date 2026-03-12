@@ -224,7 +224,8 @@ class Media:
             guess = self._guess_filename.guessit
             p2p_tags = P2pTags(filename=self.file_name,
                                title=guess.get("title", None),
-                               year=guess.get("year", None),
+                               year=guess.get("year", ""),
+                               episode_title=guess.get("episode_title", None),
                                mediafile_resolution=self.resolution,
                                season=self.guess_season,
                                episode=self.guess_episode,

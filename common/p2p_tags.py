@@ -12,6 +12,7 @@ TAG_TYPES = {
     "VU": "source",
     "UHD": "source",
     "BLURAY": "source",
+    "AMZN": "source",
     "AMC": "source",
     "CN": "source",
     "CR": "source",
@@ -78,6 +79,15 @@ TAG_TYPES = {
     "X265": "video",
     "H265": "video",
     "HEVC": "video",
+    "DV HDR10": "video",
+    "DVHDR10": "video",
+    "DV HDR": "video",
+    "DVHDR": "video",
+    "HDRPLUS+": "video",
+    "HDR10PLUS": "video",
+    "HDR": "video",
+    "HDR10+": "video",
+
     "4320P": "resolution",
     "2160P": "resolution",
     "1080P": "resolution",
@@ -89,7 +99,7 @@ TAG_TYPES = {
 
 class P2pTags:
     def __init__(self, filename: str, title: str, year: str, mediafile_resolution: str, season: int, episode: int,
-                 releaser_sign: str):
+                 episode_title: str,  releaser_sign: str):
 
         self.filename = filename
         self.title = title
@@ -97,6 +107,7 @@ class P2pTags:
         self.mediafile_resolution = mediafile_resolution
         self.season = season
         self.episode = episode
+        self.episode_title = episode_title
         self.releaser_sign = releaser_sign
         self.sign_in_title: str | None = None
 
@@ -105,7 +116,7 @@ class P2pTags:
         search_tags = sorted(TAG_TYPES.keys(), key=len, reverse=True)
 
         pattern = re.compile(
-            r'\b(?:' + '|'.join(map(re.escape, search_tags)) + r')\b',
+            r'(?:' + '|'.join(map(re.escape, search_tags)) + r')',
             re.IGNORECASE
         )
 
@@ -129,7 +140,7 @@ class P2pTags:
         # Started based on precedence
         self.tags_sorted = sorted(
             tags_match,
-            key=lambda tag: precedence_index.get(TAG_TYPES[tag.upper()], 999)
+            key=lambda tag: precedence_index.get(TAG_TYPES[tag.upper()], 100)
         )
 
     def process(self) -> str:
@@ -153,7 +164,7 @@ class P2pTags:
         else:
             self.sign_in_title = f"-{self.releaser_sign}"
 
-        parts = [self.title, str(self.year), se_str]
+        parts = [self.title, str(self.year), se_str, self.episode_title]
         filtered_parts = [part for part in parts if part]
         title = ' '.join(filtered_parts)
         return f"{title} {' '.join(self.tags_sorted)}{self.sign_in_title}"
