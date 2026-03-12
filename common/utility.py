@@ -44,7 +44,7 @@ class ManageTitles:
     }
 
     @staticmethod
-    def convert_iso(code) -> list | None:
+    def convert_iso(code) -> list | str | None:
         """ Convert iso 2 to 3 """
         code = code.upper()
 

@@ -229,7 +229,8 @@ class Media:
                                mediafile_resolution=self.resolution,
                                season=self.guess_season,
                                episode=self.guess_episode,
-                               releaser_sign=config_settings.user_preferences.RELEASER_SIGN
+                               releaser_sign=config_settings.user_preferences.RELEASER_SIGN,
+                               mediafile=self.mediafile
                                )
             self._display_name = p2p_tags.process()
         return self._display_name
