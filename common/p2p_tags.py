@@ -4,7 +4,9 @@ import re
 
 TAG_TYPES = {
     "WEB-DL": "source",
+    "WEBDL": "source",
     "WEB-DLMUX": "source",
+    "WEBDLMUX": "source",
     "WEBRIP": "source",
     "BD-UNTOUCHED": "source",
     "VU": "source",
@@ -80,7 +82,7 @@ TAG_TYPES = {
     "2160P": "resolution",
     "1080P": "resolution",
     "720P": "resolution",
-    "576p": "resolution",
+    "576P": "resolution",
     "480P": "resolution",
 }
 
