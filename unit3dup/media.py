@@ -225,7 +225,7 @@ class Media:
             p2p_tags = P2pTags(filename=self.file_name,
                                title=guess.get("title", None),
                                year=guess.get("year", None),
-                               resolution=self.resolution,
+                               mediafile_resolution=self.resolution,
                                season=self.guess_season,
                                episode=self.guess_episode,
                                releaser_sign=config_settings.user_preferences.RELEASER_SIGN

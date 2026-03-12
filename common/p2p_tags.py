@@ -75,7 +75,7 @@ TAG_TYPES = {
     "X.265": "video",
     "X265": "video",
     "H265": "video",
-    "HEVC-FHC": "video",
+    "HEVC": "video",
     "4320P": "resolution",
     "2160P": "resolution",
     "1080P": "resolution",
@@ -86,15 +86,17 @@ TAG_TYPES = {
 
 
 class P2pTags:
-    def __init__(self, filename: str, title: str, year: str, resolution: str, season: int, episode: int,
+    def __init__(self, filename: str, title: str, year: str, mediafile_resolution: str, season: int, episode: int,
                  releaser_sign: str):
+
         self.filename = filename
         self.title = title
         self.year = year
-        self.resolution = resolution
+        self.mediafile_resolution = mediafile_resolution
         self.season = season
         self.episode = episode
         self.releaser_sign = releaser_sign
+        self.sign_in_title: str | None = None
 
         filename = filename.upper()
 
@@ -105,15 +107,24 @@ class P2pTags:
             re.IGNORECASE
         )
 
+        # Search for tags
         tags_match = pattern.findall(filename)
+        # remove dope
+        tags_match = list(dict.fromkeys(tags_match))
 
+        # Check if a 'resolution' tag exists and add mediafile resolution if it doesn't
+        if not any(TAG_TYPES.get(tag.upper()) == "resolution" for tag in tags_match):
+            tags_match.append(self.mediafile_resolution.upper())
+
+        # Fixed priority
         precedence = ["resolution", "source", "audio", "flag", "subtitle", "video"]
 
+        # Assign an index to the 'precedence' keywords
         precedence_index = {}
         for i, v in enumerate(precedence):
-            print(i, v)
             precedence_index[v] = i
 
+        # Started based on precedence
         self.tags_sorted = sorted(
             tags_match,
             key=lambda tag: precedence_index.get(TAG_TYPES[tag.upper()], 999)
@@ -132,16 +143,15 @@ class P2pTags:
             # Search for a sign in the title
             base_name = os.path.basename(self.filename)
             filename, file_ext = os.path.splitext(base_name)
-            search_sign = filename.split('-')
-
-            if len(search_sign) > 1:
-                # uses the sign from the filename
-                self.releaser_sign = search_sign[-1]
+            sign = filename.rsplit('-', 1)
+            if len(sign) > 1 and sign[1]:
+                self.sign_in_title = f"-{sign[1]}"
+            else:
+                self.sign_in_title = ""
+        else:
+            self.sign_in_title = f"-{self.releaser_sign}"
 
         parts = [self.title, str(self.year), se_str]
-        filtered_parts = [p for p in parts if p]
+        filtered_parts = [part for part in parts if part]
         title = ' '.join(filtered_parts)
-        if self.releaser_sign:
-            self.releaser_sign = f"-{self.releaser_sign}"  # TODO fix sign and resolution
-
-        return f"{title} {' '.join(self.tags_sorted)} {self.releaser_sign}"
+        return f"{title} {' '.join(self.tags_sorted)}{self.sign_in_title}"
