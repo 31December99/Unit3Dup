@@ -104,7 +104,7 @@ TAG_TYPES = {
 
 class P2pTags:
     def __init__(self, filename: str, title: str, year: str, mediafile_resolution: str, season: int, episode: int,
-                 episode_title: str, releaser_sign: str, mediafile: MediaFile):
+                 episode_title: str, releaser_sign: str, tags_position: list, mediafile: MediaFile):
 
         self.filename = filename
         self.title = title
@@ -115,6 +115,7 @@ class P2pTags:
         self.episode_title = episode_title
         self.releaser_sign = releaser_sign
         self.mediafile = mediafile
+        self.tags_position = tags_position
         self.sign_in_title: str | None = None
 
         search_tags = sorted(TAG_TYPES.keys(), key=len, reverse=True)
@@ -139,6 +140,26 @@ class P2pTags:
             ch = "7.1"
         elif channel_s == 2:
             ch = "2.0"
+
+        # extract categories results
+        categories = [TAG_TYPES.get(tag) for tag in tags_match]
+
+        # Add video codec only if there is no video categories
+        if 'video' not in categories:
+            video_format = self.mediafile.video_track[0].get('format', "") if self.mediafile.video_track else ""
+            video_encode = self.mediafile.video_track[0].get('encoded_library_name',
+                                                             "") if self.mediafile.video_track else ""
+            tags_match.append(video_format)
+            tags_match.append(video_encode)
+
+        # Add audio codec only if there is no audio categories
+        if 'audio' not in categories:
+            audio_format = self.mediafile.audio_track[0].get('format', "") if self.mediafile.audio_track else ""
+            tags_match.append(audio_format)
+
+        # Add audio language if there is no audio categories
+        if 'flag' not in categories:
+            tags_match.extend(self._audio_lang())
 
         # Translate audio codec
         audio_translate = {
@@ -181,11 +202,11 @@ class P2pTags:
             tags_match.append(self.mediafile_resolution.upper())
 
         # Fixed priority
-        precedence = ["resolution", "source", "audio", "flag", "subtitle", "video"]
+        # precedence = ["resolution", "source", "audio", "flag", "subtitle", "video"]
 
         # Assign an index to the 'precedence' keywords
         precedence_index = {}
-        for i, v in enumerate(precedence):
+        for i, v in enumerate(self.tags_position):
             precedence_index[v] = i
 
         # Started based on precedence
@@ -194,27 +215,21 @@ class P2pTags:
             key=lambda tag: precedence_index.get(TAG_TYPES[tag.upper()], 100)
         )
 
-    def _mediainfo_track(self) -> list:
+    def _audio_lang(self) -> list:
 
         if not self.mediafile:
             return []
 
-        audio_format = self.mediafile.audio_track[0].get('format', "") if self.mediafile.audio_track else ""
-        video_format = self.mediafile.video_track[0].get('format', "") if self.mediafile.video_track else ""
-        video_encode = self.mediafile.video_track[0].get('encoded_library_name',
-                                                         "") if self.mediafile.video_track else ""
-
-        lang = {}
+        lang: list = []
         for track in self.mediafile.audio_track:
             l = track.get('other_language', None)
             if l:
                 for t in l:
                     c = ManageTitles.convert_iso(t)
                     if c:
-                        lang.update({c: 'flag'})
+                        lang.append(c)
                         break
-
-        return [audio_format, video_format, video_encode]
+        return lang
 
     def process(self) -> str:
         se_str = ''
