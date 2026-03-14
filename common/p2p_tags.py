@@ -104,7 +104,7 @@ TAG_TYPES = {
 
 class P2pTags:
     def __init__(self, filename: str, title: str, year: str, mediafile_resolution: str, season: int, episode: int,
-                 episode_title: str, releaser_sign: str, mediafile: MediaFile):
+                 episode_title: str, releaser_sign: str, tags_position: list, mediafile: MediaFile):
 
         self.filename = filename
         self.title = title
@@ -115,6 +115,7 @@ class P2pTags:
         self.episode_title = episode_title
         self.releaser_sign = releaser_sign
         self.mediafile = mediafile
+        self.tags_position = tags_position
         self.sign_in_title: str | None = None
 
         search_tags = sorted(TAG_TYPES.keys(), key=len, reverse=True)
@@ -201,11 +202,11 @@ class P2pTags:
             tags_match.append(self.mediafile_resolution.upper())
 
         # Fixed priority
-        precedence = ["resolution", "source", "audio", "flag", "subtitle", "video"]
+        # precedence = ["resolution", "source", "audio", "flag", "subtitle", "video"]
 
         # Assign an index to the 'precedence' keywords
         precedence_index = {}
-        for i, v in enumerate(precedence):
+        for i, v in enumerate(self.tags_position):
             precedence_index[v] = i
 
         # Started based on precedence

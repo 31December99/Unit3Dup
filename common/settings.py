@@ -101,6 +101,7 @@ class UserPreferences(BaseModel):
     IMGFI_PRIORITY: int = 4
     PASSIMA_PRIORITY: int = 5
     IMARIDE_PRIORITY: int = 6
+    TAGS_POSITION: list[str] | None = None
 
     NUMBER_OF_SCREENSHOTS: int = 4
     YOUTUBE_FAV_CHANNEL_ID: str | None = None
@@ -241,6 +242,25 @@ class Validate:
                 print(f"-> Invalid Multi Tracker '{tracker}'. Please fix your configuration file")
                 exit(1)
         return multi_tracker_list
+
+    @staticmethod
+    def validate_tags_position(position_list: list) -> list | None:
+
+        if not position_list:
+            print(f"-> Invalid TAG position. The list is empty !")
+            exit(1)
+
+        if len(position_list) != 6:
+            print(f"-> Invalid TAG position list. Wrong number of elements !")
+            exit(1)
+
+        for tag in position_list:
+            if tag.lower() not in ["resolution", "source", "audio", "flag", "subtitle", "video"]:
+                print(f"-> Invalid TAG position '{tag}'. Please fix your configuration file")
+                exit(1)
+
+        return position_list
+
 
     @staticmethod
     def unit3dup_path(path: str | None, field_name: str, default_path: str) -> str | None:
@@ -463,6 +483,8 @@ class Config(BaseModel):
                 if field == 'RELEASER_SIGN':
                     section[field] = Validate.sign(sign=section[field])
 
+                if field in ['TAGS_POSITION']:
+                    section[field] = Validate.validate_tags_position(position_list=section[field])
 
         return v
 
@@ -556,6 +578,7 @@ class Load:
                 "PASSIMA_PRIORITY": 5,
                 "IMARIDE_PRIORITY": 6,
                 "NUMBER_OF_SCREENSHOTS": 4,
+                "TAGS_POSITION": ["resolution", "source", "audio", "flag", "subtitle", "video"],
                 "YOUTUBE_FAV_CHANNEL_ID": "UCGCbxpnt25hWPFLSbvwfg_w",
                 "YOUTUBE_CHANNEL_ENABLE": "False",
                 "DUPLICATE_ON": "true",
