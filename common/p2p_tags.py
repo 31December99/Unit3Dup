@@ -58,13 +58,22 @@ TAG_TYPES = {
     "ESP": "flag",
 
     "TRUEHD": "audio",
+    "DDP7.1": "audio",
     "DDP5.1": "audio",
     "DDP2.0": "audio",
+
+    "DD7.1": "audio",
     "DD5.1": "audio",
     "DD2.0": "audio",
+
     "DD+ 7.1": "audio",
     "DD+ 5.1": "audio",
     "DD+ 2.0": "audio",
+
+    "DD 7.1": "audio",
+    "DD 5.1": "audio",
+    "DD 2.0": "audio",
+
     "AAC2.0": "audio",
     "AAC5.1": "audio",
     "AC3": "audio",
