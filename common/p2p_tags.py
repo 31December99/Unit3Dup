@@ -139,7 +139,7 @@ class P2pTags:
             re.IGNORECASE
         )
 
-        # Search for tags
+        # Search for tags in the title
         tags_match = pattern.findall(filename.upper())
 
         # remove dope
@@ -225,7 +225,7 @@ class P2pTags:
 
         # Check if a 'resolution' tag exists and add mediafile resolution if it doesn't
         if not any(TAG_TYPES.get(tag.upper()) == "resolution" for tag in tags_match):
-            tags_match.append(self.mediafile_resolution.upper())
+            tags_match.append(self.mediafile_resolution)
 
         # Assign an index to the 'precedence' keywords
         precedence_index = {}
