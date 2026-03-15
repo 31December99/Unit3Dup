@@ -62,14 +62,20 @@ TAG_TYPES = {
     "DDP2.0": "audio",
     "DD5.1": "audio",
     "DD2.0": "audio",
+    "DD+ 7.1": "audio",
+    "DD+ 5.1": "audio",
+    "DD+ 2.0": "audio",
     "AAC2.0": "audio",
     "AAC5.1": "audio",
     "AC3": "audio",
     "DD": "audio",
+    "DD+": "audio",
+    "DDP": "audio",
     "E-AC3": "audio",
     "EAC3": "audio",
     "AC-3": "audio",
     "AAC": "audio",
+    "AVC": "audio",
 
     "7.1": "audio",
     "5.1": "audio",
@@ -150,7 +156,6 @@ class P2pTags:
             video_encode = self.mediafile.video_track[0].get('encoded_library_name',
                                                              "") if self.mediafile.video_track else ""
             tags_match.append(video_format)
-            tags_match.append(video_encode)
 
         # Add audio codec only if there is no audio categories
         if 'audio' not in categories:
@@ -167,6 +172,10 @@ class P2pTags:
             "AC-3": "DD",
             "EAC3": "DD+",
             "E-AC3": "DD+",
+            "DDP2.0": "DD+ 2.0",
+            "DDP5.1": "DD+ 5.1",
+            "DDP7.1": "DD+ 7.1",
+            "DDP": "DD+",
         }
         # lower the res..
         resolution_lower = {"4320P", "2160P", "1080P", "720P", "576P", "480P"}
@@ -181,7 +190,7 @@ class P2pTags:
 
                 # Add channels only if it does not exist
                 if ch and not has_channel_tag:
-                    tag = f"{codec}{ch}"
+                    tag = f"{codec} {ch}"
                 else:
                     tag = codec
 
@@ -200,9 +209,6 @@ class P2pTags:
         # Check if a 'resolution' tag exists and add mediafile resolution if it doesn't
         if not any(TAG_TYPES.get(tag.upper()) == "resolution" for tag in tags_match):
             tags_match.append(self.mediafile_resolution.upper())
-
-        # Fixed priority
-        # precedence = ["resolution", "source", "audio", "flag", "subtitle", "video"]
 
         # Assign an index to the 'precedence' keywords
         precedence_index = {}
