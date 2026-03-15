@@ -183,6 +183,7 @@ class P2pTags:
 
         # lower the res..
         resolution_lower = {"4320P", "2160P", "1080P", "720P", "576P", "480P"}
+        codec_lower = {'X.264', 'X265', 'X.265', 'X264'}
 
         has_channel_tag = ch in tags_match
         new_tags = []
@@ -205,6 +206,9 @@ class P2pTags:
             # Fix the 'sub' word
             elif t == "SUB":
                 tag = "SUBS"
+
+            elif t in codec_lower:
+                tag = t.lower()
 
             new_tags.append(tag)
 
