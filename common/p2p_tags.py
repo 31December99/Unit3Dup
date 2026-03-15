@@ -166,17 +166,23 @@ class P2pTags:
         if 'flag' not in categories:
             tags_match.extend(self._audio_lang())
 
+        # Add subtitle tag if subtitle_track exist and there is no 'sub' in the title
+        if 'subtitle' not in categories:
+            if self.mediafile.subtitle_track:
+                tags_match.append("SUBS")
+
         # Translate audio codec
         audio_translate = {
             "AC3": "DD",
             "AC-3": "DD",
             "EAC3": "DD+",
             "E-AC3": "DD+",
-            "DDP2.0": "DD+ 2.0",
-            "DDP5.1": "DD+ 5.1",
-            "DDP7.1": "DD+ 7.1",
+            "DDP2.0": "DD+",
+            "DDP5.1": "DD+",
+            "DDP7.1": "DD+",
             "DDP": "DD+",
         }
+
         # lower the res..
         resolution_lower = {"4320P", "2160P", "1080P", "720P", "576P", "480P"}
 
