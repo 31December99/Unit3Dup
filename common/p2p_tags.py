@@ -175,8 +175,9 @@ class P2pTags:
 
         # Add subtitle tag if subtitle_track exist and there is no 'sub' in the title
         if 'subtitle' not in categories:
+            sub_tag = "SUBS" if len(self.mediafile.subtitle_track) > 1 else "SUB"
             if self.mediafile.subtitle_track:
-                tags_match.append("SUBS")
+                tags_match.append(sub_tag)
 
         # Translate audio codec
         audio_translate = {
@@ -197,6 +198,7 @@ class P2pTags:
         has_channel_tag = ch in tags_match
         new_tags = []
 
+        # verify the tags found in the title
         for tag in tags_match:
             t = tag.upper()
             if t in audio_translate:
