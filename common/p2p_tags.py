@@ -270,7 +270,8 @@ class P2pTags:
             base_name = os.path.basename(self.filename)
             filename, file_ext = os.path.splitext(base_name)
             m = re.search(r'-([A-Za-z0-9]+)$', filename)
-            if m:
+
+            if m and m.group(1) not in TAG_TYPES:
                 self.sign_in_title = f"-{m.group(1)}"
             else:
                 self.sign_in_title = ""
