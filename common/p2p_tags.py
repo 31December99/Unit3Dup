@@ -161,8 +161,8 @@ class P2pTags:
 
         # Add video codec only if there is no video categories
         if 'video' not in categories:
-            video_format = self.mediafile.video_track[0].get('format', "") if self.mediafile.video_track else ""
-            tags_match.append(video_format)
+            video_codec = self.mediafile.video_track[0].get('encoded_library_name', "") if self.mediafile.video_track else ""
+            tags_match.append(video_codec)
 
         # Add audio codec only if there is no audio categories
         if 'audio' not in categories:
