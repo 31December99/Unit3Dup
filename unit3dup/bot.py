@@ -54,6 +54,14 @@ class Bot:
         """
         custom_console.panel_message("Analyzing your media files... Please wait")
 
+        # Check permission
+        try:
+            os.stat(self.path)
+        except PermissionError:
+            custom_console.bot_error_log(f"Permission denied: {self.path}")
+            return False
+
+        # Exists
         if not os.path.exists(self.path):
             custom_console.bot_error_log("Path doesn't exist")
             return False
