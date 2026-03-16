@@ -161,8 +161,8 @@ class P2pTags:
 
         # Add video codec only if there is no video categories
         if 'video' not in categories:
-            video_format = self.mediafile.video_track[0].get('format', "") if self.mediafile.video_track else ""
-            tags_match.append(video_format)
+            video_codec = self.mediafile.video_track[0].get('encoded_library_name', "") if self.mediafile.video_track else ""
+            tags_match.append(video_codec)
 
         # Add audio codec only if there is no audio categories
         if 'audio' not in categories:
@@ -175,8 +175,9 @@ class P2pTags:
 
         # Add subtitle tag if subtitle_track exist and there is no 'sub' in the title
         if 'subtitle' not in categories:
+            sub_tag = "SUBS" if len(self.mediafile.subtitle_track) > 1 else "SUB"
             if self.mediafile.subtitle_track:
-                tags_match.append("SUBS")
+                tags_match.append(sub_tag)
 
         # Translate audio codec
         audio_translate = {
@@ -197,6 +198,7 @@ class P2pTags:
         has_channel_tag = ch in tags_match
         new_tags = []
 
+        # verify the tags found in the title
         for tag in tags_match:
             t = tag.upper()
             if t in audio_translate:
@@ -268,7 +270,8 @@ class P2pTags:
             base_name = os.path.basename(self.filename)
             filename, file_ext = os.path.splitext(base_name)
             m = re.search(r'-([A-Za-z0-9]+)$', filename)
-            if m:
+
+            if m and m.group(1) not in TAG_TYPES:
                 self.sign_in_title = f"-{m.group(1)}"
             else:
                 self.sign_in_title = ""
