@@ -9,6 +9,7 @@ TAG_TYPES = {
     "WEBDL": "source",
     "WEB-DLMUX": "source",
     "WEBDLMUX": "source",
+    "WEBMUX": "source",
     "WEBRIP": "source",
     "BD-UNTOUCHED": "source",
     "VU": "source",
