@@ -59,7 +59,10 @@ TAG_TYPES = {
     "GER": "flag",
     "ESP": "flag",
 
+    "ATMOS": "audio",
     "TRUEHD": "audio",
+    "DTSHD": "audio",
+    "DTS-HD": "audio",
     "DDP7.1": "audio",
     "DDP5.1": "audio",
     "DDP2.0": "audio",
@@ -249,9 +252,6 @@ class P2pTags:
 
         # This dict is for other categories
         other_groups = {}
-
-        print(tags_match)
-
 
         # Isolate audio and flag tags
         # All other tags will follow the normal precedence order
