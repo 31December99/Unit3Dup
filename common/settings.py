@@ -15,7 +15,7 @@ from common.utility import ManageTitles
 from common import trackers
 
 config_file = "Unit3Dbot.json"
-version = "0.9.4"
+version = "0.9.5"
 
 if os.name == "nt":
     WATCHER_DESTINATION_PATH: Path = Path(os.getenv("LOCALAPPDATA", ".")) / "Unit3Dup_config" / "watcher_destination_path"
@@ -250,12 +250,12 @@ class Validate:
             print(f"-> Invalid TAG position. The list is empty !")
             exit(1)
 
-        if len(position_list) != 6:
+        if len(position_list) != 7:
             print(f"-> Invalid TAG position list. Wrong number of elements !")
             exit(1)
 
         for tag in position_list:
-            if tag.lower() not in ["resolution", "source", "audio", "flag", "subtitle", "video"]:
+            if tag.lower() not in ["resolution", "source", "audio", "channels", "flag", "subtitle", "video"]:
                 print(f"-> Invalid TAG position '{tag}'. Please fix your configuration file")
                 exit(1)
 
@@ -578,7 +578,7 @@ class Load:
                 "PASSIMA_PRIORITY": 5,
                 "IMARIDE_PRIORITY": 6,
                 "NUMBER_OF_SCREENSHOTS": 4,
-                "TAGS_POSITION": ["resolution", "source", "audio", "flag", "subtitle", "video"],
+                "TAGS_POSITION": ["resolution", "source", "audio", "channels", "flag", "subtitle", "video"],
                 "YOUTUBE_FAV_CHANNEL_ID": "UCGCbxpnt25hWPFLSbvwfg_w",
                 "YOUTUBE_CHANNEL_ENABLE": "False",
                 "DUPLICATE_ON": "true",

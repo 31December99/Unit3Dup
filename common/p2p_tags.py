@@ -3,12 +3,14 @@ import os
 import re
 from common.utility import ManageTitles
 from common.mediainfo import MediaFile
+from collections import defaultdict, deque
 
 TAG_TYPES = {
     "WEB-DL": "source",
     "WEBDL": "source",
     "WEB-DLMUX": "source",
     "WEBDLMUX": "source",
+    "WEBMUX": "source",
     "WEBRIP": "source",
     "BD-UNTOUCHED": "source",
     "VU": "source",
@@ -57,7 +59,10 @@ TAG_TYPES = {
     "GER": "flag",
     "ESP": "flag",
 
+    "ATMOS": "audio",
     "TRUEHD": "audio",
+    "DTSHD": "audio",
+    "DTS-HD": "audio",
     "DDP7.1": "audio",
     "DDP5.1": "audio",
     "DDP2.0": "audio",
@@ -86,9 +91,9 @@ TAG_TYPES = {
     "AAC": "audio",
     "AVC": "audio",
 
-    "7.1": "audio",
-    "5.1": "audio",
-    "2.0": "audio",
+    "7.1": "channels",
+    "5.1": "channels",
+    "2.0": "channels",
 
     "H.264": "video",
     "X.264": "video",
@@ -161,7 +166,8 @@ class P2pTags:
 
         # Add video codec only if there is no video categories
         if 'video' not in categories:
-            video_codec = self.mediafile.video_track[0].get('encoded_library_name', "") if self.mediafile.video_track else ""
+            video_codec = self.mediafile.video_track[0].get('encoded_library_name',
+                                                            "") if self.mediafile.video_track else ""
             tags_match.append(video_codec)
 
         # Add audio codec only if there is no audio categories
@@ -216,7 +222,8 @@ class P2pTags:
 
             # Fix the 'sub' word
             elif t == "SUB":
-                tag = "SUBS"
+                sub_tag = "SUBS" if len(self.mediafile.subtitle_track) > 1 else "SUB"
+                tag = sub_tag
 
             elif t in codec_lower:
                 tag = t.lower()
@@ -230,15 +237,67 @@ class P2pTags:
             tags_match.append(self.mediafile_resolution)
 
         # Assign an index to the 'precedence' keywords
-        precedence_index = {}
-        for i, v in enumerate(self.tags_position):
-            precedence_index[v] = i
+        # precedence_index = {}
+        # for i, v in enumerate(self.tags_position):
+        #     precedence_index[v] = i
 
-        # Started based on precedence
-        self.tags_sorted = sorted(
-            tags_match,
-            key=lambda tag: precedence_index.get(TAG_TYPES[tag.upper()], 100)
-        )
+        # /// Sort tags based on 2 rules:
+        # 1) Order by tag_positions
+        # 2) For audio and flag categories alternate them (audio/flag/audio/flag)
+
+        # We can't sort each tags so we create dedicated list
+        audio_q = deque()
+        flag_q = deque()
+        channel_q = deque()
+
+        # This dict is for other categories
+        other_groups = {}
+
+        # Isolate audio and flag tags
+        # All other tags will follow the normal precedence order
+        for tag in tags_match:
+            cat = TAG_TYPES.get(tag.upper(), "unknown")
+            if cat == "audio":
+                # Add audio tag to its queue
+                audio_q.append(tag)
+            elif cat == "channels":
+                channel_q.append(tag)
+            elif cat == "flag":
+                # Add flag tag to its queue
+                flag_q.append(tag)
+            else:
+                # Add the other tags to other_groups
+                other_groups.setdefault(cat, []).append(tag)
+
+        # Alternate only if we have at least 2 audio and 2 flag tags
+        if len(audio_q) >= 2 and len(flag_q) >= 2:
+            mixed_audio_ch_flag = []
+            # Alternate
+            while audio_q or flag_q:
+                if audio_q:
+                    # get the first left audio and append to new list
+                    mixed_audio_ch_flag.append(audio_q.popleft())
+                if channel_q:
+                    mixed_audio_ch_flag.append(channel_q.popleft())
+                if flag_q:
+                    # get the first right flag and append to new list
+                    mixed_audio_ch_flag.append(flag_q.popleft())
+        else:
+            # otherwise goes for normal precedence
+            mixed_audio_ch_flag = list(audio_q) + list(channel_q) + list(flag_q)
+
+        # Rebuild the title ordering each tag+ audio/flag by tag_position
+        result = []
+        for cat in self.tags_position:
+            if cat in ("audio", "channels", "flag"):
+                # Insert the audio/flag processed tags
+                if mixed_audio_ch_flag:
+                    result.extend(mixed_audio_ch_flag)
+                    # clear
+                    mixed_audio_ch_flag = []
+            elif cat in other_groups:
+                result.extend(other_groups[cat])
+        self.tags_sorted = result
 
     def _audio_lang(self) -> list:
 
