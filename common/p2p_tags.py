@@ -219,7 +219,8 @@ class P2pTags:
 
             # Fix the 'sub' word
             elif t == "SUB":
-                tag = "SUBS"
+                sub_tag = "SUBS" if len(self.mediafile.subtitle_track) > 1 else "SUB"
+                tag = sub_tag
 
             elif t in codec_lower:
                 tag = t.lower()
