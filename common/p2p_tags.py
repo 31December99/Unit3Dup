@@ -152,7 +152,10 @@ class P2pTags:
         self.sign_in_title: str | None = None
 
         search_tags = sorted(TAG_TYPES.keys(), key=len, reverse=True)
-        pattern = re.compile(r'(?:' + '|'.join(map(re.escape, search_tags)) + r')', re.IGNORECASE)
+        pattern = re.compile(
+            r'\b(?:' + '|'.join(map(re.escape, search_tags)) + r')\b',
+            re.IGNORECASE
+        )
 
         # Search for tags in the title
         tags_match = pattern.findall(filename.upper())
