@@ -13,6 +13,7 @@ TAG_TYPES = {
     "WEBMUX": "source",
     "WEBRIP": "source",
     "BD-UNTOUCHED": "source",
+    "REMUX": "source",
     "VU": "source",
     "UHD": "source",
     "BLURAY": "source",
