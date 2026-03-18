@@ -222,7 +222,7 @@ class Media:
         if not self._display_name:
             self._guess_filename = title.Guessit(self.title_sanitized)
             guess = self._guess_filename.guessit
-            p2p_tags = P2pTags(filename=self.file_name,
+            p2p_tags = P2pTags(filename=self.title_sanitized,
                                title=guess.get("title", None),
                                year=guess.get("year", ""),
                                episode_title=guess.get("episode_title", None),
@@ -350,7 +350,6 @@ class Media:
             }:
                 # Read from the current video file the height field
                 file_path = os.path.join(self.folder, self.file_name)
-
                 # Media file
                 self._media_file = MediaFile(file_path)
         return self._media_file
