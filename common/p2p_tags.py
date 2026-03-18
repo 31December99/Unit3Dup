@@ -59,6 +59,10 @@ TAG_TYPES = {
     "FRA": "flag",
     "GER": "flag",
     "ESP": "flag",
+    "JPN": "flag",
+    "JAP": "flag",
+    "POR": "flag",
+    "PRT": "flag",
 
     "ATMOS": "audio",
     "TRUEHD": "audio",
@@ -117,6 +121,10 @@ TAG_TYPES = {
     "HDR10+": "video",
     "FHDRIP": "video",
     "UHDRIP": "video",
+    "FULL HD": "video",
+    "FULLHD": "video",
+    "HD": "video",
+    "UHD 4K": "video",
 
     "4320P": "resolution",
     "2160P": "resolution",
@@ -151,7 +159,6 @@ class P2pTags:
 
         # Search for tags in the title
         tags_match = pattern.findall(filename.upper())
-
         # remove dope
         tags_match = list(dict.fromkeys(tags_match))
 
@@ -258,15 +265,9 @@ class P2pTags:
         if not any(TAG_TYPES.get(tag.upper()) == "resolution" for tag in tags_match):
             tags_match.append(self.mediafile_resolution)
 
-        # Assign an index to the 'precedence' keywords
-        # precedence_index = {}
-        # for i, v in enumerate(self.tags_position):
-        #     precedence_index[v] = i
-
         # /// Sort tags based on 2 rules:
         # 1) Order by tag_positions
         # 2) For audio and flag categories alternate them (audio/flag/audio/flag)
-
         # We can't sort each tags so we create dedicated list
         audio_q = deque()
         flag_q = deque()
@@ -333,8 +334,12 @@ class P2pTags:
                 for t in l:
                     c = ManageTitles.convert_iso(t)
                     if c:
-                        lang.append(c)
-                        break
+                        if isinstance(c,list):
+                            lang.extend(c)
+                            break
+                        else:
+                            lang.append(c)
+                            break
         return lang
 
     def process(self) -> str:
