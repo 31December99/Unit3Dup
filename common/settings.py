@@ -15,7 +15,7 @@ from common.utility import ManageTitles
 from common import trackers
 
 config_file = "Unit3Dbot.json"
-version = "0.9.6"
+version = "0.9.7"
 
 if os.name == "nt":
     WATCHER_DESTINATION_PATH: Path = Path(os.getenv("LOCALAPPDATA", ".")) / "Unit3Dup_config" / "watcher_destination_path"
