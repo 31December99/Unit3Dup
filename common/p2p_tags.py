@@ -152,13 +152,15 @@ class P2pTags:
         self.sign_in_title: str | None = None
 
         search_tags = sorted(TAG_TYPES.keys(), key=len, reverse=True)
-        pattern = re.compile(r'(?:' + '|'.join(map(re.escape, search_tags)) + r')', re.IGNORECASE)
+        pattern = re.compile(
+            r'\b(?:' + '|'.join(map(re.escape, search_tags)) + r')\b',
+            re.IGNORECASE
+        )
 
         # Search for tags in the title
         tags_match = pattern.findall(filename.upper())
         # remove dope
         tags_match = list(dict.fromkeys(tags_match))
-
         # Search for channels
         channel_s = self.mediafile.audio_track[0].get('channel_s', None)
         ch: str = ''
@@ -331,7 +333,7 @@ class P2pTags:
                 for t in l:
                     c = ManageTitles.convert_iso(t)
                     if c:
-                        if isinstance(c,list):
+                        if isinstance(c, list):
                             lang.extend(c)
                             break
                         else:
