@@ -178,9 +178,12 @@ class P2pTags:
             audio_format = self.mediafile.audio_track[0].get('format', "") if self.mediafile.audio_track else ""
             tags_match.append(audio_format)
 
-        # Add audio language if there is no audio categories
-        if 'flag' not in categories:
-            tags_match.extend(self._audio_lang())
+        # Add tag language if there is no tag
+        flags = self._audio_lang()
+        # are all the language tags from mediaInfo available in the title?
+        if len(flags) != tags_match.count('flag'):
+            missing_flags = [tag for tag in flags if tag not in tags_match]
+            tags_match.extend(missing_flags)
 
         # Add subtitle tag if subtitle_track exist and there is no 'sub' in the title
         if 'subtitle' not in categories:
