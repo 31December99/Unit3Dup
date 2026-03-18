@@ -3,7 +3,7 @@ import os
 import re
 from common.utility import ManageTitles
 from common.mediainfo import MediaFile
-from collections import defaultdict, deque
+from collections import deque
 
 TAG_TYPES = {
     "WEB-DL": "source",
@@ -13,6 +13,7 @@ TAG_TYPES = {
     "WEBMUX": "source",
     "WEBRIP": "source",
     "BD-UNTOUCHED": "source",
+    "REMUX": "source",
     "VU": "source",
     "UHD": "source",
     "BLURAY": "source",
@@ -58,14 +59,20 @@ TAG_TYPES = {
     "FRA": "flag",
     "GER": "flag",
     "ESP": "flag",
+    "JPN": "flag",
+    "JAP": "flag",
+    "POR": "flag",
+    "PRT": "flag",
 
     "ATMOS": "audio",
     "TRUEHD": "audio",
     "DTSHD": "audio",
     "DTS-HD": "audio",
+    "DTS-HD MA": "audio",
     "DDP7.1": "audio",
     "DDP5.1": "audio",
     "DDP2.0": "audio",
+    "DTS": "audio",
 
     "DD7.1": "audio",
     "DD5.1": "audio",
@@ -112,6 +119,12 @@ TAG_TYPES = {
     "HDR10PLUS": "video",
     "HDR": "video",
     "HDR10+": "video",
+    "FHDRIP": "video",
+    "UHDRIP": "video",
+    "FULL HD": "video",
+    "FULLHD": "video",
+    "HD": "video",
+    "UHD 4K": "video",
 
     "4320P": "resolution",
     "2160P": "resolution",
@@ -139,14 +152,10 @@ class P2pTags:
         self.sign_in_title: str | None = None
 
         search_tags = sorted(TAG_TYPES.keys(), key=len, reverse=True)
-        pattern = re.compile(
-            r'\b(?:' + '|'.join(map(re.escape, search_tags)) + r')\b',
-            re.IGNORECASE
-        )
+        pattern = re.compile(r'(?:' + '|'.join(map(re.escape, search_tags)) + r')', re.IGNORECASE)
 
         # Search for tags in the title
         tags_match = pattern.findall(filename.upper())
-
         # remove dope
         tags_match = list(dict.fromkeys(tags_match))
 
@@ -166,8 +175,7 @@ class P2pTags:
 
         # Add video codec only if there is no video categories
         if 'video' not in categories:
-            video_codec = self.mediafile.video_track[0].get('encoded_library_name',
-                                                            "") if self.mediafile.video_track else ""
+            video_codec = self.mediafile.video_track[0].get('format', "") if self.mediafile.video_track else ""
             tags_match.append(video_codec)
 
         # Add audio codec only if there is no audio categories
@@ -175,9 +183,12 @@ class P2pTags:
             audio_format = self.mediafile.audio_track[0].get('format', "") if self.mediafile.audio_track else ""
             tags_match.append(audio_format)
 
-        # Add audio language if there is no audio categories
-        if 'flag' not in categories:
-            tags_match.extend(self._audio_lang())
+        # Add tag language if there is no tag
+        flags = self._audio_lang()
+        # are all the language tags from mediaInfo available in the title?
+        if len(flags) != tags_match.count('flag'):
+            missing_flags = [tag for tag in flags if tag not in tags_match]
+            tags_match.extend(missing_flags)
 
         # Add subtitle tag if subtitle_track exist and there is no 'sub' in the title
         if 'subtitle' not in categories:
@@ -197,6 +208,19 @@ class P2pTags:
             "DDP": "DD+",
         }
 
+        # Translate video codec
+        video_translate = {
+            "H.264": "x264",
+            "X.264": "x264",
+            "X264": "x264",
+            "AVC": "x264",
+            "H.265": "x265",
+            "H265": "x265",
+            "X.265": "x265",
+            "X265": "x265",
+            "HEVC": "x265",
+        }
+
         # lower the res..
         resolution_lower = {"4320P", "2160P", "1080P", "720P", "576P", "480P"}
         codec_lower = {'X.264', 'X265', 'X.265', 'X264'}
@@ -209,12 +233,14 @@ class P2pTags:
             t = tag.upper()
             if t in audio_translate:
                 codec = audio_translate[t]
-
                 # Add channels only if it does not exist
                 if ch and not has_channel_tag:
                     tag = f"{codec} {ch}"
                 else:
                     tag = codec
+
+            elif t in video_translate:
+                tag = video_translate[t]
 
             # Lower the res
             elif t in resolution_lower:
@@ -236,15 +262,9 @@ class P2pTags:
         if not any(TAG_TYPES.get(tag.upper()) == "resolution" for tag in tags_match):
             tags_match.append(self.mediafile_resolution)
 
-        # Assign an index to the 'precedence' keywords
-        # precedence_index = {}
-        # for i, v in enumerate(self.tags_position):
-        #     precedence_index[v] = i
-
         # /// Sort tags based on 2 rules:
         # 1) Order by tag_positions
         # 2) For audio and flag categories alternate them (audio/flag/audio/flag)
-
         # We can't sort each tags so we create dedicated list
         audio_q = deque()
         flag_q = deque()
@@ -311,8 +331,12 @@ class P2pTags:
                 for t in l:
                     c = ManageTitles.convert_iso(t)
                     if c:
-                        lang.append(c)
-                        break
+                        if isinstance(c,list):
+                            lang.extend(c)
+                            break
+                        else:
+                            lang.append(c)
+                            break
         return lang
 
     def process(self) -> str:
