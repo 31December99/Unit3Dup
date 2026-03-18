@@ -68,6 +68,7 @@ TAG_TYPES = {
     "DDP7.1": "audio",
     "DDP5.1": "audio",
     "DDP2.0": "audio",
+    "DTS": "audio",
 
     "DD7.1": "audio",
     "DD5.1": "audio",
@@ -114,6 +115,7 @@ TAG_TYPES = {
     "HDR10PLUS": "video",
     "HDR": "video",
     "HDR10+": "video",
+    "FHDRIP": "video",
 
     "4320P": "resolution",
     "2160P": "resolution",
