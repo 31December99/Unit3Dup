@@ -3,7 +3,7 @@ import os
 import re
 from common.utility import ManageTitles
 from common.mediainfo import MediaFile
-from collections import defaultdict, deque
+from collections import deque
 
 TAG_TYPES = {
     "WEB-DL": "source",
@@ -63,6 +63,7 @@ TAG_TYPES = {
     "TRUEHD": "audio",
     "DTSHD": "audio",
     "DTS-HD": "audio",
+    "DTS-HD MA": "audio",
     "DDP7.1": "audio",
     "DDP5.1": "audio",
     "DDP2.0": "audio",
@@ -166,8 +167,7 @@ class P2pTags:
 
         # Add video codec only if there is no video categories
         if 'video' not in categories:
-            video_codec = self.mediafile.video_track[0].get('encoded_library_name',
-                                                            "") if self.mediafile.video_track else ""
+            video_codec = self.mediafile.video_track[0].get('format', "") if self.mediafile.video_track else ""
             tags_match.append(video_codec)
 
         # Add audio codec only if there is no audio categories
@@ -197,6 +197,19 @@ class P2pTags:
             "DDP": "DD+",
         }
 
+        # Translate video codec
+        video_translate = {
+            "H.264": "x264",
+            "X.264": "x264",
+            "X264": "x264",
+            "AVC": "x264",
+            "H.265": "x265",
+            "H265": "x265",
+            "X.265": "x265",
+            "X265": "x265",
+            "HEVC": "x265",
+        }
+
         # lower the res..
         resolution_lower = {"4320P", "2160P", "1080P", "720P", "576P", "480P"}
         codec_lower = {'X.264', 'X265', 'X.265', 'X264'}
@@ -209,12 +222,14 @@ class P2pTags:
             t = tag.upper()
             if t in audio_translate:
                 codec = audio_translate[t]
-
                 # Add channels only if it does not exist
                 if ch and not has_channel_tag:
                     tag = f"{codec} {ch}"
                 else:
                     tag = codec
+
+            elif t in video_translate:
+                tag = video_translate[t]
 
             # Lower the res
             elif t in resolution_lower:
