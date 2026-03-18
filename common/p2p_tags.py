@@ -116,6 +116,7 @@ TAG_TYPES = {
     "HDR": "video",
     "HDR10+": "video",
     "FHDRIP": "video",
+    "UHDRIP": "video",
 
     "4320P": "resolution",
     "2160P": "resolution",
