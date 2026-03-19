@@ -74,6 +74,7 @@ TAG_TYPES = {
     "DDP5.1": "audio",
     "DDP2.0": "audio",
     "DTS": "audio",
+    "XLL": "audio",
 
     "DD7.1": "audio",
     "DD5.1": "audio",
@@ -82,6 +83,10 @@ TAG_TYPES = {
     "DD+ 7.1": "audio",
     "DD+ 5.1": "audio",
     "DD+ 2.0": "audio",
+
+    "DTS-HD MA 7.1": "audio",
+    "DTS-HD MA 5.1": "audio",
+    "DTS-HD MA 2.0": "audio",
 
     "DD 7.1": "audio",
     "DD 5.1": "audio",
@@ -188,8 +193,10 @@ class P2pTags:
 
         # Add audio codec only if there is no audio categories
         if 'audio' not in categories:
-            audio_format = self.mediafile.audio_track[0].get('format', "") if self.mediafile.audio_track else ""
-            tags_match.append(audio_format)
+            if self.mediafile.audio_track:
+                for audio in self.mediafile.audio_track:
+                    other_format = audio.get('other_format', "")
+                    tags_match.append(other_format[0])
 
         # Add tag language if there is no tag
         flags = self._audio_lang()
@@ -214,6 +221,7 @@ class P2pTags:
             "DDP5.1": "DD+",
             "DDP7.1": "DD+",
             "DDP": "DD+",
+            "DTS XLL": "DTS-HD MA",
         }
 
         # Translate video codec
