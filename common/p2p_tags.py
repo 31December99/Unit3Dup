@@ -17,40 +17,41 @@ TAG_TYPES = {
     "VU": "source",
     "UHD": "source",
     "BLURAY": "source",
-    "AMZN": "source",
-    "AMC": "source",
-    "CN": "source",
-    "CR": "source",
-    "DCU": "source",
-    "DISC": "source",
-    "DSCP": "source",
-    "DSNY": "source",
-    "DSNP": "source",
-    "DPLY": "source",
-    "ESPN": "source",
-    "FOOD": "source",
-    "FOX": "source",
-    "PLAY": "source",
-    "HBO": "source",
-    "HMAX": "source",
-    "HGTV": "source",
-    "HIST": "source",
-    "HULU": "source",
-    "MTOD": "source",
-    "NATG": "source",
-    "NF": "source",
-    "NICK": "source",
-    "NOW": "source",
-    "PMNT": "source",
-    "PMTP": "source",
-    "PCOK": "source",
-    "RKTN": "source",
-    "SHO": "source",
-    "SKST": "source",
-    "STAN": "source",
-    "STRP": "source",
-    "STZ": "source",
-    "TIMV": "source",
+
+    "AMZN": "platform",
+    "AMC": "platform",
+    "CN": "platform",
+    "CR": "platform",
+    "DCU": "platform",
+    "DISC": "platform",
+    "DSCP": "platform",
+    "DSNY": "platform",
+    "DSNP": "platform",
+    "DPLY": "platform",
+    "ESPN": "platform",
+    "FOOD": "platform",
+    "FOX": "platform",
+    "PLAY": "platform",
+    "HBO": "platform",
+    "HMAX": "platform",
+    "HGTV": "platform",
+    "HIST": "platform",
+    "HULU": "platform",
+    "MTOD": "platform",
+    "NATG": "platform",
+    "NF": "platform",
+    "NICK": "platform",
+    "NOW": "platform",
+    "PMNT": "platform",
+    "PMTP": "platform",
+    "PCOK": "platform",
+    "RKTN": "platform",
+    "SHO": "platform",
+    "SKST": "platform",
+    "STAN": "platform",
+    "STRP": "platform",
+    "STZ": "platform",
+    "TIMV": "platform",
 
     "SUB": "subtitle",
     "SUBS": "subtitle",
@@ -126,12 +127,16 @@ TAG_TYPES = {
     "HD": "video",
     "UHD 4K": "video",
 
+    "REPACK": "version",
+    "EXTENDED": "version",
+
     "4320P": "resolution",
     "2160P": "resolution",
     "1080P": "resolution",
     "720P": "resolution",
     "576P": "resolution",
     "480P": "resolution",
+
 }
 
 
@@ -161,6 +166,9 @@ class P2pTags:
         tags_match = pattern.findall(filename.upper())
         # remove dope
         tags_match = list(dict.fromkeys(tags_match))
+
+        print(tags_match)
+
 
         # Search for channels
         channel_s = self.mediafile.audio_track[0].get('channel_s', None)
@@ -311,6 +319,9 @@ class P2pTags:
 
         # Rebuild the title ordering each tag+ audio/flag by tag_position
         result = []
+
+        print(self.tags_position)
+
         for cat in self.tags_position:
             if cat in ("audio", "channels", "flag"):
                 # Insert the audio/flag processed tags
