@@ -167,9 +167,6 @@ class P2pTags:
         # remove dope
         tags_match = list(dict.fromkeys(tags_match))
 
-        print(tags_match)
-
-
         # Search for channels
         channel_s = self.mediafile.audio_track[0].get('channel_s', None)
         ch: str = ''
@@ -320,8 +317,6 @@ class P2pTags:
         # Rebuild the title ordering each tag+ audio/flag by tag_position
         result = []
 
-        print(self.tags_position)
-
         for cat in self.tags_position:
             if cat in ("audio", "channels", "flag"):
                 # Insert the audio/flag processed tags
@@ -345,7 +340,7 @@ class P2pTags:
                 for t in l:
                     c = ManageTitles.convert_iso(t)
                     if c:
-                        if isinstance(c,list):
+                        if isinstance(c, list):
                             lang.extend(c)
                             break
                         else:
