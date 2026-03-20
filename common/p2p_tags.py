@@ -9,7 +9,7 @@ TAG_TYPES = {
     # Sources
     "WEB-DL": "source", "WEBDL": "source", "WEB-DLMUX": "source", "WEBDLMUX": "source",
     "WEBMUX": "source", "WEBRIP": "source", "BD-UNTOUCHED": "source", "REMUX": "source",
-    "VU": "source", "UHD": "source", "BLURAY": "source",
+    "VU": "source", "UHD": "source", "UHDRIP": "source",  "BLURAY": "source",
 
     # Platforms
     "AMZN": "platform", "AMC": "platform", "CN": "platform", "CR": "platform",
@@ -48,7 +48,7 @@ TAG_TYPES = {
     "H.265": "video", "X.265": "video", "X265": "video", "H265": "video",
     "HEVC": "video", "DV": "video", "HDR10": "video", "DVHDR10": "video",
     "DVHDR": "video", "HDRPLUS+": "video", "HDR10PLUS": "video", "HDR": "video",
-    "HDR10+": "video", "FHDRIP": "video", "UHDRIP": "video", "FULL HD": "video",
+    "HDR10+": "video", "FHDRIP": "video", "FULL HD": "video",
     "FULLHD": "video", "HD": "video", "UHD 4K": "video",
 
     # Version
@@ -85,8 +85,7 @@ class P2pTags:
         pattern = re.compile(r'\b(?:' + '|'.join(map(re.escape, search_tags)) + r')\b', re.IGNORECASE)
 
         # Search for tags in the title
-        tags_match = list(dict.fromkeys(pattern.findall(self.filename.upper())))
-
+        tags_match = list(dict.fromkeys(pattern.findall(self.filename)))
         # Search for channels
         ch = ''
         if self.mediafile.audio_track:
@@ -123,31 +122,46 @@ class P2pTags:
 
         return self._normalize_tags(tags_match, ch)
 
-    def _audio_lang(self) -> list:
+    def _audio_lang(self) -> set:
         if not self.mediafile:
-            return []
-        langs = []
+            return set()
+        langs = set()
         for track in self.mediafile.audio_track:
             for l in track.get('other_language', []):
                 c = ManageTitles.convert_iso(l)
                 if c:
                     if isinstance(c, list):
-                        langs.extend(c)
+                        langs.add(c)
                     else:
-                        langs.append(c)
+                        langs.add(c)
                     break
         return langs
 
     def _normalize_tags(self, tags_match: list, channel_tag: str) -> list:
         audio_translate = {
-            "AC3": "DD", "AC-3": "DD", "EAC3": "DD+", "E-AC3": "DD+",
-            "DDP2.0": "DD+", "DDP5.1": "DD+", "DDP7.1": "DD+", "DDP": "DD+",
+            "AC3": "DD",
+            "AC-3": "DD",
+            "EAC3": "DD+",
+            "E-AC3": "DD+",
+            "DDP2.0": "DD+",
+            "DDP5.1": "DD+",
+            "DDP7.1": "DD+",
+            "DDP": "DD+",
             "DTS XLL": "DTS-HD MA",
         }
+
         video_translate = {
-            "H.264": "x264", "X.264": "x264", "X264": "x264", "AVC": "x264",
-            "H.265": "x265", "H265": "x265", "X.265": "x265", "X265": "x265", "HEVC": "x265",
+            "x264": "H.264",
+            "X.264": "H.264",
+            "X264": "H.264",
+            "AVC": "H.264",
+            "HEVC": "H.265",
+            "H265": "H.265",
+            "X.265": "H.265",
+            "X265": "H.265",
+            "x265": "H.265",
         }
+
         resolution_lower = {"4320P", "2160P", "1080P", "720P", "576P", "480P"}
         codec_lower = {"X.264", "X265", "X.265", "X264"}
 
