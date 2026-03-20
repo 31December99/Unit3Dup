@@ -6,57 +6,137 @@ from common.utility import ManageTitles
 from common.mediainfo import MediaFile
 
 TAG_TYPES = {
-    # Sources
-    "WEB-DL": "source", "WEBDL": "source", "WEB-DLMUX": "source", "WEBDLMUX": "source",
-    "WEBMUX": "source", "WEBRIP": "source", "BD-UNTOUCHED": "source", "REMUX": "source",
-    "VU": "source", "UHD": "source", "UHDRIP": "source",  "BLURAY": "source",
+    "WEB-DL": "source",
+    "WEBDL": "source",
+    "WEB-DLMUX": "source",
+    "WEBDLMUX": "source",
+    "WEBMUX": "source",
+    "WEBRIP": "source",
+    "BD-UNTOUCHED": "source",
+    "REMUX": "source",
+    "VU": "source",
+    "UHD": "source",
+    "UHDRIP": "source",
+    "BLURAY": "source",
 
-    # Platforms
-    "AMZN": "platform", "AMC": "platform", "CN": "platform", "CR": "platform",
-    "DCU": "platform", "DISC": "platform", "DSCP": "platform", "DSNY": "platform",
-    "DSNP": "platform", "DPLY": "platform", "ESPN": "platform", "FOOD": "platform",
-    "FOX": "platform", "PLAY": "platform", "HBO": "platform", "HMAX": "platform",
-    "HGTV": "platform", "HIST": "platform", "HULU": "platform", "MTOD": "platform",
-    "NATG": "platform", "NF": "platform", "NICK": "platform", "NOW": "platform",
-    "PMNT": "platform", "PMTP": "platform", "PCOK": "platform", "RKTN": "platform",
-    "SHO": "platform", "SKST": "platform", "STAN": "platform", "STRP": "platform",
-    "STZ": "platform", "TIMV": "platform",
+    "AMZN": "platform",
+    "AMC": "platform",
+    "CN": "platform",
+    "CR": "platform",
+    "DCU": "platform",
+    "DISC": "platform",
+    "DSCP": "platform",
+    "DSNY": "platform",
+    "DSNP": "platform",
+    "DPLY": "platform",
+    "ESPN": "platform",
+    "FOOD": "platform",
+    "FOX": "platform",
+    "PLAY": "platform",
+    "HBO": "platform",
+    "HMAX": "platform",
+    "HGTV": "platform",
+    "HIST": "platform",
+    "HULU": "platform",
+    "MTOD": "platform",
+    "NATG": "platform",
+    "NF": "platform",
+    "NICK": "platform",
+    "NOW": "platform",
+    "PMNT": "platform",
+    "PMTP": "platform",
+    "PCOK": "platform",
+    "RKTN": "platform",
+    "SHO": "platform",
+    "SKST": "platform",
+    "STAN": "platform",
+    "STRP": "platform",
+    "STZ": "platform",
+    "TIMV": "platform",
 
-    # Flags
-    "ITA": "flag", "ENG": "flag", "FRA": "flag", "GER": "flag", "ESP": "flag",
-    "JPN": "flag", "JAP": "flag", "POR": "flag", "PRT": "flag",
+    "ITA": "flag",
+    "ENG": "flag",
+    "FRA": "flag",
+    "GER": "flag",
+    "ESP": "flag",
+    "JPN": "flag",
+    "JAP": "flag",
+    "POR": "flag",
+    "PRT": "flag",
 
-    # Subtitles
-    "SUB": "subtitle", "SUBS": "subtitle",
+    "SUB": "subtitle",
+    "SUBS": "subtitle",
 
-    # Audio codecs
-    "ATMOS": "audio", "TRUEHD": "audio", "DTSHD": "audio", "DTS-HD": "audio",
-    "DTS-HD MA": "audio", "DDP7.1": "audio", "DDP5.1": "audio", "DDP2.0": "audio",
-    "DTS": "audio", "XLL": "audio", "DD7.1": "audio", "DD5.1": "audio", "DD2.0": "audio",
-    "DD+ 7.1": "audio", "DD+ 5.1": "audio", "DD+ 2.0": "audio",
-    "DTS-HD MA 7.1": "audio", "DTS-HD MA 5.1": "audio", "DTS-HD MA 2.0": "audio",
-    "DD 7.1": "audio", "DD 5.1": "audio", "DD 2.0": "audio",
-    "AAC2.0": "audio", "AAC5.1": "audio", "AC3": "audio", "DD": "audio",
-    "DD+": "audio", "DDP": "audio", "E-AC3": "audio", "EAC3": "audio", "AC-3": "audio",
-    "AAC": "audio", "AVC": "audio",
+    "ATMOS": "audio",
+    "TRUEHD": "audio",
+    "DTSHD": "audio",
+    "DTS-HD": "audio",
+    "DTS-HD MA": "audio",
+    "DDP7.1": "audio",
+    "DDP5.1": "audio",
+    "DDP2.0": "audio",
+    "DTS": "audio",
+    "XLL": "audio",
+    "DD7.1": "audio",
+    "DD5.1": "audio",
+    "DD2.0": "audio",
+    "DD+ 7.1": "audio",
+    "DD+ 5.1": "audio",
+    "DD+ 2.0": "audio",
+    "DTS-HD MA 7.1": "audio",
+    "DTS-HD MA 5.1": "audio",
+    "DTS-HD MA 2.0": "audio",
+    "DD 7.1": "audio",
+    "DD 5.1": "audio",
+    "DD 2.0": "audio",
+    "AAC2.0": "audio",
+    "AAC5.1": "audio",
+    "AC3": "audio",
+    "DD": "audio",
+    "DD+": "audio",
+    "DDP": "audio",
+    "E-AC3": "audio",
+    "EAC3": "audio",
+    "AC-3": "audio",
+    "AAC": "audio",
+    "AVC": "audio",
 
-    # Channels
-    "7.1": "channels", "5.1": "channels", "2.0": "channels",
+    "7.1": "channels",
+    "5.1": "channels",
+    "2.0": "channels",
 
-    # Video codecs
-    "H.264": "video", "X.264": "video", "X264": "video", "H264": "video",
-    "H.265": "video", "X.265": "video", "X265": "video", "H265": "video",
-    "HEVC": "video", "DV": "video", "HDR10": "video", "DVHDR10": "video",
-    "DVHDR": "video", "HDRPLUS+": "video", "HDR10PLUS": "video", "HDR": "video",
-    "HDR10+": "video", "FHDRIP": "video", "FULL HD": "video",
-    "FULLHD": "video", "HD": "video", "UHD 4K": "video",
+    "H.264": "video",
+    "X.264": "video",
+    "X264": "video",
+    "H264": "video",
+    "H.265": "video",
+    "X.265": "video",
+    "X265": "video",
+    "H265": "video",
+    "HEVC": "video",
+    "DV": "video",
+    "HDR10": "video",
+    "DVHDR10": "video",
+    "DVHDR": "video",
+    "HDRPLUS+": "video",
+    "HDR10PLUS": "video",
+    "HDR": "video",
+    "HDR10+": "video",
+    "FHDRIP": "video",
+    "FULL HD": "video",
+    "FULLHD": "video",
+    "HD": "video",
+    "UHD 4K": "video",
 
-    # Version
-    "REPACK": "version", "EXTENDED": "version",
+    "REPACK": "version",
+    "EXTENDED": "version",
 
-    # Resolution
-    "4320P": "resolution", "2160P": "resolution", "1080P": "resolution",
-    "720P": "resolution", "576P": "resolution", "480P": "resolution",
+    "4320P": "resolution",
+    "2160P": "resolution",
+    "1080P": "resolution",
+    "720P": "resolution",
+    "576P": "resolution",
+    "480P": "resolution",
 }
 
 
@@ -131,9 +211,9 @@ class P2pTags:
                 c = ManageTitles.convert_iso(l)
                 if c:
                     if isinstance(c, list):
-                        langs.add(c)
+                        langs.update(c)
                     else:
-                        langs.add(c)
+                        langs.update(c)
                     break
         return langs
 
@@ -198,11 +278,11 @@ class P2pTags:
         for tag in tags:
             cat = TAG_TYPES.get(tag.upper(), "unknown")
             if cat == "audio":
-                audio_q.append(tag)
+                audio_q.append(tag.upper())
             elif cat == "channels":
                 channel_q.append(tag)
             elif cat == "flag":
-                flag_q.append(tag)
+                flag_q.append(tag.upper())
             else:
                 other_groups.setdefault(cat, []).append(tag)
 
