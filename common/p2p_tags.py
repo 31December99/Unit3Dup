@@ -323,6 +323,6 @@ class P2pTags:
         else:
             self.sign_in_title = f"-{self.releaser_sign}"
 
-        parts = [self.title, str(self.year), se_str, self.episode_title]
+        parts = [self.title, str(self.year), se_str]
         filtered_parts = [p for p in parts if p]
         return f"{' '.join(filtered_parts)} {' '.join(self.tags_sorted)}{self.sign_in_title}"
