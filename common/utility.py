@@ -43,16 +43,32 @@ class ManageTitles:
         "ES-MX": "ESP"
     }
 
+    # From mediainfo
+    long_name = {
+        "ENGLISH": "ENG",
+        "ITALIAN": "ITA",
+        "GERMAN": "DEU",
+        "FRENCH": "FRA",
+        "SPANISH": "ESP",
+        "JAPANESE": "JPN",
+        "BRAZILIAN": "BRA",
+        "RUSSIAN": "RUS",
+        "CHINESE": "CHN",
+        "AMERICAN": "USA",
+        "BRITISH": "GBR"
+    }
     @staticmethod
     def convert_iso(code) -> list | str | None:
         """ Convert iso 2 to 3 """
         code = code.upper()
-
         # if it's 'multilang'
         if '-' in code:
             codes = code.split('-')
         else:
             codes = [code]
+
+        if code in ManageTitles.long_name:
+            codes = [ManageTitles.long_name[code]]
 
         result = []
         for part in codes:
