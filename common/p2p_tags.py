@@ -173,8 +173,7 @@ class P2pTags:
             ch = {2: "2.0", 6: "5.1", 8: "7.1"}.get(channel_s, "")
 
         # Categories of found tags
-        categories = [TAG_TYPES.get(tag) for tag in tags_match]
-
+        categories = [TAG_TYPES.get(tag.upper()) for tag in tags_match]
         # Add video codec only if there is no video categories
         if 'video' not in categories and self.mediafile.video_track:
             video_codec = self.mediafile.video_track[0].get('format', "")
@@ -283,6 +282,8 @@ class P2pTags:
                 channel_q.append(tag)
             elif cat == "flag":
                 flag_q.append(tag.upper())
+            elif cat == "video":
+                other_groups.setdefault(cat, []).append(tag.upper())
             else:
                 other_groups.setdefault(cat, []).append(tag)
 
