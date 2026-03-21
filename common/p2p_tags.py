@@ -19,6 +19,7 @@ TAG_TYPES = {
     "UHDRIP": "source",
     "BLURAY": "source",
 
+    "ATVP": "platform",
     "AMZN": "platform",
     "AMC": "platform",
     "CN": "platform",
@@ -96,22 +97,25 @@ TAG_TYPES = {
     "DD+": "audio",
     "DDP": "audio",
     "E-AC3": "audio",
+    "E-AC-3": "audio",
     "EAC3": "audio",
     "AC-3": "audio",
     "AAC": "audio",
+    "AAC LC": "audio",
     "AVC": "audio",
 
     "7.1": "channels",
     "5.1": "channels",
     "2.0": "channels",
 
+    "X.264": "video_encoder",
+    "X264": "video_encoder",
+    "X.265": "video_encoder",
+    "X265": "video_encoder",
+
     "H.264": "video",
-    "X.264": "video",
-    "X264": "video",
-    "H264": "video",
     "H.265": "video",
-    "X.265": "video",
-    "X265": "video",
+    "H264": "video",
     "H265": "video",
     "HEVC": "video",
     "DV": "video",
@@ -230,15 +234,12 @@ class P2pTags:
         }
 
         video_translate = {
-            "x264": "H.264",
-            "X.264": "H.264",
-            "X264": "H.264",
             "AVC": "H.264",
+            "X265": "x.265",
+            "X264": "x.264",
             "HEVC": "H.265",
             "H265": "H.265",
-            "X.265": "H.265",
-            "X265": "H.265",
-            "x265": "H.265",
+            "H264": "H.264",
         }
 
         resolution_lower = {"4320P", "2160P", "1080P", "720P", "576P", "480P"}
@@ -284,6 +285,9 @@ class P2pTags:
                 flag_q.append(tag.upper())
             elif cat == "video":
                 other_groups.setdefault(cat, []).append(tag.upper())
+            elif cat == "video_encoder":
+                # Skip video encoder
+                continue
             else:
                 other_groups.setdefault(cat, []).append(tag)
 
