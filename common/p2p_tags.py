@@ -92,6 +92,7 @@ TAG_TYPES = {
     "DD 2.0": "audio",
     "AAC2.0": "audio",
     "AAC5.1": "audio",
+    "AAC7.1": "audio",
     "AC3": "audio",
     "DD": "audio",
     "DD+": "audio",
