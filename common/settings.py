@@ -250,12 +250,13 @@ class Validate:
             print(f"-> Invalid TAG position. The list is empty !")
             exit(1)
 
-        if len(position_list) != 9:
+        if len(position_list) > 17 or len(position_list) < 5:
             print(f"-> Invalid TAG position list. Wrong number of elements !")
             exit(1)
 
         for tag in position_list:
-            if tag.lower() not in ["version","resolution", "platform","source", "audio", "channels", "flag", "subtitle", "video"]:
+            if tag.lower() not in ["title", "year", "season", "version", "resolution", "uhd", "platform", "source", "remux",
+                                   "multi", "acodec", "channels", "flag", "subtitle", "vcodec", "hdr", "video_encoder"]:
                 print(f"-> Invalid TAG position '{tag}'. Please fix your configuration file")
                 exit(1)
 
@@ -578,7 +579,8 @@ class Load:
                 "PASSIMA_PRIORITY": 5,
                 "IMARIDE_PRIORITY": 6,
                 "NUMBER_OF_SCREENSHOTS": 4,
-                "TAGS_POSITION": ["version","resolution", "platform", "source", "audio", "channels", "flag", "subtitle", "video"],
+                "TAGS_POSITION": ["title", "year", "season", "version", "resolution", "uhd", "platform", "source", "remux",
+                                  "multi", "acodec", "channels", "flag", "subtitle", "vcodec", "hdr", "video_encoder"],
                 "YOUTUBE_FAV_CHANNEL_ID": "UCGCbxpnt25hWPFLSbvwfg_w",
                 "YOUTUBE_CHANNEL_ENABLE": "False",
                 "DUPLICATE_ON": "true",

@@ -182,47 +182,18 @@ class ManageTitles:
         # Remove v version
         filename_sanitized = re.sub(r"v\d+(?:[ .]\d+)*", "", filename_sanitized).strip()
 
-        # Remove dots, extra spaces
+        # Remove dots, extra spaces (suspended) 0.9.12
         # filename_sanitized = re.sub(r"[._]", " ", filename_sanitized)
 
         # remove spaces, tab, newline
         filename_sanitized = re.sub(r"\s+", " ", filename_sanitized)
 
-        # Recover tag
+        # Recover tag (suspended) 0.9.12
         # filename_sanitized = ManageTitles.recover_tag(filename_sanitized)
 
         # remove double space
         filename_sanitized = re.sub(r"\s+", " ", filename_sanitized).strip()
-
         return filename_sanitized
-
-    # @staticmethod
-    # def recover_tag(filename_sanitized: str) -> str:
-    #
-    #     # Add the tag
-    #     replacements = [
-    #         (r'\b7 \b1\b', '7.1'),
-    #         (r'\b5 \b1\b', '5.1'),
-    #         (r'\bDDP5 \b1\b', 'DDP5.1'),
-    #         (r'\bDDP2 \b0\b', 'DDP2.0'),
-    #         (r'\bDD5 \b1\b', 'DD5.1'),
-    #         (r'\bDD2 \b0\b', 'DD2.0'),
-    #         (r'\b2 \b0\b', '2.0'),
-    #         (r'\bWEB \bDL\b', 'WEB-DL'),
-    #         (r'\bWEB \bDLMUX\b', 'WEB-DLMUX'),
-    #         (r'\bBD \bUNTOUCHED\b', 'BD-UNTOUCHED'),
-    #         (r'\bCINEMA \bMD\b', 'CINEMA-MD'),
-    #         (r'\bHEVC \bFHC\b', 'HEVC-FHC'),
-    #         (r'\bCBR \bCBZ\b', 'CBR-CBZ'),
-    #         (r'\bH \b264\b', 'H.264'),
-    #         (r'\bH \b265\b', 'H.265'),
-    #         (r'\bAAC2 \b0\b', 'AAC2.0'),
-    #     ]
-    #
-    #     for tag, replacement in replacements:
-    #         filename_sanitized = re.sub(tag, replacement, filename_sanitized, flags=re.IGNORECASE)
-    #     return filename_sanitized
-
 
 class MyString:
     """
