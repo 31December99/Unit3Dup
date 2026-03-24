@@ -93,18 +93,18 @@ class VideoManager:
                 if not db:
                     continue
 
-                # Update display name with Serie Title when requested by the user (-notitle)
-                if self.cli.notitle:
-                    # Add generated metadata to the display_title
-                    if self.cli.gentitle:
-                        content.display_name = (f"{db_online.media_result.result.get_title()} "
-                                                f"{db_online.media_result.year} ")
-                        content.display_name += " " + content.generate_title
-                    else:
-                        # otherwise keep the old meta_data and add the new display_title to it
-                        print()
-                        content.display_name = (f"{db_online.media_result.result.get_title()}"
-                                                f" {db_online.media_result.year} {content.guess_title}")
+                # # Update display name with Serie Title when requested by the user (-notitle)
+                # if self.cli.notitle:
+                #     # Add generated metadata to the display_title
+                #     if self.cli.gentitle:
+                #         content.display_name = (f"{db_online.media_result.result.get_title()} "
+                #                                 f"{db_online.media_result.year} ")
+                #         content.display_name += " " + content.generate_title
+                #     else:
+                #         # otherwise keep the old meta_data and add the new display_title to it
+                #         print()
+                #         content.display_name = (f"{db_online.media_result.result.get_title()}"
+                #                                 f" {db_online.media_result.year} {content.guess_title}")
 
                 # Get meta from the media video
                 video_info = Video(media=content, tmdb_id=db.video_id, trailer_key=db.trailer_key)

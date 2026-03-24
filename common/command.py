@@ -30,7 +30,7 @@ class CommandLine:
         parser.add_argument("-b", "--buildtags", action="store_true", help="Auto build torrent name")
 
         parser.add_argument("-reseed", "--reseed", action="store_true", help="reseed folder")
-        parser.add_argument("-gentitle", "--gentitle", action="store_true", help="")
+        # parser.add_argument("-gentitle", "--gentitle", action="store_true", help="")
         parser.add_argument("-watcher", "--watcher", action="store_true", help="Start watcher")
 
         parser.add_argument("-notitle", "--notitle", type=str, help="")
