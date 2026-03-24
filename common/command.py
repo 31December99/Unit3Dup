@@ -27,6 +27,7 @@ class CommandLine:
         parser.add_argument("-u", "--upload", type=str, help="Upload path")
         parser.add_argument("-f", "--folder", type=str, help="Upload folder")
         parser.add_argument("-scan", "--scan", type=str, help="Scan folder")
+        parser.add_argument("-b", "--buildtags", action="store_true", help="Auto build torrent name")
 
         parser.add_argument("-reseed", "--reseed", action="store_true", help="reseed folder")
         parser.add_argument("-gentitle", "--gentitle", action="store_true", help="")
