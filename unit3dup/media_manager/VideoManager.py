@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import argparse
+from argparse import Namespace
 import os
 
 from common.external_services.theMovieDB.core.api import DbOnline
@@ -18,7 +18,7 @@ from view import custom_console
 
 class VideoManager:
 
-    def __init__(self, contents: list[Media], cli: argparse.Namespace, tags_list: dict):
+    def __init__(self, contents: list[Media], cli: Namespace, tags_list: dict):
         """
         Initialize the VideoManager with the given contents
 
@@ -29,7 +29,7 @@ class VideoManager:
 
         self.torrent_found: bool = False
         self.contents: list[Media] = contents
-        self.cli: argparse.Namespace = cli
+        self.cli: Namespace = cli
         self.tags_list: dict = tags_list
 
     def process(self, selected_tracker: str, tracker_name_list: list, tracker_archive: str) -> list[BittorrentData]:
@@ -92,19 +92,6 @@ class VideoManager:
                 # If it is 'None' we skipped the imdb search (-notitle)
                 if not db:
                     continue
-
-                # # Update display name with Serie Title when requested by the user (-notitle)
-                # if self.cli.notitle:
-                #     # Add generated metadata to the display_title
-                #     if self.cli.gentitle:
-                #         content.display_name = (f"{db_online.media_result.result.get_title()} "
-                #                                 f"{db_online.media_result.year} ")
-                #         content.display_name += " " + content.generate_title
-                #     else:
-                #         # otherwise keep the old meta_data and add the new display_title to it
-                #         print()
-                #         content.display_name = (f"{db_online.media_result.result.get_title()}"
-                #                                 f" {db_online.media_result.year} {content.guess_title}")
 
                 # Get meta from the media video
                 video_info = Video(media=content, tmdb_id=db.video_id, trailer_key=db.trailer_key)
