@@ -40,19 +40,19 @@ class CommandLine:
         parser.add_argument('-force', nargs='?', const="movie", type=str, default=None)
         parser.add_argument("-noseed", "--noseed", action="store_true", help="No seeding after upload")
         parser.add_argument("-noup", "--noup", action="store_true", help="Torrent only. No upload")
-        parser.add_argument("-duplicate", "--duplicate", action="store_true", help="Find duplicates")
+        parser.add_argument("-dup", "--duplicate", action="store_true", help="Find duplicates")
         parser.add_argument("-personal", "--personal", action="store_true", help="Set to personal release")
 
         parser.add_argument("-ftp", "--ftp", action="store_true", help="Connect to FTP")
 
         # optional
-        parser.add_argument("-dump", "--dump", action="store_true", help="Download all torrent titles")
-        parser.add_argument("-s", "--search", type=str, help="Search for torrent")
+        parser.add_argument("-dmp", "--dump", action="store_true", help="Download all torrent titles")
+        parser.add_argument("-sch", "--search", type=str, help="Search for torrent")
         parser.add_argument("-db", "--dbsave", action="store_true", help="Save the search results")
         parser.add_argument("-i", "--info", type=str, help="Get info on torrent")
         parser.add_argument("-up", "--uploader", type=str, help="Search by uploader")
-        parser.add_argument("-desc", "--description", type=str, help="Search by description")
-        parser.add_argument("-bdinfo", "--bdinfo", type=str, help="Show BDInfo")
+        parser.add_argument("-d", "--description", type=str, help="Search by description")
+        parser.add_argument("-bd", "--bdinfo", type=str, help="Show BDInfo")
         parser.add_argument("-m", "--mediainfo", type=str, help="Show MediaInfo")
         parser.add_argument("-st", "--startyear", type=str, help="Start year")
         parser.add_argument("-en", "--endyear", type=str, help="End year")
@@ -68,8 +68,8 @@ class CommandLine:
         parser.add_argument("-playid", "--playlist_id", type=str, help="Playlist ID")
         parser.add_argument("-coll", "--collection_id", type=str, help="Collection ID")
         parser.add_argument("-free", "--freelech", type=str, help="Freelech discount")
-        parser.add_argument("-a", "--alive", action="store_true", help="Alive torrent")
-        parser.add_argument("-d", "--dead", action="store_true", help="Dead torrent")
+        parser.add_argument("-al", "--alive", action="store_true", help="Alive torrent")
+        parser.add_argument("-dd", "--dead", action="store_true", help="Dead torrent")
         parser.add_argument("-dy", "--dying", action="store_true", help="Dying torrent")
 
         parser.add_argument(
