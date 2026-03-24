@@ -4,80 +4,80 @@ import re
 from common.mediainfo import MediaFile
 from common.utility import ManageTitles
 
-TAG_TYPES = {
-    "REMUX": "remux",
-    "WEB-DL": "source",
-    "WEB-DLMUX": "source",
-    "WEBMUX": "source",
-    "WEBRIP": "source",
-    "BD-UNTOUCHED": "source",
-    "TS": "source",
-    "CAM": "source",
-    "HDTS": "source",
-    "MD": "source",
-    "UHDRIP": "source",
-    "BLURAY": "source",
-    "BRRIP": "source",
-    "BDRIP": "source",
-    "FHDRIP": "source",
-
-    "ATVP": "platform",
-    "AMZN": "platform",
-    "AMC": "platform",
-    "CN": "platform",
-    "CR": "platform",
-    "DCU": "platform",
-    "DISC": "platform",
-    "DSCP": "platform",
-    "DSNY": "platform",
-    "DSNP": "platform",
-    "DPLY": "platform",
-    "ESPN": "platform",
-    "FOOD": "platform",
-    "FOX": "platform",
-    "PLAY": "platform",
-    "HBO": "platform",
-    "HMAX": "platform",
-    "HGTV": "platform",
-    "HIST": "platform",
-    "HULU": "platform",
-    "MTOD": "platform",
-    "NATG": "platform",
-    "NF": "platform",
-    "NICK": "platform",
-    "NOW": "platform",
-    "PMNT": "platform",
-    "PMTP": "platform",
-    "PCOK": "platform",
-    "RKTN": "platform",
-    "SHO": "platform",
-    "SKST": "platform",
-    "STAN": "platform",
-    "STRP": "platform",
-    "STZ": "platform",
-    "TIMV": "platform",
-
-    "REPACK": "version",
-    "EXTENDED": "version",
-    "SUBBED": "version",
-    "MUX": "version",
-    "REMASTERED": "version",
-    "READNFO": "version",
-    "UNRATED": "version",
-    "LIMITED": "version",
-    "VU": "version",
-    "STV": "version",
-    "RECODE": "version",
-    "INTERNAL": "version",
-    "PROPER": "version",
-    "DUAL": "version",
-    "UNTOUCHED": "version",
-    "COMPLETE": "version",
-    "COMPLETA": "version",
-
-    "X264": "video_encoder",
-    "X265": "video_encoder",
-}
+# TAG_TYPES = {
+#     "REMUX": "remux",
+#     "WEB-DL": "source",
+#     "WEB-DLMUX": "source",
+#     "WEBMUX": "source",
+#     "WEBRIP": "source",
+#     "BD-UNTOUCHED": "source",
+#     "TS": "source",
+#     "CAM": "source",
+#     "HDTS": "source",
+#     "MD": "source",
+#     "UHDRIP": "source",
+#     "BLURAY": "source",
+#     "BRRIP": "source",
+#     "BDRIP": "source",
+#     "FHDRIP": "source",
+#
+#     "ATVP": "platform",
+#     "AMZN": "platform",
+#     "AMC": "platform",
+#     "CN": "platform",
+#     "CR": "platform",
+#     "DCU": "platform",
+#     "DISC": "platform",
+#     "DSCP": "platform",
+#     "DSNY": "platform",
+#     "DSNP": "platform",
+#     "DPLY": "platform",
+#     "ESPN": "platform",
+#     "FOOD": "platform",
+#     "FOX": "platform",
+#     "PLAY": "platform",
+#     "HBO": "platform",
+#     "HMAX": "platform",
+#     "HGTV": "platform",
+#     "HIST": "platform",
+#     "HULU": "platform",
+#     "MTOD": "platform",
+#     "NATG": "platform",
+#     "NF": "platform",
+#     "NICK": "platform",
+#     "NOW": "platform",
+#     "PMNT": "platform",
+#     "PMTP": "platform",
+#     "PCOK": "platform",
+#     "RKTN": "platform",
+#     "SHO": "platform",
+#     "SKST": "platform",
+#     "STAN": "platform",
+#     "STRP": "platform",
+#     "STZ": "platform",
+#     "TIMV": "platform",
+#
+#     "REPACK": "version",
+#     "EXTENDED": "version",
+#     "SUBBED": "version",
+#     "MUX": "version",
+#     "REMASTERED": "version",
+#     "READNFO": "version",
+#     "UNRATED": "version",
+#     "LIMITED": "version",
+#     "VU": "version",
+#     "STV": "version",
+#     "RECODE": "version",
+#     "INTERNAL": "version",
+#     "PROPER": "version",
+#     "DUAL": "version",
+#     "UNTOUCHED": "version",
+#     "COMPLETE": "version",
+#     "COMPLETA": "version",
+#
+#     "X264": "video_encoder",
+#     "X265": "video_encoder",
+# }
 
 # From hdr format
 hdr_map = {
@@ -124,7 +124,7 @@ video_encoder_translate = {
 
 class SearchTags(object):
     def __init__(self, filename, title: str, year: str, season: int, episode: int,
-                 mediafile: MediaFile, tags_position: list, releaser_sign: str):
+                 mediafile: MediaFile, tags_position: list, tags_list: dict, releaser_sign: str):
 
         self.tags_position = tags_position
         self.releaser_sign = releaser_sign
@@ -136,25 +136,30 @@ class SearchTags(object):
         self.year = year
         self.tags_dict = {}
         self.tags_position = tags_position
+        self.TAG_TYPES = tags_list
 
-    def normalize_version_tag(self, tag: str) -> str:
+    @staticmethod
+    def normalize_version_tag(tag: str) -> str:
         tag_esc = re.escape(tag)
         # Filter hyphenated,space compounds
         tag_esc = tag_esc.replace(r'\ ', r'[.\s_-]*')
         return tag_esc
 
-    def normalize_platform_tag(self, tag: str) -> str:
+    @staticmethod
+    def normalize_platform_tag(tag: str) -> str:
         # escape
         tag_esc = re.escape(tag)
         return tag_esc
 
-    def normalize_sources(self, tag: str) -> str:
+    @staticmethod
+    def normalize_sources(tag: str) -> str:
         tag_esc = re.escape(tag)
         # Filter hyphenated,space compounds
         tag_esc = tag_esc.replace(r'\ ', r'[.\s_-]*')
         return tag_esc
 
-    def normalize_video_encoder(self, tag: str) -> str:
+    @staticmethod
+    def normalize_video_encoder(tag: str) -> str:
         tag_esc = re.escape(tag)
         tag_esc = re.sub(r'([A-Z])(\d+)', r'\1[._-]?\2', tag_esc)
         return tag_esc
@@ -164,7 +169,7 @@ class SearchTags(object):
 
         # loop sorted TAG_TYPES dictionary
         for i, (tag, category) in enumerate(
-                sorted(TAG_TYPES.items(), key=lambda x: len(x[0]), reverse=True)
+                sorted(self.TAG_TYPES.items(), key=lambda x: len(x[0]), reverse=True)
         ):
             if category == "version":
                 norm = self.normalize_version_tag(tag)
@@ -226,7 +231,7 @@ class SearchTags(object):
         if not self.releaser_sign:
             filename, _ = os.path.splitext(os.path.basename(self.filename))
             m = re.search(r'-([A-Za-z0-9]+)$', filename)
-            self.releaser_sign = f"-{m.group(1)}" if m and m.group(1) not in TAG_TYPES else ""
+            self.releaser_sign = f"-{m.group(1)}" if m and m.group(1) not in self.TAG_TYPES else ""
         else:
             self.releaser_sign = f"-{self.releaser_sign}"
 

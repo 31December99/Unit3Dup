@@ -18,7 +18,7 @@ from view import custom_console
 
 class VideoManager:
 
-    def __init__(self, contents: list[Media], cli: argparse.Namespace):
+    def __init__(self, contents: list[Media], cli: argparse.Namespace, tags_list: dict):
         """
         Initialize the VideoManager with the given contents
 
@@ -30,6 +30,7 @@ class VideoManager:
         self.torrent_found: bool = False
         self.contents: list[Media] = contents
         self.cli: argparse.Namespace = cli
+        self.tags_list: dict = tags_list
 
     def process(self, selected_tracker: str, tracker_name_list: list, tracker_archive: str) -> list[BittorrentData]:
         """
@@ -48,6 +49,7 @@ class VideoManager:
         for content in self.contents:
             # /// User request to build the title; overwriting display_name
             if self.cli.buildtags:
+                print(self.tags_list)
                 guess_filename = title.Guessit(content.title_sanitize_tags)
                 guess = guess_filename.guessit
                 search_tags = SearchTags(filename=content.title_sanitize_tags,
@@ -57,7 +59,8 @@ class VideoManager:
                                          episode=content.guess_episode,
                                          releaser_sign=config_settings.user_preferences.RELEASER_SIGN,
                                          tags_position=config_settings.user_preferences.TAGS_POSITION,
-                                         mediafile=content.mediafile
+                                         tags_list=self.tags_list,
+                                         mediafile=content.mediafile,
                                          )
                 content.display_name = search_tags.process()
 

@@ -15,6 +15,7 @@ from common.utility import ManageTitles
 from common import trackers
 
 config_file = "Unit3Dbot.json"
+user_tags_file = "tags_list.json"
 version = "0.9.13"
 
 if os.name == "nt":
@@ -23,6 +24,7 @@ if os.name == "nt":
     CACHE_PATH: Path = Path(os.getenv("LOCALAPPDATA", ".")) / "Unit3Dup_config" / "cache_path"
     TORRENT_ARCHIVE_PATH: Path = Path(os.getenv("LOCALAPPDATA", ".")) / "Unit3Dup_config" / "torrent_archive_path"
     DEFAULT_JSON_PATH: Path = Path(os.getenv("LOCALAPPDATA", ".")) / "Unit3Dup_config" / f"{config_file}"
+    USER_TAGS_PATH: Path = Path(os.getenv("LOCALAPPDATA", ".")) / "Unit3Dup_config" / f"{user_tags_file}"
 
 else:
     WATCHER_DESTINATION_PATH: Path = Path.home() / "Unit3Dup_config" / "watcher_destination_path"
@@ -30,7 +32,7 @@ else:
     CACHE_PATH: Path = Path.home() / "Unit3Dup_config" / "cache_path"
     TORRENT_ARCHIVE_PATH: Path = Path.home() / "Unit3Dup_config" / "torrent_archive_path"
     DEFAULT_JSON_PATH: Path = Path.home() / "Unit3Dup_config" / f"{config_file}"
-
+    USER_TAGS_PATH: Path = Path.home() / "Unit3Dup_config" / f"{user_tags_file}"
 
 def get_default_path(field: str)-> str:
     default_paths = {
@@ -522,6 +524,92 @@ class Load:
     def _load_config(self):
         self.config = self.load_config()
 
+    @staticmethod
+    def create_tags_list_file(path: Path):
+        """
+        Creates a tags list file
+        """
+        TAG_TYPES = {
+            "REMUX": "remux",
+            "WEB-DL": "source",
+            "WEB-DLMUX": "source",
+            "WEBMUX": "source",
+            "WEBRIP": "source",
+            "BD-UNTOUCHED": "source",
+            "TS": "source",
+            "CAM": "source",
+            "HDTS": "source",
+            "MD": "source",
+            "UHDRIP": "source",
+            "BLURAY": "source",
+            "BRRIP": "source",
+            "BDRIP": "source",
+            "FHDRIP": "source",
+
+            "ATVP": "platform",
+            "AMZN": "platform",
+            "AMC": "platform",
+            "CN": "platform",
+            "CR": "platform",
+            "DCU": "platform",
+            "DISC": "platform",
+            "DSCP": "platform",
+            "DSNY": "platform",
+            "DSNP": "platform",
+            "DPLY": "platform",
+            "ESPN": "platform",
+            "FOOD": "platform",
+            "FOX": "platform",
+            "PLAY": "platform",
+            "HBO": "platform",
+            "HMAX": "platform",
+            "HGTV": "platform",
+            "HIST": "platform",
+            "HULU": "platform",
+            "MTOD": "platform",
+            "NATG": "platform",
+            "NF": "platform",
+            "NICK": "platform",
+            "NOW": "platform",
+            "PMNT": "platform",
+            "PMTP": "platform",
+            "PCOK": "platform",
+            "RKTN": "platform",
+            "SHO": "platform",
+            "SKST": "platform",
+            "STAN": "platform",
+            "STRP": "platform",
+            "STZ": "platform",
+            "TIMV": "platform",
+
+            "REPACK": "version",
+            "EXTENDED": "version",
+            "SUBBED": "version",
+            "MUX": "version",
+            "REMASTERED": "version",
+            "READNFO": "version",
+            "UNRATED": "version",
+            "LIMITED": "version",
+            "VU": "version",
+            "STV": "version",
+            "RECODE": "version",
+            "INTERNAL": "version",
+            "PROPER": "version",
+            "DUAL": "version",
+            "UNTOUCHED": "version",
+            "COMPLETE": "version",
+            "COMPLETA": "version",
+
+            "X264": "video_encoder",
+            "X265": "video_encoder",
+        }
+
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with open(path, "w", encoding="utf-8") as tags_list_file:
+            json.dump(TAG_TYPES, tags_list_file, ensure_ascii=False, indent=4)
+
+
+
 
     @staticmethod
     def create_default_json_file(path: Path):
@@ -580,7 +668,7 @@ class Load:
                 "IMARIDE_PRIORITY": 6,
                 "NUMBER_OF_SCREENSHOTS": 4,
                 "TAGS_POSITION": ["title", "year", "season", "version", "resolution", "uhd", "platform", "source", "remux",
-                                  "multi", "acodec", "channels", "flag", "subtitle", "vcodec", "hdr", "video_encoder"],
+                                  "multi", "acodec", "channels", "flag", "subtitle", "hdr", "vcodec", "video_encoder"],
                 "YOUTUBE_FAV_CHANNEL_ID": "UCGCbxpnt25hWPFLSbvwfg_w",
                 "YOUTUBE_CHANNEL_ENABLE": "False",
                 "DUPLICATE_ON": "true",
@@ -654,6 +742,10 @@ class Load:
         if not DEFAULT_JSON_PATH.exists():
             print(f"Create default configuration file: {DEFAULT_JSON_PATH}")
             Load.create_default_json_file(DEFAULT_JSON_PATH)
+
+        if not USER_TAGS_PATH.exists():
+            print(f"Create default Tags_list file: {USER_TAGS_PATH}")
+            Load.create_tags_list_file(USER_TAGS_PATH)
 
         # Since the last bot version there might are new attributes
         # Load the json file, find the difference between json file and the code. Update the user's json file
