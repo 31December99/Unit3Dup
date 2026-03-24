@@ -172,31 +172,6 @@ class ManageTitles:
         return filename
 
     @staticmethod
-    def clean_text(filename: str) -> str:
-
-        # Remove each addition from the string
-        filename_sanitized = filename
-        for addition in additions:
-            filename_sanitized = re.sub(rf"\b{addition}\b", "", filename_sanitized)
-
-        # Remove v version
-        filename_sanitized = re.sub(r"v\d+(?:[ .]\d+)*", "", filename_sanitized).strip()
-
-        # Remove dots, extra spaces
-        filename_sanitized = re.sub(r"[._]", " ", filename_sanitized)
-
-        # remove spaces, tab, newline
-        filename_sanitized = re.sub(r"\s+", " ", filename_sanitized)
-
-        # Recover tag
-        filename_sanitized = ManageTitles.recover_tag(filename_sanitized)
-
-        # remove double space
-        filename_sanitized = re.sub(r"\s+", " ", filename_sanitized).strip()
-
-        return filename_sanitized
-
-    @staticmethod
     def recover_tag(filename_sanitized: str) -> str:
 
         # Add the tag
@@ -217,10 +192,55 @@ class ManageTitles:
             (r'\bH \b264\b', 'H.264'),
             (r'\bH \b265\b', 'H.265'),
             (r'\bAAC2 \b0\b', 'AAC2.0'),
+            (r'\bAAC5 \b1\b', 'AAC5.1'),
         ]
 
         for tag, replacement in replacements:
             filename_sanitized = re.sub(tag, replacement, filename_sanitized, flags=re.IGNORECASE)
+        return filename_sanitized
+
+    @staticmethod
+    def clean_text(filename: str) -> str:
+        """
+            Clean filename
+        """
+
+        # Remove each addition from the string
+        filename_sanitized = filename
+        for addition in additions:
+            filename_sanitized = re.sub(rf"\b{addition}\b", "", filename_sanitized)
+
+        # Remove v version
+        filename_sanitized = re.sub(r"v\d+(?:[ .]\d+)*", "", filename_sanitized).strip()
+
+        # Remove dots, extra spaces
+        filename_sanitized = re.sub(r"[._]", " ", filename_sanitized)
+
+        # remove spaces, tab, newline
+        filename_sanitized = re.sub(r"\s+", " ", filename_sanitized)
+
+        # Recover tag
+        filename_sanitized = ManageTitles.recover_tag(filename_sanitized)
+
+        # remove double space
+        filename_sanitized = re.sub(r"\s+", " ", filename_sanitized).strip()
+        return filename_sanitized
+
+    @staticmethod
+    def clean_tags(filename: str) -> str:
+        """
+            Clean filename for title generation
+        """
+
+        filename_sanitized = filename
+        # Remove v version
+        filename_sanitized = re.sub(r"v\d+(?:[ .]\d+)*", "", filename_sanitized).strip()
+
+        # remove spaces, tab, newline
+        filename_sanitized = re.sub(r"\s+", " ", filename_sanitized)
+
+        # remove double space
+        filename_sanitized = re.sub(r"\s+", " ", filename_sanitized).strip()
         return filename_sanitized
 
 

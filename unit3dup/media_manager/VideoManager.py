@@ -4,6 +4,8 @@ import os
 
 from common.external_services.theMovieDB.core.api import DbOnline
 from common.bittorrent import BittorrentData
+from common.tags import SearchTags
+from common import title
 
 from unit3dup.media_manager.common import UserContent
 from unit3dup.upload import UploadBot
@@ -12,6 +14,7 @@ from unit3dup.pvtVideo import Video
 from unit3dup.media import Media
 
 from view import custom_console
+
 
 class VideoManager:
 
@@ -24,7 +27,7 @@ class VideoManager:
             cli (argparse.Namespace): user flag Command line
         """
 
-        self.torrent_found:bool = False
+        self.torrent_found: bool = False
         self.contents: list[Media] = contents
         self.cli: argparse.Namespace = cli
 
@@ -42,12 +45,26 @@ class VideoManager:
 
         #  Init the torrent list
         bittorrent_list = []
-        for content in self.contents :
+        for content in self.contents:
+            # /// User request to build the title; overwriting display_name
+            if self.cli.buildtags:
+                guess_filename = title.Guessit(content.title_sanitize_tags)
+                guess = guess_filename.guessit
+                search_tags = SearchTags(filename=content.title_sanitize_tags,
+                                         title=guess.get("title", None),
+                                         year=guess.get("year", ""),
+                                         season=content.guess_season,
+                                         episode=content.guess_episode,
+                                         releaser_sign=config_settings.user_preferences.RELEASER_SIGN,
+                                         tags_position=config_settings.user_preferences.TAGS_POSITION,
+                                         mediafile=content.mediafile
+                                         )
+                content.display_name = search_tags.process()
 
             # get the archive path
             archive = os.path.join(tracker_archive, selected_tracker)
             os.makedirs(archive, exist_ok=True)
-            torrent_filepath = os.path.join(tracker_archive,selected_tracker, f"{content.torrent_name}.torrent")
+            torrent_filepath = os.path.join(tracker_archive, selected_tracker, f"{content.torrent_name}.torrent")
 
             # Filter contents based on existing torrents or duplicates
             if UserContent.is_preferred_language(content=content):
@@ -67,7 +84,7 @@ class VideoManager:
                     continue
 
                 # Search for VIDEO ID
-                db_online = DbOnline(media=content,category=content.category, no_title=self.cli.notitle)
+                db_online = DbOnline(media=content, category=content.category, no_title=self.cli.notitle)
                 db = db_online.media_result
 
                 # If it is 'None' we skipped the imdb search (-notitle)
@@ -80,12 +97,12 @@ class VideoManager:
                     if self.cli.gentitle:
                         content.display_name = (f"{db_online.media_result.result.get_title()} "
                                                 f"{db_online.media_result.year} ")
-                        content.display_name+= " " + content.generate_title
+                        content.display_name += " " + content.generate_title
                     else:
                         # otherwise keep the old meta_data and add the new display_title to it
-                         print()
-                         content.display_name = (f"{db_online.media_result.result.get_title()}"
-                                                 f" {db_online.media_result.year} {content.guess_title}")
+                        print()
+                        content.display_name = (f"{db_online.media_result.result.get_title()}"
+                                                f" {db_online.media_result.year} {content.guess_title}")
 
                 # Get meta from the media video
                 video_info = Video(media=content, tmdb_id=db.video_id, trailer_key=db.trailer_key)
@@ -95,10 +112,10 @@ class VideoManager:
                 custom_console.bot_log(f"'DISPLAYNAME'...{{{content.display_name}}}\n")
 
                 # Tracker instance
-                unit3d_up = UploadBot(content=content, tracker_name=selected_tracker, cli = self.cli)
+                unit3d_up = UploadBot(content=content, tracker_name=selected_tracker, cli=self.cli)
 
                 # Get the data
-                unit3d_up.data(show_id=db.video_id, imdb_id=db.imdb_id, tvdb_id = db.tvdb_id,
+                unit3d_up.data(show_id=db.video_id, imdb_id=db.imdb_id, tvdb_id=db.tvdb_id,
                                show_keywords_list=db.keywords_list, video_info=video_info)
 
                 # Don't upload if -noup is set to True
@@ -107,8 +124,7 @@ class VideoManager:
                     continue
 
                 # Send to the tracker
-                tracker_response, tracker_message =  unit3d_up.send(torrent_archive=torrent_filepath)
-
+                tracker_response, tracker_message = unit3d_up.send(torrent_archive=torrent_filepath)
 
                 # Store response for the torrent clients
                 bittorrent_list.append(
@@ -116,7 +132,7 @@ class VideoManager:
                         tracker_response=tracker_response,
                         torrent_response=torrent_response,
                         content=content,
-                        tracker_message = tracker_message,
+                        tracker_message=tracker_message,
                         archive_path=torrent_filepath,
                     ))
 

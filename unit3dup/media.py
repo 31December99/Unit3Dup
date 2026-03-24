@@ -6,9 +6,7 @@ from common.external_services.igdb.core.tags import crew_patterns, platform_patt
 from common.title import Guessit
 from common.utility import ManageTitles, System
 from common.mediainfo import MediaFile
-from common.p2p_tags import P2pTags
 from common import title
-from unit3dup import config_settings
 from view import custom_console
 
 
@@ -62,9 +60,12 @@ class Media:
             self._title_sanitized = ManageTitles.clean_text(self.title)
         return self._title_sanitized
 
-    @title_sanitized.setter
-    def title_sanitized(self, value):
-        self.title_sanitized = value
+    @property
+    def title_sanitize_tags(self) -> str:
+        if not self._title_sanitized:
+            self._title_sanitized = ManageTitles.clean_tags(self.title)
+        return self._title_sanitized
+
 
     @property
     def crew_list(self) -> list['str']:
@@ -219,21 +220,6 @@ class Media:
 
     @property
     def display_name(self):
-        if not self._display_name:
-            self._guess_filename = title.Guessit(self.title_sanitized)
-            guess = self._guess_filename.guessit
-            p2p_tags = P2pTags(filename=self.title_sanitized,
-                               title=guess.get("title", None),
-                               year=guess.get("year", ""),
-                               episode_title=guess.get("episode_title", None),
-                               mediafile_resolution=self.resolution,
-                               season=self.guess_season,
-                               episode=self.guess_episode,
-                               releaser_sign=config_settings.user_preferences.RELEASER_SIGN,
-                               tags_position=config_settings.user_preferences.TAGS_POSITION,
-                               mediafile=self.mediafile
-                               )
-            self._display_name = p2p_tags.process()
         return self._display_name
 
     @display_name.setter
