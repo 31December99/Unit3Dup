@@ -168,11 +168,11 @@ class View(Torrent):
             unique_id = (
                 self.get_unique_id(media_info=media_info) if media_info else "-" * 40
             )
-            # console.print o log non stampa info_hash !
             print(
-                f"[{str(item['attributes']['release_year'])}] - [{item['attributes']['info_hash']}] [{unique_id}]"
+                f"[{str(item['attributes']['release_year'])}] - [{unique_id}]"
                 f" -> {item['attributes']['name']}"
             )
+
 
     def print_normal(self, tracker_data: dict, save= False):
         data = [item for item in tracker_data["data"]]
