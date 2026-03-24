@@ -49,7 +49,6 @@ class VideoManager:
         for content in self.contents:
             # /// User request to build the title; overwriting display_name
             if self.cli.buildtags:
-                print(self.tags_list)
                 guess_filename = title.Guessit(content.title_sanitize_tags)
                 guess = guess_filename.guessit
                 search_tags = SearchTags(filename=content.title_sanitize_tags,

@@ -207,7 +207,9 @@ class SearchTags(object):
                 updated_category = self.mediainfo_uhd(category=category)
 
             elif category == "subtitle":
-                updated_category = {'subtitle': "SUBS" if len(self.mediafile.subtitle_track) > 1 else "SUB"}
+                if self.mediafile.subtitle_track:
+                    updated_category = {'subtitle': "SUBS" if len(self.mediafile.subtitle_track) > 1 else "SUB"}
+
 
             if updated_category:
                 self.tags_dict.update(updated_category)
