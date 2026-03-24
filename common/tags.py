@@ -234,17 +234,17 @@ class SearchTags(object):
                 hdr_format = video.get('hdr_format', "")
                 # Check hdr
                 if hdr_format_commercial:
-                    print(f"hdr_format_commercial: {hdr_format_commercial}")
-                    print(f"hdr_format: {hdr_format}")
+                    # print(f"hdr_format_commercial: {hdr_format_commercial}")
+                    # print(f"hdr_format: {hdr_format}")
                     hdr = ''
                     if hdr_format_commercial in hdr_map:
-                        print(
-                            f"hdr_format_commercial: {hdr_format_commercial} -> Tag: {hdr_map[hdr_format_commercial]}")
+                        # print(
+                        #     f"hdr_format_commercial: {hdr_format_commercial} -> Tag: {hdr_map[hdr_format_commercial]}")
                         hdr = hdr_map[hdr_format_commercial]
                         # Check dolby vision
                     if 'DOLBY VISION' in hdr_format_commercial.upper() or 'DOLBY VISION' in hdr_format.upper():
                         hdr = f"DOLBY VISION {hdr}"
-                        print(hdr)
+                        # print(hdr)
                     return {category: hdr_map[hdr]}
         return {}
 
