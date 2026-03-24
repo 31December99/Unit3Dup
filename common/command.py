@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-
 import os
 import argparse
 from common.utility import System
 from common.settings import Load
+
 
 class CommandLine:
     """
@@ -30,7 +30,6 @@ class CommandLine:
         parser.add_argument("-b", "--buildtags", action="store_true", help="Auto build torrent name")
 
         parser.add_argument("-reseed", "--reseed", action="store_true", help="reseed folder")
-        parser.add_argument("-gentitle", "--gentitle", action="store_true", help="")
         parser.add_argument("-watcher", "--watcher", action="store_true", help="Start watcher")
 
         parser.add_argument("-notitle", "--notitle", type=str, help="")
@@ -99,8 +98,6 @@ class CommandLine:
             "-pr", "--prelease", action="store_true", help="Personal release torrent"
         )
 
-
-
         # Parsing the User cli
         self.args: parser = parser.parse_args()
 
@@ -114,10 +111,10 @@ class CommandLine:
         # Test -force flag
         if self.args.force:
             self.args.force = self.args.force[:10]
-            if self.args.force.lower() not in [ System.category_list[System.MOVIE],
-                                        System.category_list[System.GAME],
-                                        System.category_list[System.TV_SHOW],
-                                        System.category_list[System.DOCUMENTARY]]:
+            if self.args.force.lower() not in [System.category_list[System.MOVIE],
+                                               System.category_list[System.GAME],
+                                               System.category_list[System.TV_SHOW],
+                                               System.category_list[System.DOCUMENTARY]]:
                 self.args.force = None
                 print("Invalid -force category")
                 exit()

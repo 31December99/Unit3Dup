@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import argparse
+from argparse import Namespace
 import os
 
 from common.bittorrent import BittorrentData
@@ -14,10 +14,10 @@ from view import custom_console
 
 class DocuManager:
 
-    def __init__(self, contents: list[Media], cli: argparse.Namespace):
+    def __init__(self, contents: list[Media], cli: Namespace):
         self._my_tmdb = None
         self.contents: list['Media'] = contents
-        self.cli: argparse = cli
+        self.cli: Namespace = cli
 
     def process(self, selected_tracker: str, tracker_name_list: list, tracker_archive: str) -> list[BittorrentData]:
 

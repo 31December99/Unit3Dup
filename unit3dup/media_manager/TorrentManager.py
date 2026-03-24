@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import argparse
-
-import requests
-
 from unit3dup.media_manager.VideoManager import VideoManager
 from unit3dup.media_manager.GameManager import GameManager
 from unit3dup.media_manager.DocuManager import DocuManager
@@ -21,10 +18,11 @@ from view import custom_console
 
 
 class TorrentManager:
-    def __init__(self, cli: argparse.Namespace, tracker_archive: str):
+    def __init__(self, cli: argparse.Namespace, tracker_archive: str, tags_list: dict):
 
         self.preferred_lang = my_language(config_settings.user_preferences.PREFERRED_LANG)
         self.tracker_archive = tracker_archive
+        self.tags_list = tags_list
         self.videos: list[Media] = []
         self.games: list[Media] = []
         self.doc: list[Media] = []
@@ -93,7 +91,7 @@ class TorrentManager:
             # Build the torrent file and upload each VIDEO to the trackers
             if self.videos:
                 video_manager = VideoManager(contents=self.videos[:self.fast_load],
-                                             cli=self.cli)
+                                             cli=self.cli, tags_list= self.tags_list)
                 video_process_results = video_manager.process(selected_tracker=selected_tracker,
                                                               tracker_name_list=trackers_name_list,
                                                               tracker_archive=self.tracker_archive)

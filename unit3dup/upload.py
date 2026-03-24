@@ -1,6 +1,6 @@
-import argparse
-import json
+from argparse import Namespace
 import requests
+import json
 
 from common.external_services.igdb.core.models.search import Game
 from common.trackers.trackers import TRACKData
@@ -15,7 +15,7 @@ from view import custom_console
 
 
 class UploadBot:
-    def __init__(self, content: Media, tracker_name: str, cli: argparse.ArgumentParser):
+    def __init__(self, content: Media, tracker_name: str, cli: Namespace):
         self.cli = cli
         self.content = content
         self.tracker_name = tracker_name

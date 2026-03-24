@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import argparse
+from argparse import Namespace
 import os
 
 from common.external_services.igdb.client import IGDBClient
@@ -14,7 +14,7 @@ from view import custom_console
 
 class GameManager:
 
-    def __init__(self, contents: list["Media"], cli: argparse.Namespace):
+    def __init__(self, contents: list["Media"], cli: Namespace):
         """
         Initialize the GameManager with the given contents
 
@@ -23,7 +23,7 @@ class GameManager:
             cli (argparse.Namespace): user flag Command line
         """
         self.contents: list[Media] = contents
-        self.cli: argparse = cli
+        self.cli: Namespace = cli
         self.igdb = IGDBClient()
 
     def process(self, selected_tracker: str, tracker_name_list: list,  tracker_archive: str) -> list[BittorrentData]:

@@ -29,8 +29,8 @@ It performs the following tasks:
 - Seeding in qBittorrent, Transmission or rTorrent
 - Reseeding one or more torrents at a time
 - Seed your torrents across different OS
-- Add a custom title to your seasons
-- Generate info for a title using MediaInfo
+- Generate various tags for titles: ``version``, ``resolution``, ``uhd``, ``platform``, ``source``, ``remux``, ``multi``, ``acodec``, ``channels``, ``flag``, ``subtitle``, ``vcodec``, ``hdr``, ``video_encoder``
+
 
 unit3dup can grab the first page, convert it to an image (using xpdf),
 and then the bot can upload it to an image host, then add the link to the torrent page description.

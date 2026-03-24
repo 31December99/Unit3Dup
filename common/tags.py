@@ -4,81 +4,6 @@ import re
 from common.mediainfo import MediaFile
 from common.utility import ManageTitles
 
-TAG_TYPES = {
-    "REMUX": "remux",
-    "WEB-DL": "source",
-    "WEB-DLMUX": "source",
-    "WEBMUX": "source",
-    "WEBRIP": "source",
-    "BD-UNTOUCHED": "source",
-    "TS": "source",
-    "CAM": "source",
-    "HDTS": "source",
-    "MD": "source",
-    "UHDRIP": "source",
-    "BLURAY": "source",
-    "BRRIP": "source",
-    "BDRIP": "source",
-    "FHDRIP": "source",
-
-    "ATVP": "platform",
-    "AMZN": "platform",
-    "AMC": "platform",
-    "CN": "platform",
-    "CR": "platform",
-    "DCU": "platform",
-    "DISC": "platform",
-    "DSCP": "platform",
-    "DSNY": "platform",
-    "DSNP": "platform",
-    "DPLY": "platform",
-    "ESPN": "platform",
-    "FOOD": "platform",
-    "FOX": "platform",
-    "PLAY": "platform",
-    "HBO": "platform",
-    "HMAX": "platform",
-    "HGTV": "platform",
-    "HIST": "platform",
-    "HULU": "platform",
-    "MTOD": "platform",
-    "NATG": "platform",
-    "NF": "platform",
-    "NICK": "platform",
-    "NOW": "platform",
-    "PMNT": "platform",
-    "PMTP": "platform",
-    "PCOK": "platform",
-    "RKTN": "platform",
-    "SHO": "platform",
-    "SKST": "platform",
-    "STAN": "platform",
-    "STRP": "platform",
-    "STZ": "platform",
-    "TIMV": "platform",
-
-    "REPACK": "version",
-    "EXTENDED": "version",
-    "SUBBED": "version",
-    "MUX": "version",
-    "REMASTERED": "version",
-    "READNFO": "version",
-    "UNRATED": "version",
-    "LIMITED": "version",
-    "VU": "version",
-    "STV": "version",
-    "RECODE": "version",
-    "INTERNAL": "version",
-    "PROPER": "version",
-    "DUAL": "version",
-    "UNTOUCHED": "version",
-    "COMPLETE": "version",
-    "COMPLETA": "version",
-
-    "X264": "video_encoder",
-    "X265": "video_encoder",
-}
-
 # From hdr format
 hdr_map = {
     "DOLBY VISION": "DV",
@@ -124,7 +49,7 @@ video_encoder_translate = {
 
 class SearchTags(object):
     def __init__(self, filename, title: str, year: str, season: int, episode: int,
-                 mediafile: MediaFile, tags_position: list, releaser_sign: str):
+                 mediafile: MediaFile, tags_position: list, tags_list: dict, releaser_sign: str):
 
         self.tags_position = tags_position
         self.releaser_sign = releaser_sign
@@ -136,25 +61,30 @@ class SearchTags(object):
         self.year = year
         self.tags_dict = {}
         self.tags_position = tags_position
+        self.TAG_TYPES = tags_list
 
-    def normalize_version_tag(self, tag: str) -> str:
+    @staticmethod
+    def normalize_version_tag(tag: str) -> str:
         tag_esc = re.escape(tag)
         # Filter hyphenated,space compounds
         tag_esc = tag_esc.replace(r'\ ', r'[.\s_-]*')
         return tag_esc
 
-    def normalize_platform_tag(self, tag: str) -> str:
+    @staticmethod
+    def normalize_platform_tag(tag: str) -> str:
         # escape
         tag_esc = re.escape(tag)
         return tag_esc
 
-    def normalize_sources(self, tag: str) -> str:
+    @staticmethod
+    def normalize_sources(tag: str) -> str:
         tag_esc = re.escape(tag)
         # Filter hyphenated,space compounds
         tag_esc = tag_esc.replace(r'\ ', r'[.\s_-]*')
         return tag_esc
 
-    def normalize_video_encoder(self, tag: str) -> str:
+    @staticmethod
+    def normalize_video_encoder(tag: str) -> str:
         tag_esc = re.escape(tag)
         tag_esc = re.sub(r'([A-Z])(\d+)', r'\1[._-]?\2', tag_esc)
         return tag_esc
@@ -164,7 +94,7 @@ class SearchTags(object):
 
         # loop sorted TAG_TYPES dictionary
         for i, (tag, category) in enumerate(
-                sorted(TAG_TYPES.items(), key=lambda x: len(x[0]), reverse=True)
+                sorted(self.TAG_TYPES.items(), key=lambda x: len(x[0]), reverse=True)
         ):
             if category == "version":
                 norm = self.normalize_version_tag(tag)
@@ -202,7 +132,8 @@ class SearchTags(object):
                 updated_category = self.mediainfo_uhd(category=category)
 
             elif category == "subtitle":
-                updated_category = {'subtitle': "SUBS" if len(self.mediafile.subtitle_track) > 1 else "SUB"}
+                if self.mediafile.subtitle_track:
+                    updated_category = {'subtitle': "SUBS" if len(self.mediafile.subtitle_track) > 1 else "SUB"}
 
             if updated_category:
                 self.tags_dict.update(updated_category)
@@ -226,7 +157,7 @@ class SearchTags(object):
         if not self.releaser_sign:
             filename, _ = os.path.splitext(os.path.basename(self.filename))
             m = re.search(r'-([A-Za-z0-9]+)$', filename)
-            self.releaser_sign = f"-{m.group(1)}" if m and m.group(1) not in TAG_TYPES else ""
+            self.releaser_sign = f"-{m.group(1)}" if m and m.group(1) not in self.TAG_TYPES else ""
         else:
             self.releaser_sign = f"-{self.releaser_sign}"
 
@@ -249,7 +180,7 @@ class SearchTags(object):
         return refactored
 
     def mediainfo_audio(self, category: str) -> dict:
-        langs = set()
+        languages = []
         audio_codecs = []
         if self.mediafile.audio_track:
             for audio in self.mediafile.audio_track:
@@ -267,22 +198,23 @@ class SearchTags(object):
                     ch = {2: "2.0", 6: "5.1", 8: "7.1"}.get(channel_s, "")
                     if f"{codec_translated} {ch} {atmos}".strip() not in audio_codecs:
                         audio_codecs.append(f"{codec_translated} {ch} {atmos}".strip())
-                    print(f"Mediainfo {other_format} -> {codec_translated} {ch} {atmos}")
+                    # print(f"Mediainfo {other_format} -> {codec_translated} {ch} {atmos}")
 
                 # Add flags
                 for l in audio.get('other_language', []):
                     c = ManageTitles.convert_iso(l)
                     if c:
                         if isinstance(c, list):
-                            langs.update(c)
+                            languages.append(c[0])
                         else:
-                            langs.add(c)
+                            languages.append(c)
                         break
+                languages = list(dict.fromkeys(languages))
                 # Add multilanguage tag when languages > 2
-                if len(langs) > 2:
+                if len(languages) > 2:
                     self.tags_dict.update({'multi': 'MULTI'})
 
-            audio_codecs.extend(list(langs))
+            audio_codecs.extend(languages)
         return {category: audio_codecs}
 
     def mediainfo_video(self, category: str) -> dict:
@@ -302,16 +234,17 @@ class SearchTags(object):
                 hdr_format = video.get('hdr_format', "")
                 # Check hdr
                 if hdr_format_commercial:
-                    print(f"hdr_format_commercial: {hdr_format_commercial}")
-                    print(f"hdr_format: {hdr_format}")
+                    # print(f"hdr_format_commercial: {hdr_format_commercial}")
+                    # print(f"hdr_format: {hdr_format}")
                     hdr = ''
                     if hdr_format_commercial in hdr_map:
-                        print(f"hdr_format_commercial: {hdr_format_commercial} -> Tag: {hdr_map[hdr_format_commercial]}")
+                        # print(
+                        #     f"hdr_format_commercial: {hdr_format_commercial} -> Tag: {hdr_map[hdr_format_commercial]}")
                         hdr = hdr_map[hdr_format_commercial]
                         # Check dolby vision
                     if 'DOLBY VISION' in hdr_format_commercial.upper() or 'DOLBY VISION' in hdr_format.upper():
                         hdr = f"DOLBY VISION {hdr}"
-                        print(hdr)
+                        # print(hdr)
                     return {category: hdr_map[hdr]}
         return {}
 
@@ -323,7 +256,8 @@ class SearchTags(object):
         if self.mediafile.video_track:
             video_height = int(self.mediafile.video_track[0].get('height', 0))
             video_width = int(self.mediafile.video_track[0].get('width', 0))
-            print(f"VideoTrack : W{video_width} x H{video_height}")
+
+            # print(f"VideoTrack : W{video_width} x H{video_height}")
 
             # Calculate range 5%
             def in_range(value, standard):
