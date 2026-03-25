@@ -16,7 +16,7 @@ from common import trackers
 
 config_file = "Unit3Dbot.json"
 user_tags_file = "tags_list.json"
-version = "0.9.13"
+version = "0.9.14"
 
 if os.name == "nt":
     WATCHER_DESTINATION_PATH: Path = Path(os.getenv("LOCALAPPDATA", ".")) / "Unit3Dup_config" / "watcher_destination_path"
