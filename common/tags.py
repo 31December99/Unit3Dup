@@ -129,6 +129,9 @@ class SearchTags(object):
             elif category == "vcodec":
                 updated_category = self.mediainfo_video(category=category)
 
+            elif category == "video_encoder":
+                self.tags_dict['video_encoder'][0] = self.tags_dict['video_encoder'][0].lower()
+
             elif category == "hdr":
                 updated_category = self.mediainfo_hdr(category=category)
 
