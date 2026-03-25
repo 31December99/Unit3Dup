@@ -9,11 +9,14 @@ hdr_map = {
     "DOLBY VISION": "DV",
     "DOLBY VISION HDR": "DV HDR",
     "DOLBY VISION HDR10": "DV HDR10",
+    "DOLBY VISION HDR10+": "DV HDR",
     "HDR10PLUS": "HDR10+",
     "HDRPLUS+": "HDR10+",
     "HDR10+": "HDR10+",
     "HDR10": "HDR10",
     "HDR10 / HDR10": "HDR10",
+    "HDR10 / HDR10 / HDR10+": "HDR10+",
+
     "DOVI": "DV",
     "HDR": "HDR",
 }
@@ -244,8 +247,7 @@ class SearchTags(object):
                         # Check dolby vision
                     if 'DOLBY VISION' in hdr_format_commercial.upper() or 'DOLBY VISION' in hdr_format.upper():
                         hdr = f"DOLBY VISION {hdr}"
-                        # print(hdr)
-                    return {category: hdr_map[hdr]}
+                    return {category: hdr_map.get(hdr, '*HDR')}
         return {}
 
     def mediainfo_uhd(self, category: str) -> dict:
