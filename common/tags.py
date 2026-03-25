@@ -24,6 +24,7 @@ hdr_map = {
 audio_translate = {
     "AC3": "DD",
     "AAC LC": "AAC",
+    "AAC LC SBR": "HE-AAC",
     "AC-3": "DD",
     "EAC3": "DD+",
     "E-AC3": "DD+",
