@@ -3,17 +3,21 @@ import os
 import re
 from common.mediainfo import MediaFile
 from common.utility import ManageTitles
+from view import custom_console
 
 # From hdr format
 hdr_map = {
     "DOLBY VISION": "DV",
     "DOLBY VISION HDR": "DV HDR",
     "DOLBY VISION HDR10": "DV HDR10",
+    "DOLBY VISION HDR10+": "DV HDR",
     "HDR10PLUS": "HDR10+",
     "HDRPLUS+": "HDR10+",
     "HDR10+": "HDR10+",
     "HDR10": "HDR10",
     "HDR10 / HDR10": "HDR10",
+    "HDR10 / HDR10 / HDR10+": "HDR10+",
+
     "DOVI": "DV",
     "HDR": "HDR",
 }
@@ -21,6 +25,7 @@ hdr_map = {
 audio_translate = {
     "AC3": "DD",
     "AAC LC": "AAC",
+    "AAC LC SBR": "HE-AAC",
     "AC-3": "DD",
     "EAC3": "DD+",
     "E-AC3": "DD+",
@@ -124,6 +129,10 @@ class SearchTags(object):
 
             elif category == "vcodec":
                 updated_category = self.mediainfo_video(category=category)
+
+            elif category == "video_encoder":
+                if self.tags_dict.get('video_encoder', None):
+                    self.tags_dict['video_encoder'][0] = self.tags_dict['video_encoder'][0].lower()
 
             elif category == "hdr":
                 updated_category = self.mediainfo_hdr(category=category)
@@ -242,10 +251,11 @@ class SearchTags(object):
                         #     f"hdr_format_commercial: {hdr_format_commercial} -> Tag: {hdr_map[hdr_format_commercial]}")
                         hdr = hdr_map[hdr_format_commercial]
                         # Check dolby vision
+                    if hdr not in hdr_map:
+                        custom_console.bot_warning_log(f"<> HDR Warning: '{hdr_format_commercial}' not found in hdr_map")
                     if 'DOLBY VISION' in hdr_format_commercial.upper() or 'DOLBY VISION' in hdr_format.upper():
                         hdr = f"DOLBY VISION {hdr}"
-                        # print(hdr)
-                    return {category: hdr_map[hdr]}
+                    return {category: hdr_map.get(hdr, '*HDR')}
         return {}
 
     def mediainfo_uhd(self, category: str) -> dict:

@@ -16,7 +16,7 @@ from common import trackers
 
 config_file = "Unit3Dbot.json"
 user_tags_file = "tags_list.json"
-version = "0.9.13"
+version = "0.9.14"
 
 if os.name == "nt":
     WATCHER_DESTINATION_PATH: Path = Path(os.getenv("LOCALAPPDATA", ".")) / "Unit3Dup_config" / "watcher_destination_path"
@@ -545,6 +545,19 @@ class Load:
             "BRRIP": "source",
             "BDRIP": "source",
             "FHDRIP": "source",
+            "PDTV": "source",
+            "SATRIP": "source",
+            "DVBRIP": "source",
+            "DVB-S": "source",
+            "DTTRIP": "source",
+            "WP": "source",
+            "DVDSCR": "source",
+            "TVRIP": "source",
+            "VHSRIP": "source",
+            "DVDRIP": "source",
+            "HDTV": "source",
+            "DVD5": "source",
+            "DVD9": "source",
 
             "ATVP": "platform",
             "AMZN": "platform",
@@ -584,12 +597,23 @@ class Load:
 
             "REPACK": "version",
             "EXTENDED": "version",
+            "EXTENDED EDITION": "version",
+            "EXTENDED CUT": "version",
+            "DIRECTOR'S CUT": "version",
             "SUBBED": "version",
             "MUX": "version",
             "REMASTERED": "version",
             "READNFO": "version",
             "UNRATED": "version",
+            "UNCUT": "version",
             "LIMITED": "version",
+            "ANNIVERSARY": "version",
+            "SPECIAL EDITION": "version",
+            "4k RESTORATION": "version",
+            "IMAX": "version",
+            "OPEN MATTE": "version",
+            "2IN1": "version",
+
             "VU": "version",
             "STV": "version",
             "RECODE": "version",
