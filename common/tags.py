@@ -3,6 +3,7 @@ import os
 import re
 from common.mediainfo import MediaFile
 from common.utility import ManageTitles
+from view import custom_console
 
 # From hdr format
 hdr_map = {
@@ -250,6 +251,8 @@ class SearchTags(object):
                         #     f"hdr_format_commercial: {hdr_format_commercial} -> Tag: {hdr_map[hdr_format_commercial]}")
                         hdr = hdr_map[hdr_format_commercial]
                         # Check dolby vision
+                    if hdr not in hdr_map:
+                        custom_console.bot_warning_log(f"<> HDR Warning: '{hdr_format_commercial}' not found in hdr_map")
                     if 'DOLBY VISION' in hdr_format_commercial.upper() or 'DOLBY VISION' in hdr_format.upper():
                         hdr = f"DOLBY VISION {hdr}"
                     return {category: hdr_map.get(hdr, '*HDR')}
