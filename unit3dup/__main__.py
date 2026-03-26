@@ -3,7 +3,7 @@ import json
 
 from common.torrent_clients import TransmissionClient, QbittorrentClient, RTorrentClient
 from common.command import CommandLine
-from common.settings import Load,DEFAULT_JSON_PATH, USER_TAGS_PATH
+from common.settings import Load,DEFAULT_JSON_PATH, USER_TAGS_PATH, USER_SIGN_PATH
 
 from unit3dup.torrent import View
 from unit3dup import pvtTracker
@@ -104,10 +104,18 @@ def main():
         except FileNotFoundError:
             custom_console.bot_error_log(f"User tags file {USER_TAGS_PATH} not found. Please update your configuration file")
 
+    # Load User Sign list
+    sign_list = None
+    try:
+        with open(USER_SIGN_PATH, "r", encoding="utf-8") as f:
+            sign_list = json.load(f)
+    except FileNotFoundError:
+        custom_console.bot_error_log(f"User sign file {USER_SIGN_PATH} not found. Please update your configuration file")
+
     # Manual upload mode
     if cli.args.upload:
         bot = Bot(path=cli.args.upload, cli=cli.args, trackers_name_list=tracker_name_list,
-                  torrent_archive_path=tracker_archive, tags_list=tags_list)
+                  torrent_archive_path=tracker_archive, tags_list=tags_list, sign_list=sign_list)
         bot.run()
 
     # Manual folder mode
@@ -118,14 +126,15 @@ def main():
             mode="folder",
             trackers_name_list=tracker_name_list,
             torrent_archive_path=tracker_archive,
-            tags_list=tags_list
+            tags_list=tags_list,
+            sign_list=sign_list
         )
         bot.run()
 
     # Auto mode
     if cli.args.scan and not cli.args.ftp:
         bot = Bot(path=cli.args.scan, cli=cli.args, mode="auto", trackers_name_list=tracker_name_list,
-                  torrent_archive_path=tracker_archive, tags_list=tags_list)
+                  torrent_archive_path=tracker_archive, tags_list=tags_list, sign_list=sign_list)
         bot.run()
 
     # Watcher

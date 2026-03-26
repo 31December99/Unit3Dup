@@ -54,7 +54,7 @@ video_encoder_translate = {
 
 class SearchTags(object):
     def __init__(self, filename, title: str, year: str, season: int, episode: int,
-                 mediafile: MediaFile, tags_position: list, tags_list: dict, releaser_sign: str):
+                 mediafile: MediaFile, tags_position: list, tags_list: dict, sign_list: dict, releaser_sign: str):
 
         self.tags_position = tags_position
         self.releaser_sign = releaser_sign
@@ -67,12 +67,19 @@ class SearchTags(object):
         self.tags_dict = {}
         self.tags_position = tags_position
         self.TAG_TYPES = tags_list
+        self.SIGNS_LIST = sign_list
 
     @staticmethod
     def normalize_version_tag(tag: str) -> str:
         tag_esc = re.escape(tag)
         # Filter hyphenated,space compounds
         tag_esc = tag_esc.replace(r'\ ', r'[.\s_-]*')
+        return tag_esc
+
+    @staticmethod
+    def normalize_sign_tag(tag: str) -> str:
+        # escape
+        tag_esc = re.escape(tag)
         return tag_esc
 
     @staticmethod
@@ -164,10 +171,13 @@ class SearchTags(object):
 
         # /// Add Sign
         if not self.releaser_sign:
-            filename, _ = os.path.splitext(os.path.basename(self.filename))
-            m = re.search(r'-([A-Za-z0-9]+)$', filename)
-            self.releaser_sign = f"-{m.group(1)}" if m and m.group(1) not in self.TAG_TYPES else ""
+            # If releaser_sign is not defined in the configuration file try to search for a known sign from the sign_list
+            pattern = r"\b(" + "|".join(re.escape(k) for k in self.SIGNS_LIST.keys()) + r")\b"
+            regex = re.compile(pattern, re.IGNORECASE)
+            matches = regex.findall(self.filename)
+            self.releaser_sign = f"-{matches[0]}" if matches[0] in self.SIGNS_LIST else ""
         else:
+            # // Add releaser_sing from the configuration file
             self.releaser_sign = f"-{self.releaser_sign}"
 
         # /// Order according to tag position
@@ -252,7 +262,8 @@ class SearchTags(object):
                         hdr = hdr_map[hdr_format_commercial]
                         # Check dolby vision
                     if hdr not in hdr_map:
-                        custom_console.bot_warning_log(f"<> HDR Warning: '{hdr_format_commercial}' not found in hdr_map")
+                        custom_console.bot_warning_log(
+                            f"<> HDR Warning: '{hdr_format_commercial}' not found in hdr_map")
                     if 'DOLBY VISION' in hdr_format_commercial.upper() or 'DOLBY VISION' in hdr_format.upper():
                         hdr = f"DOLBY VISION {hdr}"
                     return {category: hdr_map.get(hdr, '*HDR')}
