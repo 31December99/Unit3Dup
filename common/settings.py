@@ -689,7 +689,19 @@ class Load:
             "CREW": "releaser",
             "LULLOZZO": "releaser",
             "NOGROUP": "releaser",
-            "AV1MERR": "releaser"
+            "AV1MERR": "releaser",
+            "YTS": "releaser",
+            "YIFY": "releaser",
+            "RARBG": "releaser",
+            "EZTV": "releaser",
+            "CHD": "releaser",
+            "FGT": "releaser",
+            "HDCHINA": "releaser",
+            "GRYM": "releaser",
+            "TERMINAL": "releaser",
+            "WHITERHINO": "releaser",
+            "LAZY-SUBS": "releaser",
+            "HAPPITEAM-YNK": "releaser"
         }
 
         path.parent.mkdir(parents=True, exist_ok=True)

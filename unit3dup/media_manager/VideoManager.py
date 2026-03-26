@@ -52,7 +52,7 @@ class VideoManager:
             if self.cli.buildtags:
                 guess_filename = title.Guessit(content.title_sanitize_tags)
                 guess = guess_filename.guessit
-                search_tags = SearchTags(filename=content.title_sanitize_tags,
+                search_tags = SearchTags(filename=content.title, # title_sanitize_tags,
                                          title=guess.get("title", None),
                                          year=guess.get("year", ""),
                                          season=content.guess_season,

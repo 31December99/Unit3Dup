@@ -77,12 +77,6 @@ class SearchTags(object):
         return tag_esc
 
     @staticmethod
-    def normalize_sign_tag(tag: str) -> str:
-        # escape
-        tag_esc = re.escape(tag)
-        return tag_esc
-
-    @staticmethod
     def normalize_platform_tag(tag: str) -> str:
         # escape
         tag_esc = re.escape(tag)
@@ -100,6 +94,17 @@ class SearchTags(object):
         tag_esc = re.escape(tag)
         tag_esc = re.sub(r'([A-Z])(\d+)', r'\1[._-]?\2', tag_esc)
         return tag_esc
+
+    def build_title(self, dictionary: dict) -> str:
+        # /// Build the title
+        build = []
+        for k, v in dictionary.items():
+            if isinstance(v, list):
+                build.append(' '.join(v))
+            else:
+                build.append(str(v))
+        refactored = ' '.join(build) + self.releaser_sign
+        return refactored
 
     def process(self) -> str:
         patterns = []
@@ -169,15 +174,25 @@ class SearchTags(object):
         if se_str:
             self.tags_dict.update({'season': se_str})
 
-        # /// Add Sign
         if not self.releaser_sign:
-            # If releaser_sign is not defined in the configuration file try to search for a known sign from the sign_list
-            pattern = r"\b(" + "|".join(re.escape(k) for k in self.SIGNS_LIST.keys()) + r")\b"
-            regex = re.compile(pattern, re.IGNORECASE)
+            # If releaser_sign is not defined in the configuration file,
+            # try to detect a known sign from SIGN_LIST
+            pattern = "|".join(
+                sorted((re.escape(k) for k in self.SIGNS_LIST.keys()), key=len, reverse=True)
+            )
+            self.filename = os.path.splitext(self.filename)[0]
+            regex = re.compile(
+                r'(?:^|[\s._-])(' + pattern + r')(?=$|[\s._-]*$)',
+                re.IGNORECASE
+            )
             matches = regex.findall(self.filename)
-            self.releaser_sign = f"-{matches[0]}" if matches[0] in self.SIGNS_LIST else ""
+            if matches:
+                match = matches[0].upper()
+                self.releaser_sign = f"-{match}" if match in self.SIGNS_LIST else ""
+            else:
+                self.releaser_sign = ""
         else:
-            # // Add releaser_sing from the configuration file
+            # Add releaser_sign from the configuration file
             self.releaser_sign = f"-{self.releaser_sign}"
 
         # /// Order according to tag position
@@ -187,16 +202,8 @@ class SearchTags(object):
             if k in self.tags_dict
         }
 
-        # /// Build the title
-        build = []
-        for k, v in tags_dict.items():
-            if isinstance(v, list):
-                build.append(' '.join(v))
-            else:
-                build.append(str(v))
-
-        refactored = ' '.join(build) + self.releaser_sign
-        return refactored
+        new_title = self.build_title(tags_dict)
+        return new_title
 
     def mediainfo_audio(self, category: str) -> dict:
         languages = []
