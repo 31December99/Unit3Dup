@@ -293,7 +293,7 @@ class SearchTags(object):
                 return standard - tol <= value <= standard + tol
 
             # /// UHD
-            if video_height >= 2000 or video_width >= 3840:
+            if in_range(video_width, 3840) or in_range(video_height, 2160):
                 result[category] = 'UHD'
                 result['resolution'] = '2160p'
             # /// Full HD
