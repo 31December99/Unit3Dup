@@ -18,7 +18,7 @@ config_file = "Unit3Dbot.json"
 user_tags_file = "tags_list.json"
 user_sign_file = "sign_list.json"
 
-version = "0.9.15"
+version = "0.9.16"
 
 if os.name == "nt":
     WATCHER_DESTINATION_PATH: Path = Path(
@@ -555,6 +555,7 @@ class Load:
             "HDTV": "source",
             "DVD5": "source",
             "DVD9": "source",
+            "VU": "source",
 
             "ATVP": "platform",
             "AMZN": "platform",
@@ -611,7 +612,6 @@ class Load:
             "OPEN MATTE": "version",
             "2IN1": "version",
 
-            "VU": "version",
             "STV": "version",
             "RECODE": "version",
             "INTERNAL": "version",
@@ -767,6 +767,7 @@ class Load:
             "THEEMOJICREW": "releaser",
             "THUDARA": "releaser",
             "TIGRE67": "releaser",
+            "TORRENT10": "releaser",
             "TOTAL_SHARE88": "releaser",
             "TREE7458": "releaser",
             "TRIVIAL99": "releaser",
