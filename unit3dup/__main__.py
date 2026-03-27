@@ -3,7 +3,7 @@ import json
 
 from common.torrent_clients import TransmissionClient, QbittorrentClient, RTorrentClient
 from common.command import CommandLine
-from common.settings import Load,DEFAULT_JSON_PATH, USER_TAGS_PATH, USER_SIGN_PATH
+from common.settings import Load,DEFAULT_JSON_PATH, USER_TAGS_PATH, USER_SIGN_PATH,version
 
 from unit3dup.torrent import View
 from unit3dup import pvtTracker
@@ -17,7 +17,7 @@ def main():
     """
 
     custom_console.welcome_message()
-    custom_console.bot_question_log(f"Checking your configuration file.. \n")
+    custom_console.bot_question_log(f"Unitr3Dup {version} Checking your configuration file.. \n")
 
     # Load user configuration data
     config = Load().load_config()
