@@ -555,6 +555,7 @@ class Load:
             "HDTV": "source",
             "DVD5": "source",
             "DVD9": "source",
+            "VU": "source",
 
             "ATVP": "platform",
             "AMZN": "platform",
@@ -611,7 +612,6 @@ class Load:
             "OPEN MATTE": "version",
             "2IN1": "version",
 
-            "VU": "version",
             "STV": "version",
             "RECODE": "version",
             "INTERNAL": "version",
