@@ -16,15 +16,20 @@ from common import trackers
 
 config_file = "Unit3Dbot.json"
 user_tags_file = "tags_list.json"
-version = "0.9.14"
+user_sign_file = "sign_list.json"
+
+version = "0.9.15"
 
 if os.name == "nt":
-    WATCHER_DESTINATION_PATH: Path = Path(os.getenv("LOCALAPPDATA", ".")) / "Unit3Dup_config" / "watcher_destination_path"
+    WATCHER_DESTINATION_PATH: Path = Path(
+        os.getenv("LOCALAPPDATA", ".")) / "Unit3Dup_config" / "watcher_destination_path"
     WATCHER_PATH: Path = Path(os.getenv("LOCALAPPDATA", ".")) / "Unit3Dup_config" / "watcher_path"
     CACHE_PATH: Path = Path(os.getenv("LOCALAPPDATA", ".")) / "Unit3Dup_config" / "cache_path"
     TORRENT_ARCHIVE_PATH: Path = Path(os.getenv("LOCALAPPDATA", ".")) / "Unit3Dup_config" / "torrent_archive_path"
     DEFAULT_JSON_PATH: Path = Path(os.getenv("LOCALAPPDATA", ".")) / "Unit3Dup_config" / f"{config_file}"
     USER_TAGS_PATH: Path = Path(os.getenv("LOCALAPPDATA", ".")) / "Unit3Dup_config" / f"{user_tags_file}"
+    USER_SIGN_PATH: Path = Path(os.getenv("LOCALAPPDATA", ".")) / "Unit3Dup_config" / f"{user_sign_file}"
+
 
 else:
     WATCHER_DESTINATION_PATH: Path = Path.home() / "Unit3Dup_config" / "watcher_destination_path"
@@ -33,16 +38,17 @@ else:
     TORRENT_ARCHIVE_PATH: Path = Path.home() / "Unit3Dup_config" / "torrent_archive_path"
     DEFAULT_JSON_PATH: Path = Path.home() / "Unit3Dup_config" / f"{config_file}"
     USER_TAGS_PATH: Path = Path.home() / "Unit3Dup_config" / f"{user_tags_file}"
+    USER_SIGN_PATH: Path = Path.home() / "Unit3Dup_config" / f"{user_sign_file}"
 
-def get_default_path(field: str)-> str:
+
+def get_default_path(field: str) -> str:
     default_paths = {
-            "TORRENT_ARCHIVE_PATH": TORRENT_ARCHIVE_PATH,
-            "CACHE_PATH": CACHE_PATH,
-            "WATCHER_DESTINATION_PATH": WATCHER_DESTINATION_PATH,
-            "WATCHER_PATH": WATCHER_PATH,
+        "TORRENT_ARCHIVE_PATH": TORRENT_ARCHIVE_PATH,
+        "CACHE_PATH": CACHE_PATH,
+        "WATCHER_DESTINATION_PATH": WATCHER_DESTINATION_PATH,
+        "WATCHER_PATH": WATCHER_PATH,
     }
     return str(default_paths[field])
-
 
 
 class Ccolors:
@@ -51,6 +57,7 @@ class Ccolors:
     WARNING = '\033[93m'
     FAIL = '\033[91m'
     ENDC = '\033[0m'
+
 
 class TrackerConfig(BaseModel):
     ITT_URL: str
@@ -92,7 +99,6 @@ class TorrentClientConfig(BaseModel):
     SHARED_RTORR_PATH: str | None = None
     TORRENT_CLIENT: str | None = None
     TAG: str | None = None
-
 
 
 class UserPreferences(BaseModel):
@@ -149,8 +155,7 @@ class ConsoleOptions(BaseModel):
     WELCOME_MESSAGE_BORDER_COLOR: str = "yellow"
     PANEL_MESSAGE_COLOR: str = "blue"
     PANEL_MESSAGE_BORDER_COLOR: str = "yellow"
-    QUESTION_MESSAGE_COLOR: str  = "yellow"
-
+    QUESTION_MESSAGE_COLOR: str = "yellow"
 
 
 class Validate:
@@ -189,7 +194,6 @@ class Validate:
         print(f"-> Please Fix '{field_name}' ['{value}'] in settings.json")
         exit(1)
 
-
     @staticmethod
     def dict(value: list | None, field_name: str) -> list | None:
         """
@@ -202,14 +206,14 @@ class Validate:
         exit(1)
 
     @staticmethod
-    def validate_path(path: str)-> str | None:
+    def validate_path(path: str) -> str | None:
         try:
             # Remove wrong chars
             sanitized_path = sanitize_filepath(path)
 
             # not configured = no_path
             # '.' current path
-            if 'no_path' or '.'  in sanitized_path.lower():
+            if 'no_path' or '.' in sanitized_path.lower():
                 return sanitized_path
 
             # Test for absolute path
@@ -219,10 +223,10 @@ class Validate:
             return None
 
     @staticmethod
-    def validate_shared_path(path: str)-> str | None:
+    def validate_shared_path(path: str) -> str | None:
         try:
             if 'no_path' not in path.lower():
-               return sanitize_filepath(path)
+                return sanitize_filepath(path)
             return None
         except ValueError:
             # not a valid path
@@ -257,13 +261,13 @@ class Validate:
             exit(1)
 
         for tag in position_list:
-            if tag.lower() not in ["title", "year", "season", "version", "resolution", "uhd", "platform", "source", "remux",
+            if tag.lower() not in ["title", "year", "season", "version", "resolution", "uhd", "platform", "source",
+                                   "remux",
                                    "multi", "acodec", "channels", "flag", "subtitle", "vcodec", "hdr", "video_encoder"]:
                 print(f"-> Invalid TAG position '{tag}'. Please fix your configuration file")
                 exit(1)
 
         return position_list
-
 
     @staticmethod
     def unit3dup_path(path: str | None, field_name: str, default_path: str) -> str | None:
@@ -272,13 +276,12 @@ class Validate:
         return: validated and verified path or None
         """
         if isinstance(path, str) and path.strip():
-            if validate_path:=Validate.validate_path(path=path):
+            if validate_path := Validate.validate_path(path=path):
                 # check if path exist
                 if Path(validate_path).expanduser().is_dir():
                     return validate_path
         # otherwise return the default path
         return default_path
-
 
     @staticmethod
     def shared_path(path: str | None, field_name: str) -> str | None:
@@ -295,13 +298,12 @@ class Validate:
             # On Windows torrent_path:
             # c:\test_folder
             # The torrent client will point to c:\test_folder
-            if validate_path:=Validate.validate_shared_path(path=path):
+            if validate_path := Validate.validate_shared_path(path=path):
                 return validate_path
             else:
                 # // None = invalid dir
                 return None
         return None
-
 
     @staticmethod
     def colors(value: str | None, field_name: str) -> str:
@@ -309,13 +311,12 @@ class Validate:
         Validates string colors
         """
         if isinstance(value, str) and value.strip():
-            if value.lower() in ["black", "red", "green" , "yellow" , "blue", "magenta", "cyan", "white",
-                         "black bold", "red bold", "green bold", "yellow bold", "blue bold", "magenta bold",
-                         "cyan bold", "white bold"]:
+            if value.lower() in ["black", "red", "green", "yellow", "blue", "magenta", "cyan", "white",
+                                 "black bold", "red bold", "green bold", "yellow bold", "blue bold", "magenta bold",
+                                 "cyan bold", "white bold"]:
                 return value
         print(f"-> Please Fix '{field_name}' ['{value}'] in settings.json")
         exit(1)
-
 
     @staticmethod
     def iso3166(value: str | None, field_name: str) -> str | None:
@@ -345,14 +346,14 @@ class Validate:
             exit(1)
 
     @staticmethod
-    def sign(sign: str)-> str | None:
+    def sign(sign: str) -> str | None:
 
-            title = unicodedata.normalize("NFKD", sign)
-            title = title.encode("ascii", "ignore").decode()
+        title = unicodedata.normalize("NFKD", sign)
+        title = title.encode("ascii", "ignore").decode()
 
-            title = re.sub(r'[^A-Za-z0-9.\-_\[\]() ]', '', title)
-            title = re.sub(r'\s+', ' ', title).strip()
-            return title[:20]
+        title = re.sub(r'[^A-Za-z0-9.\-_\[\]() ]', '', title)
+        title = re.sub(r'\s+', ' ', title).strip()
+        return title[:20]
 
     @staticmethod
     def integer(value: int | str, field_name: str) -> int:
@@ -391,7 +392,7 @@ class Config(BaseModel):
     def set_default_tracker_config(cls, v):
 
         section = v['tracker_config']
-        for field,value in section.items():
+        for field, value in section.items():
             if value is None:
                 print(f"Please fix the '{field}' value")
                 exit(1)
@@ -399,15 +400,14 @@ class Config(BaseModel):
                 field = field.upper()
 
                 if field in ['ITT_URL', 'SIS_URL']:
-                   section[field] = Validate.url(value=section[field], field_name=field)
-
+                    section[field] = Validate.url(value=section[field], field_name=field)
 
                 if field in ['ITT_PID', 'SIS_PID']:
-                   section[field] = Validate.pid(value=section[field], field_name=field,
-                                                 multi_trackers=section['MULTI_TRACKER'])
+                    section[field] = Validate.pid(value=section[field], field_name=field,
+                                                  multi_trackers=section['MULTI_TRACKER'])
 
                 elif field in ['ITT', 'SIS']:
-                     section[field] = Validate.dict(value=section[field], field_name=field)
+                    section[field] = Validate.dict(value=section[field], field_name=field)
                 elif field in ['MULTI_TRACKER']:
                     section[field] = Validate.validate_multi_tracker(multi_tracker_list=section[field])
                 else:
@@ -418,21 +418,21 @@ class Config(BaseModel):
     def set_default_torrent_client_config(cls, v):
 
         section = v['torrent_client_config']
-        for field,value in section.items():
+        for field, value in section.items():
             if value is None:
                 print(f"Please fix the '{field}' value")
                 exit(1)
             else:
                 field = field.upper()
 
-                if field in  ['QBIT_HOST','TRASM_HOST']:
+                if field in ['QBIT_HOST', 'TRASM_HOST']:
                     section[field] = Validate.ip(value=section[field], field_name=field, default_value="127.0.0.1")
 
                 if field in ['QBIT_PORT', 'TRASM_PORT', 'RTORR_PORT']:
                     section[field] = Validate.integer(value=section[field], field_name=field)
 
-                if field in ['QBIT_PASS','TRASM_PASS', 'RTORR_PASS', 'QBIT_USER','TRASM_USER','RTORR_USER',
-                             'TORRENT_CLIENT','TAG', 'RTORR_HOST']:
+                if field in ['QBIT_PASS', 'TRASM_PASS', 'RTORR_PASS', 'QBIT_USER', 'TRASM_USER', 'RTORR_USER',
+                             'TORRENT_CLIENT', 'TAG', 'RTORR_HOST']:
                     section[field] = Validate.string(value=section[field], field_name=field)
 
                 if field in ['SHARED_TRASM_PATH', 'SHARED_QBIT_PATH', 'SHARED_RTORR_PATH']:
@@ -440,48 +440,47 @@ class Config(BaseModel):
 
         return v
 
-
     @model_validator(mode='before')
     def set_default_user_preferences(cls, v):
         section = v['user_preferences']
 
-        for field,value in section.items():
+        for field, value in section.items():
             if value is None:
                 print(f"Please fix the '{field}' value")
                 exit(1)
             else:
                 field = field.upper()
 
-                if field in ['DUPLICATE_ON','SKIP_DUPLICATE','SKIP_TMDB','SKIP_YOUTUBE','RESIZE_SCSHOT','ANON',
-                             'WEBP_ENABLED', 'CACHE_SCR','CACHE_DBONLINE', 'PERSONAL_RELEASE']:
+                if field in ['DUPLICATE_ON', 'SKIP_DUPLICATE', 'SKIP_TMDB', 'SKIP_YOUTUBE', 'RESIZE_SCSHOT', 'ANON',
+                             'WEBP_ENABLED', 'CACHE_SCR', 'CACHE_DBONLINE', 'PERSONAL_RELEASE']:
                     section[field] = Validate.boolean(value=section[field], field_name=field)
 
-                if field in ['TORRENT_COMMENT','WATCHER_PATH','DEFAULT_TRACKER']:
+                if field in ['TORRENT_COMMENT', 'WATCHER_PATH', 'DEFAULT_TRACKER']:
                     section[field] = Validate.string(value=section[field], field_name=field)
 
-                if field in ['NUMBER_OF_SCREENSHOTS','COMPRESS_SCSHOT','IMGBB_PRIORITY','FREE_IMAGE_PRIORITY',
-                             'LENSDUMP_PRIORITY','PASSIMA_PRIORITY','IMARIDE_PRIORITY', 'WATCHER_INTERVAL','SIZE_TH',
+                if field in ['NUMBER_OF_SCREENSHOTS', 'COMPRESS_SCSHOT', 'IMGBB_PRIORITY', 'FREE_IMAGE_PRIORITY',
+                             'LENSDUMP_PRIORITY', 'PASSIMA_PRIORITY', 'IMARIDE_PRIORITY', 'WATCHER_INTERVAL', 'SIZE_TH',
                              'FAST_LOAD']:
                     section[field] = Validate.integer(value=section[field], field_name=field)
 
                 if field == 'PREFERRED_LANG':
-                    section[field] =Validate.iso3166(value=section[field], field_name=field)
+                    section[field] = Validate.iso3166(value=section[field], field_name=field)
 
                 if field == 'CACHE_PATH':
-                    section[field] =Validate.unit3dup_path(path=section[field], field_name=field,
-                                                           default_path=get_default_path(field=field))
+                    section[field] = Validate.unit3dup_path(path=section[field], field_name=field,
+                                                            default_path=get_default_path(field=field))
 
                 if field == 'WATCHER_DESTINATION_PATH':
-                    section[field] =Validate.unit3dup_path(path=section[field], field_name=field,
-                                                           default_path=get_default_path(field=field))
+                    section[field] = Validate.unit3dup_path(path=section[field], field_name=field,
+                                                            default_path=get_default_path(field=field))
 
                 if field == 'WATCHER_PATH':
-                    section[field] =Validate.unit3dup_path(path=section[field], field_name=field,
-                                                           default_path=get_default_path(field=field))
+                    section[field] = Validate.unit3dup_path(path=section[field], field_name=field,
+                                                            default_path=get_default_path(field=field))
 
                 if field == 'TORRENT_ARCHIVE_PATH':
-                    section[field] =Validate.unit3dup_path(path=section[field],field_name=field,
-                                                           default_path=get_default_path(field=field))
+                    section[field] = Validate.unit3dup_path(path=section[field], field_name=field,
+                                                            default_path=get_default_path(field=field))
 
                 if field == 'RELEASER_SIGN':
                     section[field] = Validate.sign(sign=section[field])
@@ -495,22 +494,20 @@ class Config(BaseModel):
     def set_default_console_options(cls, v):
         section = v['console_options']
 
-        for field,value in section.items():
+        for field, value in section.items():
             if value is None:
                 print(f"Please fix the '{field}' value")
                 exit(1)
             else:
                 field = field.upper()
-                if field=='WELCOME_MESSAGE':
+                if field == 'WELCOME_MESSAGE':
                     section[field] = Validate.string(value=section[field], field_name=field)
                 else:
                     section[field] = Validate.colors(value=section[field], field_name=field)
         return v
 
 
-
 class Load:
-
     _instance = None
     version = version
 
@@ -632,8 +629,164 @@ class Load:
         with open(path, "w", encoding="utf-8") as tags_list_file:
             json.dump(TAG_TYPES, tags_list_file, ensure_ascii=False, indent=4)
 
+    @staticmethod
+    def create_sign_list_file(path: Path):
+        """
+        Creates a tags list file
+        """
+        TAG_TYPES = {
+            "21APRILE": "releaser",
+            "ALE88SERMETE": "releaser",
+            "ARRANCAR": "releaser",
+            "ASTOR": "releaser",
+            "AV1MERR": "releaser",
+            "BADGUY": "releaser",
+            "BITSHIFT": "releaser",
+            "BLACKBIT": "releaser",
+            "BUMBLEBEE1982": "releaser",
+            "CAPPYO": "releaser",
+            "CAVALLONZI": "releaser",
+            "CB01HD": "releaser",
+            "CHD": "releaser",
+            "CHDWEB": "releaser",
+            "CIAME": "releaser",
+            "CLOCLONE": "releaser",
+            "COMIX21": "releaser",
+            "CREW": "releaser",
+            "CSS": "releaser",
+            "CSS2": "releaser",
+            "CSS7896": "releaser",
+            "CYBER": "releaser",
+            "D3VELOPER": "releaser",
+            "DAICHISO": "releaser",
+            "DANGUARD": "releaser",
+            "DARKCOMPANY": "releaser",
+            "DARKPARANOR": "releaser",
+            "DAYMON64": "releaser",
+            "DDN": "releaser",
+            "DEDO1911": "releaser",
+            "DEMN": "releaser",
+            "DMAN": "releaser",
+            "DOCH74": "releaser",
+            "DRIIP": "releaser",
+            "DYNUX": "releaser",
+            "ELGHOTO": "releaser",
+            "ENCRYPTED": "releaser",
+            "EVN": "releaser",
+            "EZTV": "releaser",
+            "FAINO1310": "releaser",
+            "FEDECAS89": "releaser",
+            "FGT": "releaser",
+            "FHC": "releaser",
+            "FLORIN993": "releaser",
+            "FLUX": "releaser",
+            "FREZEEN": "releaser",
+            "FUSION": "releaser",
+            "G66": "releaser",
+            "GABIACAS": "releaser",
+            "GIUSEPPETNT": "releaser",
+            "GOLDENTORRENT": "releaser",
+            "GRYM": "releaser",
+            "HAPPITEAM-YNK": "releaser",
+            "HASHDEV": "releaser",
+            "HDCHINA": "releaser",
+            "HENRYDIRTY": "releaser",
+            "HONE": "releaser",
+            "HHNN": "releaser",
+            "HYRULE": "releaser",
+            "I3AM": "releaser",
+            "IBANEZ89": "releaser",
+            "IDIB": "releaser",
+            "IDN": "releaser",
+            "ILGANZO": "releaser",
+            "ILPADRINO": "releaser",
+            "ILSAGGIO": "releaser",
+            "ILSOMMO": "releaser",
+            "IPDR01": "releaser",
+            "ITT": "releaser",
+            "JOHNSEED": "releaser",
+            "KINGOFROME": "releaser",
+            "KRIKK": "releaser",
+            "LAZY-SUBS": "releaser",
+            "LEPORE": "releaser",
+            "LFI": "releaser",
+            "LULLOZZO": "releaser",
+            "MATT3O": "releaser",
+            "MATT_BROWN4": "releaser",
+            "MAX2014": "releaser",
+            "MIRCREW": "releaser",
+            "MISTERNED": "releaser",
+            "MRBLONDE": "releaser",
+            "MRROBOT": "releaser",
+            "MUETTO": "releaser",
+            "MUWATTALI": "releaser",
+            "NAHOM": "releaser",
+            "NARSETE": "releaser",
+            "NEOSTARK": "releaser",
+            "NEUROSIS": "releaser",
+            "NIMOUEH": "releaser",
+            "NOGROUP": "releaser",
+            "NOVARIP": "releaser",
+            "NTROPIC": "releaser",
+            "ODS": "releaser",
+            "ONGOIA": "releaser",
+            "PEPPE": "releaser",
+            "PENNYWISE": "releaser",
+            "PETE321": "releaser",
+            "PICOPOCO": "releaser",
+            "PING": "releaser",
+            "PINKER": "releaser",
+            "PIR8": "releaser",
+            "PLAYWEB": "releaser",
+            "PRIME": "releaser",
+            "PROMETHEUS": "releaser",
+            "PROSCIUTTO": "releaser",
+            "RADESE": "releaser",
+            "RAWR": "releaser",
+            "RARBG": "releaser",
+            "RIDDICKK": "releaser",
+            "ROGELIOBYNIGHT": "releaser",
+            "ROMEO": "releaser",
+            "RYUKXX": "releaser",
+            "S-K": "releaser",
+            "SANDWORM": "releaser",
+            "SEEDBOX": "releaser",
+            "SEEDBOX2": "releaser",
+            "SERCIUS": "releaser",
+            "SIMO01": "releaser",
+            "SIXTEEN8664": "releaser",
+            "SK4TTO": "releaser",
+            "SMURFADMIN": "releaser",
+            "SPYRO1989": "releaser",
+            "STEVEJOHNNEE": "releaser",
+            "STINGUAJT": "releaser",
+            "TAHTAKALECI": "releaser",
+            "TELESTO": "releaser",
+            "TERMINAL": "releaser",
+            "THEBLACKKING": "releaser",
+            "THEEMOJICREW": "releaser",
+            "THUDARA": "releaser",
+            "TIGRE67": "releaser",
+            "TOTAL_SHARE88": "releaser",
+            "TREE7458": "releaser",
+            "TRIVIAL99": "releaser",
+            "UBI": "releaser",
+            "V3SP4EV3R": "releaser",
+            "VIOLENT96": "releaser",
+            "VOLVIC": "releaser",
+            "WHEELIE": "releaser",
+            "WHITERHINO": "releaser",
+            "WIZARDS2K": "releaser",
+            "WRS": "releaser",
+            "XVID": "releaser",
+            "YIFY": "releaser",
+            "YTS": "releaser",
+            "ZIORIP": "releaser"
+            }
 
-
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with open(path, "w", encoding="utf-8") as tags_sign_file:
+            json.dump(TAG_TYPES, tags_sign_file, ensure_ascii=False, indent=4)
 
     @staticmethod
     def create_default_json_file(path: Path):
@@ -649,7 +802,7 @@ class Load:
                 "SIS_URL": "https://no_tracker.xyz",
                 "SIS_APIKEY": "no_key",
                 "SIS_PID": "no_key",
-                "MULTI_TRACKER" : ["itt"],
+                "MULTI_TRACKER": ["itt"],
                 "TMDB_APIKEY": "no_key",
                 "TVDB_APIKEY": "no_key",
                 "IMGBB_KEY": "no_key",
@@ -691,14 +844,15 @@ class Load:
                 "PASSIMA_PRIORITY": 5,
                 "IMARIDE_PRIORITY": 6,
                 "NUMBER_OF_SCREENSHOTS": 4,
-                "TAGS_POSITION": ["title", "year", "season", "version", "resolution", "uhd", "platform", "source", "remux",
+                "TAGS_POSITION": ["title", "year", "season", "version", "resolution", "uhd", "platform", "source",
+                                  "remux",
                                   "multi", "acodec", "channels", "flag", "subtitle", "hdr", "vcodec", "video_encoder"],
                 "YOUTUBE_FAV_CHANNEL_ID": "UCGCbxpnt25hWPFLSbvwfg_w",
                 "YOUTUBE_CHANNEL_ENABLE": "False",
                 "DUPLICATE_ON": "true",
                 "SKIP_DUPLICATE": "false",
                 "SKIP_TMDB": "false",
-                "SKIP_YOUTUBE" :'true',
+                "SKIP_YOUTUBE": 'true',
                 "SIZE_TH": 10,
                 "WATCHER_INTERVAL": 60,
                 "WATCHER_PATH": "no_path",
@@ -716,7 +870,7 @@ class Load:
                 "PERSONAL_RELEASE": "False",
                 "FAST_LOAD": "0",
                 "RELEASER_SIGN": ""
-        },
+            },
             "options": {
                 "FTPX_USER": "user",
                 "FTPX_PASS": "pass",
@@ -742,7 +896,6 @@ class Load:
         with open(path, "w", encoding="utf-8") as json_file:
             # pycharm type checking issue (json_file)
             json.dump(default_content, json_file, ensure_ascii=False, indent=4)
-
 
     @staticmethod
     def load_config():
@@ -770,6 +923,10 @@ class Load:
         if not USER_TAGS_PATH.exists():
             print(f"Create default Tags_list file: {USER_TAGS_PATH}")
             Load.create_tags_list_file(USER_TAGS_PATH)
+
+        if not USER_SIGN_PATH.exists():
+            print(f"Create default Sign_list file: {USER_SIGN_PATH}")
+            Load.create_sign_list_file(USER_SIGN_PATH)
 
         # Since the last bot version there might are new attributes
         # Load the json file, find the difference between json file and the code. Update the user's json file
@@ -809,25 +966,24 @@ class JsonConfig:
         self.console_options_config = self.file_config_data["console_options"]
 
         # New tracker attribute
-        self.tracker_diff_keys = self.tracker_config.keys() ^ TrackerConfig.__annotations__.keys()\
+        self.tracker_diff_keys = self.tracker_config.keys() ^ TrackerConfig.__annotations__.keys() \
             if not self.tracker_config.keys() == TrackerConfig.__annotations__.keys() else None
 
         # New torrent attribute
-        self.torrent_diff_keys = self.torrent_config.keys() ^ TorrentClientConfig.__annotations__.keys()\
-        if not self.torrent_config.keys() == TorrentClientConfig.__annotations__.keys() else None
+        self.torrent_diff_keys = self.torrent_config.keys() ^ TorrentClientConfig.__annotations__.keys() \
+            if not self.torrent_config.keys() == TorrentClientConfig.__annotations__.keys() else None
 
         # New user preferences attribute
-        self.user_preferences_diff_keys = self.user_preferences_config.keys() ^ UserPreferences.__annotations__.keys()\
-        if not self.user_preferences_config.keys() == UserPreferences.__annotations__.keys() else None
+        self.user_preferences_diff_keys = self.user_preferences_config.keys() ^ UserPreferences.__annotations__.keys() \
+            if not self.user_preferences_config.keys() == UserPreferences.__annotations__.keys() else None
 
         # New options attribute
-        self.options_diff_keys = self.options_config.keys() ^ Options.__annotations__.keys()\
-        if not self.options_config.keys() == Options.__annotations__.keys() else None
+        self.options_diff_keys = self.options_config.keys() ^ Options.__annotations__.keys() \
+            if not self.options_config.keys() == Options.__annotations__.keys() else None
 
         # New console options attribute
-        self.console_options_diff_keys = self.console_options_config.keys() ^ ConsoleOptions.__annotations__.keys()\
-        if not self.console_options_config.keys() == ConsoleOptions.__annotations__.keys() else None
-
+        self.console_options_diff_keys = self.console_options_config.keys() ^ ConsoleOptions.__annotations__.keys() \
+            if not self.console_options_config.keys() == ConsoleOptions.__annotations__.keys() else None
 
     def update_tracker_config(self):
         # Add the new attributes in 'tracker config'
@@ -836,14 +992,12 @@ class JsonConfig:
             missing_keys_dict = {key: '' for key in self.tracker_diff_keys}
             self.tracker_config.update(missing_keys_dict)
 
-
     def update_torrent_client_config(self):
         # Add the new attributes in 'torrent client'
         if self.torrent_diff_keys:
             self.updated = True
             missing_keys_dict = {key: '' for key in self.torrent_diff_keys}
             self.torrent_config.update(missing_keys_dict)
-
 
     def update_user_preferences_config(self):
         # Add the new attributes in 'user preferences'
@@ -852,7 +1006,6 @@ class JsonConfig:
             missing_keys_dict = {key: '' for key in self.user_preferences_diff_keys}
             self.user_preferences_config.update(missing_keys_dict)
 
-
     def update_options_config(self):
         # Add the new attributes in 'options'
         if self.options_diff_keys:
@@ -860,14 +1013,12 @@ class JsonConfig:
             missing_keys_dict = {key: '' for key in self.options_diff_keys}
             self.options_config.update(missing_keys_dict)
 
-
     def update_console_options_config(self):
         # Add the new attributes in 'console options'
         if self.console_options_diff_keys:
             self.updated = True
             missing_keys_dict = {key: '' for key in self.console_options_diff_keys}
             self.console_options_config.update(missing_keys_dict)
-
 
     def get_config_updated(self) -> dict:
 
@@ -888,7 +1039,6 @@ class JsonConfig:
 
         return self.file_config_data
 
-
     def validate_json(self) -> dict:
         try:
             with open(self.default_json_path, 'r') as file:
@@ -900,13 +1050,13 @@ class JsonConfig:
                   f" and {Ccolors.WARNING}Column {e.colno}{Ccolors.ENDC} in the config file: *\n")
             print(f"{e.msg}\n")
             # Seek And...
-            self.aim(line=e.lineno,col=e.colno)
+            self.aim(line=e.lineno, col=e.colno)
             exit(1)
         except FileNotFoundError:
             print(f"Configuration '{self.default_json_path}' not found")
             exit(1)
 
-    def process(self)-> dict:
+    def process(self) -> dict:
 
         # Json validated and updated data
         json_updated = self.get_config_updated()
@@ -917,20 +1067,19 @@ class JsonConfig:
             self.json_message_new_attributes()
 
             # Write the content to another file with *.backup extension
-            shutil.copy2(self.default_json_path,f"{self.default_json_path}.backup")
+            shutil.copy2(self.default_json_path, f"{self.default_json_path}.backup")
             print(f"-> Backup the current json file..{self.default_json_path}.backup")
 
             # Update the current json file
             with open(f"{self.default_json_path}", 'w', encoding='utf-8') as file_w:
                 # pycharm issue type checking ( file_w)
-                json.dump(json_updated,file_w, ensure_ascii=False, indent=4)
+                json.dump(json_updated, file_w, ensure_ascii=False, indent=4)
 
             # Validate the file
             print(f"-> Json file updated and validated {self.default_json_path}")
             return self.validate_json()
         else:
             return self.file_config_data
-
 
     def json_message_new_attributes(self):
 
@@ -970,7 +1119,7 @@ class JsonConfig:
         # Test the line value
         if line <= len(lines):
             # Create a "context" around the error....
-            line_context1 = lines[line -2].rstrip('\n')
+            line_context1 = lines[line - 2].rstrip('\n')
             line_context2 = lines[line + 1].rstrip('\n')
 
             # Try to identify the position
@@ -979,7 +1128,7 @@ class JsonConfig:
             print(f"{Ccolors.WARNING}>>> {line_text}{Ccolors.ENDC}")
 
             # Put the cursor under the error
-            cursor = ' ' * (col-1) + '^'
+            cursor = ' ' * (col - 1) + '^'
             print(f"{Ccolors.WARNING}    {cursor}{Ccolors.ENDC}")
             print(f"{line_context2}")
         else:

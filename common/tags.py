@@ -54,7 +54,7 @@ video_encoder_translate = {
 
 class SearchTags(object):
     def __init__(self, filename, title: str, year: str, season: int, episode: int,
-                 mediafile: MediaFile, tags_position: list, tags_list: dict, releaser_sign: str):
+                 mediafile: MediaFile, tags_position: list, tags_list: dict, sign_list: dict, releaser_sign: str):
 
         self.tags_position = tags_position
         self.releaser_sign = releaser_sign
@@ -67,6 +67,7 @@ class SearchTags(object):
         self.tags_dict = {}
         self.tags_position = tags_position
         self.TAG_TYPES = tags_list
+        self.SIGNS_LIST = sign_list
 
     @staticmethod
     def normalize_version_tag(tag: str) -> str:
@@ -93,6 +94,17 @@ class SearchTags(object):
         tag_esc = re.escape(tag)
         tag_esc = re.sub(r'([A-Z])(\d+)', r'\1[._-]?\2', tag_esc)
         return tag_esc
+
+    def build_title(self, dictionary: dict) -> str:
+        # /// Build the title
+        build = []
+        for k, v in dictionary.items():
+            if isinstance(v, list):
+                build.append(' '.join(v))
+            else:
+                build.append(str(v))
+        refactored = ' '.join(build) + self.releaser_sign
+        return refactored
 
     def process(self) -> str:
         patterns = []
@@ -162,12 +174,24 @@ class SearchTags(object):
         if se_str:
             self.tags_dict.update({'season': se_str})
 
-        # /// Add Sign
         if not self.releaser_sign:
-            filename, _ = os.path.splitext(os.path.basename(self.filename))
-            m = re.search(r'-([A-Za-z0-9]+)$', filename)
-            self.releaser_sign = f"-{m.group(1)}" if m and m.group(1) not in self.TAG_TYPES else ""
+            # If releaser_sign is not defined in the configuration file,
+            # try to detect a known sign from SIGN_LIST
+            pattern = "|".join(
+                sorted((re.escape(k) for k in self.SIGNS_LIST.keys()), key=len, reverse=True)
+            )
+            self.filename = os.path.splitext(self.filename)[0]
+            regex = re.compile(
+                r'(?:^|[\s._-])(' + pattern + r')(?=$|[\s._-]*$)',
+                re.IGNORECASE
+            )
+            matches = regex.findall(self.filename)
+            if matches:
+                self.releaser_sign = f"-{matches[0]}" if matches[0].upper() in self.SIGNS_LIST else ""
+            else:
+                self.releaser_sign = ""
         else:
+            # Add releaser_sign from the configuration file
             self.releaser_sign = f"-{self.releaser_sign}"
 
         # /// Order according to tag position
@@ -177,16 +201,8 @@ class SearchTags(object):
             if k in self.tags_dict
         }
 
-        # /// Build the title
-        build = []
-        for k, v in tags_dict.items():
-            if isinstance(v, list):
-                build.append(' '.join(v))
-            else:
-                build.append(str(v))
-
-        refactored = ' '.join(build) + self.releaser_sign
-        return refactored
+        new_title = self.build_title(tags_dict)
+        return new_title
 
     def mediainfo_audio(self, category: str) -> dict:
         languages = []
@@ -252,7 +268,8 @@ class SearchTags(object):
                         hdr = hdr_map[hdr_format_commercial]
                         # Check dolby vision
                     if hdr not in hdr_map:
-                        custom_console.bot_warning_log(f"<> HDR Warning: '{hdr_format_commercial}' not found in hdr_map")
+                        custom_console.bot_warning_log(
+                            f"<> HDR Warning: '{hdr_format_commercial}' not found in hdr_map")
                     if 'DOLBY VISION' in hdr_format_commercial.upper() or 'DOLBY VISION' in hdr_format.upper():
                         hdr = f"DOLBY VISION {hdr}"
                     return {category: hdr_map.get(hdr, '*HDR')}
@@ -275,7 +292,7 @@ class SearchTags(object):
                 return standard - tol <= value <= standard + tol
 
             # /// UHD
-            if video_height >= 2000 or video_width >= 3840:
+            if in_range(video_width, 3840) or in_range(video_height, 2160):
                 result[category] = 'UHD'
                 result['resolution'] = '2160p'
             # /// Full HD
