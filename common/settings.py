@@ -533,6 +533,7 @@ class Load:
             "WEBMUX": "source",
             "WEBRIP": "source",
             "BD-UNTOUCHED": "source",
+            "UNTOUCHED": "source",
             "TS": "source",
             "CAM": "source",
             "HDTS": "source",
@@ -617,7 +618,6 @@ class Load:
             "INTERNAL": "version",
             "PROPER": "version",
             "DUAL": "version",
-            "UNTOUCHED": "version",
             "COMPLETE": "version",
             "COMPLETA": "version",
 
