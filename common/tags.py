@@ -187,8 +187,7 @@ class SearchTags(object):
             )
             matches = regex.findall(self.filename)
             if matches:
-                match = matches[0].upper()
-                self.releaser_sign = f"-{match}" if match in self.SIGNS_LIST else ""
+                self.releaser_sign = f"-{matches[0]}" if matches[0].upper() in self.SIGNS_LIST else ""
             else:
                 self.releaser_sign = ""
         else:
