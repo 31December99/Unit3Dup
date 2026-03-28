@@ -21,7 +21,7 @@ config_file = "Unit3Dbot.json"
 user_tags_file = "tags_list.json"
 user_sign_file = "sign_list.json"
 
-version = "0.9.18"
+version = "0.9.19"
 
 if os.name == "nt":
     WATCHER_DESTINATION_PATH: Path = Path(
