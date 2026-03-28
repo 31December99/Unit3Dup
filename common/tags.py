@@ -100,6 +100,7 @@ class SearchTags(object):
                 build.append(' '.join(v))
             else:
                 build.append(str(v))
+
         refactored = ' '.join(build) + self.releaser_sign
         return refactored
 
@@ -301,22 +302,31 @@ class SearchTags(object):
 
     @staticmethod
     def detect_releaser(name: str, signs_list: dict) -> str:
-        # Remove file ext if it's a file
-        base_name = name.strip()
+        """
+            normalize both signs_list and base_name
+            find the start/end position of the matched sign
+            extract the substring from the original base_name
+        """
+        # Strip the title
+        base_name = str(name).strip()
 
-        # split string into tokens based on chars as '.', '-','-',' ',
-        tokens = re.split(r"[.\s_-]+", base_name)
+        # Remove '.'; '_'; '-' chars from the filename and dictionary signs_list
+        tokens = re.split(r"[._-]+", base_name)
 
-        # Filter tokens
-        valid_tokens = [t for t in tokens if t.upper() in signs_list]
+        base_name_normalized = ' '.join(tokens)
 
-        # grab the last match
-        if valid_tokens:
-            return f"-{valid_tokens[-1]}"
+        # normalize list of signs ( because it is user editable)
+        tokens_signs_list = [re.sub(r"[._-]+", " ", str(sign)) for sign in signs_list]
 
-        # Sort the list to avoid false positive
-        pattern = "|".join(sorted((re.escape(k) for k in signs_list.keys()), key=len, reverse=True))
-        matches = re.findall(pattern, base_name, re.IGNORECASE)
-        if matches:
-            return f"-{matches[-1].upper()}"
+        # sort dictionary from the longest to shortest to avoid partial result (es. 'crew' instead di 'mircrew')
+        tokens_signs_list_sorted = sorted(tokens_signs_list, key=len, reverse=True)
+
+        # Search for signs in the base_name_normalized
+        for token in tokens_signs_list_sorted:
+            pattern = r"\b" + re.escape(token) + r"\b"
+            match = re.search(pattern, base_name_normalized, re.IGNORECASE)
+            if match:
+                # Capture any characters from the start to the end of base_name
+                # normalized_base_name loses chars like '-','.' or '-'
+                return f"-{base_name[match.start(): match.end()]}"
         return ""
