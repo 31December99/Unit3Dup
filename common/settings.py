@@ -697,8 +697,8 @@ class Load:
             "HASHDEV": "releaser",
             "HDCHINA": "releaser",
             "HENRYDIRTY": "releaser",
-            "HONE": "releaser",
             "HHNN": "releaser",
+            "HONE": "releaser",
             "HYRULE": "releaser",
             "I3AM": "releaser",
             "IBANEZ89": "releaser",
@@ -716,6 +716,7 @@ class Load:
             "LAZY-SUBS": "releaser",
             "LEPORE": "releaser",
             "LFI": "releaser",
+            "LICDOM": "releaser",
             "LULLOZZO": "releaser",
             "MATT3O": "releaser",
             "MATT_BROWN4": "releaser",
@@ -736,6 +737,7 @@ class Load:
             "NTROPIC": "releaser",
             "ODS": "releaser",
             "ONGOIA": "releaser",
+            "PASO77": "releaser",
             "PEPPE": "releaser",
             "PENNYWISE": "releaser",
             "PETE321": "releaser",
@@ -748,8 +750,8 @@ class Load:
             "PROMETHEUS": "releaser",
             "PROSCIUTTO": "releaser",
             "RADESE": "releaser",
-            "RAWR": "releaser",
             "RARBG": "releaser",
+            "RAWR": "releaser",
             "RIDDICKK": "releaser",
             "ROGELIOBYNIGHT": "releaser",
             "ROMEO": "releaser",
@@ -767,6 +769,7 @@ class Load:
             "STEVEJOHNNEE": "releaser",
             "STINGUAJT": "releaser",
             "TAHTAKALECI": "releaser",
+            "TASKO": "releaser",
             "TELESTO": "releaser",
             "TERMINAL": "releaser",
             "THEBLACKKING": "releaser",
@@ -788,8 +791,8 @@ class Load:
             "XVID": "releaser",
             "YIFY": "releaser",
             "YTS": "releaser",
-            "ZIORIP": "releaser"
-            }
+            "ZIORIP": "releaser",
+        }
 
         path.parent.mkdir(parents=True, exist_ok=True)
         with open(path, "w", encoding="utf-8") as tags_sign_file:
