@@ -175,22 +175,7 @@ class SearchTags(object):
         if not self.releaser_sign:
             # If releaser_sign is not defined in the configuration file,
             # try to detect a known sign from SIGN_LIST
-            pattern = "|".join(
-                sorted((re.escape(k) for k in self.SIGNS_LIST.keys()), key=len, reverse=True)
-            )
-            self.filename = os.path.splitext(self.filename)[0]
-            regex = re.compile(
-                r'(?:^|[\s._-])(' + pattern + r')(?=$|[\s._-]*$)',
-                re.IGNORECASE
-            )
-            matches = regex.findall(self.filename)
-            if matches:
-                self.releaser_sign = f"-{matches[0]}" if matches[0].upper() in self.SIGNS_LIST else ""
-            else:
-                self.releaser_sign = ""
-        else:
-            # Add releaser_sign from the configuration file
-            self.releaser_sign = f"-{self.releaser_sign}"
+            self.releaser_sign = self.detect_releaser(self.filename, self.SIGNS_LIST)
 
         # /// Order according to tag position
         tags_dict = {
@@ -314,3 +299,26 @@ class SearchTags(object):
                 result['resolution'] = f'{video_width}x{video_height}'
 
         return result
+
+
+    @staticmethod
+    def detect_releaser(name: str, signs_list: dict) -> str:
+        # Remove file ext if it's a file
+        base_name = name.strip()
+
+        # split string into tokens based on chars as '.', '-','-',' ',
+        tokens = re.split(r"[.\s_-]+", base_name)
+
+        # Filter tokens
+        valid_tokens = [t for t in tokens if t.upper() in signs_list]
+
+        # grab the last match
+        if valid_tokens:
+            return f"-{valid_tokens[-1]}"
+
+        # Sort the list to avoid false positive
+        pattern = "|".join(sorted((re.escape(k) for k in signs_list.keys()), key=len, reverse=True))
+        matches = re.findall(pattern, base_name, re.IGNORECASE)
+        if matches:
+            return f"-{matches[-1].upper()}"
+        return ""
