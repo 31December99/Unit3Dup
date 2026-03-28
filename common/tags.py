@@ -10,7 +10,7 @@ hdr_map = {
     "DOLBY VISION": "DV",
     "DOLBY VISION HDR": "DV HDR",
     "DOLBY VISION HDR10": "DV HDR10",
-    "DOLBY VISION HDR10+": "DV HDR",
+    "DOLBY VISION HDR10+": "DV HDR10+",
     "HDR10PLUS": "HDR10+",
     "HDRPLUS+": "HDR10+",
     "HDR10+": "HDR10+",
@@ -85,7 +85,6 @@ class SearchTags(object):
     def normalize_sources(tag: str) -> str:
         tag_esc = re.escape(tag)
         return tag_esc
-
 
     @staticmethod
     def normalize_video_encoder(tag: str) -> str:
@@ -299,7 +298,6 @@ class SearchTags(object):
                 result['resolution'] = f'{video_width}x{video_height}'
 
         return result
-
 
     @staticmethod
     def detect_releaser(name: str, signs_list: dict) -> str:
