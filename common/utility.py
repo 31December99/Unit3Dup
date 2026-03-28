@@ -20,49 +20,6 @@ class ManageTitles:
         "\\", "&", "*", "$", "%", "#", "@", "_", "+", "|"
     ]
 
-    # # TAG Audio in title
-    # iso_3166_alpha3 = ["ENG", "USA", "ITA", "DEU", "FRA", "GBR", "ESP", "JPN", "BRA", "RUS", "CHN", "PER", "NOR"]
-    #
-    # # TAG Audio in title
-    # iso_3166_alpha2_to_alpha3 = {
-    #     "EN": "ENG",  # exception
-    #     "US": "USA",
-    #     "IT": "ITA",
-    #     "DE": "DEU",
-    #     "FR": "FRA",
-    #     "GB": "GBR",
-    #     "ES": "ESP",
-    #     "JP": "JPN",
-    #     "BR": "BRA",
-    #     "RU": "RUS",
-    #     "CN": "CHN",
-    #     "FA": "PER",
-    #     "NO": "NOR",
-    #     "EN-US": "ENG",
-    #     "EN-GB": "ENG",
-    #     "EN-AU": "ENG",
-    #     "ES-ES": "ESP",
-    #     "ES-MX": "ESP"
-    # }
-    #
-    # # From mediainfo
-    # long_name = {
-    #     "ENGLISH": "ENG",
-    #     "ITALIAN": "ITA",
-    #     "GERMAN": "DEU",
-    #     "FRENCH": "FRA",
-    #     "SPANISH": "ESP",
-    #     "JAPANESE": "JPN",
-    #     "BRAZILIAN": "BRA",
-    #     "RUSSIAN": "RUS",
-    #     "CHINESE": "CHN",
-    #     "AMERICAN": "USA",
-    #     "BRITISH": "GBR",
-    #     "PERSIAN": "PER",
-    #     "FARSI": "PER",
-    #     "NORWEGIAN": "NOR",
-    # }
-
     iso_3166_alpha3 = [
         "ENG", "USA", "GBR", "ITA", "DEU", "FRA", "ESP",
         "BRA", "JPN", "CHN", "RUS", "PER", "NOR",
@@ -117,8 +74,6 @@ class ManageTitles:
         "VIETNAMESE": "VIE",
         "INDONESIAN": "IND"
     }
-
-
 
     @staticmethod
     def convert_iso(code) -> list | str | None:
