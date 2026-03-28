@@ -72,22 +72,18 @@ class SearchTags(object):
     @staticmethod
     def normalize_version_tag(tag: str) -> str:
         tag_esc = re.escape(tag)
-        # Filter hyphenated,space compounds
-        tag_esc = tag_esc.replace(r'\ ', r'[.\s_-]*')
         return tag_esc
 
     @staticmethod
     def normalize_platform_tag(tag: str) -> str:
-        # escape
         tag_esc = re.escape(tag)
         return tag_esc
 
     @staticmethod
     def normalize_sources(tag: str) -> str:
         tag_esc = re.escape(tag)
-        # Filter hyphenated,space compounds
-        tag_esc = tag_esc.replace(r'\ ', r'[.\s_-]*')
         return tag_esc
+
 
     @staticmethod
     def normalize_video_encoder(tag: str) -> str:
