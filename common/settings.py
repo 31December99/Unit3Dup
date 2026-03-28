@@ -18,7 +18,7 @@ config_file = "Unit3Dbot.json"
 user_tags_file = "tags_list.json"
 user_sign_file = "sign_list.json"
 
-version = "0.9.16"
+version = "0.9.17"
 
 if os.name == "nt":
     WATCHER_DESTINATION_PATH: Path = Path(
@@ -529,10 +529,16 @@ class Load:
         TAG_TYPES = {
             "REMUX": "remux",
             "WEB-DL": "source",
+            "WEBDL": "source",
+            "WEB-DLRIP": "source",
+            "WEBDLRIP": "source",
             "WEB-DLMUX": "source",
+            "WEBDLMUX": "source",
             "WEBMUX": "source",
             "WEBRIP": "source",
             "BD-UNTOUCHED": "source",
+            "UNTOUCHED": "source",
+
             "TS": "source",
             "CAM": "source",
             "HDTS": "source",
@@ -593,11 +599,13 @@ class Load:
             "STZ": "platform",
             "TIMV": "platform",
 
+            "SPECIAL": "version",
             "REPACK": "version",
             "EXTENDED": "version",
-            "EXTENDED EDITION": "version",
-            "EXTENDED CUT": "version",
-            "DIRECTOR'S CUT": "version",
+            "EDITION": "version",
+            "DIRECTOR'S": "version",
+            "CUT": "version",
+
             "SUBBED": "version",
             "MUX": "version",
             "REMASTERED": "version",
@@ -606,7 +614,6 @@ class Load:
             "UNCUT": "version",
             "LIMITED": "version",
             "ANNIVERSARY": "version",
-            "SPECIAL EDITION": "version",
             "4k RESTORATION": "version",
             "IMAX": "version",
             "OPEN MATTE": "version",
@@ -617,7 +624,6 @@ class Load:
             "INTERNAL": "version",
             "PROPER": "version",
             "DUAL": "version",
-            "UNTOUCHED": "version",
             "COMPLETE": "version",
             "COMPLETA": "version",
 
