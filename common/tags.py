@@ -17,6 +17,8 @@ hdr_map = {
     "HDR10": "HDR10",
     "HDR10 / HDR10": "HDR10",
     "HDR10 / HDR10 / HDR10+": "HDR10+",
+    "SMPTE ST 2086": "HDR10",
+    "SMPTE ST 2094": "HDR10+",
 
     "DOVI": "DV",
     "HDR": "HDR",
