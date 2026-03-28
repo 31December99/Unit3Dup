@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import os
 import re
 from common.mediainfo import MediaFile
 from common.utility import ManageTitles
@@ -10,12 +9,13 @@ hdr_map = {
     "DOLBY VISION": "DV",
     "DOLBY VISION HDR": "DV HDR",
     "DOLBY VISION HDR10": "DV HDR10",
-    "DOLBY VISION HDR10+": "DV HDR",
+    "DOLBY VISION HDR10+": "DV HDR10+",
     "HDR10PLUS": "HDR10+",
     "HDRPLUS+": "HDR10+",
     "HDR10+": "HDR10+",
     "HDR10": "HDR10",
     "HDR10 / HDR10": "HDR10",
+    "HDR10 / HDR10+": "HDR10+",
     "HDR10 / HDR10 / HDR10+": "HDR10+",
     "SMPTE ST 2086": "HDR10",
     "SMPTE ST 2094": "HDR10+",
@@ -86,7 +86,6 @@ class SearchTags(object):
         tag_esc = re.escape(tag)
         return tag_esc
 
-
     @staticmethod
     def normalize_video_encoder(tag: str) -> str:
         tag_esc = re.escape(tag)
@@ -101,6 +100,7 @@ class SearchTags(object):
                 build.append(' '.join(v))
             else:
                 build.append(str(v))
+
         refactored = ' '.join(build) + self.releaser_sign
         return refactored
 
@@ -175,22 +175,7 @@ class SearchTags(object):
         if not self.releaser_sign:
             # If releaser_sign is not defined in the configuration file,
             # try to detect a known sign from SIGN_LIST
-            pattern = "|".join(
-                sorted((re.escape(k) for k in self.SIGNS_LIST.keys()), key=len, reverse=True)
-            )
-            self.filename = os.path.splitext(self.filename)[0]
-            regex = re.compile(
-                r'(?:^|[\s._-])(' + pattern + r')(?=$|[\s._-]*$)',
-                re.IGNORECASE
-            )
-            matches = regex.findall(self.filename)
-            if matches:
-                self.releaser_sign = f"-{matches[0]}" if matches[0].upper() in self.SIGNS_LIST else ""
-            else:
-                self.releaser_sign = ""
-        else:
-            # Add releaser_sign from the configuration file
-            self.releaser_sign = f"-{self.releaser_sign}"
+            self.releaser_sign = self.detect_releaser(self.filename, self.SIGNS_LIST)
 
         # /// Order according to tag position
         tags_dict = {
@@ -314,3 +299,34 @@ class SearchTags(object):
                 result['resolution'] = f'{video_width}x{video_height}'
 
         return result
+
+    @staticmethod
+    def detect_releaser(name: str, signs_list: dict) -> str:
+        """
+            normalize both signs_list and base_name
+            find the start/end position of the matched sign
+            extract the substring from the original base_name
+        """
+        # Strip the title
+        base_name = str(name).strip()
+
+        # Remove '.'; '_'; '-' chars from the filename and dictionary signs_list
+        tokens = re.split(r"[._-]+", base_name)
+
+        base_name_normalized = ' '.join(tokens)
+
+        # normalize list of signs ( because it is user editable)
+        tokens_signs_list = [re.sub(r"[._-]+", " ", str(sign)) for sign in signs_list]
+
+        # sort dictionary from the longest to shortest to avoid partial result (es. 'crew' instead di 'mircrew')
+        tokens_signs_list_sorted = sorted(tokens_signs_list, key=len, reverse=True)
+
+        # Search for signs in the base_name_normalized
+        for token in tokens_signs_list_sorted:
+            pattern = r"\b" + re.escape(token) + r"\b"
+            match = re.search(pattern, base_name_normalized, re.IGNORECASE)
+            if match:
+                # Capture any characters from the start to the end of base_name
+                # normalized_base_name loses chars like '-','.' or '-'
+                return f"-{base_name[match.start(): match.end()]}"
+        return ""
