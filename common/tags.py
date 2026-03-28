@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import os
 import re
 from common.mediainfo import MediaFile
 from common.utility import ManageTitles
