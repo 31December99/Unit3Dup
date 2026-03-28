@@ -20,43 +20,106 @@ class ManageTitles:
         "\\", "&", "*", "$", "%", "#", "@", "_", "+", "|"
     ]
 
-    # TAG Audio in title
-    iso_3166_alpha3 = ["ENG", "USA", "ITA", "DEU", "FRA", "GBR", "ESP", "JPN", "BRA", "RUS", "CHN"]
+    # # TAG Audio in title
+    # iso_3166_alpha3 = ["ENG", "USA", "ITA", "DEU", "FRA", "GBR", "ESP", "JPN", "BRA", "RUS", "CHN", "PER", "NOR"]
+    #
+    # # TAG Audio in title
+    # iso_3166_alpha2_to_alpha3 = {
+    #     "EN": "ENG",  # exception
+    #     "US": "USA",
+    #     "IT": "ITA",
+    #     "DE": "DEU",
+    #     "FR": "FRA",
+    #     "GB": "GBR",
+    #     "ES": "ESP",
+    #     "JP": "JPN",
+    #     "BR": "BRA",
+    #     "RU": "RUS",
+    #     "CN": "CHN",
+    #     "FA": "PER",
+    #     "NO": "NOR",
+    #     "EN-US": "ENG",
+    #     "EN-GB": "ENG",
+    #     "EN-AU": "ENG",
+    #     "ES-ES": "ESP",
+    #     "ES-MX": "ESP"
+    # }
+    #
+    # # From mediainfo
+    # long_name = {
+    #     "ENGLISH": "ENG",
+    #     "ITALIAN": "ITA",
+    #     "GERMAN": "DEU",
+    #     "FRENCH": "FRA",
+    #     "SPANISH": "ESP",
+    #     "JAPANESE": "JPN",
+    #     "BRAZILIAN": "BRA",
+    #     "RUSSIAN": "RUS",
+    #     "CHINESE": "CHN",
+    #     "AMERICAN": "USA",
+    #     "BRITISH": "GBR",
+    #     "PERSIAN": "PER",
+    #     "FARSI": "PER",
+    #     "NORWEGIAN": "NOR",
+    # }
 
-    # TAG Audio in title
+    iso_3166_alpha3 = [
+        "ENG", "USA", "GBR", "ITA", "DEU", "FRA", "ESP",
+        "BRA", "JPN", "CHN", "RUS", "PER", "NOR",
+        "SWE", "DAN", "POL", "HIN", "TUR", "ARA", "KOR", "VIE", "IND"
+    ]
+
     iso_3166_alpha2_to_alpha3 = {
-        "EN": "ENG",  # exception
-        "US": "USA",
+        "EN": "ENG", "US": "USA", "GB": "GBR", "EN-US": "ENG", "EN-GB": "ENG", "EN-AU": "ENG",
         "IT": "ITA",
         "DE": "DEU",
         "FR": "FRA",
-        "GB": "GBR",
-        "ES": "ESP",
-        "JP": "JPN",
+        "ES": "ESP", "ES-ES": "ESP", "ES-MX": "ESP",
         "BR": "BRA",
-        "RU": "RUS",
+        "JP": "JPN",
         "CN": "CHN",
-        "EN-US": "ENG",
-        "EN-GB": "ENG",
-        "EN-AU": "ENG",
-        "ES-ES": "ESP",
-        "ES-MX": "ESP"
+        "RU": "RUS",
+        "FA": "PER", "IR": "PER",
+        "NO": "NOR",
+        "SE": "SWE",
+        "DK": "DAN",
+        "PL": "POL",
+        "HI": "HIN",
+        "TR": "TUR",
+        "AR": "ARA",
+        "KO": "KOR",
+        "VI": "VIE",
+        "ID": "IND"
     }
 
-    # From mediainfo
     long_name = {
         "ENGLISH": "ENG",
+        "AMERICAN": "USA",
+        "BRITISH": "GBR",
         "ITALIAN": "ITA",
         "GERMAN": "DEU",
         "FRENCH": "FRA",
         "SPANISH": "ESP",
-        "JAPANESE": "JPN",
         "BRAZILIAN": "BRA",
-        "RUSSIAN": "RUS",
+        "JAPANESE": "JPN",
         "CHINESE": "CHN",
-        "AMERICAN": "USA",
-        "BRITISH": "GBR"
+        "RUSSIAN": "RUS",
+        "PERSIAN": "PER",
+        "FARSI": "PER",
+        "NORWEGIAN": "NOR",
+        "SWEDISH": "SWE",
+        "DANISH": "DAN",
+        "POLISH": "POL",
+        "HINDI": "HIN",
+        "TURKISH": "TUR",
+        "ARABIC": "ARA",
+        "KOREAN": "KOR",
+        "VIETNAMESE": "VIE",
+        "INDONESIAN": "IND"
     }
+
+
+
     @staticmethod
     def convert_iso(code) -> list | str | None:
         """ Convert iso 2 to 3 """
