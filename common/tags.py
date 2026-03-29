@@ -77,6 +77,20 @@ class SearchTags(object):
         return tag_esc
 
     @staticmethod
+    def normalize_part_tag(title: str) -> str | None:
+        """
+        Extract substring PartX
+        Try to remove noisy chars and return a normalized tag
+        Part1, Part 1, Part.1, [Part 1], Parte1, Pt1, Prt 2,
+        """
+        pattern = r'[\[\(]?\b(?:Part|Parte|Pt|Prt)[\s\.-]*?(\d+)\b[\]\)]?'
+        match = re.search(pattern, title, re.IGNORECASE)
+        if match:
+            part_number = match.group(1)
+            return f"Part {part_number}"
+        return None
+
+    @staticmethod
     def normalize_platform_tag(tag: str) -> str:
         tag_esc = re.escape(tag)
         return tag_esc
@@ -130,6 +144,11 @@ class SearchTags(object):
             matches = regex.findall(self.filename)
             if matches:
                 self.tags_dict.setdefault(category, []).append(matches[0])
+
+        # Identify PartX
+        norm = self.normalize_part_tag(self.filename)
+        if norm:
+            self.tags_dict.update({'part': norm})
 
         # /// Read from mediainfo
         updated_category = {}

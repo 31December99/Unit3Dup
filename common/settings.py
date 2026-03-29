@@ -265,7 +265,7 @@ class Validate:
             exit(1)
 
         for tag in position_list:
-            if tag.lower() not in ["title", "year", "season", "version", "resolution", "uhd", "platform", "source",
+            if tag.lower() not in ["title", "part", "year", "season", "version", "resolution", "uhd", "platform", "source",
                                    "remux",
                                    "multi", "acodec", "channels", "flag", "subtitle", "vcodec", "hdr", "video_encoder"]:
                 print(f"-> Invalid TAG position '{tag}'. Please fix your configuration file")
@@ -603,7 +603,7 @@ class Load:
                 "PASSIMA_PRIORITY": 5,
                 "IMARIDE_PRIORITY": 6,
                 "NUMBER_OF_SCREENSHOTS": 4,
-                "TAGS_POSITION_MOVIE": ["title", "year", "season", "version", "resolution", "uhd", "platform", "source",
+                "TAGS_POSITION_MOVIE": ["title","year", "part", "version", "resolution", "uhd", "platform", "source",
                                   "remux",
                                   "multi", "acodec", "channels", "flag", "subtitle", "hdr", "vcodec", "video_encoder"],
 
