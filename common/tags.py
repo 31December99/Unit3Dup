@@ -145,12 +145,15 @@ class SearchTags(object):
             if matches:
                 self.tags_dict.setdefault(category, []).append(matches[0])
 
+        # /// Tags with no categories
         # Identify PartX
         norm = self.normalize_part_tag(self.filename)
         if norm:
             # Skip if it is part of title es: "Wicked.Parte.2.2025.iTA" Title = Wicked Parte 2
             if not any(t in self.title.lower() for t in ['part', 'parte']):
                 self.tags_dict.update({'part': norm})
+
+        # SDR - althought we should use mediainfo to add , let
 
         # /// Read from mediainfo
         updated_category = {}
@@ -167,9 +170,12 @@ class SearchTags(object):
 
             elif category == "hdr":
                 updated_category = self.mediainfo_hdr(category=category)
+                if not updated_category:
+                    updated_category = {category: 'SDR'}
 
             elif category == "uhd":
                 updated_category = self.mediainfo_uhd(category=category)
+
 
             elif category == "subtitle":
                 if self.mediafile.subtitle_track:
