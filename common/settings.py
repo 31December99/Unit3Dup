@@ -112,7 +112,8 @@ class UserPreferences(BaseModel):
     IMGFI_PRIORITY: int = 4
     PASSIMA_PRIORITY: int = 5
     IMARIDE_PRIORITY: int = 6
-    TAGS_POSITION: list[str] | None = None
+    TAGS_POSITION_MOVIE: list[str] | None = None
+    TAGS_POSITION_SERIE: list[str] | None = None
 
     NUMBER_OF_SCREENSHOTS: int = 4
     YOUTUBE_FAV_CHANNEL_ID: str | None = None
@@ -488,8 +489,12 @@ class Config(BaseModel):
                 if field == 'RELEASER_SIGN':
                     section[field] = Validate.sign(sign=section[field])
 
-                if field in ['TAGS_POSITION']:
+                if field in ['TAGS_POSITION_MOVIE']:
                     section[field] = Validate.validate_tags_position(position_list=section[field])
+
+                if field in ['TAGS_POSITION_SERIE']:
+                    section[field] = Validate.validate_tags_position(position_list=section[field])
+
 
         return v
 
@@ -598,9 +603,14 @@ class Load:
                 "PASSIMA_PRIORITY": 5,
                 "IMARIDE_PRIORITY": 6,
                 "NUMBER_OF_SCREENSHOTS": 4,
-                "TAGS_POSITION": ["title", "year", "season", "version", "resolution", "uhd", "platform", "source",
+                "TAGS_POSITION_MOVIE": ["title", "year", "season", "version", "resolution", "uhd", "platform", "source",
                                   "remux",
                                   "multi", "acodec", "channels", "flag", "subtitle", "hdr", "vcodec", "video_encoder"],
+
+                "TAGS_POSITION_SERIE": ["title", "year", "season", "version", "resolution", "uhd", "platform", "source",
+                                  "remux",
+                                  "multi", "acodec", "channels", "flag", "subtitle", "hdr", "vcodec", "video_encoder"],
+
                 "YOUTUBE_FAV_CHANNEL_ID": "UCGCbxpnt25hWPFLSbvwfg_w",
                 "YOUTUBE_CHANNEL_ENABLE": "False",
                 "DUPLICATE_ON": "true",

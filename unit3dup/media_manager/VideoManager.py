@@ -52,13 +52,15 @@ class VideoManager:
             if self.cli.buildtags:
                 guess_filename = title.Guessit(content.title_sanitize_tags)
                 guess = guess_filename.guessit
+                tags_position = config_settings.user_preferences.TAGS_POSITION_SERIE if content.category=='tv'\
+                    else config_settings.user_preferences.TAGS_POSITION_MOVIE
                 search_tags = SearchTags(filename=content.title, # title_sanitize_tags,
                                          title=guess.get("title", None),
                                          year=guess.get("year", ""),
                                          season=content.guess_season,
                                          episode=content.guess_episode,
                                          releaser_sign=config_settings.user_preferences.RELEASER_SIGN,
-                                         tags_position=config_settings.user_preferences.TAGS_POSITION,
+                                         tags_position=tags_position,
                                          tags_list=self.tags_list,
                                          sign_list=self.sign_list,
                                          mediafile=content.mediafile,
