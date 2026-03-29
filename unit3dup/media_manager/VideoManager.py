@@ -18,7 +18,7 @@ from view import custom_console
 
 class VideoManager:
 
-    def __init__(self, contents: list[Media], cli: Namespace, tags_list: dict, sign_list: dict):
+    def __init__(self, contents: list[Media], cli: Namespace, tags_list: dict, sign_list: dict, ban_list: dict):
         """
         Initialize the VideoManager with the given contents
 
@@ -32,6 +32,7 @@ class VideoManager:
         self.cli: Namespace = cli
         self.tags_list: dict = tags_list
         self.sign_list: dict = sign_list
+        self.ban_list: dict = ban_list
 
     def process(self, selected_tracker: str, tracker_name_list: list, tracker_archive: str) -> list[BittorrentData]:
         """
@@ -63,6 +64,7 @@ class VideoManager:
                                          tags_position=tags_position,
                                          tags_list=self.tags_list,
                                          sign_list=self.sign_list,
+                                         ban_list=self.ban_list,
                                          mediafile=content.mediafile,
                                          )
                 content.display_name = search_tags.process()

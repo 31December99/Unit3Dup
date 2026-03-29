@@ -11,8 +11,9 @@ from pathvalidate import sanitize_filepath
 from urllib.parse import urlparse
 from pathlib import Path
 
-from common.trackers.releasers import SIGNS_LIST
+from common.trackers.signs_list import SIGNS_LIST
 from common.trackers.tags_list import TAGS_LIST
+from common.trackers.ban_list import BAN_LIST
 
 from common.utility import ManageTitles
 from common import trackers
@@ -20,6 +21,7 @@ from common import trackers
 config_file = "Unit3Dbot.json"
 user_tags_file = "tags_list.json"
 user_sign_file = "sign_list.json"
+bane_file = "ban_list.json"
 
 version = "0.9.19"
 
@@ -32,7 +34,7 @@ if os.name == "nt":
     DEFAULT_JSON_PATH: Path = Path(os.getenv("LOCALAPPDATA", ".")) / "Unit3Dup_config" / f"{config_file}"
     USER_TAGS_PATH: Path = Path(os.getenv("LOCALAPPDATA", ".")) / "Unit3Dup_config" / f"{user_tags_file}"
     USER_SIGN_PATH: Path = Path(os.getenv("LOCALAPPDATA", ".")) / "Unit3Dup_config" / f"{user_sign_file}"
-
+    BAN_TAGS_PATH: Path = Path(os.getenv("LOCALAPPDATA", ".")) / "Unit3Dup_config" / f"{bane_file}"
 
 else:
     WATCHER_DESTINATION_PATH: Path = Path.home() / "Unit3Dup_config" / "watcher_destination_path"
@@ -42,6 +44,7 @@ else:
     DEFAULT_JSON_PATH: Path = Path.home() / "Unit3Dup_config" / f"{config_file}"
     USER_TAGS_PATH: Path = Path.home() / "Unit3Dup_config" / f"{user_tags_file}"
     USER_SIGN_PATH: Path = Path.home() / "Unit3Dup_config" / f"{user_sign_file}"
+    BAN_TAGS_PATH: Path = Path.home() / "Unit3Dup_config" / f"{bane_file}"
 
 
 def get_default_path(field: str) -> str:
@@ -257,18 +260,19 @@ class Validate:
     def validate_tags_position(position_list: list) -> list | None:
 
         if not position_list:
-            print(f"-> Invalid TAG position. The list is empty !")
+            print(f"-> Invalid TAG POSITION list. The list is empty !")
             exit(1)
 
         if len(position_list) > 17 or len(position_list) < 5:
-            print(f"-> Invalid TAG position list. Wrong number of elements !")
+            print(f"-> Invalid Tag list: number of elements exceeds the maximum allowed tags!")
             exit(1)
 
         for tag in position_list:
-            if tag.lower() not in ["title", "part", "year", "season", "version", "resolution", "uhd", "platform", "source",
+            if tag.lower() not in ["title", "part", "year", "season", "version", "resolution", "uhd", "platform",
+                                   "source",
                                    "remux",
                                    "multi", "acodec", "channels", "flag", "subtitle", "vcodec", "hdr", "video_encoder"]:
-                print(f"-> Invalid TAG position '{tag}'. Please fix your configuration file")
+                print(f"-> Invalid TAG '{tag}'. Please fix your configuration file")
                 exit(1)
 
         return position_list
@@ -495,7 +499,6 @@ class Config(BaseModel):
                 if field in ['TAGS_POSITION_SERIE']:
                     section[field] = Validate.validate_tags_position(position_list=section[field])
 
-
         return v
 
     @model_validator(mode='before')
@@ -541,11 +544,20 @@ class Load:
     @staticmethod
     def create_sign_list_file(path: Path):
         """
-        Creates a tags list file
+        Creates a sign list file
         """
         path.parent.mkdir(parents=True, exist_ok=True)
         with open(path, "w", encoding="utf-8") as tags_sign_file:
             json.dump(SIGNS_LIST, tags_sign_file, ensure_ascii=False, indent=4)
+
+    @staticmethod
+    def create_ban_list_file(path: Path):
+        """
+        Creates a ban list file
+        """
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with open(path, "w", encoding="utf-8") as ban_list_file:
+            json.dump(BAN_LIST, ban_list_file, ensure_ascii=False, indent=4)
 
     @staticmethod
     def create_default_json_file(path: Path):
@@ -603,13 +615,15 @@ class Load:
                 "PASSIMA_PRIORITY": 5,
                 "IMARIDE_PRIORITY": 6,
                 "NUMBER_OF_SCREENSHOTS": 4,
-                "TAGS_POSITION_MOVIE": ["title","year", "part", "version", "resolution", "uhd", "platform", "source",
-                                  "remux",
-                                  "multi", "acodec", "channels", "flag", "subtitle", "hdr", "vcodec", "video_encoder"],
+                "TAGS_POSITION_MOVIE": ["title", "year", "part", "version", "resolution", "uhd", "platform", "source",
+                                        "remux",
+                                        "multi", "acodec", "channels", "flag", "subtitle", "hdr", "vcodec",
+                                        "video_encoder"],
 
                 "TAGS_POSITION_SERIE": ["title", "year", "season", "version", "resolution", "uhd", "platform", "source",
-                                  "remux",
-                                  "multi", "acodec", "channels", "flag", "subtitle", "hdr", "vcodec", "video_encoder"],
+                                        "remux",
+                                        "multi", "acodec", "channels", "flag", "subtitle", "hdr", "vcodec",
+                                        "video_encoder"],
 
                 "YOUTUBE_FAV_CHANNEL_ID": "UCGCbxpnt25hWPFLSbvwfg_w",
                 "YOUTUBE_CHANNEL_ENABLE": "False",
@@ -691,6 +705,10 @@ class Load:
         if not USER_SIGN_PATH.exists():
             print(f"Create default Sign_list file: {USER_SIGN_PATH}")
             Load.create_sign_list_file(USER_SIGN_PATH)
+
+        if not BAN_TAGS_PATH.exists():
+            print(f"Create default Ban_list file: {BAN_TAGS_PATH}")
+            Load.create_ban_list_file(BAN_TAGS_PATH)
 
         # Since the last bot version there might are new attributes
         # Load the json file, find the difference between json file and the code. Update the user's json file
@@ -847,7 +865,7 @@ class JsonConfig:
 
     def json_message_new_attributes(self):
 
-        print("-- ** Since the last bot version there are new attributes  ** --")
+        print("-- ** New attributes have been added since the last bot version  ** --")
         message = ''
         if self.tracker_diff_keys:
             message += f"New Tracker Configuration attribute: {self.tracker_diff_keys}\n"

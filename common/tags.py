@@ -56,7 +56,8 @@ video_encoder_translate = {
 
 class SearchTags(object):
     def __init__(self, filename, title: str, year: str, season: int, episode: int,
-                 mediafile: MediaFile, tags_position: list, tags_list: dict, sign_list: dict, releaser_sign: str):
+                 mediafile: MediaFile, tags_position: list, tags_list: dict, sign_list: dict, ban_list: dict,
+                 releaser_sign: str):
 
         self.tags_position = tags_position
         self.releaser_sign = releaser_sign
@@ -68,8 +69,9 @@ class SearchTags(object):
         self.year = year
         self.tags_dict = {}
         self.tags_position = tags_position
-        self.TAG_TYPES = tags_list
-        self.SIGNS_LIST = sign_list
+        self.TAG_TYPES: dict = tags_list
+        self.SIGNS_LIST: dict = sign_list
+        self.BAN_LIST: dict = ban_list
 
     @staticmethod
     def normalize_version_tag(tag: str) -> str:
@@ -121,6 +123,9 @@ class SearchTags(object):
     def process(self) -> str:
         patterns = []
 
+        # Remove banned items from categories
+        self.tags_position = [x for x in self.tags_position if x not in self.BAN_LIST]
+
         # loop sorted TAG_TYPES dictionary
         for i, (tag, category) in enumerate(
                 sorted(self.TAG_TYPES.items(), key=lambda x: len(x[0]), reverse=True)
@@ -152,8 +157,6 @@ class SearchTags(object):
             # Skip if it is part of title es: "Wicked.Parte.2.2025.iTA" Title = Wicked Parte 2
             if not any(t in self.title.lower() for t in ['part', 'parte']):
                 self.tags_dict.update({'part': norm})
-
-        # SDR - althought we should use mediainfo to add , let
 
         # /// Read from mediainfo
         updated_category = {}
