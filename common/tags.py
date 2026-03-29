@@ -240,6 +240,11 @@ class SearchTags(object):
             for video in self.mediafile.video_track:
                 hdr_format_commercial = video.get('hdr_format_commercial', "")
                 hdr_format = video.get('hdr_format', "")
+                colour_primaries = video.get('color_primaries', "")
+                matrix_coefficients = video.get('matrix_coefficients', "")
+                bit_depth = video.get('bit_depth', "")
+                transfer_characteristics = video.get('transfer_characteristics', "")
+
                 # Check hdr
                 if hdr_format_commercial:
                     # print(f"hdr_format_commercial: {hdr_format_commercial}")
@@ -256,6 +261,17 @@ class SearchTags(object):
                     if 'DOLBY VISION' in hdr_format_commercial.upper() or 'DOLBY VISION' in hdr_format.upper():
                         hdr = f"DOLBY VISION {hdr}"
                     return {category: hdr_map.get(hdr, '*HDR')}
+                else:
+                    if "2020" in colour_primaries and "2020" in matrix_coefficients:
+                        if bit_depth == 10 and transfer_characteristics.strip() == 'PQ':
+                            return {category: 'PQ10'}
+                        else:
+                            custom_console.bot_warning_log(f"<> PQ10 Warning:")
+                            custom_console.bot_log(f"colour_primaries: {colour_primaries}")
+                            custom_console.bot_log(f"matrix_coefficients: {matrix_coefficients}")
+                            custom_console.bot_log(f"bit_depth: |{bit_depth}|")
+                            custom_console.bot_log(f"transfer_characteristics: |{transfer_characteristics}|")
+
         return {}
 
     def mediainfo_uhd(self, category: str) -> dict:
