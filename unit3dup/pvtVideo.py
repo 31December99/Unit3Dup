@@ -5,7 +5,6 @@ import os.path
 import diskcache
 
 from common.external_services.imageHost import Build
-from common.mediainfo import MediaFile
 from common.frames import VideoFrame
 
 from view import custom_console
@@ -17,6 +16,7 @@ class Video:
     """ Build a description for the torrent page: screenshots, mediainfo, trailers, metadata """
 
     def __init__(self, media: Media,  tmdb_id: int, trailer_key=None):
+        self.media = media
         self.file_name: str = media.file_name
         self.display_name: str = media.display_name
 
@@ -49,10 +49,8 @@ class Video:
 
     def build_info(self):
         """Build the information to send to the tracker"""
-
         # media_info
-        media_info = MediaFile(self.file_name)
-        self.mediainfo = media_info.info
+        self.mediainfo = self.media.mediafile.info
 
         if config_settings.user_preferences.CACHE_SCR:
             description = self.cache.get(self.cache_key)
