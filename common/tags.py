@@ -148,7 +148,9 @@ class SearchTags(object):
         # Identify PartX
         norm = self.normalize_part_tag(self.filename)
         if norm:
-            self.tags_dict.update({'part': norm})
+            # Skip if it is part of title es: "Wicked.Parte.2.2025.iTA" Title = Wicked Parte 2
+            if not any(t in self.title.lower() for t in ['part', 'parte']):
+                self.tags_dict.update({'part': norm})
 
         # /// Read from mediainfo
         updated_category = {}
