@@ -14,6 +14,7 @@ hdr_map = {
     "HDRPLUS+": "HDR10+",
     "HDR10+": "HDR10+",
     "HDR10": "HDR10",
+    "BLU-RAY / HDR10": "HDR10",
     "HDR10 / HDR10": "HDR10",
     "HDR10 / HDR10+": "HDR10+",
     "HDR10 / HDR10 / HDR10+": "HDR10+",
