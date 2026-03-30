@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="None">
+        
+        
+        <link rel="shortcut icon" href="img/favicon.ico">
+        <title>UNit3D-up</title>
+        <link href="css/bootstrap.min.css" rel="stylesheet">
+        <link href="css/fontawesome.min.css" rel="stylesheet">
+        <link href="css/brands.min.css" rel="stylesheet">
+        <link href="css/solid.min.css" rel="stylesheet">
+        <link href="css/v4-font-face.min.css" rel="stylesheet">
+        <link href="css/base.css" rel="stylesheet">
+        <link id="hljs-light" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" >
+        <link id="hljs-dark" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css" disabled>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+        <script>hljs.highlightAll();</script> 
+    </head>
+
+    <body class="homepage">
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href=".">UNit3D-up</a>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+
+                    <ul class="nav navbar-nav ms-md-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-bs-toggle="collapse" data-bs-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-body-tertiary">
+        <ul class="nav flex-column">
+            
+            <li class="nav-item" data-bs-level="1"><a href="#benvenuto-in-unit3dup-docs-0920b2" class="nav-link">Benvenuto in Unit3dUp Docs 0.9.20b2</a>
+              <ul class="nav flex-column">
+            <li class="nav-item" data-bs-level="2"><a href="#il-percorso" class="nav-link">Il percorso</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#loggetto" class="nav-link">L'oggetto..</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+              </ul>
+            </li>
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<h1 id="benvenuto-in-unit3dup-docs-0920b2">Benvenuto in Unit3dUp Docs 0.9.20b2</h1>
+<p>Unit3Dup è uno programma in python per creare e caricare su tracker i vostri torrents.</p>
+<p>Il workflow è il seguente:</p>
+<ul>
+<li>User fornisce un percorso di una cartella o di un file</li>
+<li>Bot analizza il file o i files e autonomamente crea per ognuno un oggetto</li>
+<li>Ogni oggetto ha diverse proprietà</li>
+<li>Le proprietà descrivono l'oggetto che verrà caricato sul tracker insieme al torrent</li>
+</ul>
+<h2 id="il-percorso">Il percorso</h2>
+<p>unit3dup è il nome del bot e del file eseguibile. Il bot viene quindi lanciato da linea di comando con varie opzioni
+solo quelle basi sono obbligatorie. Le opzioni sono chiamate flag.</p>
+<h3 id="flag-di-base">Flag di base</h3>
+<p>Questi sono i flag di base per creare uno o più torrents e caricarli sul tracker
+Esistono anche altri flag non obbligatori non qui descritti</p>
+<p><strong>-u: unico file</strong></p>
+<p>Crea e carica un torrent</p>
+<p><code>unit3dup -u "/home/ITT/upload/....mkv"</code></p>
+<p><strong>-f: Il bot tiene conto del nome del folder</strong></p>
+<p>La cartella può contenere un movie o una serie
+Per il bot non fa differenza. Soltanto un file viene analizzato per mediainfo</p>
+<p>Crea e carica quindi un torrent con il contenuto del folder</p>
+<p><code>unit3dup -f "/home/ITT/upload/nomecartella"</code></p>
+<p><strong>-scan: Il bot crea un elenco di files e sottocartelle e per ogni file si comporterà
+come per il flag '-u' mentre per ogni folder come il flag '-f'</strong></p>
+<p><code>unit3dup -scan "/home/ITT/upload/nomecartella"</code></p>
+<h2 id="loggetto">L'oggetto..</h2>
+<p>Esistono tre tipi di oggetto</p>
+<ul>
+<li>Oggetto video</li>
+<li>Oggetto Documenti</li>
+<li>Oggetto Game</li>
+</ul>
+<h3 id="oggetto-video">Oggetto Video</h3>
+<p>Il bot crea un <strong>oggetto video</strong> per ogni file video che incontra, con le proprietà che seguono:</p>
+<ul>
+<li><code>name</code> : <strong>Nome del torrent</strong> e nome visualizzato sulla pagina del tracker</li>
+<li><code>tmdb</code> : ID del video ottenuto interrogando il database online <strong>TheMovieDatabase</strong> </li>
+<li><code>tvdb</code> : ID del video ottenuto interrogando il database online <strong>TheTVDB</strong></li>
+<li><code>imdb</code> : ID del video ottenuto dal risultato di TVDB</li>
+<li><code>keywords</code> : Keywords ottenute dal risultato di TMDB</li>
+<li><code>category_id</code>: ID del tracker che identifica il tipo di video <strong>Movie</strong> o <strong>Serie</strong></li>
+<li><code>resolution_id</code>: ID del tracker che identifica la risoluzione </li>
+<li><code>sd</code> : ID del tracker che identifica se un video è almeno HD o SD</li>
+<li><code>anonymous</code> : Se settato previene la lettura dell'username</li>
+<li><code>mediainfo</code> : L'output di mediainfo che contiene le informazioni tecniche del video</li>
+<li><code>description</code> : lo spazio dove vengono inseriti gli url degli <strong>screenshot e descrizione</strong> personale </li>
+<li><code>type_id</code> : ID del tracker che identifica la sorgente</li>
+<li><code>season_number</code> : numero di stagione</li>
+<li><code>episode_number</code> : numero di episodio oppure 0 quando è un <strong>torrent pack</strong></li>
+<li><code>personal_release</code> : indica che questa è una <strong>personal release</strong></li>
+</ul>
+<h3 id="oggetto-documenti">Oggetto Documenti</h3>
+<p>L'oggetto <code>documenti</code> ha sicuramente meno proprietà in comune con il video.
+Fanno eccezione <code>tmdb</code> e <code>resolution_id</code> perché ritenuti campi obbligatori dal tracker
+e settati come valori neutrali</p>
+<ul>
+<li><code>name</code></li>
+<li><code>tmdb</code></li>
+<li><code>category_id</code></li>
+<li><code>anonymous</code></li>
+<li><code>description</code></li>
+<li><code>type_id</code></li>
+<li><code>resolution_id</code></li>
+<li><code>personal_release</code></li>
+</ul>
+<p>La descrizione di ogni proprietà è la stessa del video</p>
+<h3 id="oggetto-game">Oggetto Game</h3>
+<p>Lo stesso vale per <code>Game</code> con tmdb settato come valore neutrale.
+Si aggiunge inoltre la proprietà <code>igdb</code>, per la quale è necessario avere un account IGDB.</p>
+<p>IGDB fornisce un ID del suo database online come per tmdb e tvdb</p>
+<ul>
+<li><code>name</code></li>
+<li><code>tmdb</code></li>
+<li><code>category_id</code></li>
+<li><code>anonymous</code></li>
+<li><code>description</code></li>
+<li><code>type_id</code></li>
+<li><code>igdb</code></li>
+<li><code>personal_release</code></li>
+</ul></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script src="js/bootstrap.bundle.min.js"></script>
+        <script>
+            var base_url = ".",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="js/base.js"></script>
+        <script src="search/main.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>From here you can search these documents. Enter your search terms below.</p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results" data-no-results-text="No results found"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>
+
+<!--
+MkDocs version : 1.6.1
+Build Date UTC : 2026-03-30 23:04:07.483915+00:00
+-->
