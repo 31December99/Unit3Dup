@@ -18,7 +18,7 @@ from view import custom_console
 
 class VideoManager:
 
-    def __init__(self, contents: list[Media], cli: Namespace, tags_list: dict, sign_list: dict):
+    def __init__(self, contents: list[Media], cli: Namespace, tags_list: dict, sign_list: dict, ban_list: dict):
         """
         Initialize the VideoManager with the given contents
 
@@ -32,6 +32,7 @@ class VideoManager:
         self.cli: Namespace = cli
         self.tags_list: dict = tags_list
         self.sign_list: dict = sign_list
+        self.ban_list: dict = ban_list
 
     def process(self, selected_tracker: str, tracker_name_list: list, tracker_archive: str) -> list[BittorrentData]:
         """
@@ -52,15 +53,18 @@ class VideoManager:
             if self.cli.buildtags:
                 guess_filename = title.Guessit(content.title_sanitize_tags)
                 guess = guess_filename.guessit
+                tags_position = config_settings.user_preferences.TAGS_POSITION_SERIE if content.category=='tv'\
+                    else config_settings.user_preferences.TAGS_POSITION_MOVIE
                 search_tags = SearchTags(filename=content.title, # title_sanitize_tags,
                                          title=guess.get("title", None),
                                          year=guess.get("year", ""),
                                          season=content.guess_season,
                                          episode=content.guess_episode,
                                          releaser_sign=config_settings.user_preferences.RELEASER_SIGN,
-                                         tags_position=config_settings.user_preferences.TAGS_POSITION,
+                                         tags_position=tags_position,
                                          tags_list=self.tags_list,
                                          sign_list=self.sign_list,
+                                         ban_list=self.ban_list,
                                          mediafile=content.mediafile,
                                          )
                 content.display_name = search_tags.process()

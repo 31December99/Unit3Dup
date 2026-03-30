@@ -3,13 +3,14 @@ import json
 
 from common.torrent_clients import TransmissionClient, QbittorrentClient, RTorrentClient
 from common.command import CommandLine
-from common.settings import Load,DEFAULT_JSON_PATH, USER_TAGS_PATH, USER_SIGN_PATH,version
+from common.settings import Load, DEFAULT_JSON_PATH, USER_TAGS_PATH, USER_SIGN_PATH, BAN_TAGS_PATH, version
 
 from unit3dup.torrent import View
 from unit3dup import pvtTracker
 from unit3dup.bot import Bot
 
 from view import custom_console
+
 
 def main():
     """
@@ -42,7 +43,6 @@ def main():
         custom_console.bot_error_log(f"No tracker name provided. Please update your configuration file")
         exit(1)
 
-
     # /// Test the Trackers
     for tracker_data in config.tracker_config.MULTI_TRACKER:
         tracker = pvtTracker.Unit3d(tracker_name=tracker_data)
@@ -53,36 +53,35 @@ def main():
                 custom_console.bot_error_log(f"Your default tracker '{tracker_data}' is offline")
                 exit()
 
-
     # Test both clients only if used
     if cli.args.noseed is False and cli.args.noup is False or cli.args.reseed is True:
         # /// Test the torrent clients
         if cli.args.scan or cli.args.upload or cli.args.folder or cli.args.watcher:
 
-            if config.torrent_client_config.TORRENT_CLIENT.lower()=="qbittorrent":
+            if config.torrent_client_config.TORRENT_CLIENT.lower() == "qbittorrent":
                 test_client_torrent = QbittorrentClient()
                 if not test_client_torrent.connect():
                     exit(1)
-            elif config.torrent_client_config.TORRENT_CLIENT.lower()=="transmission":
+            elif config.torrent_client_config.TORRENT_CLIENT.lower() == "transmission":
                 test_client_torrent = TransmissionClient()
                 if not test_client_torrent.connect():
                     exit(1)
 
-            elif config.torrent_client_config.TORRENT_CLIENT.lower()=="rtorrent":
+            elif config.torrent_client_config.TORRENT_CLIENT.lower() == "rtorrent":
                 test_client_torrent = RTorrentClient()
                 if not test_client_torrent.connect():
                     exit(1)
 
             else:
-                custom_console.bot_error_log(f"Unknown Torrent Client name '{config.torrent_client_config.TORRENT_CLIENT}'")
+                custom_console.bot_error_log(
+                    f"Unknown Torrent Client name '{config.torrent_client_config.TORRENT_CLIENT}'")
                 custom_console.bot_error_log(f"You need to set a favorite 'torrent_client' in the config file")
                 exit(1)
 
-
     # Check if the tracker name exists
     if cli.args.tracker and cli.args.tracker not in config.tracker_config.MULTI_TRACKER:
-       custom_console.bot_error_log(f"Tracker '{cli.args.tracker}' not found. Please update your configuration file")
-       exit()
+        custom_console.bot_error_log(f"Tracker '{cli.args.tracker}' not found. Please update your configuration file")
+        exit()
 
     # Get default tracker
     tracker_name_list = [config.tracker_config.MULTI_TRACKER[0]]
@@ -102,7 +101,8 @@ def main():
             with open(USER_TAGS_PATH, "r", encoding="utf-8") as f:
                 tags_list = json.load(f)
         except FileNotFoundError:
-            custom_console.bot_error_log(f"User tags file {USER_TAGS_PATH} not found. Please update your configuration file")
+            custom_console.bot_error_log(
+                f"User tags file {USER_TAGS_PATH} not found. Please update your configuration file")
 
     # Load User Sign list
     sign_list = None
@@ -110,12 +110,22 @@ def main():
         with open(USER_SIGN_PATH, "r", encoding="utf-8") as f:
             sign_list = json.load(f)
     except FileNotFoundError:
-        custom_console.bot_error_log(f"User sign file {USER_SIGN_PATH} not found. Please update your configuration file")
+        custom_console.bot_error_log(
+            f"User sign file {USER_SIGN_PATH} not found. Please update your configuration file")
+
+    # Load Ban list
+    ban_list = None
+    try:
+        with open(BAN_TAGS_PATH, "r", encoding="utf-8") as f:
+            ban_list = json.load(f)
+    except FileNotFoundError:
+        custom_console.bot_error_log(
+            f"Ban list file {BAN_TAGS_PATH} not found. Please update your configuration file")
 
     # Manual upload mode
     if cli.args.upload:
         bot = Bot(path=cli.args.upload, cli=cli.args, trackers_name_list=tracker_name_list,
-                  torrent_archive_path=tracker_archive, tags_list=tags_list, sign_list=sign_list)
+                  torrent_archive_path=tracker_archive, tags_list=tags_list, sign_list=sign_list, ban_list=ban_list)
         bot.run()
 
     # Manual folder mode
@@ -134,7 +144,7 @@ def main():
     # Auto mode
     if cli.args.scan and not cli.args.ftp:
         bot = Bot(path=cli.args.scan, cli=cli.args, mode="auto", trackers_name_list=tracker_name_list,
-                  torrent_archive_path=tracker_archive, tags_list=tags_list, sign_list=sign_list)
+                  torrent_archive_path=tracker_archive, tags_list=tags_list, sign_list=sign_list, ban_list=ban_list)
         bot.run()
 
     # Watcher
@@ -142,14 +152,14 @@ def main():
         bot = Bot(path='', cli=cli.args, mode="auto", trackers_name_list=tracker_name_list,
                   torrent_archive_path=tracker_archive)
 
-        bot.watcher(duration=config.user_preferences.WATCHER_INTERVAL, watcher_path=config.user_preferences.WATCHER_PATH,
-                    destination_path = config.user_preferences.WATCHER_DESTINATION_PATH)
+        bot.watcher(duration=config.user_preferences.WATCHER_INTERVAL,
+                    watcher_path=config.user_preferences.WATCHER_PATH,
+                    destination_path=config.user_preferences.WATCHER_DESTINATION_PATH)
 
     # ftp and upload
     if cli.args.ftp:
         bot = Bot(path='', cli=cli.args, mode="folder", trackers_name_list=tracker_name_list)
         bot.ftp()
-
 
     # Commands list: commands not necessary for upload but may be useful
     if not cli.args.tracker:
@@ -202,11 +212,9 @@ def main():
         torrent_info.view_by_types(cli.args.type)
         return
 
-
     if cli.args.resolution:
         torrent_info.view_by_res(cli.args.resolution)
         return
-
 
     if cli.args.filename:
         torrent_info.view_by_filename(cli.args.filename)
@@ -300,6 +308,7 @@ def main():
     if not cli.args:
         custom_console.print("Syntax error! Please check your commands")
         return
+
 
 if __name__ == "__main__":
     main()

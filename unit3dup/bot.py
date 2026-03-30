@@ -30,7 +30,7 @@ class Bot:
 
     # Bot Manager
     def __init__(self, path: str, cli: argparse.Namespace, trackers_name_list: list, tags_list = None, mode="man",
-                 torrent_archive_path = None, sign_list= None):
+                 torrent_archive_path = None, sign_list= None, ban_list= None):
         """
         Initializes the Bot instance with path, command-line interface object, and mode
 
@@ -44,6 +44,7 @@ class Bot:
         self.content_manager = None
         self.tags_list: dict = tags_list
         self.sign_list: dict = sign_list
+        self.ban_list: dict = ban_list
         self.path = path.strip()
         self.cli = cli
         self.mode = mode
@@ -104,7 +105,7 @@ class Bot:
 
         # Instance a new run
         torrent_manager = TorrentManager(cli=self.cli, tracker_archive=self.torrent_archive_path,
-                                         tags_list=self.tags_list, sign_list=self.sign_list)
+                                         tags_list=self.tags_list, sign_list=self.sign_list, ban_list=self.ban_list)
         # Process the torrents content (files)
         torrent_manager.process(contents=contents)
 

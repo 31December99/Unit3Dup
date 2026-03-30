@@ -14,6 +14,7 @@ hdr_map = {
     "HDRPLUS+": "HDR10+",
     "HDR10+": "HDR10+",
     "HDR10": "HDR10",
+    "BLU-RAY / HDR10": "HDR10",
     "HDR10 / HDR10": "HDR10",
     "HDR10 / HDR10+": "HDR10+",
     "HDR10 / HDR10 / HDR10+": "HDR10+",
@@ -56,7 +57,8 @@ video_encoder_translate = {
 
 class SearchTags(object):
     def __init__(self, filename, title: str, year: str, season: int, episode: int,
-                 mediafile: MediaFile, tags_position: list, tags_list: dict, sign_list: dict, releaser_sign: str):
+                 mediafile: MediaFile, tags_position: list, tags_list: dict, sign_list: dict, ban_list: dict,
+                 releaser_sign: str):
 
         self.tags_position = tags_position
         self.releaser_sign = releaser_sign
@@ -68,13 +70,28 @@ class SearchTags(object):
         self.year = year
         self.tags_dict = {}
         self.tags_position = tags_position
-        self.TAG_TYPES = tags_list
-        self.SIGNS_LIST = sign_list
+        self.TAG_TYPES: dict = tags_list
+        self.SIGNS_LIST: dict = sign_list
+        self.BAN_LIST: dict = ban_list
 
     @staticmethod
     def normalize_version_tag(tag: str) -> str:
         tag_esc = re.escape(tag)
         return tag_esc
+
+    @staticmethod
+    def normalize_part_tag(title: str) -> str | None:
+        """
+        Extract substring PartX
+        Try to remove noisy chars and return a normalized tag
+        Part1, Part 1, Part.1, [Part 1], Parte1, Pt1, Prt 2,
+        """
+        pattern = r'[\[\(]?\b(?:Part|Parte|Pt|Prt)[\s\.-]*?(\d+)\b[\]\)]?'
+        match = re.search(pattern, title, re.IGNORECASE)
+        if match:
+            part_number = match.group(1)
+            return f"Part {part_number}"
+        return None
 
     @staticmethod
     def normalize_platform_tag(tag: str) -> str:
@@ -107,6 +124,9 @@ class SearchTags(object):
     def process(self) -> str:
         patterns = []
 
+        # Remove banned items from categories
+        self.tags_position = [x for x in self.tags_position if x not in self.BAN_LIST]
+
         # loop sorted TAG_TYPES dictionary
         for i, (tag, category) in enumerate(
                 sorted(self.TAG_TYPES.items(), key=lambda x: len(x[0]), reverse=True)
@@ -131,6 +151,14 @@ class SearchTags(object):
             if matches:
                 self.tags_dict.setdefault(category, []).append(matches[0])
 
+        # /// Tags with no categories
+        # Identify PartX
+        norm = self.normalize_part_tag(self.filename)
+        if norm:
+            # Skip if it is part of title es: "Wicked.Parte.2.2025.iTA" Title = Wicked Parte 2
+            if not any(t in self.title.lower() for t in ['part', 'parte']):
+                self.tags_dict.update({'part': norm})
+
         # /// Read from mediainfo
         updated_category = {}
         for category in self.tags_position:
@@ -146,9 +174,12 @@ class SearchTags(object):
 
             elif category == "hdr":
                 updated_category = self.mediainfo_hdr(category=category)
+                if not updated_category:
+                    updated_category = {category: 'SDR'}
 
             elif category == "uhd":
                 updated_category = self.mediainfo_uhd(category=category)
+
 
             elif category == "subtitle":
                 if self.mediafile.subtitle_track:
@@ -240,6 +271,11 @@ class SearchTags(object):
             for video in self.mediafile.video_track:
                 hdr_format_commercial = video.get('hdr_format_commercial', "")
                 hdr_format = video.get('hdr_format', "")
+                colour_primaries = video.get('color_primaries', "")
+                matrix_coefficients = video.get('matrix_coefficients', "")
+                bit_depth = video.get('bit_depth', "")
+                transfer_characteristics = video.get('transfer_characteristics', "")
+
                 # Check hdr
                 if hdr_format_commercial:
                     # print(f"hdr_format_commercial: {hdr_format_commercial}")
@@ -256,6 +292,17 @@ class SearchTags(object):
                     if 'DOLBY VISION' in hdr_format_commercial.upper() or 'DOLBY VISION' in hdr_format.upper():
                         hdr = f"DOLBY VISION {hdr}"
                     return {category: hdr_map.get(hdr, '*HDR')}
+                else:
+                    if "2020" in colour_primaries and "2020" in matrix_coefficients:
+                        if bit_depth == 10 and transfer_characteristics.strip() == 'PQ':
+                            return {category: 'PQ10'}
+                        else:
+                            custom_console.bot_warning_log(f"<> PQ10 Warning:")
+                            custom_console.bot_log(f"colour_primaries: {colour_primaries}")
+                            custom_console.bot_log(f"matrix_coefficients: {matrix_coefficients}")
+                            custom_console.bot_log(f"bit_depth: |{bit_depth}|")
+                            custom_console.bot_log(f"transfer_characteristics: |{transfer_characteristics}|")
+
         return {}
 
     def mediainfo_uhd(self, category: str) -> dict:

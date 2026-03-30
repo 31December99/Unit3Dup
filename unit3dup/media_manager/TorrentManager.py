@@ -18,12 +18,13 @@ from view import custom_console
 
 
 class TorrentManager:
-    def __init__(self, cli: argparse.Namespace, tracker_archive: str, tags_list: dict, sign_list: dict):
+    def __init__(self, cli: argparse.Namespace, tracker_archive: str, tags_list: dict, sign_list: dict, ban_list: dict):
 
         self.preferred_lang = my_language(config_settings.user_preferences.PREFERRED_LANG)
         self.tracker_archive = tracker_archive
         self.tags_list: dict = tags_list
         self.sign_list: dict = sign_list
+        self.ban_list: dict = ban_list
 
         self.videos: list[Media] = []
         self.games: list[Media] = []
@@ -33,7 +34,6 @@ class TorrentManager:
         if self.fast_load < 1 or self.fast_load > 150:
             # full list
             self.fast_load = None
-
 
     def process(self, contents: list) -> None:
         """
@@ -61,7 +61,6 @@ class TorrentManager:
             for content in contents
             if content.category in {System.category_list.get(System.MOVIE), System.category_list.get(System.TV_SHOW)}
         ]
-
 
         # // Build a Doc list
         self.doc = [
@@ -93,7 +92,9 @@ class TorrentManager:
             # Build the torrent file and upload each VIDEO to the trackers
             if self.videos:
                 video_manager = VideoManager(contents=self.videos[:self.fast_load],
-                                             cli=self.cli, tags_list= self.tags_list, sign_list= self.sign_list)
+                                             cli=self.cli, tags_list=self.tags_list,
+                                             sign_list=self.sign_list,
+                                             ban_list=self.ban_list)
                 video_process_results = video_manager.process(selected_tracker=selected_tracker,
                                                               tracker_name_list=trackers_name_list,
                                                               tracker_archive=self.tracker_archive)
@@ -111,7 +112,6 @@ class TorrentManager:
                 custom_console.bot_warning_log(f"No seeding active. Done.")
                 custom_console.rule()
                 continue
-
 
             if game_process_results:
                 UserContent.send_to_bittorrent(game_process_results, 'GAME')
@@ -148,7 +148,7 @@ class TorrentManager:
                                                             trackers_name_list=trackers_name_list,
                                                             tracker_archive=self.tracker_archive)
 
-                #if so download the torrent files from the tracker for seeding
+                # if so download the torrent files from the tracker for seeding
                 if seed_manager_results:
                     for result in seed_manager_results:
                         UserContent.download_file(url=result.tracker_response, destination_path=result.archive_path)
