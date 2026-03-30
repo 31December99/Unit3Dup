@@ -137,7 +137,8 @@ def main():
             trackers_name_list=tracker_name_list,
             torrent_archive_path=tracker_archive,
             tags_list=tags_list,
-            sign_list=sign_list
+            sign_list=sign_list,
+            ban_list = ban_list
         )
         bot.run()
 
