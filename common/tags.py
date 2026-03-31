@@ -357,23 +357,31 @@ class SearchTags(object):
         # Strip the title
         base_name = str(name).strip()
 
-        # Remove '.'; '_'; '-' chars from the filename and dictionary signs_list
-        tokens = re.split(r"[._-]+", base_name)
-
-        base_name_normalized = ' '.join(tokens)
-
-        # normalize list of signs ( because it is user editable)
-        tokens_signs_list = [re.sub(r"[._-]+", " ", str(sign)) for sign in signs_list]
-
         # sort dictionary from the longest to shortest to avoid partial result (es. 'crew' instead di 'mircrew')
-        tokens_signs_list_sorted = sorted(tokens_signs_list, key=len, reverse=True)
+        tokens_signs_list_sorted = sorted(signs_list.keys(), key=len, reverse=True)
+
+        video_exts = [
+            "mp4", "mkv", "avi", "mov", "wmv", "flv", "webm", "mpeg", "mpg", "m4v", "ts", "3gp"
+        ]
+
+        # Regex per catturare l'estensione alla fine (case insensitive)
+        pattern = rf"\.({'|'.join(video_exts)})$"
+
+        # # Search for signs in the base_name only at the end of the string
+        base_name = re.sub(pattern, "", base_name, flags=re.IGNORECASE)
 
         # Search for signs in the base_name_normalized
         for token in tokens_signs_list_sorted:
-            pattern = r"\b" + re.escape(token) + r"\b"
-            match = re.search(pattern, base_name_normalized, re.IGNORECASE)
+            token = str(token)
+            pattern = re.escape(token)
+            match = re.search(pattern, base_name, re.IGNORECASE)
+
             if match:
-                # Capture any characters from the start to the end of base_name
-                # normalized_base_name loses chars like '-','.' or '-'
-                return f"-{base_name[match.start(): match.end()]}"
+                # Sign must be the last words
+                base_name_len = len(base_name)
+                match_len = match.end() - base_name_len
+                if match_len == 0:
+                    # Capture any characters from the start to the end of base_name
+                    sign = base_name[match.start(): match.end()]
+                    return f"-{sign}"
         return ""
