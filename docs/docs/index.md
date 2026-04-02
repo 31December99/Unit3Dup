@@ -1,42 +1,50 @@
-# Benvenuto in Unit3dUp Docs 0.9.20
+# Benvenuto in Unit3dUp Docs 0.9.22
 
 Unit3Dup è uno programma in python per creare e caricare su tracker i vostri torrents.
 
 Il workflow è il seguente:
 
-- User fornisce un percorso di una cartella o di un file
-- Bot analizza il file o i files e autonomamente crea per ognuno un oggetto
+- User fornisce un **percorso** di una cartella o di un file
+- Bot analizza il file o i files e autonomamente crea per ognuno un **oggetto**
 - Ogni oggetto ha diverse proprietà
 - Le proprietà descrivono l'oggetto che verrà caricato sul tracker insieme al torrent
 
 ## Il percorso
 
-unit3dup è il nome del bot e del file eseguibile. Il bot viene quindi lanciato da linea di comando con varie opzioni
-solo quelle basi sono obbligatorie. Le opzioni sono chiamate flag.
+unit3dup è il nome del bot e del file eseguibile.
+Il bot viene lanciato da linea di comando seguito da alcuni flag quando necessari.
+
+I flag determinano il comportamento del bot partendo da quelli a base fino a qualcosa in più
 
 ### Flag di base
 
-Questi sono i flag di base per creare uno o più torrents e caricarli sul tracker
-Esistono anche altri flag non obbligatori non qui descritti
+I flag di base svolgono attività di analisi dei tuoi file, creazione e upload del torrent e seeding
 
 **-u: unico file**
 
-Crea e carica un torrent
+Un unico flag '-u' per
+
+- analisi del file
+- Creazione descrizione destinata alla pagina del tracker (screenshot o altro)
+- upload verso il tracker
+- seeding
 
 ```unit3dup -u "/home/ITT/upload/....mkv"```
 
 
 **-f: Il bot tiene conto del nome del folder**
 
-La cartella può contenere un movie o una serie
-Per il bot non fa differenza. Soltanto un file viene analizzato per mediainfo
+Come per '-u' ma solo per le cartelle. Il torrent viene creato facendo riferimento al contenuto della cartella
 
-Crea e carica quindi un torrent con il contenuto del folder
+La cartella può contenere un movie o una serie
+
+Per il bot non fa differenza. Crea e carica quindi un torrent con il contenuto del folder
 
 ```unit3dup -f "/home/ITT/upload/nomecartella"```
 
-**-scan: Il bot crea un elenco di files e sottocartelle e per ogni file si comporterà
-come per il flag '-u' mentre per ogni folder come il flag '-f'**
+**-scan: flag '-u' e '-f' insieme**
+
+Prendendo come input un percorso, analizza ogni file e cartella terminando il processo con il seeding
 
 ```unit3dup -scan "/home/ITT/upload/nomecartella"```
 
@@ -51,7 +59,7 @@ Esistono tre tipi di oggetto
 
 ### Oggetto Video
 
-Il bot crea un **oggetto video** per ogni file video che incontra, con le proprietà che seguono:
+Il bot crea un **oggetto video** per ogni file video che incontra con le proprietà che seguono:
 
 - `name` : **Nome del torrent** e nome visualizzato sulla pagina del tracker
 - `tmdb` : ID del video ottenuto interrogando il database online **TheMovieDatabase** 
