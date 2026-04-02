@@ -4,7 +4,7 @@ import time
 import requests
 
 from common.trackers.trackers import TRACKData
-from common.database import Database
+# from common.database import Database
 from unit3dup import pvtTracker
 from view import custom_console
 
@@ -14,7 +14,7 @@ class Torrent:
 
         self.perPage = 100
         self.tracker = pvtTracker.Unit3d(tracker_name=tracker_name)
-        self.database = Database(db_file=tracker_name)
+        # self.database = Database(db_file=tracker_name)
 
     def get_unique_id(self, media_info: str) -> str:
         # Divido per campi
@@ -26,116 +26,116 @@ class Torrent:
                 unique_id = match.group(1)
         return unique_id
 
-    def search(self, keyword: str) -> requests:
+    def search(self, keyword: str) -> requests.Response:
         # The user does not always include the '-' (hyphen) in the title
         keyword = keyword.replace("-", " ")
         return self.tracker.get_name(name=keyword, perPage=self.perPage)
 
-    def get_by_description(self, description: str) -> requests:
+    def get_by_description(self, description: str) -> requests.Response:
         return self.tracker.get_description(
             description=description, perPage=self.perPage
         )
 
-    def get_by_bdinfo(self, bd_info: str) -> requests:
+    def get_by_bdinfo(self, bd_info: str) -> requests.Response:
         return self.tracker.get_bdinfo(bdinfo=bd_info, perPage=self.perPage)
 
-    def get_by_uploader(self, username: str) -> requests:
+    def get_by_uploader(self, username: str) -> requests.Response:
         return self.tracker.get_uploader(uploader=username, perPage=self.perPage)
 
-    def get_by_start_year(self, start_year: str) -> requests:
+    def get_by_start_year(self, start_year: str) -> requests.Response:
         return self.tracker.start_year(start_year=start_year, perPage=self.perPage)
 
-    def get_by_end_year(self, end_year: str) -> requests:
+    def get_by_end_year(self, end_year: str) -> requests.Response:
         return self.tracker.end_year(end_year=end_year, perPage=self.perPage)
 
-    def get_by_mediainfo(self, mediainfo: str) -> requests:
+    def get_by_mediainfo(self, mediainfo: str) -> requests.Response:
         return self.tracker.get_mediainfo(mediainfo=mediainfo, perPage=self.perPage)
 
-    def get_by_types(self, type_name: str) -> requests:
+    def get_by_types(self, type_name: str) -> requests.Response:
         return self.tracker.get_types(
             type_id=type_name, perPage=self.perPage
         )
 
-    def get_by_res(self, resolution_id: str) -> requests:
+    def get_by_res(self, resolution_id: str) -> requests.Response:
         return self.tracker.get_res(
             res_id=resolution_id, perPage=self.perPage
         )
 
-    def get_by_filename(self, file_name: str) -> requests:
+    def get_by_filename(self, file_name: str) -> requests.Response:
         return self.tracker.get_filename(file_name=file_name, perPage=self.perPage)
 
-    def get_by_tmdb_id(self, tmdb_id: int) -> requests:
+    def get_by_tmdb_id(self, tmdb_id: int) -> requests.Response:
         return self.tracker.get_tmdb(tmdb_id=tmdb_id, perPage=self.perPage)
 
-    def get_by_imdb_id(self, imdb_id: int) -> requests:
+    def get_by_imdb_id(self, imdb_id: int) -> requests.Response:
         return self.tracker.get_imdb(imdb_id=imdb_id, perPage=self.perPage)
 
-    def get_by_igdb_id(self, imdb_id: int) -> requests:
+    def get_by_igdb_id(self, imdb_id: int) -> requests.Response:
         return self.tracker.get_igdb(igdb_id=imdb_id, perPage=self.perPage)
 
-    def get_by_tvdb_id(self, tvdb_id: int) -> requests:
+    def get_by_tvdb_id(self, tvdb_id: int) -> requests.Response:
         return self.tracker.get_tvdb(tvdb_id=tvdb_id, perPage=self.perPage)
 
-    def get_by_mal_id(self, mal_id: int) -> requests:
+    def get_by_mal_id(self, mal_id: int) -> requests.Response:
         return self.tracker.get_mal(mal_id=mal_id, perPage=self.perPage)
 
-    def get_by_playlist_id(self, playlist_id: int) -> requests:
+    def get_by_playlist_id(self, playlist_id: int) -> requests.Response:
         return self.tracker.get_playlist_id(
             playlist_id=playlist_id, perPage=self.perPage
         )
 
-    def get_by_collection_id(self, collection_id: int) -> requests:
+    def get_by_collection_id(self, collection_id: int) -> requests.Response:
         return self.tracker.get_collection_id(
             collection_id=collection_id, perPage=self.perPage
         )
 
-    def get_by_freeleech(self, freeleech: int) -> requests:
+    def get_by_freeleech(self, freeleech: int) -> requests.Response:
         return self.tracker.get_freeleech(freeleech=freeleech, perPage=self.perPage)
 
-    def get_by_season(self, season: int) -> requests:
+    def get_by_season(self, season: int) -> requests.Response:
         return self.tracker.get_season_number(se_number=season, perPage=self.perPage)
 
-    def get_by_episode(self, episode: int) -> requests:
+    def get_by_episode(self, episode: int) -> requests.Response:
         return self.tracker.get_episode_number(ep_number=episode, perPage=self.perPage)
 
-    def get_alive(self) -> requests:
+    def get_alive(self) -> requests.Response:
         return self.tracker.get_alive(alive=True, perPage=self.perPage)
 
-    def get_dead(self) -> requests:
+    def get_dead(self) -> requests.Response:
         return self.tracker.get_dead(dead=True, perPage=self.perPage)
 
-    def get_dying(self) -> requests:
+    def get_dying(self) -> requests.Response:
         return self.tracker.get_dying(dying=True, perPage=self.perPage)
 
-    def get_doubleup(self) -> requests:
+    def get_doubleup(self) -> requests.Response:
         return self.tracker.get_double_up(double_up=True, perPage=self.perPage)
 
-    def get_featured(self) -> requests:
+    def get_featured(self) -> requests.Response:
         return self.tracker.get_featured(featured=True, perPage=self.perPage)
 
-    def get_refundable(self) -> requests:
+    def get_refundable(self) -> requests.Response:
         return self.tracker.get_refundable(refundable=True, perPage=self.perPage)
 
-    def get_stream(self) -> requests:
+    def get_stream(self) -> requests.Response:
         return self.tracker.get_stream(stream=True, perPage=self.perPage)
 
-    def get_sd(self) -> requests:
+    def get_sd(self) -> requests.Response:
         return self.tracker.get_sd(sd=True, perPage=self.perPage)
 
-    def get_highspeed(self) -> requests:
+    def get_highspeed(self) -> requests.Response:
         return self.tracker.get_highspeed(highspeed=True, perPage=self.perPage)
 
-    def get_internal(self) -> requests:
+    def get_internal(self) -> requests.Response:
         return self.tracker.get_internal(internal=True, perPage=self.perPage)
 
-    def get_personal(self) -> requests:
+    def get_personal(self) -> requests.Response:
         return self.tracker.get_personal_release(
             personalRelease=True, perPage=self.perPage
         )
 
 
     # Filter 'Combo'
-    def get_by_tmdb_res(self, tmdb_id: int , resolution_id: str) -> requests:
+    def get_by_tmdb_res(self, tmdb_id: int , resolution_id: str) -> requests.Response:
         return self.tracker.get_tmdb_res(tmdb_id=tmdb_id, res_id=resolution_id, perPage=self.perPage)
 
 
@@ -193,11 +193,11 @@ class View(Torrent):
             # Print a data to the console
             custom_console.bot_log(f"\n {media} - {item['attributes']['name']}")
             # Save torrent data into database by -db flag
-            if save:
-                self.database.write(item['attributes'])
+            # if save:
+            #     self.database.write(item['attributes'])
 
 
-    def page_view(self, tracker_data: dict, tracker: pvtTracker, info=False, inkey=True, save=False):
+    def page_view(self, tracker_data: dict, tracker: pvtTracker.Tracker, info=False, inkey=True, save=False):
 
         self.print_normal(tracker_data,save=save) if not info else self.print_info(tracker_data)
         page = 0
@@ -455,7 +455,7 @@ class View(Torrent):
             self.page_view(tracker_data=tracker_data, tracker=self.tracker)
 
     # Filter 'Combo'
-    def view_tmdb_res(self, tmdb_id: int , res_name: str) -> requests:
+    def view_tmdb_res(self, tmdb_id: int , res_name: str) -> requests.Response | None:
 
         # Filter by TMDB and Resolution
         if res_name not in self.tracker_data.resolution.keys():
