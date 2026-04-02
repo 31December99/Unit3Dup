@@ -315,7 +315,7 @@ class Torrents(Tracker):
 
 
 class Uploader(Tracker):
-    def upload_t(self, data: dict, torrent_archive_path: str, nfo_path=None) -> requests.Response.Response:
+    def upload_t(self, data: dict, torrent_archive_path: str, nfo_path=None) -> requests.Response:
         files = {}
         # Binary mode
         with open(torrent_archive_path, 'rb') as torrent_file:
