@@ -4,7 +4,7 @@ import time
 import requests
 
 from common.trackers.trackers import TRACKData
-from common.database import Database
+# from common.database import Database
 from unit3dup import pvtTracker
 from view import custom_console
 
@@ -14,7 +14,7 @@ class Torrent:
 
         self.perPage = 100
         self.tracker = pvtTracker.Unit3d(tracker_name=tracker_name)
-        self.database = Database(db_file=tracker_name)
+        # self.database = Database(db_file=tracker_name)
 
     def get_unique_id(self, media_info: str) -> str:
         # Divido per campi
@@ -193,8 +193,8 @@ class View(Torrent):
             # Print a data to the console
             custom_console.bot_log(f"\n {media} - {item['attributes']['name']}")
             # Save torrent data into database by -db flag
-            if save:
-                self.database.write(item['attributes'])
+            # if save:
+            #     self.database.write(item['attributes'])
 
 
     def page_view(self, tracker_data: dict, tracker: pvtTracker.Tracker, info=False, inkey=True, save=False):
