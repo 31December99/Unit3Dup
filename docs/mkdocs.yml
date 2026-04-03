@@ -3,6 +3,5 @@ site_name: UNit3D-up
 nav:
   - Home: index.md
   - Installa unit3Dup: install.md
-  - Installa python: install_python.md
-  - Installa pyenv: install_pyenv.md
-
+  - Configurazione: config.md
+  - Installa su ultra.cc: install_ultra_cc

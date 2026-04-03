@@ -281,10 +281,10 @@ class SearchTags(object):
                     # print(f"hdr_format_commercial: {hdr_format_commercial}")
                     # print(f"hdr_format: {hdr_format}")
                     hdr = ''
-                    if hdr_format_commercial in hdr_map:
+                    if hdr_format_commercial.upper() in hdr_map:
                         # print(
                         #     f"hdr_format_commercial: {hdr_format_commercial} -> Tag: {hdr_map[hdr_format_commercial]}")
-                        hdr = hdr_map[hdr_format_commercial]
+                        hdr = hdr_map[hdr_format_commercial.upper()]
                         # Check dolby vision
                     if hdr not in hdr_map:
                         custom_console.bot_warning_log(
