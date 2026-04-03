@@ -8,7 +8,7 @@
         
         
         <link rel="shortcut icon" href="../img/favicon.ico">
-        <title>Installa unit3Dup - UNit3D-up</title>
+        <title>Installa Unit3dUp su seedbox ultra.cc - UNit3D-up</title>
         <link href="../css/bootstrap.min.css" rel="stylesheet">
         <link href="../css/fontawesome.min.css" rel="stylesheet">
         <link href="../css/brands.min.css" rel="stylesheet">
@@ -38,13 +38,13 @@
                                 <a href=".." class="nav-link">Home</a>
                             </li>
                             <li class="nav-item">
-                                <a href="./" class="nav-link active" aria-current="page">Installa unit3Dup</a>
+                                <a href="../install/" class="nav-link">Installa unit3Dup</a>
                             </li>
                             <li class="nav-item">
                                 <a href="../config/" class="nav-link">Configurazione</a>
                             </li>
                             <li class="nav-item">
-                                <a href="../install_ultra_cc" class="nav-link">Installa su ultra.cc</a>
+                                <a href="." class="nav-link">Installa su ultra.cc</a>
                             </li>
                         </ul>
 
@@ -54,16 +54,6 @@
                                 <i class="fa fa-search"></i> Search
                             </a>
                         </li>
-                            <li class="nav-item">
-                                <a rel="prev" href=".." class="nav-link">
-                                    <i class="fa fa-arrow-left"></i> Previous
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a rel="next" href="../config/" class="nav-link">
-                                    Next <i class="fa fa-arrow-right"></i>
-                                </a>
-                            </li>
                     </ul>
                 </div>
             </div>
@@ -82,21 +72,9 @@
     <div id="toc-collapse" class="navbar-collapse collapse card bg-body-tertiary">
         <ul class="nav flex-column">
             
-            <li class="nav-item" data-bs-level="1"><a href="#installa-unit3dup" class="nav-link">Installa Unit3dUp</a>
+            <li class="nav-item" data-bs-level="1"><a href="#installa-unit3dup-su-seedbox-ultracc" class="nav-link">Installa Unit3dUp su seedbox ultra.cc</a>
               <ul class="nav flex-column">
-            <li class="nav-item" data-bs-level="2"><a href="#dipendenze-windows" class="nav-link">Dipendenze Windows:</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-            <li class="nav-item" data-bs-level="2"><a href="#dipendenze-linux" class="nav-link">Dipendenze Linux...:</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-            <li class="nav-item" data-bs-level="2"><a href="#installazione-valida-per-linux-e-windows" class="nav-link">Installazione valida per linux e windows</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-            <li class="nav-item" data-bs-level="2"><a href="#aggiorna-il-bot-quando-esce-una-nuova-versione" class="nav-link">Aggiorna il bot quando esce una nuova versione</a>
+            <li class="nav-item" data-bs-level="2"><a href="#ultracc-non-permette-luso-di-sudo" class="nav-link">Ultra.cc non permette l'uso di Sudo</a>
               <ul class="nav flex-column">
               </ul>
             </li>
@@ -107,35 +85,55 @@
 </div></div>
                     <div class="col-md-9" role="main">
 
-<h1 id="installa-unit3dup">Installa Unit3dUp</h1>
+<h1 id="installa-unit3dup-su-seedbox-ultracc">Installa Unit3dUp su seedbox ultra.cc</h1>
 <hr />
-<h2 id="dipendenze-windows">Dipendenze Windows:</h2>
-<ul>
-<li>Scarica e decomprimi FFmpeg da: https://www.ffmpeg.org/download.html</li>
-<li>Aggiungi la cartella di FFmpeg alla variabile d’ambiente PATH (utente)</li>
-</ul>
-<h3 id="se-vuoi-anche-creare-torrents-per-documenti-pdf">Se vuoi anche creare torrents per documenti (PDF)</h3>
-<ul>
-<li>Scarica e decomprimi Poppler per Windows da: https://github.com/oschwartz10612/poppler-windows/releases</li>
-<li>Aggiungi la cartella bin al PATH di sistema (esempio: C:\poppler-24.08.0\Library\bin)</li>
-<li>Chiudi e riapri il terminale</li>
-<li>Verifica l’installazione eseguendo:</li>
-<li><strong>pdftocairo</strong></li>
-</ul>
-<h2 id="dipendenze-linux">Dipendenze Linux...:</h2>
-<ul>
-<li>sudo apt install ffmpeg</li>
-<li>sudo apt install poppler-utils</li>
-</ul>
+<h2 id="ultracc-non-permette-luso-di-sudo">Ultra.cc non permette l'uso di Sudo</h2>
+<p>Il bot richiede python con versione minima 3.10 mentre in questo momento su ultra.cc python è alla versione 3.9.</p>
+<p>Utilizziamo <strong>pyenv preinstallato su ultra.cc</strong>. Unico problema pyenv non installa sqlite3.</p>
+<p>Sqlite3 viene utilizzato dal bot come cache per screenshot e ricerche su tracker.</p>
+<p>Occorre quindi installare sqlite3 (un paio di comandi) e poi python 3.10</p>
 <hr />
-<h2 id="installazione-valida-per-linux-e-windows">Installazione valida per linux e windows</h2>
+<h3 id="installare-sqlite3">Installare sqlite3</h3>
+<p>Per installare sqlite3 non possiamo utilizzare sudo quindi dobbiamo compilare</p>
+<p>Va in home</p>
 <ul>
-<li>pip install unit3dup</li>
+<li><code>cd ~</code></li>
 </ul>
-<h2 id="aggiorna-il-bot-quando-esce-una-nuova-versione">Aggiorna il bot quando esce una nuova versione</h2>
+<p>Scarica il pacchetto con</p>
 <ul>
-<li>pip install unit3dup --upgrade</li>
-</ul></div>
+<li><code>wget https://sqlite.org/2026/sqlite-autoconf-3510300.tar.gz</code></li>
+</ul>
+<p>Scompatta il pacchetto</p>
+<ul>
+<li><code>tar xvf sqlite-autoconf-3510300.tar.gz</code></li>
+</ul>
+<p>Entra nella cartella che hai ottenuto scompattando il tuo pacchetto</p>
+<p><code>cd sqlite-autoconf-3510300</code></p>
+<p>Lancia questi tre comandi uno dietro l'altro</p>
+<p><code>./configure --prefix=$HOME/sqlite</code></p>
+<p><code>make</code></p>
+<p><code>make install</code></p>
+<p>Imposta le variabili ambiente solo per questa sessione</p>
+<p>Copia e incolla nel terminale 'ssh'</p>
+<pre><code>export PATH=$HOME/sqlite/bin:$PATH
+export LDFLAGS=&quot;-L$HOME/sqlite/lib&quot;
+export CPPFLAGS=&quot;-I$HOME/sqlite/include&quot;
+export PKG_CONFIG_PATH=&quot;$HOME/sqlite/lib/pkgconfig&quot;
+export PYTHON_CONFIGURE_OPTS=&quot;--enable-loadable-sqlite-extensions&quot;
+</code></pre>
+<h3 id="installare-python-310">Installare python 3.10</h3>
+<p>Installa </p>
+<p><code>pyenv install -f 3.10.0</code></p>
+<p>Setta python 3.10 come versione di sistema di default</p>
+<p><code>pyenv global 3.10.0</code></p>
+<p>Se hai già installato Unit3Dup, lancia il bot come primo test</p>
+<p><code>Unit3Dup</code></p>
+<p><img alt="avvio" src="/images/unit3dup.png" /></p>
+<p>I messaggi in rosso ti avvertono che non hai ancora configurato il tuo bot <a href="../config/">Configurazione minima</a></p>
+<h3 id="se-su-ultracc-non-esiste-pyenv">Se su ultra.cc non esiste pyenv</h3>
+<p>Lancia nel terminale</p>
+<p><code>curl -fsSL https://pyenv.run | bash</code></p>
+<p><a href="https://github.com/pyenv/pyenv?tab=readme-ov-file#linuxunix">Dal loro github</a></p></div>
             </div>
         </div>
 
