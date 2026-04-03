@@ -23,7 +23,7 @@ user_tags_file = "tags_list.json"
 user_sign_file = "sign_list.json"
 bane_file = "ban_list.json"
 
-version = "0.9.24"
+version = "0.9.25"
 
 if os.name == "nt":
     WATCHER_DESTINATION_PATH: Path = Path(
