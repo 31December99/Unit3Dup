@@ -68,7 +68,7 @@ Se hai già installato Unit3Dup, lancia il bot come primo test
 
 ```Unit3Dup```
 
-![avvio](/images/unit3dup.png)
+![avvio](images/unit3dup.png)
 
 I messaggi in rosso ti avvertono che non hai ancora configurato il tuo bot [Configurazione minima](config.md)
 
