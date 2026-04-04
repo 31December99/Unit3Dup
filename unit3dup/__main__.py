@@ -18,7 +18,7 @@ def main():
     """
 
     custom_console.welcome_message()
-    custom_console.bot_question_log(f"Unitr3Dup {version} Checking your configuration file.. \n")
+    custom_console.bot_question_log(f"Unit3Dup {version} Checking your configuration file.. \n")
 
     # Load user configuration data
     config = Load().load_config()

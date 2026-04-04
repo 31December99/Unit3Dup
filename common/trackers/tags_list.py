@@ -87,6 +87,7 @@ TAGS_LIST = {
             "DIRECTOR'S": "version",
             "CUT": "version",
 
+            "COLLECTION": "version",
             "SUBBED": "version",
             "MUX": "version",
             "REMASTERED": "version",
