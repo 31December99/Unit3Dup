@@ -4,9 +4,10 @@ import time
 import requests
 
 from common.trackers.trackers import TRACKData
-# from common.database import Database
+from common.database import Database
 from unit3dup import pvtTracker
 from view import custom_console
+
 
 class Torrent:
 
@@ -14,7 +15,7 @@ class Torrent:
 
         self.perPage = 100
         self.tracker = pvtTracker.Unit3d(tracker_name=tracker_name)
-        # self.database = Database(db_file=tracker_name)
+        self.database = Database(db_file=tracker_name)
 
     def get_unique_id(self, media_info: str) -> str:
         # Divido per campi
@@ -133,11 +134,9 @@ class Torrent:
             personalRelease=True, perPage=self.perPage
         )
 
-
     # Filter 'Combo'
-    def get_by_tmdb_res(self, tmdb_id: int , resolution_id: str) -> requests.Response:
+    def get_by_tmdb_res(self, tmdb_id: int, resolution_id: str) -> requests.Response:
         return self.tracker.get_tmdb_res(tmdb_id=tmdb_id, res_id=resolution_id, perPage=self.perPage)
-
 
 
 class View(Torrent):
@@ -148,6 +147,7 @@ class View(Torrent):
         # Load the constant tracker
         self.tracker_data = TRACKData.load_from_module(tracker_name=tracker_name)
         self.tracker_name = tracker_name
+
         print()
 
     def get_unique_id(self, media_info: str) -> str:
@@ -173,8 +173,7 @@ class View(Torrent):
                 f" -> {item['attributes']['name']}"
             )
 
-
-    def print_normal(self, tracker_data: dict, save= False):
+    def print_normal(self, tracker_data: dict, save=False):
         data = [item for item in tracker_data["data"]]
         for item in data:
             if item['attributes']['tmdb_id'] != 0:
@@ -185,21 +184,20 @@ class View(Torrent):
 
                 media = f"{self.tracker_name} - TMDB: {item['attributes']['tmdb_id']} - {release_year}"
 
-            elif item['attributes']['igdb_id'] !=0:
-                    media = f"{self.tracker_name} IGDB: {item['attributes']['igdb_id']}"
+            elif item['attributes']['igdb_id'] != 0:
+                media = f"{self.tracker_name} IGDB: {item['attributes']['igdb_id']}"
             else:
                 media = f"{self.tracker_name} DOC:"
 
             # Print a data to the console
             custom_console.bot_log(f"\n {media} - {item['attributes']['name']}")
             # Save torrent data into database by -db flag
-            # if save:
-            #     self.database.write(item['attributes'])
-
+            if save:
+                self.database.write(item['attributes'])
 
     def page_view(self, tracker_data: dict, tracker: pvtTracker.Tracker, info=False, inkey=True, save=False):
 
-        self.print_normal(tracker_data,save=save) if not info else self.print_info(tracker_data)
+        self.print_normal(tracker_data, save=save) if not info else self.print_info(tracker_data)
         page = 0
         while True:
             if not tracker_data["links"]["next"]:
@@ -229,7 +227,7 @@ class View(Torrent):
         tracker_data = self.search(keyword=keyword)
         custom_console.log(f"Searching.. '{keyword}'")
         (
-            self.page_view(tracker_data=tracker_data, tracker=self.tracker,inkey=inkey, save=save)
+            self.page_view(tracker_data=tracker_data, tracker=self.tracker, inkey=inkey, save=save)
             if not info
             else self.page_view(
                 tracker_data=tracker_data, tracker=self.tracker, info=True
@@ -247,10 +245,10 @@ class View(Torrent):
         custom_console.bot_log(f"Filter by the torrent's BDInfo.. '{bdinfo.upper()}'")
         self.page_view(tracker_data=tracker_data, tracker=self.tracker)
 
-    def view_by_uploader(self, username: str):
+    def view_by_uploader(self, username: str, save=False):
         tracker_data = self.get_by_uploader(username=username)
         custom_console.bot_log(f"Filter by the torrent uploader's username.. '{username.upper()}'")
-        self.page_view(tracker_data=tracker_data, tracker=self.tracker)
+        self.page_view(tracker_data=tracker_data, tracker=self.tracker, save=save)
 
     def view_by_start_year(self, startyear: str):
         tracker_data = self.get_by_start_year(start_year=startyear)
@@ -455,7 +453,7 @@ class View(Torrent):
             self.page_view(tracker_data=tracker_data, tracker=self.tracker)
 
     # Filter 'Combo'
-    def view_tmdb_res(self, tmdb_id: int , res_name: str) -> requests.Response | None:
+    def view_tmdb_res(self, tmdb_id: int, res_name: str) -> requests.Response | None:
 
         # Filter by TMDB and Resolution
         if res_name not in self.tracker_data.resolution.keys():
@@ -463,7 +461,7 @@ class View(Torrent):
             custom_console.bot_warning_log(";".join(list(self.tracker_data.resolution.keys())[:-1]))
             exit()
 
-        tracker_data = self.get_by_tmdb_res(tmdb_id=tmdb_id,resolution_id=str(self.tracker_data.resolution.get(res_name)))
+        tracker_data = self.get_by_tmdb_res(tmdb_id=tmdb_id,
+                                            resolution_id=str(self.tracker_data.resolution.get(res_name)))
         if tracker_data:
             self.page_view(tracker_data=tracker_data, tracker=self.tracker)
-
