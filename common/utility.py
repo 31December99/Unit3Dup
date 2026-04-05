@@ -21,7 +21,7 @@ class ManageTitles:
     ]
 
     iso_3166_alpha3 = [
-        "ENG", "USA", "GBR", "ITA", "DEU", "FRA", "ESP",
+        "ENG", "USA", "GBR", "ITA", "DEU", "FRA", "ESP", "SPA",
         "BRA", "JPN", "CHN", "RUS", "PER", "NOR",
         "SWE", "DAN", "POL", "HIN", "TUR", "ARA", "KOR", "VIE", "IND"
     ]
@@ -31,7 +31,7 @@ class ManageTitles:
         "IT": "ITA",
         "DE": "DEU",
         "FR": "FRA",
-        "ES": "ESP", "ES-ES": "ESP", "ES-MX": "ESP",
+        "ES": "SPA", "ES-ES": "SPA", "ES-MX": "SPA",
         "BR": "BRA",
         "JP": "JPN",
         "CN": "CHN",
@@ -56,7 +56,7 @@ class ManageTitles:
         "ITALIAN": "ITA",
         "GERMAN": "DEU",
         "FRENCH": "FRA",
-        "SPANISH": "ESP",
+        "SPANISH": "SPA",
         "BRAZILIAN": "BRA",
         "JAPANESE": "JPN",
         "CHINESE": "CHN",
