@@ -1,4 +1,4 @@
-# Benvenuto in Unit3dUp Docs 0.9.24
+# Benvenuto in Unit3dUp Docs 0.9.26
 
 Unit3Dup è uno programma in python per creare e caricare su tracker i vostri torrents.
 

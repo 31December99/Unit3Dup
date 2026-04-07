@@ -18,7 +18,7 @@ def main():
     """
 
     custom_console.welcome_message()
-    custom_console.bot_question_log(f"Unitr3Dup {version} Checking your configuration file.. \n")
+    custom_console.bot_question_log(f"Unit3Dup {version} Checking your configuration file.. \n")
 
     # Load user configuration data
     config = Load().load_config()
@@ -181,8 +181,7 @@ def main():
 
     # Dump
     if cli.args.dump:
-        print("NOT YET IMPLEMENTED")
-        # torrent_info.view_search(" ", inkey=False,save=True) # Fix aggiunto Save
+        torrent_info.view_search(" ", inkey=False,save=True)
         return
 
     if cli.args.info:
@@ -198,7 +197,7 @@ def main():
         return
 
     if cli.args.uploader:
-        torrent_info.view_by_uploader(cli.args.uploader)
+        torrent_info.view_by_uploader(cli.args.uploader, save=cli.args.dbsave)
         return
 
     if cli.args.startyear:
