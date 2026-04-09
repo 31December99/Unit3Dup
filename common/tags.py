@@ -271,6 +271,7 @@ class SearchTags(object):
             for video in self.mediafile.video_track:
                 hdr_format_commercial = video.get('hdr_format_commercial', "")
                 hdr_format = video.get('hdr_format', "")
+                other_hdr_format = video.get('other_hdr_format', "")
                 colour_primaries = video.get('color_primaries', "")
                 matrix_coefficients = video.get('matrix_coefficients', "")
                 bit_depth = video.get('bit_depth', "")
@@ -290,6 +291,19 @@ class SearchTags(object):
                         custom_console.bot_warning_log(
                             f"<> HDR Warning: '{hdr_format_commercial}' not found in hdr_map")
                     if 'DOLBY VISION' in hdr_format_commercial.upper() or 'DOLBY VISION' in hdr_format.upper():
+                        # Search for fake remux
+                        if any("dvhe.08" in s or "Profile 8" in s for s in other_hdr_format):
+                            remux = self.tags_dict.get('remux', '')
+                            if remux:
+                                remux = remux[0]
+                                if 'remux' in remux.lower():
+                                    del self.tags_dict[remux.lower()]
+                                    self.tags_dict.update({'source': 'ENCODE'})
+                                    custom_console.bot_warning_log(
+                                        f"<> Warning: Detected REMUX with {other_hdr_format}")
+                                    hdr = f"DOLBY VISION {hdr}"
+                                    return {category: f"{hdr_map.get(hdr, '*HDR')}"}
+
                         hdr = f"DOLBY VISION {hdr}"
                     return {category: hdr_map.get(hdr, '*HDR')}
                 else:
