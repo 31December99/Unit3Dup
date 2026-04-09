@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 import re
-from common.mediainfo import MediaFile
 from common.utility import ManageTitles
+from common.mediainfo import MediaFile
+from unit3dup.media import Media
 from view import custom_console
 
 # From hdr format
@@ -57,12 +58,13 @@ video_encoder_translate = {
 
 class SearchTags(object):
     def __init__(self, filename, title: str, year: str, season: int, episode: int,
-                 mediafile: MediaFile, tags_position: list, tags_list: dict, sign_list: dict, ban_list: dict,
+                 media: Media, tags_position: list, tags_list: dict, sign_list: dict, ban_list: dict,
                  releaser_sign: str):
 
+        self.mediafile: MediaFile = media.mediafile
         self.tags_position = tags_position
         self.releaser_sign = releaser_sign
-        self.mediafile = mediafile
+        self.media: Media = media
         self.filename = filename
         self.episode = episode
         self.season = season
@@ -299,6 +301,7 @@ class SearchTags(object):
                                 if 'remux' in remux.lower():
                                     del self.tags_dict[remux.lower()]
                                     self.tags_dict.update({'source': 'ENCODE'})
+                                    self.media.file_name = self.media.file_name.replace(remux, 'ENCODE')
                                     custom_console.bot_warning_log(
                                         f"<> Warning: Detected REMUX with {other_hdr_format}")
                                     hdr = f"DOLBY VISION {hdr}"
