@@ -55,7 +55,7 @@ class VideoManager:
                 guess = guess_filename.guessit
                 tags_position = config_settings.user_preferences.TAGS_POSITION_SERIE if content.category=='tv'\
                     else config_settings.user_preferences.TAGS_POSITION_MOVIE
-                search_tags = SearchTags(filename=content.title, # title_sanitize_tags,
+                search_tags = SearchTags(filename=content.title,
                                          title=guess.get("title", None),
                                          year=guess.get("year", ""),
                                          season=content.guess_season,
@@ -65,7 +65,7 @@ class VideoManager:
                                          tags_list=self.tags_list,
                                          sign_list=self.sign_list,
                                          ban_list=self.ban_list,
-                                         mediafile=content.mediafile,
+                                         media=content,
                                          )
                 content.display_name = search_tags.process()
 
