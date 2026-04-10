@@ -116,7 +116,8 @@ class SearchTags(object):
         build = []
         for k, v in dictionary.items():
             if isinstance(v, list):
-                build.append(' '.join(v))
+                for item in v:
+                    build.append(str(item))
             else:
                 build.append(str(v))
 
