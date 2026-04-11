@@ -1,4 +1,5 @@
 site_name: UNit3D-up
+site_description: Guida in italiano per Unit3Dup
 
 nav:
   - Home: index.md
