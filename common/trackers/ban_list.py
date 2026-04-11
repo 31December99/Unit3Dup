@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
 BAN_LIST = {
-    "dummy" : "banned"
+    "dummy" : "banned",
+    "video_encoder": "banned"
 }
