@@ -117,7 +117,7 @@ united by a shared passion for torrents and more
 +------------------+----------------------------+
 
 .. image:: https://img.shields.io/discord/1214696147600408698?label=Discord&logo=discord&style=flat
-   :target: https://discord.gg/2kHJPju6
+   :target: https://discord.gg/rhKyeH3W9Y
    :alt: Discord Server
 
 
