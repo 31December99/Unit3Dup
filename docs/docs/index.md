@@ -1,6 +1,6 @@
-# Benvenuto in Unit3dUp Docs 0.10.0
+# Benvenuto in Unit3dUp Docs 0.10.1
 
-Unit3Dup è uno programma in python per creare e caricare su tracker i vostri torrents.
+Unit3Dup è un bot scritto in python per caricare i vostri torrents sui trackers UNIT3D
 
 Il workflow è il seguente:
 
