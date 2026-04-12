@@ -21,7 +21,7 @@ class ManageTitles:
     ]
 
     iso_3166_alpha3 = [
-        "ENG", "USA", "GBR", "ITA", "DEU", "FRA", "ESP", "SPA",
+        "ENG", "USA", "GBR", "ITA", "DEU", "GER", "FRA", "ESP", "SPA",
         "BRA", "JPN", "CHN", "RUS", "PER", "NOR",
         "SWE", "DAN", "POL", "HIN", "TUR", "ARA", "KOR", "VIE", "IND"
     ]
@@ -29,7 +29,7 @@ class ManageTitles:
     iso_3166_alpha2_to_alpha3 = {
         "EN": "ENG", "US": "USA", "GB": "GBR", "EN-US": "ENG", "EN-GB": "ENG", "EN-AU": "ENG",
         "IT": "ITA",
-        "DE": "DEU",
+        "DE": "GER",
         "FR": "FRA",
         "ES": "SPA", "ES-ES": "SPA", "ES-MX": "SPA",
         "BR": "BRA",
@@ -51,10 +51,10 @@ class ManageTitles:
 
     long_name = {
         "ENGLISH": "ENG",
-        "AMERICAN": "USA",
-        "BRITISH": "GBR",
+        "AMERICAN": "ENG",
+        "BRITISH": "ENG",
         "ITALIAN": "ITA",
-        "GERMAN": "DEU",
+        "GERMAN": "GER",
         "FRENCH": "FRA",
         "SPANISH": "SPA",
         "BRAZILIAN": "BRA",
@@ -76,7 +76,7 @@ class ManageTitles:
     }
 
     @staticmethod
-    def convert_iso(code) -> list | str | None:
+    def convert_iso(code) -> list[str] | str:
         """ Convert iso 2 to 3 """
         code = code.upper()
         # if it's 'multilang'
@@ -95,7 +95,7 @@ class ManageTitles:
             if match:
                 iso_code = match.group(1)
                 if len(iso_code) == 2:  # // alpha-2
-                    return ManageTitles.iso_3166_alpha2_to_alpha3.get(code, None)
+                    return ManageTitles.iso_3166_alpha2_to_alpha3.get(code, "")
                 elif len(iso_code) == 3:  # // alpha3
                     # return the same code provided it is an alpha3
                     if iso_code in ManageTitles.iso_3166_alpha3:
