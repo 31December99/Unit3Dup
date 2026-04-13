@@ -1,3 +1,4 @@
+import pprint
 from argparse import Namespace
 import requests
 import json
@@ -54,6 +55,15 @@ class UploadBot:
             else:
                 name_error = _message
             error_message = f"{self.__class__.__name__} - {name_error}"
+
+        elif tracker_response.status_code == 500:
+            custom_console.bot_error_log("HTTP 500 Internal Tracker Error\n")
+            pprint.pprint(self.tracker_data)
+            error_message = f"{self.__class__.__name__} - {tracker_response.status_code} {tracker_response.text}"
+            custom_console.bot_error_log(self.content.file_name)
+            custom_console.bot_error_log(error_message)
+            exit()
+
         else:
             if _message.get("name", None):
                 name_error = _message["name"][0]
