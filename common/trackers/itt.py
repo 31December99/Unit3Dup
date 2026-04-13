@@ -12,6 +12,7 @@ itt_data = {
                  "size5": 25},
 
     "TYPE_ID":{ "full-disc": 1,
+                "fulldisc": 1,
                 "remux": 2,
                 "bdremux": 2,
                 "vh": 2,
