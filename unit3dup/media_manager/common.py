@@ -196,6 +196,10 @@ class UserContent:
             # Check if we have a valid response from the tracker
             if bittorrent_file.tracker_response:
                 if client:
+                    print(f"tracker_data_response: {bittorrent_file.tracker_response}")
+                    print(f"torrent: {bittorrent_file.torrent_response}")
+                    print(f"archive_path: {bittorrent_file.archive_path}")
+
                     client.send_to_client(
                     tracker_data_response=bittorrent_file.tracker_response,
                     torrent=bittorrent_file.torrent_response,
@@ -204,6 +208,8 @@ class UserContent:
                 )
             else:
                 # invalid response
+                print(f"Invalid Tracker response -> {client}")
+
                 custom_console.rule()
 
         except Exception as e:
