@@ -119,10 +119,7 @@ class VideoManager:
                     continue
 
                 # Send to the tracker
-                print("Sending torrent to tracker")
                 tracker_response, tracker_message = unit3d_up.send(torrent_archive=torrent_filepath)
-                print(f"tracker_response {tracker_response}")
-                print(f"tracker_message {tracker_message}")
 
                 # Store response for the torrent clients
                 bittorrent_list.append(

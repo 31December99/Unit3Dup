@@ -119,6 +119,10 @@ class UploadBot:
 
         tracker_response = self.tracker.upload_t(data=self.tracker.data, torrent_archive_path=torrent_archive,
                                                  nfo_path=nfo_path)
+
+        print(f"tracker_response {tracker_response.status_code}")
+        print(f"tracker_response {tracker_response.text}")
+
         return self.message(tracker_response=tracker_response, torrent_archive=torrent_archive)
 
     @staticmethod
