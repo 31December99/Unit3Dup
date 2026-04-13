@@ -208,7 +208,7 @@ class UserContent:
                 )
             else:
                 # invalid response
-                print(f"Invalid Tracker response -> {client}")
+                print(f"Invalid Tracker response -> {bittorrent_file.tracker_response}")
 
                 custom_console.rule()
 
@@ -252,6 +252,7 @@ class UserContent:
         if not bittorrent_list:
             return None
 
+        print("bittorrent_list: {bittorrent_list}")
         custom_console.bot_warning_log(f"\nSending {message} torrents to the "
                                        f"{config_settings.torrent_client_config.TORRENT_CLIENT.upper()} client "
                                        f"... Please wait")
