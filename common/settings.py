@@ -23,7 +23,7 @@ user_tags_file = "tags_list.json"
 user_sign_file = "sign_list.json"
 bane_file = "ban_list.json"
 
-version = "0.9.31"
+version = "0.10.1"
 
 if os.name == "nt":
     WATCHER_DESTINATION_PATH: Path = Path(
@@ -72,6 +72,9 @@ class TrackerConfig(BaseModel):
     SIS_URL: str
     SIS_APIKEY: str | None = None
     SIS_PID: str | None = None
+    PTT_URL: str
+    PTT_APIKEY: str | None = None
+    PTT_PID: str | None = None
     MULTI_TRACKER: list[str] | None = None
     TMDB_APIKEY: str | None = None
     TVDB_APIKEY: str | None = None
@@ -407,14 +410,14 @@ class Config(BaseModel):
             else:
                 field = field.upper()
 
-                if field in ['ITT_URL', 'SIS_URL']:
+                if field in ['ITT_URL']:
                     section[field] = Validate.url(value=section[field], field_name=field)
 
-                if field in ['ITT_PID', 'SIS_PID']:
+                if field in ['ITT_PID']:
                     section[field] = Validate.pid(value=section[field], field_name=field,
                                                   multi_trackers=section['MULTI_TRACKER'])
 
-                elif field in ['ITT', 'SIS']:
+                elif field in ['ITT', 'SIS', 'PTT']:
                     section[field] = Validate.dict(value=section[field], field_name=field)
                 elif field in ['MULTI_TRACKER']:
                     section[field] = Validate.validate_multi_tracker(multi_tracker_list=section[field])
@@ -573,7 +576,10 @@ class Load:
                 "SIS_URL": "https://no_tracker.xyz",
                 "SIS_APIKEY": "no_key",
                 "SIS_PID": "no_key",
-                "MULTI_TRACKER": ["itt"],
+                "PTT_URL": "https://no_tracker.xyz",
+                "PTT_APIKEY": "no_key",
+                "PTT_PID": "no_key",
+                "MULTI_TRACKER": ["itt","sis","ptt"],
                 "TMDB_APIKEY": "no_key",
                 "TVDB_APIKEY": "no_key",
                 "IMGBB_KEY": "no_key",
@@ -771,7 +777,7 @@ class JsonConfig:
         # Add the new attributes in 'tracker config'
         if self.tracker_diff_keys:
             self.updated = True
-            missing_keys_dict = {key: '' for key in self.tracker_diff_keys}
+            missing_keys_dict = {key: 'no_key' for key in self.tracker_diff_keys}
             self.tracker_config.update(missing_keys_dict)
 
     def update_torrent_client_config(self):

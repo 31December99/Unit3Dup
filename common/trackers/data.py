@@ -21,6 +21,15 @@ trackers_api_data = {
             "announce":  f"{config_settings.tracker_config.SIS_URL}/announce/{config_settings.tracker_config.SIS_PID}",
             "source": "ShareIsland",
         }
+    ,
+    'PTT':
+        {
+            "url": config_settings.tracker_config.PTT_URL,
+            "api_key": config_settings.tracker_config.PTT_APIKEY,
+            "pass_key": config_settings.tracker_config.PTT_PID,
+            "announce": f"{config_settings.tracker_config.PTT_URL}/announce/{config_settings.tracker_config.PTT_PID}",
+            "source": "PolishTorrent",
+        }
 
 }
 

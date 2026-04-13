@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import json
 
+import requests
+
 from common.torrent_clients import TransmissionClient, QbittorrentClient, RTorrentClient
 from common.command import CommandLine
 from common.settings import Load, DEFAULT_JSON_PATH, USER_TAGS_PATH, USER_SIGN_PATH, BAN_TAGS_PATH, version
@@ -43,15 +45,25 @@ def main():
         custom_console.bot_error_log(f"No tracker name provided. Please update your configuration file")
         exit(1)
 
-    # /// Test the Trackers
-    for tracker_data in config.tracker_config.MULTI_TRACKER:
-        tracker = pvtTracker.Unit3d(tracker_name=tracker_data)
+    # Check if the tracker name exists
+    if cli.args.tracker:
+        if not any(cli.args.tracker.upper() in tracker.upper() for tracker in config.tracker_config.MULTI_TRACKER):
+            custom_console.bot_error_log(
+                f"Tracker '{cli.args.tracker}' not found. Please update your configuration file")
+            exit()
+
+        tracker = pvtTracker.Unit3d(tracker_name=cli.args.tracker)
         if tracker.get_alive(alive=True, perPage=1):
-            custom_console.bot_log(f"Tracker -> '{tracker_data.upper()}' Online")
-        else:
-            if cli.args.tracker == tracker_data:
-                custom_console.bot_error_log(f"Your default tracker '{tracker_data}' is offline")
-                exit()
+            custom_console.bot_log(f"Tracker -> '{cli.args.tracker.upper()}' Online")
+            tracker_name_list = [cli.args.tracker.upper()]
+
+    # Send content to the multi_tracker list
+    if cli.args.mt:
+        tracker_name_list = config.tracker_config.MULTI_TRACKER
+        for tracker_data in tracker_name_list[1:]:
+            tracker = pvtTracker.Unit3d(tracker_name=tracker_data)
+            if tracker.get_alive(alive=True, perPage=1):
+                custom_console.bot_log(f"Tracker -> '{tracker_data.upper()}' Online")
 
     # Test both clients only if used
     if cli.args.noseed is False and cli.args.noup is False or cli.args.reseed is True:
@@ -77,22 +89,6 @@ def main():
                     f"Unknown Torrent Client name '{config.torrent_client_config.TORRENT_CLIENT}'")
                 custom_console.bot_error_log(f"You need to set a favorite 'torrent_client' in the config file")
                 exit(1)
-
-    # Check if the tracker name exists
-    if cli.args.tracker and cli.args.tracker not in config.tracker_config.MULTI_TRACKER:
-        custom_console.bot_error_log(f"Tracker '{cli.args.tracker}' not found. Please update your configuration file")
-        exit()
-
-    # Get default tracker
-    tracker_name_list = [config.tracker_config.MULTI_TRACKER[0]]
-
-    # Add a single announce if requested (disabled)
-    if cli.args.tracker:
-        tracker_name_list = [cli.args.tracker.upper()]
-
-    # Send content to the multi_tracker list
-    if cli.args.mt:
-        tracker_name_list = config.tracker_config.MULTI_TRACKER
 
     # Load User Tags list
     tags_list = None
@@ -138,7 +134,7 @@ def main():
             torrent_archive_path=tracker_archive,
             tags_list=tags_list,
             sign_list=sign_list,
-            ban_list = ban_list
+            ban_list=ban_list
         )
         bot.run()
 
@@ -181,7 +177,7 @@ def main():
 
     # Dump
     if cli.args.dump:
-        torrent_info.view_search(" ", inkey=False,save=True)
+        torrent_info.view_search(" ", inkey=False, save=True)
         return
 
     if cli.args.info:

@@ -91,6 +91,11 @@ class Tracker(Myhttp):
                     f"or verify if the tracker is online",
                 )
                 exit(1)
+            except requests.exceptions.MissingSchema:
+                custom_console.bot_error_log(
+                    f"TRACKER Connection error. Please check your configuration data"
+                )
+                exit(1)
             except requests.exceptions.ReadTimeout as e:
                 custom_console.bot_error_log(f"TRACKER HTTP Error {e}. Tracker Offline !")
                 exit(1)
