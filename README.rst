@@ -114,6 +114,7 @@ united by a shared passion for torrents and more
 | **Trackers**     | **Description**            |
 +==================+============================+
 | ``ITT``          | https://itatorrents.xyz/   |
+|                  |                            |
 | ``PTT``          | https://polishtorrent.top/ |
 +------------------+----------------------------+
 
