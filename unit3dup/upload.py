@@ -1,3 +1,4 @@
+import pprint
 from argparse import Namespace
 import requests
 import json
@@ -48,12 +49,22 @@ class UploadBot:
             custom_console.bot_error_log(_message)
             exit(_message['message'])
 
+        elif tracker_response.status_code == 403:
+            custom_console.bot_error_log(f"{self.__class__.__name__} HTTP 403 Upload right disabled\n")
+            custom_console.bot_error_log(self.content.file_name)
+
         elif tracker_response.status_code == 404:
             if _message.get("type_id", None):
                 name_error = _message["type_id"]
             else:
                 name_error = _message
             error_message = f"{self.__class__.__name__} - {name_error}"
+
+        elif tracker_response.status_code == 500:
+            custom_console.bot_error_log(f"{self.__class__.__name__} HTTP 500 Internal Tracker Error\n")
+            custom_console.bot_error_log(self.content.file_name)
+            exit()
+
         else:
             if _message.get("name", None):
                 name_error = _message["name"][0]
@@ -119,6 +130,7 @@ class UploadBot:
 
         tracker_response = self.tracker.upload_t(data=self.tracker.data, torrent_archive_path=torrent_archive,
                                                  nfo_path=nfo_path)
+
         return self.message(tracker_response=tracker_response, torrent_archive=torrent_archive)
 
     @staticmethod
