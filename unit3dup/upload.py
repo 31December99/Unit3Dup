@@ -49,6 +49,10 @@ class UploadBot:
             custom_console.bot_error_log(_message)
             exit(_message['message'])
 
+        elif tracker_response.status_code == 403:
+            custom_console.bot_error_log(f"{self.__class__.__name__} HTTP 403 Upload right disabled\n")
+            custom_console.bot_error_log(self.content.file_name)
+
         elif tracker_response.status_code == 404:
             if _message.get("type_id", None):
                 name_error = _message["type_id"]
@@ -57,11 +61,8 @@ class UploadBot:
             error_message = f"{self.__class__.__name__} - {name_error}"
 
         elif tracker_response.status_code == 500:
-            custom_console.bot_error_log("HTTP 500 Internal Tracker Error\n")
-            pprint.pprint(self.tracker_data)
-            error_message = f"{self.__class__.__name__} - {tracker_response.status_code} {tracker_response.text}"
+            custom_console.bot_error_log(f"{self.__class__.__name__} HTTP 500 Internal Tracker Error\n")
             custom_console.bot_error_log(self.content.file_name)
-            custom_console.bot_error_log(error_message)
             exit()
 
         else:
