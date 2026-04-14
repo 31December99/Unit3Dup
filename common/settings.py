@@ -576,7 +576,7 @@ class Load:
                 "SIS_URL": "https://no_tracker.xyz",
                 "SIS_APIKEY": "no_key",
                 "SIS_PID": "no_key",
-                "PTT_URL": "https://no_tracker.xyz",
+                "PTT_URL": "https://polishtorrent.top/",
                 "PTT_APIKEY": "no_key",
                 "PTT_PID": "no_key",
                 "MULTI_TRACKER": ["itt","sis","ptt"],
