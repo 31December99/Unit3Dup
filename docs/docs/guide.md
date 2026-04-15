@@ -1,9 +1,3 @@
-# Indice
-
-- [Installa il bot su ultra.cc](#sezione-1)
-- [Installare Redis su ultra.cc senza sudo](#sezione-1)
-- [Uso del flag -watcher](#sezione-2)
-
 # Installa Unit3dUp su seedbox ultra.cc
 ----
 

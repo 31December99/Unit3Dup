@@ -1,9 +1,3 @@
-# Indice
-
-- [Installa il bot su ultra.cc](#sezione-1)
-- [Installare Redis su ultra.cc senza sudo](#sezione-1)
-- [Uso del flag -watcher](#sezione-2)
-
 ## Installare Redis su ultra.cc senza sudo
 
 * wget https://download.redis.io/redis-stable.tar.gz
@@ -30,7 +24,7 @@
 
 - ./redis-cli ping
 
-#### Shutdown server
+#### Shutdown Redis server
 
 Nel caso servisse chiudere redis
 
