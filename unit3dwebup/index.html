@@ -8,7 +8,7 @@
         
         
         <link rel="shortcut icon" href="../img/favicon.ico">
-        <title>Guide - UNit3D-up</title>
+        <title>Unit3D webUp - UNit3D-up</title>
         <link href="../css/bootstrap.min.css" rel="stylesheet">
         <link href="../css/fontawesome.min.css" rel="stylesheet">
         <link href="../css/brands.min.css" rel="stylesheet">
@@ -44,10 +44,10 @@
                                 <a href="../config/" class="nav-link">Configurazione</a>
                             </li>
                             <li class="nav-item">
-                                <a href="./" class="nav-link active" aria-current="page">Guide</a>
+                                <a href="../guide/" class="nav-link">Guide</a>
                             </li>
                             <li class="nav-item">
-                                <a href="../unit3dwebup/" class="nav-link">Unit3D webUp</a>
+                                <a href="./" class="nav-link active" aria-current="page">Unit3D webUp</a>
                             </li>
                         </ul>
 
@@ -58,12 +58,12 @@
                             </a>
                         </li>
                             <li class="nav-item">
-                                <a rel="prev" href="../config/" class="nav-link">
+                                <a rel="prev" href="../guide/" class="nav-link">
                                     <i class="fa fa-arrow-left"></i> Previous
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a rel="next" href="../unit3dwebup/" class="nav-link">
+                                <a rel="next" class="nav-link disabled">
                                     Next <i class="fa fa-arrow-right"></i>
                                 </a>
                             </li>
@@ -87,16 +87,11 @@
             
             <li class="nav-item" data-bs-level="1"><a href="#indice" class="nav-link">Indice</a>
               <ul class="nav flex-column">
-              </ul>
-            </li>
-            
-            <li class="nav-item" data-bs-level="1"><a href="#installa-unit3dup-su-seedbox-ultracc" class="nav-link">Installa Unit3dUp su seedbox ultra.cc</a>
-              <ul class="nav flex-column">
-            <li class="nav-item" data-bs-level="2"><a href="#ultracc-non-permette-luso-di-sudo" class="nav-link">Ultra.cc non permette l'uso di Sudo</a>
+            <li class="nav-item" data-bs-level="2"><a href="#installare-redis-su-ultracc-senza-sudo" class="nav-link">Installare Redis su ultra.cc senza sudo</a>
               <ul class="nav flex-column">
               </ul>
             </li>
-            <li class="nav-item" data-bs-level="2"><a href="#uso-del-flag-watcher" class="nav-link">Uso del flag -watcher</a>
+            <li class="nav-item" data-bs-level="2"><a href="#test-veloce-di-connessione-a-redis-lato-client" class="nav-link">Test veloce di connessione a Redis lato client</a>
               <ul class="nav flex-column">
               </ul>
             </li>
@@ -113,85 +108,57 @@
 <li><a href="#sezione-1">Installare Redis su ultra.cc senza sudo</a></li>
 <li><a href="#sezione-2">Uso del flag -watcher</a></li>
 </ul>
-<h1 id="installa-unit3dup-su-seedbox-ultracc">Installa Unit3dUp su seedbox ultra.cc</h1>
-<hr />
-<h2 id="ultracc-non-permette-luso-di-sudo">Ultra.cc non permette l'uso di Sudo</h2>
-<p>Il bot richiede python con versione minima 3.10 e max 3.12.
-python 3.14 risulta essere ancora troppo recente per alcune librerie (12/4/2026)</p>
-<p>Utilizziamo <strong>pyenv preinstallato su ultra.cc</strong>. Unico problema pyenv non installa sqlite3.</p>
-<p>Sqlite3 viene utilizzato dal bot come cache per screenshot e ricerche su tracker.</p>
-<p>Occorre quindi installare sqlite3 (un paio di comandi) e poi python 3.12</p>
-<hr />
-<h3 id="installare-sqlite3">Installare sqlite3</h3>
-<p>Per installare sqlite3 non possiamo utilizzare sudo quindi dobbiamo compilare</p>
-<p>Va in home</p>
-<ul>
-<li><code>cd ~</code></li>
-</ul>
-<p>Scarica il pacchetto con</p>
-<ul>
-<li><code>wget https://sqlite.org/2026/sqlite-autoconf-3510300.tar.gz</code></li>
-</ul>
-<p>Scompatta il pacchetto</p>
-<ul>
-<li><code>tar xvf sqlite-autoconf-3510300.tar.gz</code></li>
-</ul>
-<p>Entra nella cartella che hai ottenuto scompattando il tuo pacchetto</p>
-<p><code>cd sqlite-autoconf-3510300</code></p>
-<p>Lancia questi tre comandi uno dietro l'altro</p>
-<p><code>./configure --prefix=$HOME/sqlite</code></p>
-<p><code>make</code></p>
-<p><code>make install</code></p>
-<p>Imposta le variabili ambiente solo per questa sessione</p>
-<p>Copia e incolla nel terminale 'ssh'</p>
-<pre><code>export PATH=$HOME/sqlite/bin:$PATH
-export LDFLAGS=&quot;-L$HOME/sqlite/lib&quot;
-export CPPFLAGS=&quot;-I$HOME/sqlite/include&quot;
-export PKG_CONFIG_PATH=&quot;$HOME/sqlite/lib/pkgconfig&quot;
-export PYTHON_CONFIGURE_OPTS=&quot;--enable-loadable-sqlite-extensions&quot;
-</code></pre>
-<h3 id="installare-python-312">Installare python 3.12</h3>
-<p>Installa</p>
-<p><code>pyenv install -f 3.12.0</code></p>
-<p>Setta python 3.12 come versione di sistema di default</p>
-<p><code>pyenv global 3.12.0</code></p>
-<p>Se hai già installato Unit3Dup, lancia il bot come primo test</p>
-<p><code>Unit3Dup</code></p>
-<p><img alt="avvio" src="../images/unit3dup.png" /></p>
-<p>I messaggi in rosso ti avvertono che non hai ancora configurato il tuo bot <a href="../config/">Configurazione minima</a></p>
-<h3 id="se-su-ultracc-non-esiste-pyenv">Se su ultra.cc non esiste pyenv</h3>
-<p>Lancia nel terminale</p>
-<p><code>curl -fsSL https://pyenv.run | bash</code></p>
-<p><a href="https://github.com/pyenv/pyenv?tab=readme-ov-file#linuxunix">Dal loro github</a></p>
-<h2 id="uso-del-flag-watcher">Uso del flag -watcher</h2>
-<p>Il flag <code>-watcher</code> legge il contenuto di una cartella e lo sposta in una cartella di destinazione, poi carica tutto sul
-tracker.</p>
-<h3 id="come-usare-watcher">Come usare watcher</h3>
-<p>Il flag non accetta parametri.</p>
-<pre><code class="language-bash">python start.py -watcher
-</code></pre>
+<h2 id="installare-redis-su-ultracc-senza-sudo">Installare Redis su ultra.cc senza sudo</h2>
 <ul>
 <li>
-<p>watcher_path → configura percorso dove vengono scaricati i file</p>
+<p>wget https://download.redis.io/redis-stable.tar.gz</p>
 </li>
 <li>
-<p>watcher_destination_path → configura percorso dove Unit3Dup sposta i file per caricarli sul tracker</p>
+<p>tar xzf redis-stable.tar.gz</p>
+</li>
+<li>
+<p>cd redis-stable</p>
+</li>
+<li>
+<p>make</p>
 </li>
 </ul>
-<h3 id="come-configurare-il-watcher">Come configurare il watcher</h3>
-<p>Apri il file Unit3D.json con un editor di testo e imposta il parametro:</p>
-<p><code>WATCHER_INTERVAL</code>  ( in secondi)</p>
-<p>Assegna un percorso a piacere per questi due parametri:</p>
+<h3 id="configura-redis">Configura redis</h3>
 <ul>
-<li><code>watcher_path</code></li>
-<li><code>watcher_destination_path</code></li>
+<li>cd redis-stable</li>
+<li>nano redis.conf<ul>
+<li>verifica che sia presente la stringa "bind 127.0.0.1"</li>
+<li>Cambia la porta da "port 6379" a "port 7000"</li>
+<li>ctrl-o per salvare</li>
+<li>ctrl-x per uscire da nano</li>
 </ul>
-<p>Allo scadere di WATCHER_INTERVAL il bot esegue queste operazioni:</p>
+</li>
+<li>cd src</li>
+<li>[non lanciare redis senza specificare il file di configurazione]</li>
+<li>./redis-server ../redis.conf --daemonize yes</li>
+</ul>
+<h4 id="test-redis-server">Test Redis server</h4>
 <ul>
-<li>Controlla la cartella watcher_path</li>
-<li>Sposta tutti i file in watcher_destination_path</li>
-<li>Processa i file e li carica sul tracker</li>
-</ul></div>
+<li>./redis-cli ping</li>
+</ul>
+<h4 id="shutdown-server">Shutdown server</h4>
+<p>Nel caso servisse chiudere redis</p>
+<ul>
+<li>./redis-cli -p 7000 shutdown</li>
+</ul>
+<h3 id="configura-tunnel-ssh-per-raggiungere-il-backend-dal-tuo-browser">Configura tunnel ssh per raggiungere il backend dal tuo browser</h3>
+<p>ssh -L 7000:localhost:7000 -L 8000:localhost:8000 utente_tuo_server@ip_del_tuo_server -N</p>
+<h2 id="test-veloce-di-connessione-a-redis-lato-client">Test veloce di connessione a Redis lato client</h2>
+<ul>
+<li>nc 127.0.0.1 7000</li>
+<li>ping -&gt; il server deve rispondere PONG</li>
+</ul>
+<p>Ora puoi collegarti al bot attraverso il browser all'indirizzo 127.0.0.1:8000</p>
+<h3 id="configura-memoria">Configura memoria</h3>
+<ul>
+<li><code>under construction</code></li>
+</ul>
+<hr /></div>
             </div>
         </div>
 
