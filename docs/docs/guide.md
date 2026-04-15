@@ -58,6 +58,7 @@ export LDFLAGS="-L$HOME/sqlite/lib"
 export CPPFLAGS="-I$HOME/sqlite/include"
 export PKG_CONFIG_PATH="$HOME/sqlite/lib/pkgconfig"
 export PYTHON_CONFIGURE_OPTS="--enable-loadable-sqlite-extensions"
+export LD_LIBRARY_PATH=$HOME/sqlite/lib:$LD_LIBRARY_PATH
 ```
 
 ### Installare python 3.12
