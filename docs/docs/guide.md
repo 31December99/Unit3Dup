@@ -1,9 +1,3 @@
-# Indice
-- [Installa il bot su ultra.cc](#sezione-1)
-- [Installare Redis su ultra.cc senza sudo](#sezione-1)
-- [Uso del flag -watcher](#sezione-2)
-
-
 # Installa Unit3dUp su seedbox ultra.cc
 ----
 
@@ -58,18 +52,18 @@ export LDFLAGS="-L$HOME/sqlite/lib"
 export CPPFLAGS="-I$HOME/sqlite/include"
 export PKG_CONFIG_PATH="$HOME/sqlite/lib/pkgconfig"
 export PYTHON_CONFIGURE_OPTS="--enable-loadable-sqlite-extensions"
+export LD_LIBRARY_PATH=$HOME/sqlite/lib:$LD_LIBRARY_PATH
 ```
 
 ### Installare python 3.12
 
-Installa 
+Installa
 
 ```pyenv install -f 3.12.0```
 
-Setta python 3.10 come versione di sistema di default
+Setta python 3.12 come versione di sistema di default
 
 ```pyenv global 3.12.0```
-
 
 Se hai già installato Unit3Dup, lancia il bot come primo test
 
@@ -79,7 +73,6 @@ Se hai già installato Unit3Dup, lancia il bot come primo test
 
 I messaggi in rosso ti avvertono che non hai ancora configurato il tuo bot [Configurazione minima](config.md)
 
-
 ### Se su ultra.cc non esiste pyenv
 
 Lancia nel terminale
@@ -88,35 +81,11 @@ Lancia nel terminale
 
 [Dal loro github](https://github.com/pyenv/pyenv?tab=readme-ov-file#linuxunix)
 
----
-
-## Installare Redis su ultra.cc senza sudo
-
-* wget https://download.redis.io/redis-stable.tar.gz
-
-* tar xzf redis-stable.tar.gz
-
-* cd redis-stable
-
-* make
-
-### Configura redis
-- cd redis-stable
-- nano redis.conf
-  - verifica che sia presente la stringa "bind 127.0.0.1 -::1"
-  - Cambia la porta da "Port 6379" a "Port 7000"
-- cd src
-- ./redis-server
-
-### Configura memoria
-
--  ```under construction```
-
----
 
 ## Uso del flag -watcher
 
-Il flag `-watcher` legge il contenuto di una cartella e lo sposta in una cartella di destinazione, poi carica tutto sul tracker.
+Il flag `-watcher` legge il contenuto di una cartella e lo sposta in una cartella di destinazione, poi carica tutto sul
+tracker.
 
 ### Come usare watcher
 
@@ -125,6 +94,7 @@ Il flag non accetta parametri.
 ```bash
 python start.py -watcher
 ```
+
 * watcher_path → configura percorso dove vengono scaricati i file
 
 * watcher_destination_path → configura percorso dove Unit3Dup sposta i file per caricarli sul tracker
@@ -136,10 +106,11 @@ Apri il file Unit3D.json con un editor di testo e imposta il parametro:
 ```WATCHER_INTERVAL```  ( in secondi)
 
 Assegna un percorso a piacere per questi due parametri:
+
 * ```watcher_path```
 * ```watcher_destination_path```
 
-Allo scadere di WATCHER_INTERVAL il bot esegue queste operazioni: 
+Allo scadere di WATCHER_INTERVAL il bot esegue queste operazioni:
 
 * Controlla la cartella watcher_path
 * Sposta tutti i file in watcher_destination_path

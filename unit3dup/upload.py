@@ -62,6 +62,7 @@ class UploadBot:
 
         elif tracker_response.status_code == 500:
             custom_console.bot_error_log(f"{self.__class__.__name__} HTTP 500 Internal Tracker Error\n")
+            pprint.pprint(self.tracker.data)
             custom_console.bot_error_log(self.content.file_name)
             exit()
 

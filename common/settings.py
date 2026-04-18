@@ -23,7 +23,7 @@ user_tags_file = "tags_list.json"
 user_sign_file = "sign_list.json"
 bane_file = "ban_list.json"
 
-version = "0.10.6"
+version = "0.10.10"
 
 if os.name == "nt":
     WATCHER_DESTINATION_PATH: Path = Path(
@@ -576,7 +576,7 @@ class Load:
                 "SIS_URL": "https://no_tracker.xyz",
                 "SIS_APIKEY": "no_key",
                 "SIS_PID": "no_key",
-                "PTT_URL": "https://no_tracker.xyz",
+                "PTT_URL": "https://polishtorrent.top/",
                 "PTT_APIKEY": "no_key",
                 "PTT_PID": "no_key",
                 "MULTI_TRACKER": ["itt","sis","ptt"],

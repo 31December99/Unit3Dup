@@ -165,6 +165,14 @@ class SearchTags(object):
         # /// Read from mediainfo
         updated_category = {}
         for category in self.tags_position:
+            if category == "source":
+                if 'source' not in self.tags_dict.keys():
+                    encode_settings = self.mediainfo_encode_settings()
+                    if encode_settings:
+                        updated_category.update({"source": "BluRay"})
+                    else:
+                        updated_category.update({"source": "WEB-DL"})
+
             if category == "acodec":
                 updated_category = self.mediainfo_audio(category=category)
 
@@ -268,6 +276,14 @@ class SearchTags(object):
         if codec_translated:
             return {category: codec_translated}
         return codec_translated
+
+    def mediainfo_encode_settings(self) -> str | None:
+        if self.mediafile.video_track:
+            for video in self.mediafile.video_track:
+                video_encode_settings = video.get("encoding_settings", None)
+                if video_encode_settings:
+                    return video_encode_settings
+        return None
 
     def mediainfo_hdr(self, category: str) -> dict:
         if self.mediafile.video_track:

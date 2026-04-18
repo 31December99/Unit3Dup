@@ -15,6 +15,7 @@ class MediaFile:
         self._video_info: list = []
         self._general_track: dict = {}
         self._audio_info: list = []
+        self._encoding_settings: str | None = None
 
         try:
             self.media_info = MediaInfo.parse(self.file_path)
@@ -172,6 +173,13 @@ class MediaFile:
     @property
     def info(self):
         return MediaInfo.parse(self.file_path, output="STRING", full=False)
+
+    @property
+    def encode_settings(self):
+        if not self._encoding_settings:
+            self._encoding_settings = self.video_track[0].get("encoding_settings", None)
+        return self._encoding_settings
+
 
     @property
     def is_interlaced(self) -> int | None:
