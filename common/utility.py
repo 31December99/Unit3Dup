@@ -31,7 +31,7 @@ class ManageTitles:
         "IT": "ITA",
         "DE": "GER",
         "FR": "FRA",
-        "ES": "SPA", "ES-ES": "SPA", "ES-MX": "SPA",
+        "ES": "SPA", "ES-ES": "SPA", "ES-MX": "SPA", "ES-419": "ESP",
         "BR": "BRA",
         "JP": "JPN",
         "CN": "CHN",
