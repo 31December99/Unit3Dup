@@ -17,6 +17,7 @@ hdr_map = {
     "HDR10": "HDR10",
     "BLU-RAY / HDR10": "HDR10",
     "HDR10 / HDR10": "HDR10",
+    "HDR10 / HDR10 / HDR10" : "HDR10",
     "HDR10 / HDR10+": "HDR10+",
     "HDR10 / HDR10 / HDR10+": "HDR10+",
     "SMPTE ST 2086": "HDR10",
