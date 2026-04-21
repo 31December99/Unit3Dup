@@ -77,6 +77,20 @@ class UploadBot:
         custom_console.rule()
         return {}, error_message
 
+    def resolution_id(self) -> int | None:
+        value = self.content.screen_size or self.content.resolution
+        _id = self.tracker_data.resolution.get(value)
+        if not _id:
+            custom_console.bot_error_log(f"Resolution ID {value} not found")
+        return _id
+
+    def category_id(self) -> int | None:
+        _id = self.tracker_data.category.get(self.content.category)
+        if not _id:
+            custom_console.bot_error_log(f"Category ID {self.content.category} not found")
+        return _id
+
+
     def data(self, show_id: int, imdb_id: int, tvdb_id: int, show_keywords_list: str,
              video_info: Video) -> Unit3d | None:
 
@@ -88,8 +102,6 @@ class UploadBot:
         self.tracker.data["keywords"] = show_keywords_list
         self.tracker.data["category_id"] = self.tracker_data.category.get(self.content.category)
         self.tracker.data["anonymous"] = int(config_settings.user_preferences.ANON)
-        self.tracker.data["resolution_id"] = self.tracker_data.resolution[self.content.screen_size] \
-            if self.content.screen_size else self.tracker_data.resolution[self.content.resolution]
         self.tracker.data["mediainfo"] = video_info.mediainfo
         self.tracker.data["description"] = video_info.description + self.sign
         self.tracker.data["sd"] = video_info.is_hd
@@ -98,6 +110,18 @@ class UploadBot:
         self.tracker.data["episode_number"] = (self.content.guess_episode if not self.content.torrent_pack else 0)
         self.tracker.data["personal_release"] = (int(config_settings.user_preferences.PERSONAL_RELEASE)
                                                  or int(self.cli.personal))
+
+        # skip upload if the key is missing
+        if self.category_id():
+            self.tracker.data["category_id"] = self.category_id()
+        else:
+            return None
+
+        if self.resolution_id():
+            self.tracker.data["resolution_id"] = self.resolution_id()
+        else:
+            return None
+
         return self.tracker
 
     def data_game(self, igdb: Game) -> Unit3d | None:
