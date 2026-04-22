@@ -110,8 +110,12 @@ class VideoManager:
                 unit3d_up = UploadBot(content=content, tracker_name=selected_tracker, cli=self.cli)
 
                 # Get the data
-                unit3d_up.data(show_id=db.video_id, imdb_id=db.imdb_id, tvdb_id=db.tvdb_id,
+                processed_data = unit3d_up.data(show_id=db.video_id, imdb_id=db.imdb_id, tvdb_id=db.tvdb_id,
                                show_keywords_list=db.keywords_list, video_info=video_info)
+
+                # Do not upload if an error occurs
+                if not processed_data:
+                    continue
 
                 # Don't upload if -noup is set to True
                 if self.cli.noup:
