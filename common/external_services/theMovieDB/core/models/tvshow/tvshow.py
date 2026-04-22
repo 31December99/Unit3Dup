@@ -38,6 +38,7 @@ class TvShow(Media):
     backdrop_path: str | None = None
     poster_path: str | None = None
     adult: bool = False
+    softcore:  str | None = None
 
     def get_title(self) -> str:
         return self.name
