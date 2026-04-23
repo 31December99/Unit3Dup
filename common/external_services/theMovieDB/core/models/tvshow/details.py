@@ -115,6 +115,7 @@ class TVShowDetails(Media):
     type: str
     vote_average: float
     vote_count: int
+    softcore: str | None = None
     languages: list[str] = field(default_factory=list)
     genres: list[Genre] = field(default_factory=list)
     backdrop_path: str | None = None
