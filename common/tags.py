@@ -358,47 +358,7 @@ class SearchTags(object):
         identify resolution based on Height and Width tolerance 5%
         """
         result = {'resolution': self.media.resolution}
-        video_height = int(self.mediafile.video_track[0].get('height', 0))
-        video_width = int(self.mediafile.video_track[0].get('width', 0))
-        print(f"VideoTrack : W{video_width} x H{video_height}")
         return result
-
-        # if self.mediafile.video_track:
-        #     video_height = int(self.mediafile.video_track[0].get('height', 0))
-        #     video_width = int(self.mediafile.video_track[0].get('width', 0))
-        #
-        #     print(f"VideoTrack : W{video_width} x H{video_height}")
-        #
-        #     # Calculate range 5%
-        #     def in_range(value, standard):
-        #         tol = standard * 0.05
-        #         return standard - tol <= value <= standard + tol
-        #
-        #     # /// UHD
-        #     if in_range(video_width, 3840) or in_range(video_height, 2160):
-        #         result[category] = 'UHD'
-        #         result['resolution'] = '2160p'
-        #     # /// Full HD
-        #     elif in_range(video_height, 1080) or in_range(video_width, 1920):
-        #         result[category] = 'FullHD'
-        #         result['resolution'] = '1080p'
-        #     # /// HD
-        #     elif in_range(video_height, 720) or in_range(video_width, 1280):
-        #         result[category] = 'HD'
-        #         result['resolution'] = '720p'
-        #     # /// SD 576p
-        #     elif in_range(video_height, 576) or in_range(video_width, 768):
-        #         result[category] = 'SD'
-        #         result['resolution'] = '576p'
-        #     # /// SD 480p
-        #     elif in_range(video_height, 480) or in_range(video_width, 640):
-        #         result[category] = 'SD'
-        #         result['resolution'] = '480p'
-        #     else:
-        #         result[category] = 'unknown'
-        #         result['resolution'] = f'{video_width}x{video_height}'
-        #
-        # return result
 
     @staticmethod
     def detect_releaser(name: str, signs_list: dict) -> str:
