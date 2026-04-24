@@ -63,6 +63,9 @@ class Bot:
         except PermissionError:
             custom_console.bot_error_log(f"Permission denied: {self.path}")
             return False
+        except FileNotFoundError:
+            custom_console.bot_error_log(f"Path not found: {self.path}")
+            return False
 
         # Exists
         if not os.path.exists(self.path):
