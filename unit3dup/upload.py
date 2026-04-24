@@ -78,7 +78,7 @@ class UploadBot:
         return {}, error_message
 
     def resolution_id(self) -> int | None:
-        value = self.content.screen_size or self.content.resolution
+        value = self.content.resolution
         _id = self.tracker_data.resolution.get(value)
         if not _id:
             custom_console.bot_error_log(f"Resolution ID {value} not found")

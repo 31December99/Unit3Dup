@@ -42,19 +42,6 @@ class CompareTitles:
             # always return true if it's a movie
             return True
 
-
-    # not used
-    def is_best_resolution(self) -> bool:
-        if self.tracker_file.screen_size:
-            self.tracker_screen_size = int(
-                self.tracker_file.screen_size.lower().replace("p", "")
-            )
-        if self.content_file.screen_size:
-            self.content_screen_size = int(
-                self.content_file.screen_size.lower().replace("p", "")
-            )
-        return False
-
     def process(self) -> bool:
         """
         Return True if they have the same year,seasons,title
