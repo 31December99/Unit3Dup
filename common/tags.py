@@ -17,7 +17,7 @@ hdr_map = {
     "HDR10": "HDR10",
     "BLU-RAY / HDR10": "HDR10",
     "HDR10 / HDR10": "HDR10",
-    "HDR10 / HDR10 / HDR10" : "HDR10",
+    "HDR10 / HDR10 / HDR10": "HDR10",
     "HDR10 / HDR10+": "HDR10+",
     "HDR10 / HDR10 / HDR10+": "HDR10+",
     "SMPTE ST 2086": "HDR10",
@@ -54,6 +54,11 @@ video_translate = {
 video_encoder_translate = {
     "X265": "x.265",
     "X264": "x.264",
+}
+
+TAG_NORMALIZE = {
+    "WEBDL": "WEB-DL",
+    "UHDRIP": "UHDRip",
 }
 
 
@@ -153,6 +158,10 @@ class SearchTags(object):
             regex = re.compile(r'(?<!\w)' + p + r'(?!\w)', re.IGNORECASE)
             matches = regex.findall(self.filename)
             if matches:
+                # Normalize Tag_list
+                normalized_tag = TAG_NORMALIZE.get(matches[0], None)
+                if normalized_tag:
+                    matches[0] = normalized_tag
                 self.tags_dict.setdefault(category, []).append(matches[0])
 
         # /// Tags with no categories
@@ -212,7 +221,6 @@ class SearchTags(object):
         else:
             se_str = self.media.pack
 
-
         self.tags_dict.update({'title': self.title})
         if self.year:
             self.tags_dict.update({'year': self.year})
@@ -232,6 +240,7 @@ class SearchTags(object):
         }
 
         new_title = self.build_title(tags_dict)
+
         return new_title
 
     def mediainfo_audio(self, category: str) -> dict:
