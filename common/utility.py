@@ -21,9 +21,13 @@ class ManageTitles:
     ]
 
     iso_3166_alpha3 = [
-        "ENG", "USA", "GBR", "ITA", "DEU", "GER", "FRA", "ESP", "SPA", "POR",
+        "ENG", "USA", "GBR", "ITA", "DEU", "GER", "FRA", "ESP", "SPA", "POR", "NLD",
         "BRA", "JPN", "CHN", "RUS", "PER", "NOR",
-        "SWE", "DAN", "POL", "HIN", "TUR", "ARA", "KOR", "VIE", "IND"
+        "SWE", "DAN", "POL", "HIN", "TUR", "ARA", "KOR", "VIE", "IND",
+
+        "GRE", "HEB", "RON", "UKR", "CZE", "HUN", "FIN", "ICE", "CAT", "EUS",
+        "URD", "KAZ", "UZB", "THA", "TAM", "TEL", "MAR", "BEN", "PAN",
+        "SWA", "AFR", "AMH", "YOR", "ZUL",
     ]
 
     iso_3166_alpha2_to_alpha3 = {
@@ -47,7 +51,35 @@ class ManageTitles:
         "AR": "ARA",
         "KO": "KOR",
         "VI": "VIE",
-        "ID": "IND"
+        "ID": "IND",
+        "NL": "NLD",
+        "NE": "NLD",
+        "DU": "NLD",
+
+        "EL": "GRE",
+        "HE": "HEB",
+        "RO": "RON",
+        "UK": "UKR",
+        "CZ": "CZE",
+        "HU": "HUN",
+        "FI": "FIN",
+        "IS": "ICE",
+        "CA": "CAT",
+        "EU": "EUS",
+        "UR": "URD",
+        "KK": "KAZ",
+        "UZ": "UZB",
+        "TH": "THA",
+        "TA": "TAM",
+        "TE": "TEL",
+        "MR": "MAR",
+        "BN": "BEN",
+        "PA": "PAN",
+        "SW": "SWA",
+        "AF": "AFR",
+        "AM": "AMH",
+        "YO": "YOR",
+        "ZU": "ZUL",
     }
 
     long_name = {
@@ -74,7 +106,36 @@ class ManageTitles:
         "ARABIC": "ARA",
         "KOREAN": "KOR",
         "VIETNAMESE": "VIE",
-        "INDONESIAN": "IND"
+        "INDONESIAN": "IND",
+        "NETHERLANDS": "NLD",
+        "DUTCH": "NLD",
+        "HOLLAND": "NLD",
+        "NETHERLANDS DUTCH": "NLD",
+
+        "GREEK": "GRE",
+        "HEBREW": "HEB",
+        "ROMANIAN": "RON",
+        "UKRAINIAN": "UKR",
+        "CZECH": "CZE",
+        "HUNGARIAN": "HUN",
+        "FINNISH": "FIN",
+        "ICELANDIC": "ICE",
+        "CATALAN": "CAT",
+        "BASQUE": "EUS",
+        "URDU": "URD",
+        "KAZAKH": "KAZ",
+        "UZBEK": "UZB",
+        "THAI": "THA",
+        "TAMIL": "TAM",
+        "TELUGU": "TEL",
+        "MARATHI": "MAR",
+        "BENGALI": "BEN",
+        "PUNJABI": "PAN",
+        "SWAHILI": "SWA",
+        "AFRIKAANS": "AFR",
+        "AMHARIC": "AMH",
+        "YORUBA": "YOR",
+        "ZULU": "ZUL",
     }
 
     @staticmethod
