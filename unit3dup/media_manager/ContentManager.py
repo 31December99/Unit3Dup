@@ -69,18 +69,17 @@ class ContentManager:
 
         # add category filter to the regex result caused by a possible substring (e.g., S06) in the whole path
         # and not part of the title
-        if media.category=='tv':
-            # Search for the first result (Sx) in self.path
-            torrent_pack = bool(re.search(r"(S\d+(?!.*E\d+))|(S\d+E\d+-E?\d+)", self.path))
-        else:
-            torrent_pack = False
+        match = re.search(r"(S\d+(?!.*E\d+))|(S\d+E\d+-E?\d+)", self.path) if media.category == 'tv' else None
+        pack = match.group() if match else None
+        torrent_pack = bool(match)
 
         if process:
             media.file_name = self.file_name
             media.torrent_name = self.torrent_name
             media.size = self.size
-            media.metainfo = self.meta_info
             media.torrent_pack = torrent_pack
+            media.pack = pack
+            media.metainfo = self.meta_info
             media.doc_description = self.doc_description
             media.game_nfo = self.game_nfo
 
@@ -90,12 +89,6 @@ class ContentManager:
             media.tmdb_id = self.tmdb_id
             media.igdb_id = self.igdb_id
             media.display_name = self.display_name
-
-            # # Add language to the title from the media file when it's absent
-            # if media.category == 'tv':
-            #     for found_languages in media.audio_languages:
-            #         if found_languages not in media.display_name.upper():
-            #             media.display_name = f"{media.display_name}  {found_languages}"
 
             return media
         else:

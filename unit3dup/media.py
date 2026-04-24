@@ -35,7 +35,7 @@ class Media:
         self._file_name: str | None = None
         self._display_name: str | None = None
         self._category: int | None = None
-        self._audio_languages: list[str]  = []
+        self._audio_languages: list[str] = []
         self._media_file: MediaFile | None = None
         self._languages: list[str] | None = None
         self._resolution: str | None = None
@@ -46,6 +46,7 @@ class Media:
         self._size: int = 0
         self._metainfo: str | None = None
         self._torrent_pack: bool = False
+        self._pack: str | None = None
         self._doc_description: str | None = None
         self._game_nfo: str | None = None
         self._tmdb_id: int | None = None
@@ -65,7 +66,6 @@ class Media:
         if not self._title_sanitized:
             self._title_sanitized = ManageTitles.clean_tags(self.title)
         return self._title_sanitized
-
 
     @property
     def crew_list(self) -> list['str']:
@@ -144,6 +144,14 @@ class Media:
     @torrent_pack.setter
     def torrent_pack(self, value):
         self._torrent_pack = value
+
+    @property
+    def pack(self) -> str | None:
+        return self._pack
+
+    @pack.setter
+    def pack(self, value):
+        self._pack = value
 
     @property
     def tmdb_id(self) -> int:
