@@ -159,7 +159,10 @@ class MediaFile:
         for track in self.audio_track:  # + self.subtitle_track:
             lang = track.get("language", "Unknown")
             if lang != "Unknown":
-                languages.add(ManageTitles.convert_iso(lang)[0])
+                try:
+                    languages.add(ManageTitles.convert_iso(lang)[0])
+                except IndexError:
+                  print(f"Warning : {lang} is not available")
         return list(languages) if len(languages) > 0 else ["not found"]
 
     @property
