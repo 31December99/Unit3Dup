@@ -1,4 +1,4 @@
-# Benvenuto in Unit3dUp Docs 0.10.12
+# Benvenuto in Unit3dUp Docs 0.0.1
 
 Unit3Dup è un bot scritto in python per caricare i vostri torrents sui trackers UNIT3D
 
