@@ -14,6 +14,7 @@ from pathlib import Path
 from common.trackers.signs_list import SIGNS_LIST
 from common.trackers.tags_list import TAGS_LIST
 from common.trackers.ban_list import BAN_LIST
+from common.trackers import tracker_list
 
 from common.utility import ManageTitles
 from common import trackers
@@ -203,6 +204,11 @@ class Validate:
         Validates string
         """
         if isinstance(value, str) and value.strip() or 'no_key' in value.lower():
+            return value
+
+        # Dont exit if the field_name is a tracker name
+        tracker_from_field_name = field_name.split('_')[0]
+        if tracker_from_field_name in tracker_list:
             return value
         print(f"-> Please Fix '{field_name}' ['{value}'] in settings.json")
         exit(1)

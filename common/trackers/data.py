@@ -30,6 +30,15 @@ trackers_api_data = {
             "announce": f"{config_settings.tracker_config.PTT_URL}/announce/{config_settings.tracker_config.PTT_PID}",
             "source": "PolishTorrent",
         }
+    ,
+    'AST':
+        {
+            "url": config_settings.tracker_config.AST_URL,
+            "api_key": config_settings.tracker_config.AST_APIKEY,
+            "pass_key": config_settings.tracker_config.AST_PID,
+            "announce": f"{config_settings.tracker_config.AST_URL}/announce/{config_settings.tracker_config.AST_PID}",
+            "source": "AST",
+        }
 
 }
 
