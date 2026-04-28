@@ -334,8 +334,6 @@ class Media:
                     return "720p"
                 elif width >= 960:
                     return "576p"
-                elif width >= 720:
-                    return "480p"
                 else:
                     return f"{self.mediafile.video_height}p"
         return None
