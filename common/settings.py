@@ -23,7 +23,7 @@ user_tags_file = "tags_list.json"
 user_sign_file = "sign_list.json"
 bane_file = "ban_list.json"
 
-version = "0.10.19"
+version = "0.11.0"
 
 if os.name == "nt":
     WATCHER_DESTINATION_PATH: Path = Path(
@@ -75,6 +75,9 @@ class TrackerConfig(BaseModel):
     PTT_URL: str
     PTT_APIKEY: str | None = None
     PTT_PID: str | None = None
+    AST_URL: str
+    AST_APIKEY: str | None = None
+    AST_PID: str | None = None
     MULTI_TRACKER: list[str] | None = None
     TMDB_APIKEY: str | None = None
     TVDB_APIKEY: str | None = None
@@ -417,7 +420,7 @@ class Config(BaseModel):
                     section[field] = Validate.pid(value=section[field], field_name=field,
                                                   multi_trackers=section['MULTI_TRACKER'])
 
-                elif field in ['ITT', 'SIS', 'PTT']:
+                elif field in ['ITT', 'SIS', 'PTT', 'AST']:
                     section[field] = Validate.dict(value=section[field], field_name=field)
                 elif field in ['MULTI_TRACKER']:
                     section[field] = Validate.validate_multi_tracker(multi_tracker_list=section[field])
@@ -576,10 +579,13 @@ class Load:
                 "SIS_URL": "https://no_tracker.xyz",
                 "SIS_APIKEY": "no_key",
                 "SIS_PID": "no_key",
-                "PTT_URL": "https://polishtorrent.top/",
+                "PTT_URL": "https://polishtorrent.top",
                 "PTT_APIKEY": "no_key",
                 "PTT_PID": "no_key",
-                "MULTI_TRACKER": ["itt","sis","ptt"],
+                "AST_URL": "https://https://arabicsource.net",
+                "AST_APIKEY": "no_key",
+                "AST_PID": "no_key",
+                "MULTI_TRACKER": ["itt","sis","ptt","ast"],
                 "TMDB_APIKEY": "no_key",
                 "TVDB_APIKEY": "no_key",
                 "IMGBB_KEY": "no_key",
