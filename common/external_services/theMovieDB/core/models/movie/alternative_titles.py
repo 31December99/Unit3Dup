@@ -2,6 +2,7 @@
 
 from dataclasses import dataclass, field
 from common.external_services import logger
+from typing import Any
 import json
 
 
@@ -19,7 +20,7 @@ class Title:
         self.logger = logger.getChild(self.__class__.__name__)
 
     @staticmethod
-    def from_data(data: dict[str, any]) -> "Title | None":
+    def from_data(data: dict[str, Any]) -> "Title | None":
         try:
             return Title(
                 iso_3166_1=data["iso_3166_1"],

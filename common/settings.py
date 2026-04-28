@@ -23,7 +23,7 @@ user_tags_file = "tags_list.json"
 user_sign_file = "sign_list.json"
 bane_file = "ban_list.json"
 
-version = "0.10.15"
+version = "0.10.19"
 
 if os.name == "nt":
     WATCHER_DESTINATION_PATH: Path = Path(
@@ -626,7 +626,7 @@ class Load:
                                         "multi", "acodec", "channels", "flag", "subtitle", "hdr", "vcodec",
                                         "video_encoder"],
 
-                "TAGS_POSITION_SERIE": ["title", "year", "season", "version", "resolution", "uhd", "platform", "source",
+                "TAGS_POSITION_SERIE": ["title", "season", "version", "resolution", "uhd", "platform", "source",
                                         "remux",
                                         "multi", "acodec", "channels", "flag", "subtitle", "hdr", "vcodec",
                                         "video_encoder"],

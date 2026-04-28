@@ -60,9 +60,8 @@ class UserContent:
             return True
 
         # If an audio lang exists in the preferred list
-        if any(item in content.audio_languages for item in preferred_lang_to_iso):
+        if any(item in preferred_lang_to_iso for item in content.audio_languages):
             return True
-
 
         custom_console.bot_log(f"'{content.file_name}'")
         custom_console.bot_warning_log(

@@ -35,7 +35,7 @@ class Media:
         self._file_name: str | None = None
         self._display_name: str | None = None
         self._category: int | None = None
-        self._audio_languages: list[str]  = []
+        self._audio_languages: list[str] = []
         self._media_file: MediaFile | None = None
         self._languages: list[str] | None = None
         self._resolution: str | None = None
@@ -46,6 +46,7 @@ class Media:
         self._size: int = 0
         self._metainfo: str | None = None
         self._torrent_pack: bool = False
+        self._pack: str | None = None
         self._doc_description: str | None = None
         self._game_nfo: str | None = None
         self._tmdb_id: int | None = None
@@ -65,7 +66,6 @@ class Media:
         if not self._title_sanitized:
             self._title_sanitized = ManageTitles.clean_tags(self.title)
         return self._title_sanitized
-
 
     @property
     def crew_list(self) -> list['str']:
@@ -144,6 +144,14 @@ class Media:
     @torrent_pack.setter
     def torrent_pack(self, value):
         self._torrent_pack = value
+
+    @property
+    def pack(self) -> str | None:
+        return self._pack
+
+    @pack.setter
+    def pack(self, value):
+        self._pack = value
 
     @property
     def tmdb_id(self) -> int:
@@ -236,15 +244,6 @@ class Media:
         return self._source
 
     @property
-    def screen_size(self):
-        if not self._screen_size:
-            screen_split = self.title_sanitized.split(" ")
-            for screen in screen_split:
-                if screen in System.RESOLUTION_labels:
-                    self._screen_size = screen
-        return self._screen_size
-
-    @property
     def audio_codec(self):
         if not self._audio_codec:
             self._audio_codec = self.guess_filename.audio_codec
@@ -323,38 +322,30 @@ class Media:
         return self._languages
 
     @property
+    def _resolution2(self):
+        if self.mediafile:
+            width = int(self.mediafile.video_width)
+            if self.mediafile.video_width:
+                if width >= 3200:
+                    return "2160p"
+                elif width >= 1600:
+                    return "1080p"
+                elif width >= 1100:
+                    return "720p"
+                elif width >= 960:
+                    return "576p"
+                elif width >= 720:
+                    return "480p"
+                else:
+                    return f"{self.mediafile.video_height}p"
+        return None
+
+    @property
     def resolution(self):
         if not self._resolution:
             if self.mediafile:
-                # The resolution from the mediainfo not always mach those in tracker data
-                # so we apply the difference between 'x' (tracker resolution in set) and the video_height
-                # do it for each value in resolution_values and return the min among all values
-                # example: height = 1000...
-                # For 720: abs(720 - 1000) = 280
-                # For 1080: abs(1080 - 1000) = 80
-                # -> get 1080
-
-                if self.mediafile.video_height:
-                    closest_resolution = min(
-                        System.RESOLUTIONS,
-                        key=lambda x: abs(int(x) - int(self.mediafile.video_height)),
-                    )
-
-                    # Get scan type: progressive or interlaced
-                    scan_type = self.mediafile.video_scan_type
-                    if scan_type:
-                        if scan_type.lower() == "progressive":
-                            closest_resolution = f"{closest_resolution}p"
-                        else:
-                            closest_resolution = f"{closest_resolution}i"
-                    else:
-                        # else read the interlaced field..
-                        if self.mediafile.is_interlaced:
-                            closest_resolution = f"{closest_resolution}i"
-                        else:
-                            closest_resolution = f"{closest_resolution}p"
-
-                    self._resolution = closest_resolution
+                if self.mediafile.video_width:
+                    self._resolution = self._resolution2
                 else:
                     custom_console.bot_error_log(
                         f"'{self.__class__.__name__}' Video Height resolution not found in {self.file_name}"
@@ -368,6 +359,55 @@ class Media:
                 self._resolution = System.NO_RESOLUTION
 
         return self._resolution
+
+    # @property
+    # def resolution(self):
+    #     if not self._resolution:
+    #         if self.mediafile:
+    #             width = self.mediafile.video_width
+    #
+    #             # The resolution from the mediainfo not always mach those in tracker data
+    #             # so we apply the difference between 'x' (tracker resolution in set) and the video_height
+    #             # do it for each value in resolution_values and return the min among all values
+    #             # example: height = 1000...
+    #             # For 720: abs(720 - 1000) = 280
+    #             # For 1080: abs(1080 - 1000) = 80
+    #             # -> get 1080
+    #
+    #             if self.mediafile.video_height:
+    #                 closest_resolution = min(
+    #                     System.RESOLUTIONS,
+    #                     key=lambda x: abs(int(x) - int(self.mediafile.video_height)),
+    #                 )
+    #
+    #                 # Get scan type: progressive or interlaced
+    #                 scan_type = self.mediafile.video_scan_type
+    #                 if scan_type:
+    #                     if scan_type.lower() == "progressive":
+    #                         closest_resolution = f"{closest_resolution}p"
+    #                     else:
+    #                         closest_resolution = f"{closest_resolution}i"
+    #                 else:
+    #                     # else read the interlaced field..
+    #                     if self.mediafile.is_interlaced:
+    #                         closest_resolution = f"{closest_resolution}i"
+    #                     else:
+    #                         closest_resolution = f"{closest_resolution}p"
+    #
+    #                 self._resolution = closest_resolution
+    #             else:
+    #                 custom_console.bot_error_log(
+    #                     f"'{self.__class__.__name__}' Video Height resolution not found in {self.file_name}"
+    #                 )
+    #                 custom_console.bot_error_log(
+    #                     f"'{self.__class__.__name__}' Set to default value {System.NO_RESOLUTION}"
+    #                 )
+    #                 self._resolution = System.NO_RESOLUTION
+    #         else:
+    #             # Game
+    #             self._resolution = System.NO_RESOLUTION
+    #
+    #     return self._resolution
 
     @staticmethod
     def _crew(filename: str) -> list[str]:

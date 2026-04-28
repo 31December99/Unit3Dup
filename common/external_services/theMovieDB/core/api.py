@@ -92,16 +92,6 @@ class TvEndpoint:
 
 
 class TmdbAPI(MyHttp):
-    params = {
-        "api_key": config.TMDB_APIKEY,
-        "language": "it-IT",
-    }
-
-    # Mappatura automatica degli endpoint
-    ENDPOINTS = {
-        'movie': MovieEndpoint,
-        'tv': TvEndpoint,
-    }
 
     def __init__(self):
         """
@@ -110,6 +100,22 @@ class TmdbAPI(MyHttp):
         headers = Agent.headers()
         super().__init__(headers)
         self.http_client = self.session
+
+        if config_settings.user_preferences.PREFERRED_LANG.lower() == 'all':
+            selected_language = "en-EN"
+        else:
+            selected_language = config_settings.user_preferences.PREFERRED_LANG
+
+        self.params = {
+            "api_key": config.TMDB_APIKEY,
+            "language": f"{selected_language.lower()}-{selected_language.upper()}",  # "it-IT",
+        }
+
+        # Mappatura automatica degli endpoint
+        self.ENDPOINTS = {
+            'movie': MovieEndpoint,
+            'tv': TvEndpoint,
+        }
 
     def _search(self, query: str, category: str) -> list[T] | None:
         """
@@ -187,7 +193,7 @@ class TmdbAPI(MyHttp):
         :param endpoint: request endpoint
         :return: list of T or None
         """
-        params = {**TmdbAPI.params, "query": endpoint['query']}
+        params = {**self.params, "query": endpoint['query']}
         response = self.get_url(endpoint['url'], params=params)
 
         if response:
@@ -252,9 +258,10 @@ class DbOnline(TmdbAPI):
             # Search for alternative title
             for result in results:
                 alternative = self.alternative(media_id=result.id, category=self.category)
-                for alt in alternative:
-                    if ManageTitles.fuzzyit(str1=self.query, str2=alt.title) > 95:
-                        return result
+                if alternative:
+                    for alt in alternative:
+                        if ManageTitles.fuzzyit(str1=self.query, str2=alt.title) > 95:
+                            return result
         return False
 
     def results_in_string(self, tmdb_id: int, imdb_id: int, tvdb_id: int) -> MediaResult:

@@ -29,6 +29,7 @@ def main():
     custom_console.bot_log(f"[Images,Tmdb cache] '{config.user_preferences.CACHE_PATH}'")
     custom_console.bot_log(f"[Watcher] '{config.user_preferences.WATCHER_PATH}'")
     custom_console.bot_log(f"[Watcher] '{config.user_preferences.WATCHER_DESTINATION_PATH}'")
+    custom_console.bot_log(f"[Preferred Language] '{config.user_preferences.PREFERRED_LANG}'")
     print()
 
     # /// Initialize command line interface
@@ -56,6 +57,7 @@ def main():
         if tracker.get_alive(alive=True, perPage=1):
             custom_console.bot_log(f"Tracker -> '{cli.args.tracker.upper()}' Online")
             tracker_name_list = [cli.args.tracker.upper()]
+
 
     # Send content to the multi_tracker list
     if cli.args.mt:

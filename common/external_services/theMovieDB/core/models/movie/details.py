@@ -70,6 +70,7 @@ class MovieDetails(Media):
     video: bool
     vote_average: float
     vote_count: int
+    softcore: str | None = None
 
     def get_title(self) -> str:
         return self.title

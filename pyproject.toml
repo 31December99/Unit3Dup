@@ -5,14 +5,14 @@ build-backend = "setuptools.build_meta"
 [project]
 dynamic = ["dependencies"]
 name = "Unit3Dup"
-version = "0.10.15"
+version = "0.10.19"
 description = "An uploader for the Unit3D torrent tracker"
 readme = "README.rst"
 requires-python = ">=3.10"
-license =  "MIT"
+license = "MIT"
 
 authors = [
-  { name = "Parzival" }
+    { name = "Parzival" }
 ]
 
 [project.urls]
@@ -21,10 +21,10 @@ Homepage = "https://github.com/31December99/Unit3Dup"
 
 [tool.setuptools.packages.find]
 where = ["."]
-exclude = ["tests", "docs","http_cache","venv*"]
+exclude = ["tests", "docs", "http_cache", "venv*"]
 
 [tool.setuptools.dynamic]
-dependencies = {file = ["requirements.txt"]}
+dependencies = { file = ["requirements.txt"] }
 
 
 [project.scripts]
