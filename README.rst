@@ -78,7 +78,7 @@ RUN
 DOC
 ===
 
-Link `Unit3DUP <https://unit3dup.readthedocs.io/en/latest/index.html#>`_
+Commands list `Unit3Dup <https://31december99.github.io/Unit3Dup/commands/>`_
 
 
 ImageHost
