@@ -3,5 +3,6 @@
 from common.trackers.itt import itt_data
 from common.trackers.ptt import ptt_data
 from common.trackers.sis import sis_data
+from common.trackers.ast import ast_data
 
-tracker_list = {'ITT': itt_data, 'SIS': sis_data, 'PTT': ptt_data}
+tracker_list = {'ITT': itt_data, 'SIS': sis_data, 'PTT': ptt_data, 'AST': ast_data}

@@ -113,9 +113,11 @@ united by a shared passion for torrents and more
 +------------------+----------------------------+
 | **Trackers**     | **Description**            |
 +==================+============================+
-| ``ITT``          | https://itatorrents.xyz/   |
+| ``ITT``          | https://itatorrents.xyz    |
 |                  |                            |
-| ``PTT``          | https://polishtorrent.top/ |
+| ``PTT``          | https://polishtorrent.top  |
+|                  |                            |
+| ``AST``          | https://arabicsource.net   |
 +------------------+----------------------------+
 
 .. image:: https://img.shields.io/discord/1214696147600408698?label=Discord&logo=discord&style=flat
