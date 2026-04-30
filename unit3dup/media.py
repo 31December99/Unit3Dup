@@ -63,8 +63,7 @@ class Media:
 
     @property
     def title_sanitize_tags(self) -> str:
-        if not self._title_sanitized:
-            self._title_sanitized = ManageTitles.clean_tags(self.title)
+        self._title_sanitized = ManageTitles.clean_tags(self.title)
         return self._title_sanitized
 
     @property

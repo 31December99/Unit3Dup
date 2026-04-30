@@ -317,6 +317,9 @@ class ManageTitles:
         # Remove v version
         filename_sanitized = re.sub(r"v\d+(?:[ .]\d+)*", "", filename_sanitized).strip()
 
+        # Remove '꞉:'
+        filename_sanitized = re.sub(r"[꞉:]", "", filename_sanitized).strip()
+
         # remove spaces, tab, newline
         filename_sanitized = re.sub(r"\s+", " ", filename_sanitized)
 
