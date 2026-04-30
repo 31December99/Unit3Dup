@@ -159,7 +159,7 @@ class SearchTags(object):
             matches = regex.findall(self.filename)
             if matches:
                 # Normalize Tag_list
-                normalized_tag = TAG_NORMALIZE.get(matches[0], None)
+                normalized_tag = TAG_NORMALIZE.get(matches[0].upper(), None)
                 if normalized_tag:
                     matches[0] = normalized_tag
                 self.tags_dict.setdefault(category, []).append(matches[0])
