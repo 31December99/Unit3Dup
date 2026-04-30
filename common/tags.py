@@ -357,8 +357,17 @@ class SearchTags(object):
         """
         identify resolution based on Height and Width tolerance 5%
         """
-        result = {'resolution': self.media.resolution}
-        return result
+        mapping = {
+            '2160p': 'UHD',
+            '1080p': 'FullHD',
+            '720p': 'HD',
+            '576p': 'SD',
+            '480p': 'SD',
+        }
+        return {
+            'resolution': self.media.resolution,
+            'uhd': mapping.get(self.media.resolution, 'unknown')
+        }
 
     @staticmethod
     def detect_releaser(name: str, signs_list: dict) -> str:
