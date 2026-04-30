@@ -58,6 +58,7 @@ video_encoder_translate = {
 
 TAG_NORMALIZE = {
     "BLURAY": "BluRay",
+    "WEB": "WEB-DL",
     "WEBDL": "WEB-DL",
     "WEBMUX": "WEBMux",
     "BDRIP": "BDRip",
