@@ -114,6 +114,8 @@ SIGNS_LIST = {
     "ITT": "releaser",
     "JEDDAK-MIRCREW": "releaser",
     "JOHNSEED": "releaser",
+    "K-Z": "releaser",
+    "KARIDO": "releaser",
     "KINGOFROME": "releaser",
     "KIN": "releaser",
     "KISSY": "releaser",
