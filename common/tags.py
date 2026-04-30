@@ -57,7 +57,11 @@ video_encoder_translate = {
 }
 
 TAG_NORMALIZE = {
+    "BLURAY": "BluRay",
     "WEBDL": "WEB-DL",
+    "WEBMUX": "WEBMux",
+    "BDRIP": "BDRip",
+    "WEBRIP": "WEBRip",
     "UHDRIP": "UHDRip",
 }
 
