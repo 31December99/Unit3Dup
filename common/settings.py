@@ -588,7 +588,7 @@ class Load:
                 "PTT_URL": "https://polishtorrent.top",
                 "PTT_APIKEY": "no_key",
                 "PTT_PID": "no_key",
-                "AST_URL": "https://https://arabicsource.net",
+                "AST_URL": "https://arabicsource.net",
                 "AST_APIKEY": "no_key",
                 "AST_PID": "no_key",
                 "MULTI_TRACKER": ["itt","sis","ptt","ast"],
