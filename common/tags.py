@@ -321,7 +321,6 @@ class SearchTags(object):
                                 if 'remux' in remux.lower():
                                     del self.tags_dict[remux.lower()]
                                     self.tags_dict.update({'source': 'ENCODE'})
-                                    self.media.file_name = self.media.file_name.replace(remux, 'ENCODE')
                                     custom_console.bot_warning_log(
                                         f"<> Warning: Detected REMUX with {other_hdr_format}")
                                     hdr = f"DOLBY VISION {hdr}"
