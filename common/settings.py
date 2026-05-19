@@ -24,7 +24,7 @@ user_tags_file = "tags_list.json"
 user_sign_file = "sign_list.json"
 bane_file = "ban_list.json"
 
-version = "0.11.5"
+version = "0.11.8"
 
 if os.name == "nt":
     WATCHER_DESTINATION_PATH: Path = Path(
@@ -588,7 +588,7 @@ class Load:
                 "PTT_URL": "https://polishtorrent.top",
                 "PTT_APIKEY": "no_key",
                 "PTT_PID": "no_key",
-                "AST_URL": "https://https://arabicsource.net",
+                "AST_URL": "https://arabicsource.net",
                 "AST_APIKEY": "no_key",
                 "AST_PID": "no_key",
                 "MULTI_TRACKER": ["itt","sis","ptt","ast"],
