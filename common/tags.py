@@ -82,7 +82,7 @@ class SearchTags(object):
         self.title = title
         self.year = year
         self.tags_dict = {}
-        self.tags_position = tags_position
+
         self.TAG_TYPES: dict = tags_list
         self.SIGNS_LIST: dict = sign_list
         self.BAN_LIST: dict = ban_list
