@@ -116,3 +116,140 @@ Allo scadere di WATCHER_INTERVAL il bot esegue queste operazioni:
 * Sposta tutti i file in watcher_destination_path
 * Processa i file e li carica sul tracker
 
+## Quick start...
+
+Apri il file UNIT3Dbot.json
+
+setta URL e APIKEY di uno o di tutti i trackers riportati 
+ 
+       "ITT_URL": "https://...",
+       "ITT_APIKEY": "xxxxxxxxxxxxxxxxxxxxxxxxxx",
+       .... 
+                
+
+inserire l'api_key per ogni database online
+        
+        "TMDB_APIKEY": "xxxxxxxxxxxx",
+        "TVDB_APIKEY": "yyyyyyyyyyyy",
+
+
+inserisci almeno uno (consigliati due) api_key per screenshot
+        
+        "IMGBB_KEY": "zzzzzzzzzzzz",
+
+
+inserisci almeno i dati di un client torrent
+
+        "QBIT_USER": "admin",
+        "QBIT_PASS": "tua_passoword",
+        "QBIT_HOST": "127.0.0.1 o altro ip accessibile",
+        "QBIT_PORT": "9000 o altra porta disponibile",
+
+
+test : ```unit3dup -b -u <file path>```
+
+        unit3dup: il nome del bot 
+        -b: non utilizza il tuo filename come titolo del torrent ma lo builda
+        -u: unico file
+        <file path> il percorso del tuo file, nome del file compreso..
+
+Fine
+
+------
+
+## HOW TO
+
+Caricare un file ?
+        
+        Aggiungi -u <file path> vedi sopra
+
+Caricare una cartella ?
+        
+        Aggiungi -f <foder path>
+
+Autobuild nome del torrent ?
+
+        Il bot leggerà da mediainfo e cercherà di costruire il nome del torrent
+        ovvero il nome che apparirà...Sul tracker
+        Non rinomina il file.
+        
+        Aggiungi -b
+        
+Cos'è l'autobuild ?
+
+        Il bot leggerà da mediainfo e cercherà di costruire il nome del torrent
+        ovvero il nome che apparirà...Sul tracker
+        Le informazioni nel titolo sono chiamate TAG.
+        
+Come rispetto la convenzione dei nomi con l'autobuild ?
+        
+        Nel file di configurazione cerca :
+        
+        TAGS_POSITION_MOVIE
+        
+        TAGS_POSITION_SERIE
+        
+        Contengono l'elenco delle tag che processa il bot divisi per serie e movie
+        La precedenza fra le tag non è altro che la precedenza nella lista
+
+Come escludo una o più Tag dall'autobuild ?
+        
+        Apri il file ban_list.json :
+
+        Devi aggiungere la TAG che ti interessa bannare dall'autobuild
+        nell'elenco dei bannati
+
+        esempio se vuoi bannare 'video_encoder'
+        scrivi:
+        {
+            "video_encoder": "banned"
+        }
+        
+        se vuoi bannare vcodec:
+        {
+            "vcodec": "banned"
+        }
+
+        se vuoi bannarli entrambi:
+        {
+            "vcodec": "banned",
+            "video_encoder": "banned"
+        }
+
+Posso caricare su più trackers ?
+
+        se rientrano nelle rules..
+        Aggiungi -mt
+
+il flag -mt su quali trackers caricherà i torrents ?
+
+        dipende sempre dalla configurazione
+        Nel file cerca: 
+        "MULTI_TRACKER": [
+            "itt",
+            "sis",
+            "ast"
+        ],
+        
+        Tutti quelli presenti nell'elenco sono attivi ma assicurati
+        di aver prima configurato URL e API_KEY
+        
+----
+to be continued...
+
+    
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
