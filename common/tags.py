@@ -82,7 +82,7 @@ class SearchTags(object):
         self.title = title
         self.year = year
         self.tags_dict = {}
-        self.tags_position = tags_position
+
         self.TAG_TYPES: dict = tags_list
         self.SIGNS_LIST: dict = sign_list
         self.BAN_LIST: dict = ban_list
@@ -117,6 +117,11 @@ class SearchTags(object):
         return tag_esc
 
     @staticmethod
+    def normalize_remux(tag: str) -> str:
+        tag_esc = re.escape(tag)
+        return tag_esc
+
+    @staticmethod
     def normalize_video_encoder(tag: str) -> str:
         tag_esc = re.escape(tag)
         tag_esc = re.sub(r'([A-Z])(\d+)', r'\1[._-]?\2', tag_esc)
@@ -139,7 +144,7 @@ class SearchTags(object):
         patterns = []
 
         # Remove banned items from categories
-        self.tags_position = [x for x in self.tags_position if x not in self.BAN_LIST]
+        self.tags_position = [x.lower() for x in self.tags_position if x not in self.BAN_LIST]
 
         # loop sorted TAG_TYPES dictionary
         for i, (tag, category) in enumerate(
@@ -149,6 +154,8 @@ class SearchTags(object):
                 norm = self.normalize_version_tag(tag)
             elif category == "platform":
                 norm = self.normalize_platform_tag(tag)
+            elif category == "remux":
+                norm = self.normalize_remux(tag)
             elif category == "source":
                 norm = self.normalize_sources(tag)
             elif category == "video_encoder":
@@ -180,7 +187,14 @@ class SearchTags(object):
         # /// Read from mediainfo
         updated_category = {}
         for category in self.tags_position:
-            if category == "acodec":
+            if category == "remux":
+                remux_tags = self.tags_dict.get('remux', None)
+                if remux_tags:
+                    if not any('remux' in tag.lower() for tag in remux_tags):
+                        remux_tags.append('REMUX')
+                        self.tags_dict.update({'remux': remux_tags})
+
+            elif category == "acodec":
                 updated_category = self.mediainfo_audio(category=category)
 
             elif category == "vcodec":
@@ -259,7 +273,6 @@ class SearchTags(object):
                     ch = {2: "2.0", 6: "5.1", 8: "7.1"}.get(channel_s, "")
                     if f"{codec_translated} {ch} {atmos}".strip() not in audio_codecs:
                         audio_codecs.append(f"{codec_translated} {ch} {atmos}".strip())
-                    # print(f"Mediainfo {other_format} -> {codec_translated} {ch} {atmos}")
 
                 # Add flags
                 for l in audio.get('other_language', []):
@@ -301,12 +314,8 @@ class SearchTags(object):
 
                 # Check hdr
                 if hdr_format_commercial:
-                    # print(f"hdr_format_commercial: {hdr_format_commercial}")
-                    # print(f"hdr_format: {hdr_format}")
                     hdr = ''
                     if hdr_format_commercial.upper() in hdr_map:
-                        # print(
-                        #     f"hdr_format_commercial: {hdr_format_commercial} -> Tag: {hdr_map[hdr_format_commercial]}")
                         hdr = hdr_map[hdr_format_commercial.upper()]
                         # Check dolby vision
                     if hdr not in hdr_map:
@@ -315,16 +324,14 @@ class SearchTags(object):
                     if 'DOLBY VISION' in hdr_format_commercial.upper() or 'DOLBY VISION' in hdr_format.upper():
                         # Search for fake remux
                         if any("dvhe.08" in s or "Profile 8" in s for s in other_hdr_format):
-                            remux = self.tags_dict.get('remux', '')
-                            if remux:
-                                remux = remux[0]
-                                if 'remux' in remux.lower():
-                                    del self.tags_dict[remux.lower()]
-                                    self.tags_dict.update({'source': 'ENCODE'})
-                                    custom_console.bot_warning_log(
-                                        f"<> Warning: Detected REMUX with {other_hdr_format}")
-                                    hdr = f"DOLBY VISION {hdr}"
-                                    return {category: f"{hdr_map.get(hdr, '*HDR')}"}
+                            if self.tags_dict.get('remux', ''):
+                                remux = self.tags_dict.get('remux', '')
+                                remux.append('HYBRID')
+                                self.tags_dict.update({'remux': remux})
+                                custom_console.bot_warning_log(
+                                    f"<> Warning: HYBRID REMUX with {other_hdr_format}")
+                                hdr = f"DOLBY VISION {hdr}"
+                                return {category: f"{hdr_map.get(hdr, '*HDR')}"}
 
                         hdr = f"DOLBY VISION {hdr}"
                     return {category: hdr_map.get(hdr, '*HDR')}
