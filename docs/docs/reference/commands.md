@@ -1,83 +1,83 @@
-# Tutti i comandi
+# All commands
 
-Sinossi:
+Synopsis:
 
 ```text
-unit3dup [opzioni]
+unit3dup [options]
 ```
 
-I flag di upload si combinano tra loro (es. `-mt -b -u "<file>"`); i flag di ricerca si combinano con i filtri. Ogni flag esiste anche in forma lunga (`-u` / `--upload`).
+Upload flags combine with each other (e.g. `-mt -b -u "<file>"`); search flags combine with the filters. Every flag also has a long form (`-u` / `--upload`).
 
-## Configurazione
+## Configuration
 
-| Flag | Argomento | Descrizione |
+| Flag | Argument | Description |
 |---|---|---|
-| `-check` | — | Controlla i file di configurazione e l'ambiente |
+| `-check` | — | Checks the configuration files and the environment |
 
 ## Upload
 
-| Flag | Argomento | Descrizione |
+| Flag | Argument | Description |
 |---|---|---|
-| `-u`, `--upload` | percorso file | Carica un [singolo file](../usage/upload.md#-u-un-singolo-file) |
-| `-f`, `--folder` | percorso cartella | Carica una [cartella](../usage/upload.md#-f-una-cartella) come unico torrent |
-| `-scan` | percorso | Processa [tutto il contenuto](../usage/upload.md#-scan-tutto-il-contenuto-di-un-percorso) del percorso |
-| `-b`, `--buildtags` | — | [Ricostruisce titolo e tag](../usage/tags.md#-b-ricostruisci-il-titolo) dall'analisi del media |
-| `-reseed` | — | [Reseed](../usage/reseed.md): scarica dal tracker i torrent dei tuoi contenuti locali |
-| `-watcher` | — | Avvia il [watcher](../usage/watcher.md) (cartella monitorata) |
-| `-notitle` | "titolo" | [Titolo manuale](../usage/tags.md#titolo-manuale) per la ricerca TMDB |
-| `-tracker` | nome tracker | [Tracker di destinazione](../usage/multitracker.md#-tracker-un-tracker-specifico) (default: il primo di `MULTI_TRACKER`) |
-| `-mt` | — | Upload su [tutti i tracker](../usage/multitracker.md#-mt-tutti-i-tracker) configurati |
-| `-force` | categoria | Forza la categoria: `movie`, `tv`, `game`, `edicola` (senza argomento: `movie`) |
-| `-noseed` | — | Upload senza consegnare il torrent al client (niente seeding) |
-| `-noup` | — | Crea solo il `.torrent` nell'archivio, niente upload |
-| `-dup`, `--duplicate` | — | Controlla i duplicati sul tracker prima dell'upload |
-| `-personal` | — | Marca come personal release |
-| `-ftp` | — | [Browser FTP interattivo](../usage/ftp.md): scarica dal server remoto e carica |
+| `-u`, `--upload` | file path | Uploads a [single file](../usage/upload.md#-u-a-single-file) |
+| `-f`, `--folder` | folder path | Uploads a [folder](../usage/upload.md#-f-a-folder) as a single torrent |
+| `-scan` | path | Processes [everything](../usage/upload.md#-scan-everything-inside-a-path) inside the path |
+| `-b`, `--buildtags` | — | [Rebuilds title and tags](../usage/tags.md#-b-rebuild-the-title) from the media analysis |
+| `-reseed` | — | [Reseed](../usage/reseed.md): downloads from the tracker the torrents of your local content |
+| `-watcher` | — | Starts the [watcher](../usage/watcher.md) (monitored folder) |
+| `-notitle` | "title" | [Manual title](../usage/tags.md#manual-title) for the TMDB search |
+| `-tracker` | tracker name | [Destination tracker](../usage/multitracker.md#-tracker-one-specific-tracker) (default: the first in `MULTI_TRACKER`) |
+| `-mt` | — | Upload to [all configured trackers](../usage/multitracker.md#-mt-all-trackers) |
+| `-force` | category | Forces the category: `movie`, `tv`, `game`, `edicola` (no argument: `movie`) |
+| `-noseed` | — | Upload without handing the torrent to the client (no seeding) |
+| `-noup` | — | Creates the `.torrent` in the archive only, no upload |
+| `-dup`, `--duplicate` | — | Checks the tracker for duplicates before uploading |
+| `-personal` | — | Marks as personal release |
+| `-ftp` | — | [Interactive FTP browser](../usage/ftp.md): download from the remote server and upload |
 
-## Ricerca
+## Search
 
-| Flag | Argomento | Descrizione |
+| Flag | Argument | Description |
 |---|---|---|
-| `-sch`, `--search` | "testo" | [Cerca](../usage/search.md) torrent per titolo |
-| `-i`, `--info` | "testo" | Come `-sch` con informazioni dettagliate |
-| `-dmp`, `--dump` | — | Dump completo dei titoli del tracker (salvato in locale) |
-| `-db`, `--dbsave` | — | Salva i risultati della ricerca nel database locale |
-| `-up`, `--uploader` | "nome" | Torrent di un uploader |
-| `-d`, `--description` | "testo" | Cerca nelle descrizioni |
-| `-bd`, `--bdinfo` | "testo" | Mostra il BDInfo dei risultati |
-| `-m`, `--mediainfo` | "testo" | Mostra il MediaInfo dei risultati |
+| `-sch`, `--search` | "text" | [Searches](../usage/search.md) torrents by title |
+| `-i`, `--info` | "text" | Like `-sch` with detailed information |
+| `-dmp`, `--dump` | — | Full dump of the tracker titles (saved locally) |
+| `-db`, `--dbsave` | — | Saves the search results to the local database |
+| `-up`, `--uploader` | "name" | Torrents by uploader |
+| `-d`, `--description` | "text" | Searches inside descriptions |
+| `-bd`, `--bdinfo` | "text" | Shows the BDInfo of the results |
+| `-m`, `--mediainfo` | "text" | Shows the MediaInfo of the results |
 
-## Filtri
+## Filters
 
-| Flag | Argomento | Descrizione |
+| Flag | Argument | Description |
 |---|---|---|
-| `-st`, `--startyear` | anno | Dall'anno in poi |
-| `-en`, `--endyear` | anno | Fino all'anno |
-| `-type` | tipo | Tipo di contenuto |
-| `-res`, `--resolution` | risoluzione | Filtra per risoluzione |
-| `-file`, `--filename` | "nome" | Filtra per nome file |
-| `-se`, `--season` | numero | Stagione |
-| `-ep`, `--episode` | numero | Episodio |
-| `-tmdb` | ID | Per ID TMDB (con `-res`: combo titolo+risoluzione) |
-| `-imdb` | ID | Per ID IMDB |
-| `-tvdb` | ID | Per ID TVDB |
-| `-mal` | ID | Per ID MyAnimeList |
-| `-playid` | ID | Per playlist |
-| `-coll` | ID | Per collection |
-| `-free` | percentuale | Per percentuale freeleech |
-| `-al`, `--alive` | — | Solo torrent vivi |
-| `-dd`, `--dead` | — | Solo torrent morti |
-| `-dy`, `--dying` | — | Solo torrent morenti |
+| `-st`, `--startyear` | year | From this year on |
+| `-en`, `--endyear` | year | Up to this year |
+| `-type` | type | Content type |
+| `-res`, `--resolution` | resolution | Filter by resolution |
+| `-file`, `--filename` | "name" | Filter by file name |
+| `-se`, `--season` | number | Season |
+| `-ep`, `--episode` | number | Episode |
+| `-tmdb` | ID | By TMDB ID (with `-res`: title+resolution combo) |
+| `-imdb` | ID | By IMDB ID |
+| `-tvdb` | ID | By TVDB ID |
+| `-mal` | ID | By MyAnimeList ID |
+| `-playid` | ID | By playlist |
+| `-coll` | ID | By collection |
+| `-free` | percentage | By freeleech percentage |
+| `-al`, `--alive` | — | Alive torrents only |
+| `-dd`, `--dead` | — | Dead torrents only |
+| `-dy`, `--dying` | — | Dying torrents only |
 
-## Viste speciali
+## Special views
 
-| Flag | Descrizione |
+| Flag | Description |
 |---|---|
-| `-du`, `--doubleup` | Torrent DoubleUp |
-| `-fe`, `--featured` | Torrent Featured |
-| `-re`, `--refundable` | Torrent Refundable |
-| `-str`, `--stream` | Torrent stream-friendly |
-| `-sd`, `--standard` | Torrent SD |
-| `-hs`, `--highspeed` | Torrent Highspeed |
-| `-int`, `--internal` | Release Internal |
-| `-pr`, `--prelease` | Personal release |
+| `-du`, `--doubleup` | DoubleUp torrents |
+| `-fe`, `--featured` | Featured torrents |
+| `-re`, `--refundable` | Refundable torrents |
+| `-str`, `--stream` | Stream-friendly torrents |
+| `-sd`, `--standard` | SD torrents |
+| `-hs`, `--highspeed` | Highspeed torrents |
+| `-int`, `--internal` | Internal releases |
+| `-pr`, `--prelease` | Personal releases |

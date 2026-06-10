@@ -1,8 +1,8 @@
-# Opzioni avanzate
+# Advanced options
 
-Sezione `user_preferences` di `Unit3Dbot.json` (più `console_options` in fondo). Nessuna di queste opzioni è obbligatoria: i default vanno bene per iniziare.
+`user_preferences` section of `Unit3Dbot.json` (plus `console_options` at the bottom). None of these options is required: the defaults are fine to start with.
 
-## Screenshot
+## Screenshots
 
 ```json
 "NUMBER_OF_SCREENSHOTS": 4,
@@ -11,14 +11,14 @@ Sezione `user_preferences` di `Unit3Dbot.json` (più `console_options` in fondo)
 "WEBP_ENABLED": "False",
 ```
 
-| Chiave | Effetto |
+| Key | Effect |
 |---|---|
-| `NUMBER_OF_SCREENSHOTS` | Quanti screenshot estrarre dal video |
-| `COMPRESS_SCSHOT` | Livello di compressione delle immagini |
-| `RESIZE_SCSHOT` | Ridimensiona gli screenshot prima dell'upload |
-| `WEBP_ENABLED` | Aggiunge una webp animata alla descrizione del torrent |
+| `NUMBER_OF_SCREENSHOTS` | How many screenshots to extract from the video |
+| `COMPRESS_SCSHOT` | Image compression level |
+| `RESIZE_SCSHOT` | Resize screenshots before uploading |
+| `WEBP_ENABLED` | Adds an animated webp to the torrent description |
 
-## Duplicati
+## Duplicates
 
 ```json
 "DUPLICATE_ON": "true",
@@ -26,11 +26,11 @@ Sezione `user_preferences` di `Unit3Dbot.json` (più `console_options` in fondo)
 "SIZE_TH": 10,
 ```
 
-| Chiave | Effetto |
+| Key | Effect |
 |---|---|
-| `DUPLICATE_ON` | Attiva il controllo duplicati prima dell'upload (equivale al flag `-dup`) |
-| `SKIP_DUPLICATE` | Salta il contenuto se viene trovato un duplicato, senza chiedere |
-| `SIZE_TH` | Soglia percentuale: un torrent sul tracker è considerato "stesso contenuto" se la differenza di dimensione rispetto al tuo file è entro questa percentuale |
+| `DUPLICATE_ON` | Enables the duplicate check before every upload (same as the `-dup` flag) |
+| `SKIP_DUPLICATE` | Skips the content when a duplicate is found, without asking |
+| `SIZE_TH` | Percentage threshold: a torrent on the tracker counts as "same content" if its size differs from your file within this percentage |
 
 ## Cache
 
@@ -40,13 +40,13 @@ Sezione `user_preferences` di `Unit3Dbot.json` (più `console_options` in fondo)
 "CACHE_DBONLINE": "False",
 ```
 
-| Chiave | Effetto |
+| Key | Effect |
 |---|---|
-| `CACHE_PATH` | Cartella della cache (default: `Unit3Dup_config/cache_path`) |
-| `CACHE_SCR` | Riusa gli screenshot già estratti |
-| `CACHE_DBONLINE` | Mette in cache i risultati di TMDB e delle ricerche online |
+| `CACHE_PATH` | Cache folder (default: `Unit3Dup_config/cache_path`) |
+| `CACHE_SCR` | Reuses screenshots already extracted |
+| `CACHE_DBONLINE` | Caches TMDB results and online searches |
 
-## Lingua, anonimato e firma
+## Language, anonymity and signature
 
 ```json
 "PREFERRED_LANG": "all",
@@ -56,22 +56,22 @@ Sezione `user_preferences` di `Unit3Dbot.json` (più `console_options` in fondo)
 "TORRENT_COMMENT": "no_comment",
 ```
 
-| Chiave | Effetto |
+| Key | Effect |
 |---|---|
-| `PREFERRED_LANG` | Codice lingua preferita (ISO 3166, es. `it`) o `all`: il bot avvisa se l'audio non corrisponde |
-| `ANON` | Upload **anonimo**: il tuo username non compare sulla pagina del torrent |
-| `PERSONAL_RELEASE` | Marca ogni upload come personal release (equivale al flag `-personal`) |
-| `RELEASER_SIGN` | La tua firma da releaser, aggiunta al titolo (max 20 caratteri; vedi [Tag e titoli](../usage/tags.md)) |
-| `TORRENT_COMMENT` | Commento inserito nel file `.torrent` |
+| `PREFERRED_LANG` | Preferred language code (ISO 3166, e.g. `it`) or `all`: the bot warns when the audio doesn't match |
+| `ANON` | **Anonymous** upload: your username doesn't appear on the torrent page |
+| `PERSONAL_RELEASE` | Marks every upload as a personal release (same as the `-personal` flag) |
+| `RELEASER_SIGN` | Your releaser signature, appended to the title (max 20 characters; see [Tags and titles](../usage/tags.md)) |
+| `TORRENT_COMMENT` | Comment embedded in the `.torrent` file |
 
-## Posizione dei tag nel titolo
+## Tag order in the title
 
 ```json
 "TAGS_POSITION_MOVIE": ["title", "year", "part", "version", "resolution", "uhd", "platform", "source", "remux", "multi", "acodec", "channels", "flag", "subtitle", "hdr", "vcodec", "video_encoder"],
 "TAGS_POSITION_SERIE": ["title", "season", "version", "resolution", "uhd", "platform", "source", "remux", "multi", "acodec", "channels", "flag", "subtitle", "hdr", "vcodec", "video_encoder"],
 ```
 
-L'**ordine** con cui i tag compongono il titolo del torrent, per film e serie. Puoi riordinare o togliere voci (minimo 5); i nomi devono restare tra quelli ammessi. Dettagli: [Tag e titoli](../usage/tags.md).
+The **order** in which tags build the torrent title, for movies and TV shows. You can reorder or remove entries (minimum 5); names must stay within the allowed set. Details: [Tags and titles](../usage/tags.md).
 
 ## Watcher
 
@@ -81,21 +81,21 @@ L'**ordine** con cui i tag compongono il titolo del torrent, per film e serie. P
 "WATCHER_DESTINATION_PATH": "no_path",
 ```
 
-| Chiave | Effetto |
+| Key | Effect |
 |---|---|
-| `WATCHER_INTERVAL` | Ogni quanti **secondi** il watcher controlla la cartella |
-| `WATCHER_PATH` | Cartella monitorata (es. dove scarica il tuo client) |
-| `WATCHER_DESTINATION_PATH` | Cartella dove i file vengono spostati e poi caricati |
+| `WATCHER_INTERVAL` | How many **seconds** between watcher checks |
+| `WATCHER_PATH` | Watched folder (e.g. where your client downloads) |
+| `WATCHER_DESTINATION_PATH` | Folder where files are moved and then uploaded |
 
-Come funziona: [Watcher](../usage/watcher.md).
+How it works: [Watcher](../usage/watcher.md).
 
-## Percorsi
+## Paths
 
 ```json
 "TORRENT_ARCHIVE_PATH": "no_path",
 ```
 
-Cartella dove il bot archivia i `.torrent` generati, organizzati in sottocartelle per tracker (`<archivio>/ITT/...`). Con `no_path` usa il default dentro `Unit3Dup_config`.
+Folder where the bot archives the generated `.torrent` files, organized in per-tracker subfolders (`<archive>/ITT/...`). With `no_path` it uses the default inside `Unit3Dup_config`.
 
 ## YouTube
 
@@ -106,12 +106,12 @@ Cartella dove il bot archivia i `.torrent` generati, organizzati in sottocartell
 "SKIP_TMDB": "false",
 ```
 
-| Chiave | Effetto |
+| Key | Effect |
 |---|---|
-| `YOUTUBE_FAV_CHANNEL_ID` | Canale preferito da cui pescare i trailer |
-| `YOUTUBE_CHANNEL_ENABLE` | Abilita la ricerca trailer sul canale preferito |
-| `SKIP_YOUTUBE` | Salta del tutto la ricerca trailer su YouTube |
-| `SKIP_TMDB` | Salta l'interrogazione di TMDB (sconsigliato per i video) |
+| `YOUTUBE_FAV_CHANNEL_ID` | Favorite channel to pick trailers from |
+| `YOUTUBE_CHANNEL_ENABLE` | Enables trailer search on the favorite channel |
+| `SKIP_YOUTUBE` | Skips the YouTube trailer search entirely |
+| `SKIP_TMDB` | Skips the TMDB lookup (not recommended for videos) |
 
 ## FAST_LOAD
 
@@ -119,9 +119,9 @@ Cartella dove il bot archivia i `.torrent` generati, organizzati in sottocartell
 "FAST_LOAD": "0",
 ```
 
-Limita il numero di contenuti processati per ogni esecuzione (valori utili: 1–150; `0` = nessun limite). Comodo per testare uno `-scan` su una cartella enorme senza processarla tutta.
+Limits how many items are processed per run (useful values: 1–150; `0` = no limit). Handy to test a `-scan` on a huge folder without processing all of it.
 
-## Colori della console (`console_options`)
+## Console colors (`console_options`)
 
 ```json
 "console_options": {
@@ -136,4 +136,4 @@ Limita il numero di contenuti processati per ogni esecuzione (valori utili: 1–
 }
 ```
 
-Personalizza testo e colori dell'output. Colori ammessi: `black`, `red`, `green`, `yellow`, `blue`, `magenta`, `cyan`, `white`, anche in variante `bold` (es. `"cyan bold"`).
+Customize the console text and colors. Allowed colors: `black`, `red`, `green`, `yellow`, `blue`, `magenta`, `cyan`, `white`, plus the `bold` variant (e.g. `"cyan bold"`).

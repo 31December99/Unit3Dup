@@ -1,12 +1,12 @@
 site_name: Unit3Dup
-site_description: Documentazione italiana per Unit3Dup — bot di upload per tracker UNIT3D
+site_description: Unit3Dup documentation — torrent generator and uploader for UNIT3D trackers
 site_url: https://31december99.github.io/Unit3Dup/
 repo_url: https://github.com/31December99/Unit3Dup
 repo_name: 31December99/Unit3Dup
 
 theme:
   name: material
-  language: it
+  language: en
   logo: images/unit3dup.png
   favicon: images/unit3dup.png
   palette:
@@ -16,14 +16,14 @@ theme:
       accent: indigo
       toggle:
         icon: material/weather-night
-        name: Passa al tema scuro
+        name: Switch to dark mode
     - media: "(prefers-color-scheme: dark)"
       scheme: slate
       primary: indigo
       accent: indigo
       toggle:
         icon: material/weather-sunny
-        name: Passa al tema chiaro
+        name: Switch to light mode
   features:
     - navigation.tabs
     - navigation.sections
@@ -45,36 +45,69 @@ markdown_extensions:
   - attr_list
 
 plugins:
-  - search:
-      lang: it
+  - search
+  - i18n:
+      docs_structure: suffix
+      fallback_to_default: true
+      reconfigure_material: true
+      reconfigure_search: true
+      languages:
+        - locale: en
+          default: true
+          name: English
+          build: true
+        - locale: it
+          name: Italiano
+          build: true
+          site_description: Documentazione di Unit3Dup — generatore e uploader di torrent per tracker UNIT3D
+          nav_translations:
+            Installation: Installazione
+            Upgrade: Aggiornamento
+            Configuration: Configurazione
+            Getting started: Primi passi
+            Trackers: Tracker
+            Image hosts: Image host
+            Torrent clients: Client torrent
+            Advanced options: Opzioni avanzate
+            Usage: Uso del bot
+            Basic upload: Upload base
+            Tags and titles: Tag e titoli
+            Search: Ricerca
+            Guides: Guide
+            First upload step by step: Primo upload passo-passo
+            PDF documents: Documenti PDF
+            Games: Giochi
+            Reference: Riferimenti
+            All commands: Tutti i comandi
+            Full config: Config completa
 
 nav:
   - Home: index.md
-  - Installazione:
+  - Installation:
       - Windows: install/windows.md
       - Linux: install/linux.md
       - Seedbox ultra.cc: install/seedbox.md
-      - Aggiornamento: install/upgrade.md
-  - Configurazione:
-      - Primi passi: config/intro.md
-      - Tracker: config/trackers.md
+      - Upgrade: install/upgrade.md
+  - Configuration:
+      - Getting started: config/intro.md
+      - Trackers: config/trackers.md
       - Metadata: config/metadata.md
-      - Image host: config/imagehosts.md
-      - Client torrent: config/clients.md
-      - Opzioni avanzate: config/options.md
-  - Uso del bot:
-      - Upload base: usage/upload.md
-      - Tag e titoli: usage/tags.md
+      - Image hosts: config/imagehosts.md
+      - Torrent clients: config/clients.md
+      - Advanced options: config/options.md
+  - Usage:
+      - Basic upload: usage/upload.md
+      - Tags and titles: usage/tags.md
       - Multi-tracker: usage/multitracker.md
       - Reseed: usage/reseed.md
       - Watcher: usage/watcher.md
-      - Ricerca: usage/search.md
+      - Search: usage/search.md
       - FTP: usage/ftp.md
-  - Guide:
-      - Primo upload passo-passo: guides/primo-upload.md
-      - Documenti PDF: guides/documenti.md
-      - Giochi: guides/giochi.md
-  - Riferimenti:
-      - Tutti i comandi: reference/commands.md
-      - Config completa: reference/config.md
+  - Guides:
+      - First upload step by step: guides/first-upload.md
+      - PDF documents: guides/documents.md
+      - Games: guides/games.md
+  - Reference:
+      - All commands: reference/commands.md
+      - Full config: reference/config.md
       - FAQ: reference/faq.md

@@ -1,22 +1,22 @@
-# Aggiornamento
+# Upgrade
 
-Quando esce una nuova versione:
+When a new version is out:
 
 ```bash
 pip install unit3dup --upgrade
 ```
 
-La versione installata è visibile all'avvio del bot:
+The installed version is shown when the bot starts:
 
 ```text
 Unit3Dup 0.11.10 Checking your configuration file..
 ```
 
-!!! tip "Dopo ogni aggiornamento"
-    Lancia un controllo della configurazione: le nuove versioni possono introdurre nuove chiavi nel file di config.
+!!! tip "After every upgrade"
+    Run a configuration check: new versions may introduce new config keys.
 
     ```bash
     unit3dup -check
     ```
 
-Le novità di ogni release sono nella pagina [Releases del progetto](https://github.com/31December99/Unit3Dup/releases).
+Release notes are on the [project Releases page](https://github.com/31December99/Unit3Dup/releases).

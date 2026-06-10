@@ -1,27 +1,27 @@
-# Tracker
+# Trackers
 
-Sezione `tracker_config` di `Unit3Dbot.json`.
+`tracker_config` section of `Unit3Dbot.json`.
 
-## Le tre chiavi di ogni tracker
+## The three keys of every tracker
 
-Per ogni tracker supportato (`ITT`, `SIS`, `PTT`, `AST`) esistono tre chiavi:
+Each supported tracker (`ITT`, `SIS`, `PTT`, `AST`) has three keys:
 
-| Chiave | Cos'è | Dove si trova |
+| Key | What it is | Where to find it |
 |---|---|---|
-| `*_URL` | Indirizzo del tracker | Già precompilato nel file di default |
-| `*_APIKEY` | La tua API key personale | Sul tracker: profilo utente → impostazioni → API |
-| `*_PID` | La tua passkey (PID) | Sul tracker: pagina sicurezza del profilo |
+| `*_URL` | Tracker address | Already prefilled in the default file |
+| `*_APIKEY` | Your personal API key | On the tracker: user profile → settings → API |
+| `*_PID` | Your passkey (PID) | On the tracker: profile security page |
 
-Esempio per ITT:
+Example for ITT:
 
 ```json
 "ITT_URL": "https://itatorrents.xyz",
-"ITT_APIKEY": "la_tua_api_key",
-"ITT_PID": "la_tua_passkey",
+"ITT_APIKEY": "your_api_key",
+"ITT_PID": "your_passkey",
 ```
 
-- **`APIKEY`** serve per ogni comunicazione col tracker: upload, ricerche, controllo duplicati
-- **`PID`** serve per generare l'announce URL del torrent: è **obbligatoria per ogni tracker presente in `MULTI_TRACKER`** — senza, il bot esce con `-> No PID value`
+- **`APIKEY`** is used for every exchange with the tracker: uploads, searches, duplicate checks
+- **`PID`** is used to build the torrent announce URL: it is **required for every tracker listed in `MULTI_TRACKER`** — without it the bot exits with `-> No PID value`
 
 ## MULTI_TRACKER
 
@@ -29,14 +29,14 @@ Esempio per ITT:
 "MULTI_TRACKER": ["itt", "sis", "ptt", "ast"],
 ```
 
-La lista dei tracker che il bot conosce e usa:
+The list of trackers the bot knows and uses:
 
-- Il **primo elemento** è il tracker di **default**: usato quando non passi `-tracker` e per tutti i comandi di [ricerca](../usage/search.md)
-- Con `-mt` il bot carica su **tutti** i tracker della lista ([Multi-tracker](../usage/multitracker.md))
-- Niente duplicati nella lista, e ogni nome deve essere tra quelli supportati — altrimenti il bot esce con errore
+- The **first element** is the **default** tracker: used when you don't pass `-tracker` and for all [search](../usage/search.md) commands
+- With `-mt` the bot uploads to **all** the trackers in the list ([Multi-tracker](../usage/multitracker.md))
+- No duplicates allowed, and every name must be a supported tracker — otherwise the bot exits with an error
 
-!!! tip "Usi solo ITT?"
-    Lascia solo `"MULTI_TRACKER": ["itt"]`: eviti errori di PID mancanti per tracker che non usi.
+!!! tip "Only using ITT?"
+    Keep just `"MULTI_TRACKER": ["itt"]`: you avoid missing-PID errors for trackers you don't use.
 
-!!! note "Tracker SIS"
-    `SIS_URL` non è precompilato nel file di default: inserisci l'URL del tracker se hai un account.
+!!! note "SIS tracker"
+    `SIS_URL` is not prefilled in the default file: enter the tracker URL if you have an account.

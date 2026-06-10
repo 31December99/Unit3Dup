@@ -1,26 +1,26 @@
-# Tag e titoli
+# Tags and titles
 
-Il titolo del torrent è composto dal **titolo del media** più una serie di **tag** ricavati dall'analisi del file: risoluzione, sorgente, codec audio/video, lingua, HDR…
+The torrent title is made of the **media title** plus a set of **tags** derived from the file analysis: resolution, source, audio/video codec, language, HDR…
 
-Tag generabili: `version`, `resolution`, `uhd`, `platform`, `source`, `remux`, `multi`, `acodec`, `channels`, `flag`, `subtitle`, `vcodec`, `hdr`, `video_encoder`.
+Available tags: `version`, `resolution`, `uhd`, `platform`, `source`, `remux`, `multi`, `acodec`, `channels`, `flag`, `subtitle`, `vcodec`, `hdr`, `video_encoder`.
 
-## `-b` — ricostruisci il titolo
+## `-b` — rebuild the title
 
 ```bash
-unit3dup -b -u "/percorso/film.mkv"
+unit3dup -b -u "/path/movie.mkv"
 ```
 
-Con `-b/--buildtags` il bot **ricostruisce da zero** titolo e tag a partire dall'analisi tecnica del media (MediaInfo) e dal nome del file, nell'ordine definito da `TAGS_POSITION_MOVIE` / `TAGS_POSITION_SERIE` ([Opzioni avanzate](../config/options.md#posizione-dei-tag-nel-titolo)).
+With `-b/--buildtags` the bot **rebuilds from scratch** the title and tags using the technical analysis of the media (MediaInfo) and the file name, in the order defined by `TAGS_POSITION_MOVIE` / `TAGS_POSITION_SERIE` ([Advanced options](../config/options.md#tag-order-in-the-title)).
 
-Senza `-b`, il titolo resta più fedele al nome originale del file.
+Without `-b`, the title stays closer to the original file name.
 
-## I tre file di personalizzazione
+## The three customization files
 
-Stanno nella cartella di configurazione (`Unit3Dup_config`) e vengono creati al primo avvio con valori di default. Sono JSON modificabili con un editor di testo.
+They live in the configuration folder (`Unit3Dup_config`) and are created on first run with default values. They are plain JSON, editable with any text editor.
 
-### `tags_list.json` — tag personalizzati
+### `tags_list.json` — custom tags
 
-Mappa **parola → tipo di tag**: insegna al bot a riconoscere parole nei nomi dei file e classificarle.
+Maps **word → tag type**: it teaches the bot to recognize words in file names and classify them.
 
 ```json
 {
@@ -30,25 +30,25 @@ Mappa **parola → tipo di tag**: insegna al bot a riconoscere parole nei nomi d
 }
 ```
 
-Usato da `-b`: se nel nome del file compare la parola, il valore corrispondente finisce nel tag giusto del titolo. Puoi aggiungere le tue voci (es. sigle di release group o sorgenti particolari).
+Used by `-b`: when the word appears in the file name, the value lands in the right tag of the title. You can add your own entries (e.g. release group names or unusual sources).
 
-!!! warning "File richiesto da `-b`"
-    Se `tags_list.json` manca, il bot lo segnala all'avvio quando usi `-b`.
+!!! warning "Required by `-b`"
+    If `tags_list.json` is missing, the bot reports it at startup when you use `-b`.
 
-### `ban_list.json` — parole da eliminare
+### `ban_list.json` — words to remove
 
-Lista di parole **rimosse dal titolo** durante la ricostruzione: roba che non deve finire sulla pagina del tracker (sigle di siti, spazzatura nei nomi dei file…).
+List of words **stripped from the title** during the rebuild: stuff that must not reach the tracker page (site tags, junk in file names…).
 
-### `sign_list.json` — firme releaser
+### `sign_list.json` — releaser signatures
 
-Lista delle firme riconosciute come **release group**. Insieme a `RELEASER_SIGN` ([Opzioni avanzate](../config/options.md#lingua-anonimato-e-firma)) gestisce la firma in coda al titolo (max 20 caratteri, caratteri speciali rimossi).
+List of signatures recognized as **release groups**. Together with `RELEASER_SIGN` ([Advanced options](../config/options.md#language-anonymity-and-signature)) it manages the signature at the end of the title (max 20 characters, special characters stripped).
 
-## Titolo manuale
+## Manual title
 
-Quando il nome del file è troppo sporco per ricavarne il titolo (capita con i pack di stagioni senza titolo):
+When the file name is too messy to extract a title from (typical with season packs without a title):
 
 ```bash
-unit3dup -u "/percorso/S01.pack.1080p.mkv" -notitle "Nome Della Serie"
+unit3dup -u "/path/S01.pack.1080p.mkv" -notitle "Show Name"
 ```
 
-`-notitle` forza il titolo usato per la **ricerca su TMDB**, senza toccare i tag tecnici.
+`-notitle` forces the title used for the **TMDB search**, without touching the technical tags.

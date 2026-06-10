@@ -1,38 +1,38 @@
-# Installazione su seedbox ultra.cc
+# Installation on an ultra.cc seedbox
 
-Ultra.cc non permette l'uso di `sudo`, quindi serve qualche passaggio in più rispetto a un Linux normale.
+Ultra.cc does not allow `sudo`, so a few extra steps are needed compared to a regular Linux box.
 
-Il bot richiede Python con versione minima 3.10 (consigliata: fino alla 3.12 — le versioni più recenti risultano ancora troppo nuove per alcune librerie).
+The bot requires Python 3.10 minimum (recommended: up to 3.12 — newer versions are still too recent for some libraries).
 
-Su ultra.cc è preinstallato **pyenv**, che useremo per installare Python. Unico problema: pyenv non installa sqlite3, che il bot usa come cache per screenshot e ricerche sul tracker. Va quindi compilato sqlite3 (un paio di comandi) e poi installato Python 3.12.
+**pyenv** comes preinstalled on ultra.cc and we'll use it to install Python. One catch: pyenv does not install sqlite3, which the bot uses as a cache for screenshots and tracker searches. So we need to build sqlite3 first (a couple of commands), then install Python 3.12.
 
-## 1. Installare sqlite3
+## 1. Install sqlite3
 
-Senza `sudo` dobbiamo compilare. Vai nella home:
+Without `sudo` we have to compile it. Go to your home:
 
 ```bash
 cd ~
 ```
 
-Scarica il pacchetto:
+Download the package:
 
 ```bash
 wget https://sqlite.org/2026/sqlite-autoconf-3510300.tar.gz
 ```
 
-Scompattalo:
+Unpack it:
 
 ```bash
 tar xvf sqlite-autoconf-3510300.tar.gz
 ```
 
-Entra nella cartella ottenuta:
+Enter the folder you just unpacked:
 
 ```bash
 cd sqlite-autoconf-3510300
 ```
 
-Lancia questi tre comandi uno dietro l'altro:
+Run these three commands one after the other:
 
 ```bash
 ./configure --prefix=$HOME/sqlite
@@ -40,7 +40,7 @@ make
 make install
 ```
 
-Imposta le variabili d'ambiente **solo per questa sessione** — copia e incolla nel terminale SSH:
+Set the environment variables **for this session only** — copy and paste into the SSH terminal:
 
 ```bash
 export PATH=$HOME/sqlite/bin:$PATH
@@ -51,40 +51,40 @@ export PYTHON_CONFIGURE_OPTS="--enable-loadable-sqlite-extensions"
 export LD_LIBRARY_PATH=$HOME/sqlite/lib:$LD_LIBRARY_PATH
 ```
 
-## 2. Installare Python 3.12
+## 2. Install Python 3.12
 
 ```bash
 pyenv install -f 3.12.0
 ```
 
-Imposta Python 3.12 come versione di default:
+Set Python 3.12 as the default version:
 
 ```bash
 pyenv global 3.12.0
 ```
 
-## 3. Installare e testare il bot
+## 3. Install and test the bot
 
 ```bash
 pip install unit3dup
 ```
 
-Lancia il bot come primo test:
+Launch the bot as a first test:
 
 ```bash
 unit3dup
 ```
 
-![avvio](../images/unit3dup.png)
+![startup](../images/unit3dup.png)
 
-I messaggi in rosso ti avvertono che non hai ancora configurato il bot: prosegui con la [Configurazione minima](../config/intro.md).
+The red messages warn you that the bot is not configured yet: continue with the [minimal configuration](../config/intro.md).
 
-## Se pyenv non è presente
+## If pyenv is missing
 
-Lancia nel terminale:
+Run in the terminal:
 
 ```bash
 curl -fsSL https://pyenv.run | bash
 ```
 
-Istruzioni complete sul [GitHub di pyenv](https://github.com/pyenv/pyenv?tab=readme-ov-file#linuxunix).
+Full instructions on the [pyenv GitHub page](https://github.com/pyenv/pyenv?tab=readme-ov-file#linuxunix).

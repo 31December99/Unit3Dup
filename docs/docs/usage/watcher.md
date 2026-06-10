@@ -1,42 +1,42 @@
 # Watcher
 
-Il watcher è la modalità **automatica**: il bot monitora una cartella e carica sul tracker tutto quello che ci arriva dentro. Utile in coppia con un client che scarica in una cartella fissa.
+The watcher is the **automatic** mode: the bot monitors a folder and uploads to the tracker everything that lands in it. Great paired with a client downloading to a fixed folder.
 
-## Avvio
+## Start
 
 ```bash
 unit3dup -watcher
 ```
 
-Il flag non accetta parametri: tutto si configura in `Unit3Dbot.json`.
+The flag takes no parameters: everything is configured in `Unit3Dbot.json`.
 
-## Configurazione
+## Configuration
 
-In `user_preferences` ([Opzioni avanzate](../config/options.md#watcher)):
+In `user_preferences` ([Advanced options](../config/options.md#watcher)):
 
 ```json
 "WATCHER_INTERVAL": 60,
-"WATCHER_PATH": "/percorso/cartella/sorgente",
-"WATCHER_DESTINATION_PATH": "/percorso/cartella/destinazione",
+"WATCHER_PATH": "/path/source/folder",
+"WATCHER_DESTINATION_PATH": "/path/destination/folder",
 ```
 
-- `WATCHER_PATH` → la cartella **monitorata** (es. dove vengono scaricati i file)
-- `WATCHER_DESTINATION_PATH` → la cartella dove i file vengono **spostati** e da cui parte l'upload
-- `WATCHER_INTERVAL` → ogni quanti **secondi** scatta il controllo
+- `WATCHER_PATH` → the **watched** folder (e.g. where files get downloaded)
+- `WATCHER_DESTINATION_PATH` → the folder where files are **moved** and uploaded from
+- `WATCHER_INTERVAL` → how many **seconds** between checks
 
-## Cosa fa a ogni ciclo
+## What happens on every cycle
 
-Allo scadere di `WATCHER_INTERVAL` (a schermo vedi il conto alla rovescia):
+When `WATCHER_INTERVAL` expires (you see the countdown on screen):
 
-1. Controlla `WATCHER_PATH`; se è vuota, riparte il conto alla rovescia
-2. **Sposta** tutti i file in `WATCHER_DESTINATION_PATH`, preservando le sottocartelle (le cartelle svuotate vengono rimosse)
-3. Processa i file spostati e li **carica sul tracker** con seeding, come uno [`-scan`](upload.md)
-4. Ricomincia
+1. It checks `WATCHER_PATH`; if empty, the countdown restarts
+2. It **moves** all files to `WATCHER_DESTINATION_PATH`, preserving subfolders (emptied folders are removed)
+3. It processes the moved files and **uploads them to the tracker** with seeding, like a [`-scan`](upload.md)
+4. It starts over
 
-Il loop è infinito: si esce con ++ctrl+c++.
+The loop is endless: exit with ++ctrl+c++.
 
-!!! warning "I file vengono spostati, non copiati"
-    `WATCHER_PATH` viene **svuotata** a ogni ciclo. Non puntarla a una cartella i cui file devono restare dove sono (es. quella di seeding del client).
+!!! warning "Files are moved, not copied"
+    `WATCHER_PATH` gets **emptied** on every cycle. Don't point it to a folder whose files must stay where they are (e.g. your client's seeding folder).
 
-!!! tip "Cartella inesistente?"
-    Se `WATCHER_PATH` non esiste o non è configurata, il bot si ferma con `Watcher path does not exist or is not configured`.
+!!! tip "Folder missing?"
+    If `WATCHER_PATH` doesn't exist or isn't configured, the bot stops with `Watcher path does not exist or is not configured`.

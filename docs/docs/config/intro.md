@@ -1,31 +1,31 @@
-# Configurazione — primi passi
+# Configuration — getting started
 
-## Dove sta la configurazione
+## Where the configuration lives
 
-Al **primo avvio** il bot crea la cartella `Unit3Dup_config` con dentro il file di configurazione principale e i file di supporto:
+On **first run** the bot creates the `Unit3Dup_config` folder containing the main configuration file and the support files:
 
-| Sistema | Percorso |
+| System | Path |
 |---|---|
 | Windows | `%LOCALAPPDATA%\Unit3Dup_config\` |
 | Linux / macOS | `~/Unit3Dup_config/` |
 
-Contenuto della cartella:
+Folder contents:
 
-| File | A cosa serve |
+| File | Purpose |
 |---|---|
-| `Unit3Dbot.json` | **Configurazione principale**: tracker, api key, client torrent, preferenze |
-| `tags_list.json` | Tag personalizzati per la costruzione dei titoli ([dettagli](../usage/tags.md)) |
-| `sign_list.json` | Firme releaser ([dettagli](../usage/tags.md)) |
-| `ban_list.json` | Parole da rimuovere dai titoli ([dettagli](../usage/tags.md)) |
+| `Unit3Dbot.json` | **Main configuration**: trackers, API keys, torrent client, preferences |
+| `tags_list.json` | Custom tags for title building ([details](../usage/tags.md)) |
+| `sign_list.json` | Releaser signatures ([details](../usage/tags.md)) |
+| `ban_list.json` | Words to strip from titles ([details](../usage/tags.md)) |
 
-!!! warning "Il file si chiama `Unit3Dbot.json`"
-    In vecchie versioni della documentazione era indicato come "Unit3D.json": il nome corretto è **`Unit3Dbot.json`**.
+!!! warning "The file is named `Unit3Dbot.json`"
+    Older versions of the documentation called it "Unit3D.json": the correct name is **`Unit3Dbot.json`**.
 
-Nella stessa cartella il bot crea anche le sottocartelle di default `torrent_archive_path` (dove archivia i `.torrent` generati), `cache_path`, `watcher_path` e `watcher_destination_path` — tutte personalizzabili (vedi [Opzioni avanzate](options.md)).
+In the same folder the bot also creates the default subfolders `torrent_archive_path` (where generated `.torrent` files are stored), `cache_path`, `watcher_path` and `watcher_destination_path` — all customizable (see [Advanced options](options.md)).
 
-## La struttura del file
+## File structure
 
-`Unit3Dbot.json` è diviso in **cinque sezioni**:
+`Unit3Dbot.json` is split into **five sections**:
 
 ```json
 {
@@ -37,32 +37,32 @@ Nella stessa cartella il bot crea anche le sottocartelle di default `torrent_arc
 }
 ```
 
-| Sezione | Contenuto | Pagina |
+| Section | Contents | Page |
 |---|---|---|
-| `tracker_config` | URL e api key dei tracker, chiavi TMDB/TVDB/IGDB/YouTube, chiavi image host | [Tracker](trackers.md), [Metadata](metadata.md), [Image host](imagehosts.md) |
-| `torrent_client_config` | qBittorrent, Transmission, rTorrent | [Client torrent](clients.md) |
-| `user_preferences` | Screenshot, cache, watcher, duplicati, tag, lingua… | [Opzioni avanzate](options.md) |
-| `options` | Connessione FTP | [FTP](../usage/ftp.md) |
-| `console_options` | Colori e messaggi della console | [Opzioni avanzate](options.md) |
+| `tracker_config` | Tracker URLs and API keys, TMDB/TVDB/IGDB/YouTube keys, image host keys | [Trackers](trackers.md), [Metadata](metadata.md), [Image hosts](imagehosts.md) |
+| `torrent_client_config` | qBittorrent, Transmission, rTorrent | [Torrent clients](clients.md) |
+| `user_preferences` | Screenshots, cache, watcher, duplicates, tags, language… | [Advanced options](options.md) |
+| `options` | FTP connection | [FTP](../usage/ftp.md) |
+| `console_options` | Console colors and messages | [Advanced options](options.md) |
 
-## Configurazione minima
+## Minimal configuration
 
-Non serve compilare ogni riga. Per iniziare bastano:
+You don't need to fill in every line. To get started you only need:
 
-1. **`ITT_URL` + `ITT_APIKEY`** (o il tuo tracker) — [Tracker](trackers.md)
+1. **`ITT_URL` + `ITT_APIKEY`** (or your tracker) — [Trackers](trackers.md)
 2. **`TMDB_APIKEY`** — [Metadata](metadata.md)
-3. **Almeno due chiavi image host** — [Image host](imagehosts.md)
-4. **`TORRENT_CLIENT` + credenziali del client** — [Client torrent](clients.md)
+3. **At least two image host keys** — [Image hosts](imagehosts.md)
+4. **`TORRENT_CLIENT` + client credentials** — [Torrent clients](clients.md)
 
-I valori non configurati restano `no_key` / `no_pass` / `no_path`.
+Unconfigured values stay `no_key` / `no_pass` / `no_path`.
 
-## Verifica la configurazione
+## Check your configuration
 
 ```bash
 unit3dup -check
 ```
 
-Controlla i file di configurazione e l'ambiente. All'avvio il bot mostra sempre i percorsi attivi:
+It validates the configuration files and the environment. On startup the bot always prints the active paths:
 
 ```text
 [Configuration] '~/Unit3Dup_config/Unit3Dbot.json'
@@ -73,5 +73,5 @@ Controlla i file di configurazione e l'ambiente. All'avvio il bot mostra sempre 
 [Preferred Language] 'all'
 ```
 
-!!! danger "Errori bloccanti"
-    Se un valore è malformato il bot esce subito con un messaggio tipo `-> Please Fix 'CAMPO' ['valore'] in settings.json`: apri `Unit3Dbot.json` e correggi il campo indicato.
+!!! danger "Blocking errors"
+    If a value is malformed the bot exits immediately with a message like `-> Please Fix 'FIELD' ['value'] in settings.json`: open `Unit3Dbot.json` and fix the reported field.

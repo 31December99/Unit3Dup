@@ -1,10 +1,10 @@
 # FTP
 
-Con `-ftp` il bot si collega a un server FTP remoto, ti fa **navigare e scegliere i file** da un menu interattivo, li scarica in locale e li carica sul tracker.
+With `-ftp` the bot connects to a remote FTP server, lets you **browse and pick files** from an interactive menu, downloads them locally and uploads them to the tracker.
 
-## Configurazione
+## Configuration
 
-Sezione `options` di `Unit3Dbot.json`:
+`options` section of `Unit3Dbot.json`:
 
 ```json
 "options": {
@@ -12,30 +12,30 @@ Sezione `options` di `Unit3Dbot.json`:
     "FTPX_PASS": "pass",
     "FTPX_IP": "127.0.0.1",
     "FTPX_PORT": 2121,
-    "FTPX_LOCAL_PATH": "/percorso/download/locale",
+    "FTPX_LOCAL_PATH": "/local/download/path",
     "FTPX_ROOT": ".",
     "FTPX_KEEP_ALIVE": "False"
 }
 ```
 
-| Chiave | Significato |
+| Key | Meaning |
 |---|---|
-| `FTPX_USER` / `FTPX_PASS` | Credenziali del server FTP |
-| `FTPX_IP` / `FTPX_PORT` | Indirizzo e porta del server |
-| `FTPX_LOCAL_PATH` | Cartella locale dove scaricare i file |
-| `FTPX_ROOT` | Cartella remota di partenza |
-| `FTPX_KEEP_ALIVE` | Mantiene viva la connessione |
+| `FTPX_USER` / `FTPX_PASS` | FTP server credentials |
+| `FTPX_IP` / `FTPX_PORT` | Server address and port |
+| `FTPX_LOCAL_PATH` | Local folder for downloads |
+| `FTPX_ROOT` | Remote starting folder |
+| `FTPX_KEEP_ALIVE` | Keeps the connection alive |
 
-## Uso
+## Usage
 
 ```bash
 unit3dup -ftp
 ```
 
-1. Il bot si connette e mostra il contenuto della cartella remota in una **tabella numerata**
-2. Navighi: selezioni una cartella per entrarci, un file per scaricarlo
-3. `0` per uscire
-4. Alla chiusura, se hai scaricato qualcosa: eventuali archivi **`.rar` vengono estratti** automaticamente, poi parte l'upload del contenuto scaricato (come [`-f`](upload.md))
+1. The bot connects and shows the remote folder contents as a **numbered table**
+2. You navigate: pick a folder to enter it, a file to download it
+3. `0` to quit
+4. On exit, if you downloaded something: any **`.rar` archives are extracted** automatically, then the downloaded content gets uploaded (like [`-f`](upload.md))
 
-!!! tip "Seedbox remota"
-    Tipico uso: peschi le release dalla seedbox via FTP e le carichi sul tracker dalla macchina di casa, senza passaggi manuali.
+!!! tip "Remote seedbox"
+    Typical use case: you grab releases from your seedbox over FTP and upload them to the tracker from your home machine, no manual steps.

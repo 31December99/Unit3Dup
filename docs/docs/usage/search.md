@@ -1,51 +1,51 @@
-# Ricerca sul tracker
+# Tracker search
 
-Oltre a caricare, il bot interroga il tracker dal terminale: ricerche, dettagli, filtri. Tutti i comandi operano sul **tracker di default** (il primo di `MULTI_TRACKER`) oppure su quello indicato con `-tracker <NOME>`.
+Besides uploading, the bot queries the tracker from the terminal: searches, details, filters. Every command runs against the **default tracker** (the first in `MULTI_TRACKER`) or the one given with `-tracker <NAME>`.
 
-## Ricerche di base
+## Basic searches
 
-| Comando | Cosa fa |
+| Command | What it does |
 |---|---|
-| `-sch "<testo>"` | Cerca torrent per titolo |
-| `-i "<testo>"` | Come `-sch` ma mostra le **informazioni dettagliate** di ogni risultato |
-| `-dmp` | **Dump completo** di tutti i titoli del tracker (salvato in locale) |
-| `-up "<uploader>"` | Torrent di un certo uploader |
-| `-d "<testo>"` | Cerca nel testo delle **descrizioni** |
-| `-bd "<testo>"` | Mostra il **BDInfo** dei torrent trovati |
-| `-m "<testo>"` | Mostra il **MediaInfo** dei torrent trovati |
-| `-db` | Aggiunto a una ricerca, **salva i risultati** nel database locale |
+| `-sch "<text>"` | Searches torrents by title |
+| `-i "<text>"` | Like `-sch` but shows the **detailed information** of every result |
+| `-dmp` | **Full dump** of all the tracker titles (saved locally) |
+| `-up "<uploader>"` | Torrents by a given uploader |
+| `-d "<text>"` | Searches inside the **descriptions** |
+| `-bd "<text>"` | Shows the **BDInfo** of the matching torrents |
+| `-m "<text>"` | Shows the **MediaInfo** of the matching torrents |
+| `-db` | Added to a search, **saves the results** to the local database |
 
 ```bash
-unit3dup -sch "nome del film"
-unit3dup -tracker ptt -sch "nome del film"
-unit3dup -up "NomeUploader" -db
+unit3dup -sch "movie title"
+unit3dup -tracker ptt -sch "movie title"
+unit3dup -up "UploaderName" -db
 ```
 
-## Filtri
+## Filters
 
-| Filtro | Significato |
+| Filter | Meaning |
 |---|---|
-| `-st <anno>` / `-en <anno>` | Dall'anno / fino all'anno |
-| `-type <tipo>` | Tipo di contenuto |
-| `-res <risoluzione>` | Risoluzione |
-| `-file "<nome>"` | Nome file |
-| `-se <n>` / `-ep <n>` | Stagione / episodio |
-| `-tmdb <id>` `-imdb <id>` `-tvdb <id>` `-mal <id>` | Per ID database esterni |
+| `-st <year>` / `-en <year>` | From year / up to year |
+| `-type <type>` | Content type |
+| `-res <resolution>` | Resolution |
+| `-file "<name>"` | File name |
+| `-se <n>` / `-ep <n>` | Season / episode |
+| `-tmdb <id>` `-imdb <id>` `-tvdb <id>` `-mal <id>` | By external database IDs |
 | `-playid <id>` / `-coll <id>` | Playlist / collection |
-| `-free <valore>` | Percentuale freeleech |
-| `-al` / `-dd` / `-dy` | Stato: vivi / morti / morenti |
+| `-free <value>` | Freeleech percentage |
+| `-al` / `-dd` / `-dy` | Status: alive / dead / dying |
 
-Combo utile — un titolo TMDB a una risoluzione precisa:
+Useful combo — one TMDB title at a specific resolution:
 
 ```bash
 unit3dup -tmdb 603 -res 1080p
 ```
 
-## Viste speciali
+## Special views
 
-Elenchi per attributo del torrent:
+Lists by torrent attribute:
 
-| Flag | Mostra |
+| Flag | Shows |
 |---|---|
 | `-du` | DoubleUp |
 | `-fe` | Featured |
@@ -60,4 +60,4 @@ Elenchi per attributo del torrent:
 unit3dup -fe
 ```
 
-La tabella completa di ogni flag: [Tutti i comandi](../reference/commands.md).
+The full table of every flag: [All commands](../reference/commands.md).

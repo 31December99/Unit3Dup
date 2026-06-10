@@ -1,122 +1,122 @@
-# Config completa
+# Full config reference
 
-Ogni chiave di `Unit3Dbot.json`, sezione per sezione. "Default" è il valore nel file generato al primo avvio; i segnaposto `no_key` / `no_pass` / `no_path` significano "non configurato".
+Every key of `Unit3Dbot.json`, section by section. "Default" is the value in the file generated on first run; the `no_key` / `no_pass` / `no_path` placeholders mean "not configured".
 
 ## `tracker_config`
 
-| Chiave | Tipo | Default | Obbligatoria | Descrizione |
+| Key | Type | Default | Required | Description |
 |---|---|---|---|---|
-| `ITT_URL` | stringa | `https://itatorrents.xyz` | per usare ITT | URL del tracker ITT |
-| `ITT_APIKEY` | stringa | `no_key` | per usare ITT | API key del tuo profilo ITT |
-| `ITT_PID` | stringa | `no_key` | se `itt` è in `MULTI_TRACKER` | Passkey ITT |
-| `SIS_URL` | stringa | `https://no_tracker.xyz` | per usare SIS | URL del tracker SIS |
-| `SIS_APIKEY` | stringa | `no_key` | per usare SIS | API key SIS |
-| `SIS_PID` | stringa | `no_key` | se `sis` è in `MULTI_TRACKER` | Passkey SIS |
-| `PTT_URL` | stringa | `https://polishtorrent.top` | per usare PTT | URL del tracker PTT |
-| `PTT_APIKEY` | stringa | `no_key` | per usare PTT | API key PTT |
-| `PTT_PID` | stringa | `no_key` | se `ptt` è in `MULTI_TRACKER` | Passkey PTT |
-| `AST_URL` | stringa | `https://arabicsource.net` | per usare AST | URL del tracker AST |
-| `AST_APIKEY` | stringa | `no_key` | per usare AST | API key AST |
-| `AST_PID` | stringa | `no_key` | se `ast` è in `MULTI_TRACKER` | Passkey AST |
-| `MULTI_TRACKER` | lista | `["itt","sis","ptt","ast"]` | sì (non vuota) | Tracker attivi; il primo è il default. Niente duplicati |
-| `TMDB_APIKEY` | stringa | `no_key` | per i video | Chiave TheMovieDB |
-| `TVDB_APIKEY` | stringa | `no_key` | consigliata per le serie | Chiave TheTVDB |
-| `IMGBB_KEY` | stringa | `no_key` | almeno un host | Chiave ImgBB |
-| `FREE_IMAGE_KEY` | stringa | `no_key` | almeno un host | Chiave FreeImage |
-| `LENSDUMP_KEY` | stringa | `no_key` | almeno un host | Chiave LensDump |
-| `PTSCREENS_KEY` | stringa | `no_key` | almeno un host | Chiave PtScreens |
-| `IMGFI_KEY` | stringa | `no_key` | almeno un host | Chiave ImgFI |
-| `PASSIMA_KEY` | stringa | `no_key` | almeno un host | Chiave PassIMA |
-| `IMARIDE_KEY` | stringa | `no_key` | almeno un host | Chiave ImaRide |
-| `YOUTUBE_KEY` | stringa | `no_key` | no | Chiave YouTube Data API (trailer) |
-| `IGDB_CLIENT_ID` | stringa | `no_key` | per i giochi | Client ID IGDB/Twitch |
-| `IGDB_ID_SECRET` | stringa | `no_key` | per i giochi | Client Secret IGDB/Twitch |
+| `ITT_URL` | string | `https://itatorrents.xyz` | to use ITT | ITT tracker URL |
+| `ITT_APIKEY` | string | `no_key` | to use ITT | Your ITT profile API key |
+| `ITT_PID` | string | `no_key` | if `itt` is in `MULTI_TRACKER` | ITT passkey |
+| `SIS_URL` | string | `https://no_tracker.xyz` | to use SIS | SIS tracker URL |
+| `SIS_APIKEY` | string | `no_key` | to use SIS | SIS API key |
+| `SIS_PID` | string | `no_key` | if `sis` is in `MULTI_TRACKER` | SIS passkey |
+| `PTT_URL` | string | `https://polishtorrent.top` | to use PTT | PTT tracker URL |
+| `PTT_APIKEY` | string | `no_key` | to use PTT | PTT API key |
+| `PTT_PID` | string | `no_key` | if `ptt` is in `MULTI_TRACKER` | PTT passkey |
+| `AST_URL` | string | `https://arabicsource.net` | to use AST | AST tracker URL |
+| `AST_APIKEY` | string | `no_key` | to use AST | AST API key |
+| `AST_PID` | string | `no_key` | if `ast` is in `MULTI_TRACKER` | AST passkey |
+| `MULTI_TRACKER` | list | `["itt","sis","ptt","ast"]` | yes (non-empty) | Active trackers; the first is the default. No duplicates |
+| `TMDB_APIKEY` | string | `no_key` | for videos | TheMovieDB key |
+| `TVDB_APIKEY` | string | `no_key` | recommended for TV shows | TheTVDB key |
+| `IMGBB_KEY` | string | `no_key` | at least one host | ImgBB key |
+| `FREE_IMAGE_KEY` | string | `no_key` | at least one host | FreeImage key |
+| `LENSDUMP_KEY` | string | `no_key` | at least one host | LensDump key |
+| `PTSCREENS_KEY` | string | `no_key` | at least one host | PtScreens key |
+| `IMGFI_KEY` | string | `no_key` | at least one host | ImgFI key |
+| `PASSIMA_KEY` | string | `no_key` | at least one host | PassIMA key |
+| `IMARIDE_KEY` | string | `no_key` | at least one host | ImaRide key |
+| `YOUTUBE_KEY` | string | `no_key` | no | YouTube Data API key (trailers) |
+| `IGDB_CLIENT_ID` | string | `no_key` | for games | IGDB/Twitch Client ID |
+| `IGDB_ID_SECRET` | string | `no_key` | for games | IGDB/Twitch Client Secret |
 
 ## `torrent_client_config`
 
-| Chiave | Tipo | Default | Obbligatoria | Descrizione |
+| Key | Type | Default | Required | Description |
 |---|---|---|---|---|
-| `QBIT_USER` | stringa | `admin` | se usi qBittorrent | Username WebUI |
-| `QBIT_PASS` | stringa | `no_pass` | se usi qBittorrent | Password WebUI |
-| `QBIT_HOST` | stringa | `127.0.0.1` | se usi qBittorrent | Host del client |
-| `QBIT_PORT` | numero | `8080` | se usi qBittorrent | Porta WebUI |
-| `SHARED_QBIT_PATH` | stringa | `no_path` | no | Percorso visto dal client se gira altrove |
-| `TRASM_USER` | stringa | `admin` | se usi Transmission | Username |
-| `TRASM_PASS` | stringa | `no_pass` | se usi Transmission | Password |
-| `TRASM_HOST` | stringa | `127.0.0.1` | se usi Transmission | Host |
-| `TRASM_PORT` | numero | `9091` | se usi Transmission | Porta |
-| `SHARED_TRASM_PATH` | stringa | `no_path` | no | Percorso visto dal client se gira altrove |
-| `RTORR_USER` | stringa | `admin` | se usi rTorrent | Username |
-| `RTORR_PASS` | stringa | `no_pass` | se usi rTorrent | Password |
-| `RTORR_HOST` | stringa | `127.0.0.1` | se usi rTorrent | Host |
-| `RTORR_PORT` | numero | `9091` | se usi rTorrent | Porta |
-| `SHARED_RTORR_PATH` | stringa | `no_path` | no | Percorso visto dal client se gira altrove |
-| `TORRENT_CLIENT` | stringa | `qbittorrent` | per upload con seeding | `qbittorrent`, `transmission` o `rtorrent` |
-| `TAG` | stringa | `ADDED TORRENTS` | no | Etichetta applicata ai torrent nel client |
+| `QBIT_USER` | string | `admin` | if using qBittorrent | WebUI username |
+| `QBIT_PASS` | string | `no_pass` | if using qBittorrent | WebUI password |
+| `QBIT_HOST` | string | `127.0.0.1` | if using qBittorrent | Client host |
+| `QBIT_PORT` | number | `8080` | if using qBittorrent | WebUI port |
+| `SHARED_QBIT_PATH` | string | `no_path` | no | Path as seen by the client when it runs elsewhere |
+| `TRASM_USER` | string | `admin` | if using Transmission | Username |
+| `TRASM_PASS` | string | `no_pass` | if using Transmission | Password |
+| `TRASM_HOST` | string | `127.0.0.1` | if using Transmission | Host |
+| `TRASM_PORT` | number | `9091` | if using Transmission | Port |
+| `SHARED_TRASM_PATH` | string | `no_path` | no | Path as seen by the client when it runs elsewhere |
+| `RTORR_USER` | string | `admin` | if using rTorrent | Username |
+| `RTORR_PASS` | string | `no_pass` | if using rTorrent | Password |
+| `RTORR_HOST` | string | `127.0.0.1` | if using rTorrent | Host |
+| `RTORR_PORT` | number | `9091` | if using rTorrent | Port |
+| `SHARED_RTORR_PATH` | string | `no_path` | no | Path as seen by the client when it runs elsewhere |
+| `TORRENT_CLIENT` | string | `qbittorrent` | for uploads with seeding | `qbittorrent`, `transmission` or `rtorrent` |
+| `TAG` | string | `ADDED TORRENTS` | no | Label applied to torrents in the client |
 
 ## `user_preferences`
 
-| Chiave | Tipo | Default | Descrizione |
+| Key | Type | Default | Description |
 |---|---|---|---|
-| `PTSCREENS_PRIORITY` | numero | `0` | Priorità host immagini (0 = primo) |
-| `LENSDUMP_PRIORITY` | numero | `1` | Priorità LensDump |
-| `FREE_IMAGE_PRIORITY` | numero | `2` | Priorità FreeImage |
-| `IMGBB_PRIORITY` | numero | `3` | Priorità ImgBB |
-| `IMGFI_PRIORITY` | numero | `4` | Priorità ImgFI |
-| `PASSIMA_PRIORITY` | numero | `5` | Priorità PassIMA |
-| `IMARIDE_PRIORITY` | numero | `6` | Priorità ImaRide |
-| `NUMBER_OF_SCREENSHOTS` | numero | `4` | Screenshot estratti dal video (2–10) |
-| `TAGS_POSITION_MOVIE` | lista | vedi [Opzioni](../config/options.md#posizione-dei-tag-nel-titolo) | Ordine dei tag nei titoli dei film (5–17 voci) |
-| `TAGS_POSITION_SERIE` | lista | vedi [Opzioni](../config/options.md#posizione-dei-tag-nel-titolo) | Ordine dei tag nei titoli delle serie |
-| `YOUTUBE_FAV_CHANNEL_ID` | stringa | canale ITT | Canale YouTube preferito per i trailer |
-| `YOUTUBE_CHANNEL_ENABLE` | booleano | `False` | Abilita la ricerca sul canale preferito |
-| `DUPLICATE_ON` | booleano | `true` | Controllo duplicati a ogni upload |
-| `SKIP_DUPLICATE` | booleano | `false` | Salta i contenuti duplicati senza chiedere |
-| `SKIP_TMDB` | booleano | `false` | Non interrogare TMDB |
-| `SKIP_YOUTUBE` | booleano | `true` | Non cercare trailer su YouTube |
-| `SIZE_TH` | numero | `10` | Soglia % di differenza dimensione per il match duplicati |
-| `WATCHER_INTERVAL` | numero | `60` | Secondi tra i controlli del watcher |
-| `WATCHER_PATH` | stringa | `no_path` | Cartella monitorata dal watcher |
-| `WATCHER_DESTINATION_PATH` | stringa | `no_path` | Destinazione dei file del watcher |
-| `TORRENT_ARCHIVE_PATH` | stringa | `no_path` | Archivio dei `.torrent` generati |
-| `CACHE_PATH` | stringa | `no_path` | Cartella cache |
-| `COMPRESS_SCSHOT` | numero | `3` | Compressione screenshot |
-| `RESIZE_SCSHOT` | booleano | `False` | Ridimensiona gli screenshot |
-| `TORRENT_COMMENT` | stringa | `no_comment` | Commento nel file `.torrent` |
-| `PREFERRED_LANG` | stringa | `all` | Lingua preferita (ISO 3166) o `all` |
-| `ANON` | booleano | `False` | Upload anonimo |
-| `WEBP_ENABLED` | booleano | `False` | Webp animata nella descrizione |
-| `CACHE_SCR` | booleano | `False` | Cache degli screenshot |
-| `CACHE_DBONLINE` | booleano | `False` | Cache delle ricerche online |
-| `PERSONAL_RELEASE` | booleano | `False` | Personal release su ogni upload |
-| `FAST_LOAD` | numero | `0` | Limita i contenuti processati (1–150; 0 = tutti) |
-| `RELEASER_SIGN` | stringa | vuota | Firma releaser (max 20 caratteri) |
+| `PTSCREENS_PRIORITY` | number | `0` | Image host priority (0 = first) |
+| `LENSDUMP_PRIORITY` | number | `1` | LensDump priority |
+| `FREE_IMAGE_PRIORITY` | number | `2` | FreeImage priority |
+| `IMGBB_PRIORITY` | number | `3` | ImgBB priority |
+| `IMGFI_PRIORITY` | number | `4` | ImgFI priority |
+| `PASSIMA_PRIORITY` | number | `5` | PassIMA priority |
+| `IMARIDE_PRIORITY` | number | `6` | ImaRide priority |
+| `NUMBER_OF_SCREENSHOTS` | number | `4` | Screenshots extracted from the video (2–10) |
+| `TAGS_POSITION_MOVIE` | list | see [Options](../config/options.md#tag-order-in-the-title) | Tag order in movie titles (5–17 entries) |
+| `TAGS_POSITION_SERIE` | list | see [Options](../config/options.md#tag-order-in-the-title) | Tag order in TV show titles |
+| `YOUTUBE_FAV_CHANNEL_ID` | string | ITT channel | Favorite YouTube channel for trailers |
+| `YOUTUBE_CHANNEL_ENABLE` | boolean | `False` | Enables the favorite-channel search |
+| `DUPLICATE_ON` | boolean | `true` | Duplicate check on every upload |
+| `SKIP_DUPLICATE` | boolean | `false` | Skips duplicate content without asking |
+| `SKIP_TMDB` | boolean | `false` | Skips the TMDB lookup |
+| `SKIP_YOUTUBE` | boolean | `true` | Skips the YouTube trailer search |
+| `SIZE_TH` | number | `10` | Size difference % threshold for duplicate matching |
+| `WATCHER_INTERVAL` | number | `60` | Seconds between watcher checks |
+| `WATCHER_PATH` | string | `no_path` | Folder watched by the watcher |
+| `WATCHER_DESTINATION_PATH` | string | `no_path` | Watcher file destination |
+| `TORRENT_ARCHIVE_PATH` | string | `no_path` | Archive of the generated `.torrent` files |
+| `CACHE_PATH` | string | `no_path` | Cache folder |
+| `COMPRESS_SCSHOT` | number | `3` | Screenshot compression |
+| `RESIZE_SCSHOT` | boolean | `False` | Resizes screenshots |
+| `TORRENT_COMMENT` | string | `no_comment` | Comment inside the `.torrent` file |
+| `PREFERRED_LANG` | string | `all` | Preferred language (ISO 3166) or `all` |
+| `ANON` | boolean | `False` | Anonymous upload |
+| `WEBP_ENABLED` | boolean | `False` | Animated webp in the description |
+| `CACHE_SCR` | boolean | `False` | Screenshot cache |
+| `CACHE_DBONLINE` | boolean | `False` | Online search cache |
+| `PERSONAL_RELEASE` | boolean | `False` | Personal release on every upload |
+| `FAST_LOAD` | number | `0` | Caps the processed items (1–150; 0 = all) |
+| `RELEASER_SIGN` | string | empty | Releaser signature (max 20 characters) |
 
 ## `options`
 
-| Chiave | Tipo | Default | Descrizione |
+| Key | Type | Default | Description |
 |---|---|---|---|
-| `FTPX_USER` | stringa | `user` | Username FTP |
-| `FTPX_PASS` | stringa | `pass` | Password FTP |
-| `FTPX_IP` | stringa | `127.0.0.1` | IP del server FTP |
-| `FTPX_PORT` | numero | `2121` | Porta FTP |
-| `FTPX_LOCAL_PATH` | stringa | `.` | Cartella locale di download |
-| `FTPX_ROOT` | stringa | `.` | Cartella remota di partenza |
-| `FTPX_KEEP_ALIVE` | booleano | `False` | Mantiene viva la connessione |
+| `FTPX_USER` | string | `user` | FTP username |
+| `FTPX_PASS` | string | `pass` | FTP password |
+| `FTPX_IP` | string | `127.0.0.1` | FTP server IP |
+| `FTPX_PORT` | number | `2121` | FTP port |
+| `FTPX_LOCAL_PATH` | string | `.` | Local download folder |
+| `FTPX_ROOT` | string | `.` | Remote starting folder |
+| `FTPX_KEEP_ALIVE` | boolean | `False` | Keeps the connection alive |
 
 ## `console_options`
 
-| Chiave | Tipo | Default | Descrizione |
+| Key | Type | Default | Description |
 |---|---|---|---|
-| `NORMAL_COLOR` | stringa | `blue bold` | Colore messaggi normali |
-| `ERROR_COLOR` | stringa | `red bold` | Colore errori |
-| `WELCOME_MESSAGE` | stringa | `https://itatorrents.xyz` | Testo del banner di benvenuto |
-| `WELCOME_MESSAGE_COLOR` | stringa | `blue` | Colore del banner |
-| `WELCOME_MESSAGE_BORDER_COLOR` | stringa | `yellow` | Bordo del banner |
-| `PANEL_MESSAGE_COLOR` | stringa | `blue` | Colore dei pannelli |
-| `PANEL_MESSAGE_BORDER_COLOR` | stringa | `yellow` | Bordo dei pannelli |
-| `QUESTION_MESSAGE_COLOR` | stringa | `yellow` | Colore delle domande |
+| `NORMAL_COLOR` | string | `blue bold` | Normal message color |
+| `ERROR_COLOR` | string | `red bold` | Error color |
+| `WELCOME_MESSAGE` | string | `https://itatorrents.xyz` | Welcome banner text |
+| `WELCOME_MESSAGE_COLOR` | string | `blue` | Banner color |
+| `WELCOME_MESSAGE_BORDER_COLOR` | string | `yellow` | Banner border |
+| `PANEL_MESSAGE_COLOR` | string | `blue` | Panel color |
+| `PANEL_MESSAGE_BORDER_COLOR` | string | `yellow` | Panel border |
+| `QUESTION_MESSAGE_COLOR` | string | `yellow` | Question color |
 
-Colori ammessi: `black`, `red`, `green`, `yellow`, `blue`, `magenta`, `cyan`, `white` (+ ` bold`).
+Allowed colors: `black`, `red`, `green`, `yellow`, `blue`, `magenta`, `cyan`, `white` (+ ` bold`).
 
-I valori booleani accettano `true`/`false`, `1`/`0`, `yes`/`no` (come stringhe o nativi).
+Boolean values accept `true`/`false`, `1`/`0`, `yes`/`no` (as strings or native).

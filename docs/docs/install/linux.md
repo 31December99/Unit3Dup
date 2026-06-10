@@ -1,39 +1,39 @@
-# Installazione su Linux
+# Installation on Linux
 
-## Requisiti
+## Requirements
 
-- **Python 3.10 o superiore** (consigliato: dalla 3.10 alla 3.12 — le versioni più recenti possono dare problemi con alcune librerie)
-- **FFmpeg** — usato per estrarre gli screenshot dai video
-- **Poppler** — solo se vuoi creare torrent di documenti PDF
+- **Python 3.10 or newer** (recommended: 3.10 to 3.12 — newer versions may have issues with some libraries)
+- **FFmpeg** — used to extract screenshots from videos
+- **Poppler** — only if you want to create torrents for PDF documents
 
-Distribuzioni testate: Ubuntu 22, Debian 12.
+Tested distributions: Ubuntu 22, Debian 12.
 
-## 1. Installa le dipendenze
+## 1. Install the dependencies
 
 ```bash
 sudo apt install ffmpeg
 ```
 
-Solo se caricherai documenti PDF:
+Only if you upload PDF documents:
 
 ```bash
 sudo apt install poppler-utils
 ```
 
-## 2. Installa Unit3Dup
+## 2. Install Unit3Dup
 
 ```bash
 pip install unit3dup
 ```
 
-## 3. Primo avvio
+## 3. First run
 
 ```bash
 unit3dup
 ```
 
-!!! note "Messaggi rossi al primo avvio?"
-    È normale: il bot ti sta avvisando che non è ancora configurato. Al primo avvio crea la cartella di configurazione e il file `Unit3Dbot.json`. Prosegui con la [Configurazione](../config/intro.md).
+!!! note "Red messages on first run?"
+    That's expected: the bot is telling you it's not configured yet. On first run it creates the configuration folder and the `Unit3Dbot.json` file. Continue with the [Configuration](../config/intro.md).
 
-!!! tip "Sei su una seedbox senza sudo?"
-    Vedi la guida dedicata [Seedbox ultra.cc](seedbox.md).
+!!! tip "On a seedbox without sudo?"
+    See the dedicated guide: [ultra.cc seedbox](seedbox.md).

@@ -1,100 +1,100 @@
 # FAQ / Troubleshooting
 
-## Primo avvio e configurazione
+## First run and configuration
 
-### Messaggi rossi al primo avvio
+### Red messages on first run
 
-Normale: il bot ha appena creato `Unit3Dbot.json` e i file di supporto con i valori segnaposto, e ti avvisa che mancano le chiavi. Segui i [Primi passi](../config/intro.md).
+Normal: the bot has just created `Unit3Dbot.json` and the support files with placeholder values, and it's warning you that the keys are missing. Follow [Getting started](../config/intro.md).
 
-### `-> Please Fix 'CAMPO' ['valore'] in settings.json`
+### `-> Please Fix 'FIELD' ['value'] in settings.json`
 
-Un valore in `Unit3Dbot.json` è malformato (colore inesistente, numero non numerico, URL senza schema…). Apri il file e correggi il campo indicato tra apici. La [Config completa](config.md) elenca tipo e valori ammessi di ogni chiave.
+A value in `Unit3Dbot.json` is malformed (nonexistent color, non-numeric number, URL without scheme…). Open the file and fix the quoted field. The [Full config reference](config.md) lists the type and allowed values of every key.
 
 ### `No tracker name provided. Please update your configuration file`
 
-`MULTI_TRACKER` è vuoto. Serve almeno un tracker: `"MULTI_TRACKER": ["itt"]`.
+`MULTI_TRACKER` is empty. At least one tracker is required: `"MULTI_TRACKER": ["itt"]`.
 
 ### `Tracker 'xyz' not found. Please update your configuration file`
 
-Il nome passato a `-tracker` non è nella lista `MULTI_TRACKER` (o non è tra i tracker supportati: `itt`, `sis`, `ptt`, `ast`).
+The name passed to `-tracker` is not in the `MULTI_TRACKER` list (or it's not a supported tracker: `itt`, `sis`, `ptt`, `ast`).
 
 ### `Invalid multi-tracker list. Please remove duplicates`
 
-Lo stesso tracker compare due volte in `MULTI_TRACKER`.
+The same tracker appears twice in `MULTI_TRACKER`.
 
 ### `-> No PID value for XXX_PID`
 
-Manca la passkey di un tracker presente in `MULTI_TRACKER`: o la configuri, o togli quel tracker dalla lista. Vedi [Tracker](../config/trackers.md).
+The passkey of a tracker listed in `MULTI_TRACKER` is missing: either configure it or remove that tracker from the list. See [Trackers](../config/trackers.md).
 
-## Client torrent
+## Torrent client
 
 ### `Unknown Torrent Client name 'xxx'`
 
-`TORRENT_CLIENT` deve essere esattamente `qbittorrent`, `transmission` o `rtorrent`. Vedi [Client torrent](../config/clients.md).
+`TORRENT_CLIENT` must be exactly `qbittorrent`, `transmission` or `rtorrent`. See [Torrent clients](../config/clients.md).
 
-### Il bot non si connette al client
+### The bot can't connect to the client
 
-- WebUI attiva? (qBittorrent: *Strumenti → Opzioni → WebUI*)
-- Host e porta giusti? (`QBIT_HOST`/`QBIT_PORT` e equivalenti)
-- Credenziali corrette?
-- Il client gira su un'altra macchina/container? Allora serve anche `SHARED_*_PATH` ([dettagli](../config/clients.md#shared__path-client-su-unaltra-macchina))
+- Is the WebUI enabled? (qBittorrent: *Tools → Options → WebUI*)
+- Host and port correct? (`QBIT_HOST`/`QBIT_PORT` and equivalents)
+- Credentials correct?
+- Client on another machine/container? Then you also need `SHARED_*_PATH` ([details](../config/clients.md#shared__path-client-on-another-machine))
 
-### Upload senza client?
+### Upload without a client?
 
-Sì: `-noseed` carica senza seeding, `-noup` crea solo il `.torrent`. Differenza: con `-noseed` il torrent **arriva sul tracker**, con `-noup` no — resta solo nell'archivio locale.
+Yes: `-noseed` uploads without seeding, `-noup` only creates the `.torrent`. The difference: with `-noseed` the torrent **reaches the tracker**, with `-noup` it doesn't — it only stays in the local archive.
 
-## Dipendenze
+## Dependencies
 
-### `ffmpeg` non trovato
+### `ffmpeg` not found
 
-FFmpeg non è nel PATH. [Windows](../install/windows.md#1-installa-ffmpeg) · [Linux](../install/linux.md): `sudo apt install ffmpeg`. Dopo averlo aggiunto al PATH, chiudi e riapri il terminale.
+FFmpeg is not in the PATH. [Windows](../install/windows.md#1-install-ffmpeg) · [Linux](../install/linux.md): `sudo apt install ffmpeg`. After adding it to the PATH, close and reopen the terminal.
 
-### `pdftocairo` non riconosciuto
+### `pdftocairo` not recognized
 
-Poppler manca o non è nel PATH — serve solo per i PDF. [Windows](../install/windows.md#2-poppler-solo-per-i-pdf) · Linux: `sudo apt install poppler-utils`.
+Poppler is missing or not in the PATH — only needed for PDFs. [Windows](../install/windows.md#2-poppler-pdf-only) · Linux: `sudo apt install poppler-utils`.
 
 ## Upload
 
 ### `There are no Media to process`
 
-Nel percorso non c'è niente che il bot riconosca come media, oppure il percorso è sbagliato o senza permessi di lettura.
+Nothing in the path is recognized as media, or the path is wrong or unreadable.
 
 ### `Invalid -force category`
 
-Le categorie valide per `-force` sono: `movie`, `tv`, `game`, `edicola`.
+Valid categories for `-force` are: `movie`, `tv`, `game`, `edicola`.
 
 ### `Skipping game upload, no IGDB credentials provided`
 
-Mancano `IGDB_CLIENT_ID` / `IGDB_ID_SECRET`: i giochi vengono saltati, il resto prosegue. Vedi [Giochi](../guides/giochi.md).
+`IGDB_CLIENT_ID` / `IGDB_ID_SECRET` are missing: games are skipped, everything else continues. See [Games](../guides/games.md).
 
-### `User tags file ... not found` (con `-b`)
+### `User tags file ... not found` (with `-b`)
 
-Manca `tags_list.json` nella cartella di configurazione. Viene creato al primo avvio: se l'hai cancellato, rilancia il bot senza argomenti. Vedi [Tag e titoli](../usage/tags.md).
+`tags_list.json` is missing from the configuration folder. It's created on first run: if you deleted it, launch the bot once with no arguments. See [Tags and titles](../usage/tags.md).
 
-### Il titolo viene riconosciuto male
+### The title is recognized incorrectly
 
-Usa `-notitle "Titolo Corretto"` per forzare la ricerca TMDB, e `-b` per ricostruire i tag. Vedi [Tag e titoli](../usage/tags.md).
+Use `-notitle "Correct Title"` to force the TMDB search, and `-b` to rebuild the tags. See [Tags and titles](../usage/tags.md).
 
-### Dove finiscono i `.torrent` creati?
+### Where do the created `.torrent` files go?
 
-In `TORRENT_ARCHIVE_PATH`, organizzati per tracker: `<archivio>/ITT/nome.torrent`. Default: `Unit3Dup_config/torrent_archive_path/`.
+Into `TORRENT_ARCHIVE_PATH`, organized per tracker: `<archive>/ITT/name.torrent`. Default: `Unit3Dup_config/torrent_archive_path/`.
 
 ## Watcher
 
 ### `Watcher path does not exist or is not configured`
 
-`WATCHER_PATH` non esiste o è rimasto `no_path`. Configura entrambi i percorsi del watcher ([dettagli](../usage/watcher.md)).
+`WATCHER_PATH` doesn't exist or is still `no_path`. Configure both watcher paths ([details](../usage/watcher.md)).
 
-## Altro
+## Other
 
-### Il bot funziona su seedbox senza sudo?
+### Does the bot work on a seedbox without sudo?
 
-Sì, con pyenv: guida [Seedbox ultra.cc](../install/seedbox.md).
+Yes, with pyenv: [ultra.cc seedbox](../install/seedbox.md) guide.
 
-### Come aggiorno?
+### How do I upgrade?
 
-`pip install unit3dup --upgrade` — [Aggiornamento](../install/upgrade.md).
+`pip install unit3dup --upgrade` — [Upgrade](../install/upgrade.md).
 
-### Dove chiedo aiuto?
+### Where do I ask for help?
 
-Sul [Discord di ITT](https://discord.gg/8RpwN2Khcz) o aprendo una [issue su GitHub](https://github.com/31December99/Unit3Dup/issues).
+On the [ITT Discord](https://discord.gg/8RpwN2Khcz) or by opening a [GitHub issue](https://github.com/31December99/Unit3Dup/issues).

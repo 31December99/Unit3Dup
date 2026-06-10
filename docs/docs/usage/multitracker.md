@@ -1,35 +1,35 @@
 # Multi-tracker
 
-Il bot può caricare lo stesso contenuto su un tracker solo o su tutti quelli configurati in `MULTI_TRACKER` ([configurazione](../config/trackers.md)).
+The bot can upload the same content to a single tracker or to every tracker configured in `MULTI_TRACKER` ([configuration](../config/trackers.md)).
 
-## `-tracker` — un tracker specifico
+## `-tracker` — one specific tracker
 
 ```bash
-unit3dup -tracker ptt -u "/percorso/film.mkv"
+unit3dup -tracker ptt -u "/path/movie.mkv"
 ```
 
-Carica solo sul tracker indicato. Il nome deve essere presente nella lista `MULTI_TRACKER`, altrimenti:
+Uploads only to the given tracker. The name must be in the `MULTI_TRACKER` list, otherwise:
 
 ```text
 Tracker 'xyz' not found. Please update your configuration file
 ```
 
-Senza `-tracker`, il bot usa il **primo tracker della lista** — vale anche per tutti i comandi di [ricerca](search.md).
+Without `-tracker`, the bot uses the **first tracker in the list** — this also applies to all [search](search.md) commands.
 
-## `-mt` — tutti i tracker
+## `-mt` — all trackers
 
 ```bash
-unit3dup -mt -u "/percorso/film.mkv"
+unit3dup -mt -u "/path/movie.mkv"
 ```
 
-Carica su **tutti** i tracker di `MULTI_TRACKER`, in sequenza: per ognuno crea il torrent con l'announce giusto, lo carica e lo mette in seeding.
+Uploads to **all** the trackers in `MULTI_TRACKER`, one after the other: for each it builds the torrent with the right announce URL, uploads it and starts seeding.
 
-All'avvio il bot verifica che ogni tracker risponda:
+On startup the bot checks that every tracker responds:
 
 ```text
 Tracker -> 'ITT' Online
 Tracker -> 'PTT' Online
 ```
 
-!!! warning "Serve la PID di ogni tracker"
-    Per ogni tracker in `MULTI_TRACKER` devono essere configurate `*_APIKEY` **e** `*_PID`: senza PID il bot esce con `-> No PID value`. Se non usi un tracker, toglilo dalla lista.
+!!! warning "Every tracker needs its PID"
+    Each tracker in `MULTI_TRACKER` must have both `*_APIKEY` **and** `*_PID` configured: without the PID the bot exits with `-> No PID value`. If you don't use a tracker, remove it from the list.

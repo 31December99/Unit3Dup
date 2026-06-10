@@ -1,31 +1,31 @@
 # Reseed
 
-`-reseed` serve a **rimettere in seeding contenuti che hai già sul disco**, partendo da torrent già esistenti sul tracker — senza creare niente di nuovo.
+`-reseed` puts **content you already have on disk** back into seeding, using torrents that already exist on the tracker — nothing new is created.
 
-## Come funziona
+## How it works
 
 ```bash
-unit3dup -reseed -f "/percorso/cartella"
-unit3dup -reseed -scan "/percorso/libreria"
+unit3dup -reseed -f "/path/folder"
+unit3dup -reseed -scan "/path/library"
 ```
 
-Per ogni contenuto video trovato nel percorso:
+For every video content found in the path:
 
-1. Il bot identifica il titolo (ricerca TMDB, come per un upload)
-2. Cerca sul tracker un torrent **corrispondente** al tuo file
-3. Se lo trova, **scarica il `.torrent` dal tracker** nell'[archivio](../config/options.md#percorsi) (`<archivio>/<TRACKER>/`)
-4. Lo consegna al client torrent, che riprende il seeding usando i tuoi file locali
+1. The bot identifies the title (TMDB lookup, just like an upload)
+2. It searches the tracker for a torrent **matching** your file
+3. If found, it **downloads the `.torrent` from the tracker** into the [archive](../config/options.md#paths) (`<archive>/<TRACKER>/`)
+4. It hands it to the torrent client, which resumes seeding using your local files
 
-Con più tracker (lista `MULTI_TRACKER` o `-mt`) il giro viene ripetuto per ognuno.
+With multiple trackers (`MULTI_TRACKER` list or `-mt`) the round is repeated for each one.
 
-## A cosa serve
+## What it's for
 
-- **Riprendere il seeding** di release che avevi già caricato, dopo un cambio di client o di macchina
-- **Seedare release esistenti** di cui possiedi già i file identici
-- **Migrare tra OS diversi**: i torrent creati su Linux si riseedano su Windows e viceversa
+- **Resume seeding** releases you had already uploaded, after switching client or machine
+- **Seed existing releases** you already own identical files for
+- **Migrate across OSes**: torrents created on Linux reseed on Windows and vice versa
 
-!!! note "Solo contenuti video"
-    Il reseed lavora su film e serie; documenti e giochi non sono coinvolti.
+!!! note "Video content only"
+    Reseed works on movies and TV shows; documents and games are not involved.
 
-!!! tip "Titoli sporchi"
-    Se il nome della cartella non basta a identificare il titolo, aggiungi `-notitle "Titolo Vero"`.
+!!! tip "Messy titles"
+    If the folder name isn't enough to identify the title, add `-notitle "Real Title"`.
