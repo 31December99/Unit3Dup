@@ -1,111 +1,94 @@
-# Benvenuto in Unit3dUp Docs 0.0.3
+# Unit3Dup
 
-Unit3Dup è un bot scritto in python per caricare i vostri torrents sui trackers UNIT3D
+**Unit3Dup is a Python bot that generates and uploads your torrents to UNIT3D-based trackers.**
 
-Il workflow è il seguente:
+Give it a path — a file or a folder — and it does the rest: it analyzes your media, creates the torrent, prepares the tracker page and starts seeding.
 
-- User fornisce un **percorso** di una cartella o di un file
-- Bot analizza il file o i files e autonomamente crea per ognuno un **oggetto**
-- Ogni oggetto ha diverse proprietà
-- Le proprietà descrivono l'oggetto che verrà caricato sul tracker insieme al torrent
+## What it does
 
-## Il percorso
+- Scans folders and subfolders
+- Collects metadata and creates the `.torrent` file
+- Extracts a series of screenshots straight from the video and uploads them to an image host
+- Looks up the matching ID on **TMDB**, **IMDB**, **TVDB**, **IGDB**
+- Adds the trailer from TMDB or YouTube
+- Generates the title tags: `version`, `resolution`, `uhd`, `platform`, `source`, `remux`, `multi`, `acodec`, `channels`, `flag`, `subtitle`, `vcodec`, `hdr`, `video_encoder`
+- Extracts the cover from PDF documents
+- Seeds with **qBittorrent**, **Transmission** or **rTorrent**
+- Reseeds one or more torrents at a time, even across different OSes
 
-unit3dup è il nome del bot e del file eseguibile.
-Il bot viene lanciato da linea di comando seguito da alcuni flag quando necessari.
+## Quickstart
 
-I flag determinano il comportamento del bot partendo da quelli a base fino a qualcosa in più
+Three commands cover most use cases:
 
-### Flag di base
+```bash
+unit3dup -u "/home/ITT/upload/movie.mkv"
+```
 
-I flag di base svolgono attività di analisi dei tuoi file, creazione e upload del torrent e seeding
+Uploads a **single file**: analysis, screenshots, upload, seeding.
 
-**-u: unico file**
+```bash
+unit3dup -f "/home/ITT/upload/foldername"
+```
 
-Un unico flag '-u' per
+Uploads a **folder** as a single torrent (a movie, a full season…). The torrent takes the folder name.
 
-- analisi del file
-- Creazione descrizione destinata alla pagina del tracker (screenshot o altro)
-- upload verso il tracker
-- seeding
+```bash
+unit3dup -scan "/home/ITT/upload"
+```
 
-```unit3dup -u "/home/ITT/upload/....mkv"```
+Processes **everything** inside the path: every file and every folder, all the way to seeding.
 
+!!! tip "First time?"
+    Follow the [First upload step by step](guides/first-upload.md) guide: from installation to your first uploaded torrent.
 
-**-f: Il bot tiene conto del nome del folder**
+## How the bot thinks
 
-Come per '-u' ma solo per le cartelle. Il torrent viene creato facendo riferimento al contenuto della cartella
+The flow is always the same:
 
-La cartella può contenere un movie o una serie
+1. You provide a **path** (file or folder)
+2. The bot analyzes the content and creates an **object** for each item
+3. Every object has **properties** describing what will be uploaded
+4. The properties are sent to the tracker together with the torrent
 
-Per il bot non fa differenza. Crea e carica quindi un torrent con il contenuto del folder
+### Video object
 
-```unit3dup -f "/home/ITT/upload/nomecartella"```
+Created for every video file found:
 
-**-scan: flag '-u' e '-f' insieme**
+| Property | Description |
+|---|---|
+| `name` | Torrent name and title shown on the tracker page |
+| `tmdb` | ID obtained by querying TheMovieDatabase |
+| `tvdb` | ID obtained by querying TheTVDB |
+| `imdb` | ID derived from the TVDB result |
+| `keywords` | Keywords obtained from the TMDB result |
+| `category_id` | Tracker category: Movie or TV show |
+| `resolution_id` | Resolution as recognized by the tracker |
+| `sd` | Whether the video is SD or at least HD |
+| `anonymous` | If set, hides your username |
+| `mediainfo` | MediaInfo output with the technical details of the video |
+| `description` | Screenshots, trailer and personal description |
+| `type_id` | Video source (Disc, Remux, Encode, WEB-DL…) |
+| `season_number` | Season number |
+| `episode_number` | Episode number, `0` for a torrent pack |
+| `personal_release` | Marks the torrent as a personal release |
 
-Prendendo come input un percorso, analizza ogni file e cartella terminando il processo con il seeding
+### Document object
 
-```unit3dup -scan "/home/ITT/upload/nomecartella"```
+It has fewer properties than the video object: `name`, `tmdb`, `category_id`, `anonymous`, `description`, `type_id`, `resolution_id`, `personal_release`. The `tmdb` and `resolution_id` fields are set to neutral values because the tracker requires them. See the [PDF documents](guides/documents.md) guide.
 
+### Game object
 
-## L'oggetto..
+Like Documents, plus the `igdb` property: the game ID on the IGDB database. It requires an IGDB account — see the [Games](guides/games.md) guide.
 
-Esistono tre tipi di oggetto
+## Supported trackers
 
-- Oggetto video
-- Oggetto Documenti
-- Oggetto Game
+| Tracker | Site |
+|---|---|
+| `ITT` | [itatorrents.xyz](https://itatorrents.xyz) |
+| `PTT` | [polishtorrent.top](https://polishtorrent.top) |
+| `AST` | [arabicsource.net](https://arabicsource.net) |
+| `SIS` | — |
 
-### Oggetto Video
+## Community
 
-Il bot crea un **oggetto video** per ogni file video che incontra con le proprietà che seguono:
-
-- `name` : **Nome del torrent** e nome visualizzato sulla pagina del tracker
-- `tmdb` : ID del video ottenuto interrogando il database online **TheMovieDatabase** 
-- `tvdb` : ID del video ottenuto interrogando il database online **TheTVDB**
-- `imdb` : ID del video ottenuto dal risultato di TVDB
-- `keywords` : Keywords ottenute dal risultato di TMDB
-- `category_id`: ID del tracker che identifica il tipo di video **Movie** o **Serie**
-- `resolution_id`: ID del tracker che identifica la risoluzione 
-- `sd` : ID del tracker che identifica se un video è almeno HD o SD
-- `anonymous` : Se settato previene la lettura dell'username
-- `mediainfo` : L'output di mediainfo che contiene le informazioni tecniche del video
-- `description` : lo spazio dove vengono inseriti gli url degli **screenshot e descrizione** personale 
-- `type_id` : ID del tracker che identifica la sorgente
-- `season_number` : numero di stagione
-- `episode_number` : numero di episodio oppure 0 quando è un **torrent pack**
-- `personal_release` : indica che questa è una **personal release**
- 
-### Oggetto Documenti
-
-L'oggetto ```documenti``` ha sicuramente meno proprietà in comune con il video.
-Fanno eccezione `tmdb` e `resolution_id` perché ritenuti campi obbligatori dal tracker
-e settati come valori neutrali
-
-- `name`
-- `tmdb`
-- `category_id`
-- `anonymous`
-- `description`
-- `type_id`
-- `resolution_id`
-- `personal_release`
-
-La descrizione di ogni proprietà è la stessa del video
-
-### Oggetto Game
-
-Lo stesso vale per `Game` con tmdb settato come valore neutrale.
-Si aggiunge inoltre la proprietà `igdb`, per la quale è necessario avere un account IGDB.
-
-IGDB fornisce un ID del suo database online come per tmdb e tvdb
-
-- `name`
-- `tmdb`
-- `category_id`
-- `anonymous`
-- `description`
-- `type_id`
-- `igdb`
-- `personal_release`
+Questions, reports, requests: [ITT Discord server](https://discord.gg/8RpwN2Khcz).

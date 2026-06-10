@@ -1,9 +1,113 @@
-site_name: UNit3D-up
-site_description: Guida in italiano per Unit3Dup
+site_name: Unit3Dup
+site_description: Unit3Dup documentation — torrent generator and uploader for UNIT3D trackers
+site_url: https://31december99.github.io/Unit3Dup/
+repo_url: https://github.com/31December99/Unit3Dup
+repo_name: 31December99/Unit3Dup
+
+theme:
+  name: material
+  language: en
+  logo: images/unit3dup.png
+  favicon: images/unit3dup.png
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - navigation.footer
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+  - pymdownx.tabbed:
+      alternate_style: true
+  - tables
+  - attr_list
+
+plugins:
+  - search
+  - i18n:
+      docs_structure: suffix
+      fallback_to_default: true
+      reconfigure_material: true
+      reconfigure_search: true
+      languages:
+        - locale: en
+          default: true
+          name: English
+          build: true
+        - locale: it
+          name: Italiano
+          build: true
+          site_description: Documentazione di Unit3Dup — generatore e uploader di torrent per tracker UNIT3D
+          nav_translations:
+            Installation: Installazione
+            Upgrade: Aggiornamento
+            Configuration: Configurazione
+            Getting started: Primi passi
+            Trackers: Tracker
+            Image hosts: Image host
+            Torrent clients: Client torrent
+            Advanced options: Opzioni avanzate
+            Usage: Uso del bot
+            Basic upload: Upload base
+            Tags and titles: Tag e titoli
+            Search: Ricerca
+            Guides: Guide
+            First upload step by step: Primo upload passo-passo
+            PDF documents: Documenti PDF
+            Games: Giochi
+            Reference: Riferimenti
+            All commands: Tutti i comandi
+            Full config: Config completa
 
 nav:
   - Home: index.md
-  - Installa unit3Dup: install.md
-  - Configurazione: config.md
-  - Guide: guide.md
-  - Commands: commands.md
+  - Installation:
+      - Windows: install/windows.md
+      - Linux: install/linux.md
+      - Seedbox ultra.cc: install/seedbox.md
+      - Upgrade: install/upgrade.md
+  - Configuration:
+      - Getting started: config/intro.md
+      - Trackers: config/trackers.md
+      - Metadata: config/metadata.md
+      - Image hosts: config/imagehosts.md
+      - Torrent clients: config/clients.md
+      - Advanced options: config/options.md
+  - Usage:
+      - Basic upload: usage/upload.md
+      - Tags and titles: usage/tags.md
+      - Multi-tracker: usage/multitracker.md
+      - Reseed: usage/reseed.md
+      - Watcher: usage/watcher.md
+      - Search: usage/search.md
+      - FTP: usage/ftp.md
+  - Guides:
+      - First upload step by step: guides/first-upload.md
+      - PDF documents: guides/documents.md
+      - Games: guides/games.md
+  - Reference:
+      - All commands: reference/commands.md
+      - Full config: reference/config.md
+      - FAQ: reference/faq.md
