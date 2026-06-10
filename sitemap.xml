@@ -1,3 +1,339 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+    <url>
+        <loc>https://31december99.github.io/Unit3Dup/</loc>
+        <lastmod>2026-06-10</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://31december99.github.io/Unit3Dup/"/>
+        <xhtml:link rel="alternate" hreflang="it" href="https://31december99.github.io/Unit3Dup/it/"/>
+    </url>
+    <url>
+        <loc>https://31december99.github.io/Unit3Dup/config/clients/</loc>
+        <lastmod>2026-06-10</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://31december99.github.io/Unit3Dup/config/clients/"/>
+        <xhtml:link rel="alternate" hreflang="it" href="https://31december99.github.io/Unit3Dup/it/config/clients/"/>
+    </url>
+    <url>
+        <loc>https://31december99.github.io/Unit3Dup/config/imagehosts/</loc>
+        <lastmod>2026-06-10</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://31december99.github.io/Unit3Dup/config/imagehosts/"/>
+        <xhtml:link rel="alternate" hreflang="it" href="https://31december99.github.io/Unit3Dup/it/config/imagehosts/"/>
+    </url>
+    <url>
+        <loc>https://31december99.github.io/Unit3Dup/config/intro/</loc>
+        <lastmod>2026-06-10</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://31december99.github.io/Unit3Dup/config/intro/"/>
+        <xhtml:link rel="alternate" hreflang="it" href="https://31december99.github.io/Unit3Dup/it/config/intro/"/>
+    </url>
+    <url>
+        <loc>https://31december99.github.io/Unit3Dup/config/metadata/</loc>
+        <lastmod>2026-06-10</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://31december99.github.io/Unit3Dup/config/metadata/"/>
+        <xhtml:link rel="alternate" hreflang="it" href="https://31december99.github.io/Unit3Dup/it/config/metadata/"/>
+    </url>
+    <url>
+        <loc>https://31december99.github.io/Unit3Dup/config/options/</loc>
+        <lastmod>2026-06-10</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://31december99.github.io/Unit3Dup/config/options/"/>
+        <xhtml:link rel="alternate" hreflang="it" href="https://31december99.github.io/Unit3Dup/it/config/options/"/>
+    </url>
+    <url>
+        <loc>https://31december99.github.io/Unit3Dup/config/trackers/</loc>
+        <lastmod>2026-06-10</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://31december99.github.io/Unit3Dup/config/trackers/"/>
+        <xhtml:link rel="alternate" hreflang="it" href="https://31december99.github.io/Unit3Dup/it/config/trackers/"/>
+    </url>
+    <url>
+        <loc>https://31december99.github.io/Unit3Dup/guides/documents/</loc>
+        <lastmod>2026-06-10</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://31december99.github.io/Unit3Dup/guides/documents/"/>
+        <xhtml:link rel="alternate" hreflang="it" href="https://31december99.github.io/Unit3Dup/it/guides/documents/"/>
+    </url>
+    <url>
+        <loc>https://31december99.github.io/Unit3Dup/guides/first-upload/</loc>
+        <lastmod>2026-06-10</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://31december99.github.io/Unit3Dup/guides/first-upload/"/>
+        <xhtml:link rel="alternate" hreflang="it" href="https://31december99.github.io/Unit3Dup/it/guides/first-upload/"/>
+    </url>
+    <url>
+        <loc>https://31december99.github.io/Unit3Dup/guides/games/</loc>
+        <lastmod>2026-06-10</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://31december99.github.io/Unit3Dup/guides/games/"/>
+        <xhtml:link rel="alternate" hreflang="it" href="https://31december99.github.io/Unit3Dup/it/guides/games/"/>
+    </url>
+    <url>
+        <loc>https://31december99.github.io/Unit3Dup/install/linux/</loc>
+        <lastmod>2026-06-10</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://31december99.github.io/Unit3Dup/install/linux/"/>
+        <xhtml:link rel="alternate" hreflang="it" href="https://31december99.github.io/Unit3Dup/it/install/linux/"/>
+    </url>
+    <url>
+        <loc>https://31december99.github.io/Unit3Dup/install/seedbox/</loc>
+        <lastmod>2026-06-10</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://31december99.github.io/Unit3Dup/install/seedbox/"/>
+        <xhtml:link rel="alternate" hreflang="it" href="https://31december99.github.io/Unit3Dup/it/install/seedbox/"/>
+    </url>
+    <url>
+        <loc>https://31december99.github.io/Unit3Dup/install/upgrade/</loc>
+        <lastmod>2026-06-10</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://31december99.github.io/Unit3Dup/install/upgrade/"/>
+        <xhtml:link rel="alternate" hreflang="it" href="https://31december99.github.io/Unit3Dup/it/install/upgrade/"/>
+    </url>
+    <url>
+        <loc>https://31december99.github.io/Unit3Dup/install/windows/</loc>
+        <lastmod>2026-06-10</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://31december99.github.io/Unit3Dup/install/windows/"/>
+        <xhtml:link rel="alternate" hreflang="it" href="https://31december99.github.io/Unit3Dup/it/install/windows/"/>
+    </url>
+    <url>
+        <loc>https://31december99.github.io/Unit3Dup/reference/commands/</loc>
+        <lastmod>2026-06-10</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://31december99.github.io/Unit3Dup/reference/commands/"/>
+        <xhtml:link rel="alternate" hreflang="it" href="https://31december99.github.io/Unit3Dup/it/reference/commands/"/>
+    </url>
+    <url>
+        <loc>https://31december99.github.io/Unit3Dup/reference/config/</loc>
+        <lastmod>2026-06-10</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://31december99.github.io/Unit3Dup/reference/config/"/>
+        <xhtml:link rel="alternate" hreflang="it" href="https://31december99.github.io/Unit3Dup/it/reference/config/"/>
+    </url>
+    <url>
+        <loc>https://31december99.github.io/Unit3Dup/reference/faq/</loc>
+        <lastmod>2026-06-10</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://31december99.github.io/Unit3Dup/reference/faq/"/>
+        <xhtml:link rel="alternate" hreflang="it" href="https://31december99.github.io/Unit3Dup/it/reference/faq/"/>
+    </url>
+    <url>
+        <loc>https://31december99.github.io/Unit3Dup/usage/ftp/</loc>
+        <lastmod>2026-06-10</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://31december99.github.io/Unit3Dup/usage/ftp/"/>
+        <xhtml:link rel="alternate" hreflang="it" href="https://31december99.github.io/Unit3Dup/it/usage/ftp/"/>
+    </url>
+    <url>
+        <loc>https://31december99.github.io/Unit3Dup/usage/multitracker/</loc>
+        <lastmod>2026-06-10</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://31december99.github.io/Unit3Dup/usage/multitracker/"/>
+        <xhtml:link rel="alternate" hreflang="it" href="https://31december99.github.io/Unit3Dup/it/usage/multitracker/"/>
+    </url>
+    <url>
+        <loc>https://31december99.github.io/Unit3Dup/usage/reseed/</loc>
+        <lastmod>2026-06-10</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://31december99.github.io/Unit3Dup/usage/reseed/"/>
+        <xhtml:link rel="alternate" hreflang="it" href="https://31december99.github.io/Unit3Dup/it/usage/reseed/"/>
+    </url>
+    <url>
+        <loc>https://31december99.github.io/Unit3Dup/usage/search/</loc>
+        <lastmod>2026-06-10</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://31december99.github.io/Unit3Dup/usage/search/"/>
+        <xhtml:link rel="alternate" hreflang="it" href="https://31december99.github.io/Unit3Dup/it/usage/search/"/>
+    </url>
+    <url>
+        <loc>https://31december99.github.io/Unit3Dup/usage/tags/</loc>
+        <lastmod>2026-06-10</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://31december99.github.io/Unit3Dup/usage/tags/"/>
+        <xhtml:link rel="alternate" hreflang="it" href="https://31december99.github.io/Unit3Dup/it/usage/tags/"/>
+    </url>
+    <url>
+        <loc>https://31december99.github.io/Unit3Dup/usage/upload/</loc>
+        <lastmod>2026-06-10</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://31december99.github.io/Unit3Dup/usage/upload/"/>
+        <xhtml:link rel="alternate" hreflang="it" href="https://31december99.github.io/Unit3Dup/it/usage/upload/"/>
+    </url>
+    <url>
+        <loc>https://31december99.github.io/Unit3Dup/usage/watcher/</loc>
+        <lastmod>2026-06-10</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://31december99.github.io/Unit3Dup/usage/watcher/"/>
+        <xhtml:link rel="alternate" hreflang="it" href="https://31december99.github.io/Unit3Dup/it/usage/watcher/"/>
+    </url>
+    <url>
+        <loc>https://31december99.github.io/Unit3Dup/it/</loc>
+        <lastmod>2026-06-10</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="it" href="https://31december99.github.io/Unit3Dup/it/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://31december99.github.io/Unit3Dup/"/>
+    </url>
+    <url>
+        <loc>https://31december99.github.io/Unit3Dup/it/config/clients/</loc>
+        <lastmod>2026-06-10</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="it" href="https://31december99.github.io/Unit3Dup/it/config/clients/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://31december99.github.io/Unit3Dup/config/clients/"/>
+    </url>
+    <url>
+        <loc>https://31december99.github.io/Unit3Dup/it/config/imagehosts/</loc>
+        <lastmod>2026-06-10</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="it" href="https://31december99.github.io/Unit3Dup/it/config/imagehosts/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://31december99.github.io/Unit3Dup/config/imagehosts/"/>
+    </url>
+    <url>
+        <loc>https://31december99.github.io/Unit3Dup/it/config/intro/</loc>
+        <lastmod>2026-06-10</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="it" href="https://31december99.github.io/Unit3Dup/it/config/intro/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://31december99.github.io/Unit3Dup/config/intro/"/>
+    </url>
+    <url>
+        <loc>https://31december99.github.io/Unit3Dup/it/config/metadata/</loc>
+        <lastmod>2026-06-10</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="it" href="https://31december99.github.io/Unit3Dup/it/config/metadata/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://31december99.github.io/Unit3Dup/config/metadata/"/>
+    </url>
+    <url>
+        <loc>https://31december99.github.io/Unit3Dup/it/config/options/</loc>
+        <lastmod>2026-06-10</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="it" href="https://31december99.github.io/Unit3Dup/it/config/options/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://31december99.github.io/Unit3Dup/config/options/"/>
+    </url>
+    <url>
+        <loc>https://31december99.github.io/Unit3Dup/it/config/trackers/</loc>
+        <lastmod>2026-06-10</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="it" href="https://31december99.github.io/Unit3Dup/it/config/trackers/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://31december99.github.io/Unit3Dup/config/trackers/"/>
+    </url>
+    <url>
+        <loc>https://31december99.github.io/Unit3Dup/it/guides/documents/</loc>
+        <lastmod>2026-06-10</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="it" href="https://31december99.github.io/Unit3Dup/it/guides/documents/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://31december99.github.io/Unit3Dup/guides/documents/"/>
+    </url>
+    <url>
+        <loc>https://31december99.github.io/Unit3Dup/it/guides/first-upload/</loc>
+        <lastmod>2026-06-10</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="it" href="https://31december99.github.io/Unit3Dup/it/guides/first-upload/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://31december99.github.io/Unit3Dup/guides/first-upload/"/>
+    </url>
+    <url>
+        <loc>https://31december99.github.io/Unit3Dup/it/guides/games/</loc>
+        <lastmod>2026-06-10</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="it" href="https://31december99.github.io/Unit3Dup/it/guides/games/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://31december99.github.io/Unit3Dup/guides/games/"/>
+    </url>
+    <url>
+        <loc>https://31december99.github.io/Unit3Dup/it/install/linux/</loc>
+        <lastmod>2026-06-10</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="it" href="https://31december99.github.io/Unit3Dup/it/install/linux/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://31december99.github.io/Unit3Dup/install/linux/"/>
+    </url>
+    <url>
+        <loc>https://31december99.github.io/Unit3Dup/it/install/seedbox/</loc>
+        <lastmod>2026-06-10</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="it" href="https://31december99.github.io/Unit3Dup/it/install/seedbox/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://31december99.github.io/Unit3Dup/install/seedbox/"/>
+    </url>
+    <url>
+        <loc>https://31december99.github.io/Unit3Dup/it/install/upgrade/</loc>
+        <lastmod>2026-06-10</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="it" href="https://31december99.github.io/Unit3Dup/it/install/upgrade/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://31december99.github.io/Unit3Dup/install/upgrade/"/>
+    </url>
+    <url>
+        <loc>https://31december99.github.io/Unit3Dup/it/install/windows/</loc>
+        <lastmod>2026-06-10</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="it" href="https://31december99.github.io/Unit3Dup/it/install/windows/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://31december99.github.io/Unit3Dup/install/windows/"/>
+    </url>
+    <url>
+        <loc>https://31december99.github.io/Unit3Dup/it/reference/commands/</loc>
+        <lastmod>2026-06-10</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="it" href="https://31december99.github.io/Unit3Dup/it/reference/commands/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://31december99.github.io/Unit3Dup/reference/commands/"/>
+    </url>
+    <url>
+        <loc>https://31december99.github.io/Unit3Dup/it/reference/config/</loc>
+        <lastmod>2026-06-10</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="it" href="https://31december99.github.io/Unit3Dup/it/reference/config/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://31december99.github.io/Unit3Dup/reference/config/"/>
+    </url>
+    <url>
+        <loc>https://31december99.github.io/Unit3Dup/it/reference/faq/</loc>
+        <lastmod>2026-06-10</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="it" href="https://31december99.github.io/Unit3Dup/it/reference/faq/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://31december99.github.io/Unit3Dup/reference/faq/"/>
+    </url>
+    <url>
+        <loc>https://31december99.github.io/Unit3Dup/it/usage/ftp/</loc>
+        <lastmod>2026-06-10</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="it" href="https://31december99.github.io/Unit3Dup/it/usage/ftp/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://31december99.github.io/Unit3Dup/usage/ftp/"/>
+    </url>
+    <url>
+        <loc>https://31december99.github.io/Unit3Dup/it/usage/multitracker/</loc>
+        <lastmod>2026-06-10</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="it" href="https://31december99.github.io/Unit3Dup/it/usage/multitracker/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://31december99.github.io/Unit3Dup/usage/multitracker/"/>
+    </url>
+    <url>
+        <loc>https://31december99.github.io/Unit3Dup/it/usage/reseed/</loc>
+        <lastmod>2026-06-10</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="it" href="https://31december99.github.io/Unit3Dup/it/usage/reseed/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://31december99.github.io/Unit3Dup/usage/reseed/"/>
+    </url>
+    <url>
+        <loc>https://31december99.github.io/Unit3Dup/it/usage/search/</loc>
+        <lastmod>2026-06-10</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="it" href="https://31december99.github.io/Unit3Dup/it/usage/search/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://31december99.github.io/Unit3Dup/usage/search/"/>
+    </url>
+    <url>
+        <loc>https://31december99.github.io/Unit3Dup/it/usage/tags/</loc>
+        <lastmod>2026-06-10</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="it" href="https://31december99.github.io/Unit3Dup/it/usage/tags/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://31december99.github.io/Unit3Dup/usage/tags/"/>
+    </url>
+    <url>
+        <loc>https://31december99.github.io/Unit3Dup/it/usage/upload/</loc>
+        <lastmod>2026-06-10</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="it" href="https://31december99.github.io/Unit3Dup/it/usage/upload/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://31december99.github.io/Unit3Dup/usage/upload/"/>
+    </url>
+    <url>
+        <loc>https://31december99.github.io/Unit3Dup/it/usage/watcher/</loc>
+        <lastmod>2026-06-10</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="it" href="https://31december99.github.io/Unit3Dup/it/usage/watcher/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://31december99.github.io/Unit3Dup/usage/watcher/"/>
+    </url>
 </urlset>
