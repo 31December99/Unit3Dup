@@ -78,7 +78,9 @@ RUN
 DOC
 ===
 
-Commands list `Unit3Dup <https://31december99.github.io/Unit3Dup/commands/>`_
+Full documentation `Unit3Dup Docs <https://31december99.github.io/Unit3Dup/>`_
+
+Commands list `Unit3Dup <https://31december99.github.io/Unit3Dup/reference/commands/>`_
 
 
 ImageHost
