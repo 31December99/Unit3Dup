@@ -1,4 +1,4 @@
-# Benvenuto in Unit3dUp Docs 0.0.2
+# Benvenuto in Unit3dUp Docs 0.0.3
 
 Unit3Dup è un bot scritto in python per caricare i vostri torrents sui trackers UNIT3D
 
@@ -109,4 +109,3 @@ IGDB fornisce un ID del suo database online come per tmdb e tvdb
 - `type_id`
 - `igdb`
 - `personal_release`
-
