@@ -9,7 +9,7 @@ pip install unit3dup --upgrade
 La versione installata è visibile all'avvio del bot:
 
 ```text
-Unit3Dup 0.11.10 Checking your configuration file..
+Unit3Dup 0.11.11 Checking your configuration file..
 ```
 
 !!! tip "Dopo ogni aggiornamento"

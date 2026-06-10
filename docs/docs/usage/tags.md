@@ -12,6 +12,8 @@ unit3dup -b -u "/path/movie.mkv"
 
 With `-b/--buildtags` the bot **rebuilds from scratch** the title and tags using the technical analysis of the media (MediaInfo) and the file name, in the order defined by `TAGS_POSITION_MOVIE` / `TAGS_POSITION_SERIE` ([Advanced options](../config/options.md#tag-order-in-the-title)).
 
+It **does not rename your file**: it only builds the torrent title shown on the tracker page.
+
 Without `-b`, the title stays closer to the original file name.
 
 ## The three customization files
@@ -35,9 +37,18 @@ Used by `-b`: when the word appears in the file name, the value lands in the rig
 !!! warning "Required by `-b`"
     If `tags_list.json` is missing, the bot reports it at startup when you use `-b`.
 
-### `ban_list.json` — words to remove
+### `ban_list.json` — tags to exclude from the autobuild
 
-List of words **stripped from the title** during the rebuild: stuff that must not reach the tracker page (site tags, junk in file names…).
+Excludes entire **tag types** from the title rebuild: a tag listed here never ends up in the title built by `-b`. Keys are the tag names (the same ones used in `TAGS_POSITION_*`); the value is just a placeholder.
+
+Example — never include the video codec nor the encoder in the title:
+
+```json
+{
+    "vcodec": "banned",
+    "video_encoder": "banned"
+}
+```
 
 ### `sign_list.json` — releaser signatures
 

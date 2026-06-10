@@ -9,7 +9,7 @@ pip install unit3dup --upgrade
 The installed version is shown when the bot starts:
 
 ```text
-Unit3Dup 0.11.10 Checking your configuration file..
+Unit3Dup 0.11.11 Checking your configuration file..
 ```
 
 !!! tip "After every upgrade"

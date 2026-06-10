@@ -16,7 +16,7 @@ Folder contents:
 | `Unit3Dbot.json` | **Main configuration**: trackers, API keys, torrent client, preferences |
 | `tags_list.json` | Custom tags for title building ([details](../usage/tags.md)) |
 | `sign_list.json` | Releaser signatures ([details](../usage/tags.md)) |
-| `ban_list.json` | Words to strip from titles ([details](../usage/tags.md)) |
+| `ban_list.json` | Tags to exclude from the title autobuild ([details](../usage/tags.md)) |
 
 !!! warning "The file is named `Unit3Dbot.json`"
     Older versions of the documentation called it "Unit3D.json": the correct name is **`Unit3Dbot.json`**.
