@@ -1,9 +1,80 @@
-site_name: UNit3D-up
-site_description: Guida in italiano per Unit3Dup
+site_name: Unit3Dup
+site_description: Documentazione italiana per Unit3Dup — bot di upload per tracker UNIT3D
+site_url: https://31december99.github.io/Unit3Dup/
+repo_url: https://github.com/31December99/Unit3Dup
+repo_name: 31December99/Unit3Dup
+
+theme:
+  name: material
+  language: it
+  logo: images/unit3dup.png
+  favicon: images/unit3dup.png
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-night
+        name: Passa al tema scuro
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-sunny
+        name: Passa al tema chiaro
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - navigation.footer
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+  - pymdownx.tabbed:
+      alternate_style: true
+  - tables
+  - attr_list
+
+plugins:
+  - search:
+      lang: it
 
 nav:
   - Home: index.md
-  - Installa unit3Dup: install.md
-  - Configurazione: config.md
-  - Guide: guide.md
-  - Commands: commands.md
+  - Installazione:
+      - Windows: install/windows.md
+      - Linux: install/linux.md
+      - Seedbox ultra.cc: install/seedbox.md
+      - Aggiornamento: install/upgrade.md
+  - Configurazione:
+      - Primi passi: config/intro.md
+      - Tracker: config/trackers.md
+      - Metadata: config/metadata.md
+      - Image host: config/imagehosts.md
+      - Client torrent: config/clients.md
+      - Opzioni avanzate: config/options.md
+  - Uso del bot:
+      - Upload base: usage/upload.md
+      - Tag e titoli: usage/tags.md
+      - Multi-tracker: usage/multitracker.md
+      - Reseed: usage/reseed.md
+      - Watcher: usage/watcher.md
+      - Ricerca: usage/search.md
+      - FTP: usage/ftp.md
+  - Guide:
+      - Primo upload passo-passo: guides/primo-upload.md
+      - Documenti PDF: guides/documenti.md
+      - Giochi: guides/giochi.md
+  - Riferimenti:
+      - Tutti i comandi: reference/commands.md
+      - Config completa: reference/config.md
+      - FAQ: reference/faq.md
