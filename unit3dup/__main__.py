@@ -291,7 +291,7 @@ def main():
         torrent_info.view_highspeed()
         return
 
-    if cli.args.internal:
+    if cli.args.intern_r:
         torrent_info.view_internal()
         return
 

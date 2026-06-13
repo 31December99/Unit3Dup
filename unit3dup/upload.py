@@ -98,7 +98,6 @@ class UploadBot:
         self.tracker.data["tmdb"] = show_id
         self.tracker.data["imdb"] = imdb_id if imdb_id else 0
         self.tracker.data["tvdb"] = tvdb_id if tvdb_id and self.content.category == 'tv' else None
-
         self.tracker.data["keywords"] = show_keywords_list
         self.tracker.data["category_id"] = self.tracker_data.category.get(self.content.category)
         self.tracker.data["anonymous"] = int(config_settings.user_preferences.ANON)
@@ -110,6 +109,8 @@ class UploadBot:
         self.tracker.data["episode_number"] = (self.content.guess_episode if not self.content.torrent_pack else 0)
         self.tracker.data["personal_release"] = (int(config_settings.user_preferences.PERSONAL_RELEASE)
                                                  or int(self.cli.personal))
+        self.tracker.data["internal"] = int(self.cli.internal)
+
         # skip upload if the key is missing
         if self.category_id():
             self.tracker.data["category_id"] = self.category_id()
