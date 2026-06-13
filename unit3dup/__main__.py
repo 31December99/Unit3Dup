@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 import json
 
-import requests
-
 from common.torrent_clients import TransmissionClient, QbittorrentClient, RTorrentClient
 from common.command import CommandLine
 from common.settings import Load, DEFAULT_JSON_PATH, USER_TAGS_PATH, USER_SIGN_PATH, BAN_TAGS_PATH, version
@@ -57,7 +55,6 @@ def main():
         if tracker.get_alive(alive=True, perPage=1):
             custom_console.bot_log(f"Tracker -> '{cli.args.tracker.upper()}' Online")
             tracker_name_list = [cli.args.tracker.upper()]
-
 
     # Send content to the multi_tracker list
     if cli.args.mt:

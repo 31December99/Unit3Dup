@@ -1,6 +1,6 @@
 guessit==3.8.0
 pymediainfo==6.1.0
-python-qbittorrent==0.4.3
+qbittorrent-api==2026.6.0
 pydantic==2.10.6
 requests==2.32.3
 rich==13.7.1
