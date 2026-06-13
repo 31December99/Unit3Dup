@@ -24,7 +24,7 @@ user_tags_file = "tags_list.json"
 user_sign_file = "sign_list.json"
 bane_file = "ban_list.json"
 
-version = "0.11.11"
+version = "0.12.0"
 
 if os.name == "nt":
     WATCHER_DESTINATION_PATH: Path = Path(
@@ -112,6 +112,8 @@ class TorrentClientConfig(BaseModel):
     SHARED_RTORR_PATH: str | None = None
     TORRENT_CLIENT: str | None = None
     TAG: str | None = None
+    CATEGORY_MOVIE: str | None = None
+    CATEGORY_TV: str | None = None
 
 
 class UserPreferences(BaseModel):
@@ -452,7 +454,7 @@ class Config(BaseModel):
                     section[field] = Validate.integer(value=section[field], field_name=field)
 
                 if field in ['QBIT_PASS', 'TRASM_PASS', 'RTORR_PASS', 'QBIT_USER', 'TRASM_USER', 'RTORR_USER',
-                             'TORRENT_CLIENT', 'TAG', 'RTORR_HOST']:
+                             'TORRENT_CLIENT', 'TAG', 'CATEGORY_MOVIE','CATEGORY_TV', 'RTORR_HOST']:
                     section[field] = Validate.string(value=section[field], field_name=field)
 
                 if field in ['SHARED_TRASM_PATH', 'SHARED_QBIT_PATH', 'SHARED_RTORR_PATH']:
@@ -622,7 +624,9 @@ class Load:
                 "RTORR_PORT": "9091",
                 "SHARED_RTORR_PATH": "no_path",
                 "TORRENT_CLIENT": "qbittorrent",
-                "TAG": "ADDED TORRENTS"
+                "TAG": "ADDED TORRENTS",
+                "CATEGORY_MOVIE": "movie",
+                "CATEGORY_TV": "tv"
             },
             "user_preferences": {
                 "PTSCREENS_PRIORITY": 0,

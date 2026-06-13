@@ -4,7 +4,6 @@ import bencode2
 import argparse
 import requests
 
-
 from concurrent.futures import ThreadPoolExecutor
 
 from common.torrent_clients import TransmissionClient, QbittorrentClient, RTorrentClient
@@ -18,13 +17,14 @@ from unit3dup.media import Media
 
 from view import custom_console
 
+
 class UserContent:
     """
     Manage user media Files
     """
 
     @staticmethod
-    def tracker_key(tracker_data: dict, value)-> str | None:
+    def tracker_key(tracker_data: dict, value) -> str | None:
         """
         read the string Key from tracker data dictionary
         Args:
@@ -70,14 +70,12 @@ class UserContent:
         custom_console.rule()
         return False
 
-
-
     @staticmethod
-    def torrent_announces(torrent_path: str, tracker_name_list: list,selected_tracker: str) -> bool:
+    def torrent_announces(torrent_path: str, tracker_name_list: list, selected_tracker: str) -> bool:
         """ Add announces to a torrent file"""
 
         if not tracker_name_list:
-           tracker_name_list = [selected_tracker]
+            tracker_name_list = [selected_tracker]
         custom_console.bot_log(f"UPLOAD TO {tracker_name_list}")
 
         # // Read the existing torrent file
@@ -97,7 +95,6 @@ class UserContent:
         if b'announce-list' in torrent_data:
             if torrent_data[b'announce-list'] != announce_list_encoded:
                 create_torrent = True
-
 
         if b'announce' in torrent_data:
             if torrent_data[b'announce'] != announce_list_encoded[0][0]:
@@ -126,8 +123,8 @@ class UserContent:
 
             # Compare the exists announces and return True if it's/they are different from the request -tracker flags
             different = UserContent.torrent_announces(torrent_path=this_path,
-                                          tracker_name_list=tracker_name_list,
-                                          selected_tracker=selected_tracker)
+                                                      tracker_name_list=tracker_name_list,
+                                                      selected_tracker=selected_tracker)
             # False if we need Update the torrent file
             if different:
                 my_torrent = Mytorrent(contents=content, meta=content.metainfo, trackers_list=tracker_name_list)
@@ -143,7 +140,7 @@ class UserContent:
         return None
 
     @staticmethod
-    def is_duplicate(content: Media, tracker_name: str,  cli: argparse.Namespace) -> bool:
+    def is_duplicate(content: Media, tracker_name: str, cli: argparse.Namespace) -> bool:
         """
            Search for a duplicate. Delta = config.SIZE_TH
 
@@ -165,7 +162,7 @@ class UserContent:
             return False
 
     @staticmethod
-    def can_ressed(content: Media, tracker_name: str,  cli: argparse.Namespace, tmdb_id :int) -> list[requests.Response]:
+    def can_ressed(content: Media, tracker_name: str, cli: argparse.Namespace, tmdb_id: int) -> list[requests.Response]:
         """
            Search for a duplicate and compare with the user content. Delta = config.SIZE_TH
 
@@ -179,8 +176,6 @@ class UserContent:
         """
         duplicate = Duplicate(content=content, tracker_name=tracker_name, cli=cli)
         return duplicate.process_dead_torrents(tmdb_id=tmdb_id)
-
-
 
     @staticmethod
     def send_to_bittorrent_worker(bittorrent_file: BittorrentData, client: QbittorrentClient | TransmissionClient):
@@ -196,11 +191,11 @@ class UserContent:
             if bittorrent_file.tracker_response:
                 if client:
                     client.send_to_client(
-                    tracker_data_response=bittorrent_file.tracker_response,
-                    torrent=bittorrent_file.torrent_response,
-                    content=bittorrent_file.content,
-                    archive_path=bittorrent_file.archive_path,
-                )
+                        tracker_data_response=bittorrent_file.tracker_response,
+                        torrent=bittorrent_file.torrent_response,
+                        content=bittorrent_file.content,
+                        archive_path=bittorrent_file.archive_path,
+                    )
             else:
                 # invalid response
                 custom_console.rule()
@@ -208,26 +203,25 @@ class UserContent:
         except Exception as e:
             custom_console.bot_error_log(f"Error sending torrent {bittorrent_file.content.file_name}: {str(e)}")
 
-
     @staticmethod
     def get_client() -> QbittorrentClient | TransmissionClient:
 
         client = QbittorrentClient()
 
-        if config_settings.torrent_client_config.TORRENT_CLIENT.lower()=='qbittorrent':
+        if config_settings.torrent_client_config.TORRENT_CLIENT.lower() == 'qbittorrent':
             client = QbittorrentClient()
             client.connect()
 
-        elif config_settings.torrent_client_config.TORRENT_CLIENT.lower()=='transmission':
+        elif config_settings.torrent_client_config.TORRENT_CLIENT.lower() == 'transmission':
             client = TransmissionClient()
             client.connect()
 
-        elif config_settings.torrent_client_config.TORRENT_CLIENT.lower()=='rtorrent':
+        elif config_settings.torrent_client_config.TORRENT_CLIENT.lower() == 'rtorrent':
             client = RTorrentClient()
             client.connect()
         else:
             custom_console.bot_error_log(f"{UserContent.__class__.__name__} - "
-                                         f" Invalid torrent client '{config_settings.torrent_client_config.TORRENT_CLIENT}'" )
+                                         f" Invalid torrent client '{config_settings.torrent_client_config.TORRENT_CLIENT}'")
             exit(1)
 
         return client

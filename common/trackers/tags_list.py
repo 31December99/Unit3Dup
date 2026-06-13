@@ -29,6 +29,7 @@ TAGS_LIST = {
     "MD": "source",
     "UHDRIP": "source",
     "BLURAY": "source",
+    "BLU-RAY": "source",
     "BRRIP": "source",
     "BDRIP": "source",
     "FHDRIP": "source",

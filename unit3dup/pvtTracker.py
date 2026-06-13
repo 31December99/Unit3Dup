@@ -51,6 +51,7 @@ class Myhttp:
             "sd": "0",
             "keywords": "",
             "personal_release": "0",
+            "mod_queue_opt_in": "0",
             "internal": 0,
             "featured": 0,
             "free": 0,

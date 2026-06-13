@@ -88,6 +88,9 @@ class CommandLine:
         search_group.add_argument("-d", "--description", type=str, help="By description")
         search_group.add_argument("-bd", "--bdinfo", type=str, help="Show BDInfo")
         search_group.add_argument("-m", "--mediainfo", type=str, help="Show MediaInfo")
+        search_group.add_argument("-int", "--internal", action="store_true", help="Internal Release")
+        search_group.add_argument("-mod", "--moderation", action="store_true", help="In moderation")
+
 
         # /////////////////////////
         # Filter Options
@@ -123,7 +126,7 @@ class CommandLine:
         special_group.add_argument("-str", "--stream", action="store_true", help="Stream")
         special_group.add_argument("-sd", "--standard", action="store_true", help="SD")
         special_group.add_argument("-hs", "--highspeed", action="store_true", help="Highspeed")
-        special_group.add_argument("-int", "--internal", action="store_true", help="Internal")
+        special_group.add_argument("-inter", "--intern_r", action="store_true", help="Internal Release")
         special_group.add_argument("-pr", "--prelease", action="store_true", help="Personal")
 
         # /////////////////////////
