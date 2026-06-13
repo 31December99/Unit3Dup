@@ -124,9 +124,6 @@ class TorrentManager:
             custom_console.bot_log(f"Tracker '{selected_tracker}' Done.")
             custom_console.rule()
 
-    custom_console.bot_log(f"Done.")
-    custom_console.rule()
-
     def reseed(self, trackers_name_list: list) -> None:
         """
 
