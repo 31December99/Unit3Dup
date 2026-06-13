@@ -150,45 +150,29 @@ class QbittorrentClient(TorrClient):
                 f"{self.__class__.__name__} Please verify your configuration"
             )
 
-    def _add_torrent_and_tag(
-            self,
-            torrent_bytes: bytes,
-            save_path: str,
-            info_hash: str,
-    ) -> None:
+    def _add_torrent_and_tag(self, torrent_bytes: bytes, save_path: str, info_hash: str,category: str) -> None:
 
-        self.client.torrents_add(
-            torrent_files=torrent_bytes,
-            save_path=save_path,
-        )
+        self.client.torrents_add(torrent_files=torrent_bytes,save_path=save_path)
 
-        # attende che qBittorrent registri il torrent
+        # wait for torrent to be registered
         for _ in range(20):
             try:
-                torrents = self.client.torrents_info(
-                    torrent_hashes=info_hash
-                )
-
+                torrents = self.client.torrents_info(torrent_hashes=info_hash)
                 if torrents:
                     break
-
             except Exception:
                 pass
-
             time.sleep(0.25)
 
-        self.client.torrents_add_tags(
-            tags=info_hash,
-            torrent_hashes=info_hash,
-        )
+        if category=='movie':
+            category = config_settings.torrent_client_config.CATEGORY_MOVIE
+        if category=='tv':
+            category = config_settings.torrent_client_config.CATEGORY_MOVIE
+        self.client.torrents_add_tags(tags=config_settings.torrent_client_config.TAG, torrent_hashes=info_hash)
+        self.client.torrents_set_category(category=category, torrent_hashes=info_hash)
 
-    def send_to_client(
-            self,
-            tracker_data_response: str,
-            torrent: Mytorrent,
-            content: Media,
-            archive_path: str,
-    ):
+
+    def send_to_client(self, tracker_data_response: str, torrent: Mytorrent, content: Media,archive_path: str):
 
         if config_settings.torrent_client_config.SHARED_QBIT_PATH:
             torr_location = (
@@ -198,54 +182,22 @@ class QbittorrentClient(TorrClient):
             torr_location = os.path.dirname(content.torrent_path)
 
         if not torrent:
-
             with open(archive_path, "rb") as file_buffer:
-
                 torrent_data = file_buffer.read()
 
-                info = bencode2.bdecode(
-                    torrent_data
-                )[b"info"]
-
-                info_hash = hashlib.sha1(
-                    bencode2.bencode(info)
-                ).hexdigest()
-
+                info = bencode2.bdecode(torrent_data)[b"info"]
+                info_hash = hashlib.sha1(bencode2.bencode(info)).hexdigest()
                 file_buffer.seek(0)
-
-                self._add_torrent_and_tag(
-                    torrent_bytes=file_buffer.read(),
-                    save_path=str(torr_location),
-                    info_hash=info_hash,
-                )
-
+                self._add_torrent_and_tag(torrent_bytes=file_buffer.read(),save_path=str(torr_location),
+                    info_hash=info_hash, category = content.category)
         else:
-
             info = torrent.mytorr.metainfo["info"]
-
             info_hash = hashlib.sha1(
                 bencode2.bencode(info)
             ).hexdigest()
-
             with open(archive_path, "rb") as file_buffer:
-
-                self._add_torrent_and_tag(
-                    torrent_bytes=file_buffer.read(),
-                    save_path=str(torr_location),
-                    info_hash=info_hash,
-                )
-
-    def send_file_to_client(
-            self,
-            torrent_path: str,
-            media_location: str,
-    ):
-
-        with open(torrent_path, "rb") as file_buffer:
-            self.client.torrents_add(
-                torrent_files=file_buffer.read(),
-                save_path=media_location,
-            )
+                self._add_torrent_and_tag(torrent_bytes=file_buffer.read(),save_path=str(torr_location),
+                    info_hash=info_hash, category = content.category)
 
 
 class RTorrentClient(TorrClient):
