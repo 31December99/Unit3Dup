@@ -13,8 +13,8 @@ license = "MIT"
 
 authors = [
     { name = "Parzival" }
+  
 ]
-
 [project.urls]
 Homepage = "https://github.com/31December99/Unit3Dup"
 
