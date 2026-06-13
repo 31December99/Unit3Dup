@@ -89,6 +89,7 @@ class CommandLine:
         search_group.add_argument("-bd", "--bdinfo", type=str, help="Show BDInfo")
         search_group.add_argument("-m", "--mediainfo", type=str, help="Show MediaInfo")
         search_group.add_argument("-int", "--internal", action="store_true", help="Internal Release")
+        search_group.add_argument("-mod", "--moderation", action="store_true", help="In moderation")
 
 
         # /////////////////////////

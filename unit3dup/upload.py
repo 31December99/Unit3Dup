@@ -110,6 +110,8 @@ class UploadBot:
         self.tracker.data["personal_release"] = (int(config_settings.user_preferences.PERSONAL_RELEASE)
                                                  or int(self.cli.personal))
         self.tracker.data["internal"] = int(self.cli.internal)
+        self.tracker.data["mod_queue_opt_in"] = int(self.cli.moderation)
+
 
         # skip upload if the key is missing
         if self.category_id():
