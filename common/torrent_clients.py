@@ -168,9 +168,13 @@ class QbittorrentClient(TorrClient):
             category = config_settings.torrent_client_config.CATEGORY_MOVIE
         if category=='tv':
             category = config_settings.torrent_client_config.CATEGORY_MOVIE
-        self.client.torrents_add_tags(tags=config_settings.torrent_client_config.TAG, torrent_hashes=info_hash)
-        self.client.torrents_set_category(category=category, torrent_hashes=info_hash)
 
+        try:
+            self.client.torrents_set_category(category=category, torrent_hashes=info_hash)
+        except qbittorrentapi.APIError:
+            custom_console.bot_warning_log(f"<> qbittorrent Category '{category}' does not exist")
+
+        self.client.torrents_add_tags(tags=config_settings.torrent_client_config.TAG, torrent_hashes=info_hash)
 
     def send_to_client(self, tracker_data_response: str, torrent: Mytorrent, content: Media,archive_path: str):
 
