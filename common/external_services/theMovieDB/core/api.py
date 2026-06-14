@@ -7,6 +7,9 @@ import diskcache
 from typing import TypeVar
 
 from common.external_services.theMovieDB.core.models.tvshow.alternative import Alternative
+
+from common.external_services.theMovieDB.core.models.tvshow.translations import Translation
+from common.external_services.theMovieDB.core.models.movie.translations import Translation
 from common.external_services.theMovieDB.core.models.tvshow.details import TVShowDetails
 from common.external_services.theMovieDB.core.models.movie.details import MovieDetails
 from common.external_services.theMovieDB.core.models.movie.nowplaying import NowPlaying
@@ -25,7 +28,6 @@ from common.utility import ManageTitles
 
 from unit3dup.media import Media
 from view import custom_console
-
 
 from unit3dup import config_settings
 
@@ -46,6 +48,11 @@ class MovieEndpoint:
     def alternative(movie_id: int) -> dict:
         return {'url': f'{base_url}/movie/{movie_id}/alternative_titles', 'datatype': Alternative, 'query': '',
                 'results': 'titles'}
+
+    @staticmethod
+    def translations(movie_id: int) -> dict:
+        return {'url': f'{base_url}/movie/{movie_id}/translations', 'datatype': Translation, 'query': '',
+                'results': 'translations'}
 
     @staticmethod
     def videos(movie_id: int) -> dict:
@@ -75,6 +82,11 @@ class TvEndpoint:
     def alternative(serie_id: int) -> dict:
         return {'url': f'{base_url}/tv/{serie_id}/alternative_titles', 'datatype': Alternative, 'query': '',
                 'results': 'results'}
+
+    @staticmethod
+    def translations(serie_id: int) -> dict:
+        return {'url': f'{base_url}/tv/{serie_id}/translations', 'datatype': Translation, 'query': '',
+                'results': 'translations'}
 
     @staticmethod
     def videos(serie_id: int) -> dict:
@@ -119,7 +131,7 @@ class TmdbAPI(MyHttp):
 
     def _search(self, query: str, category: str) -> list[T] | None:
         """
-        Searches for data based on a query and category.
+        Searches for data based on a query and category
         :param query: search query
         :param category: category of the search query, e.g., 'movie' or 'tv'
         :return: list of T or None
@@ -151,13 +163,27 @@ class TmdbAPI(MyHttp):
 
     def alternative(self, media_id: int, category: str) -> list[T] | None:
         """
-        Searches for data based on a query and category.
+        Searches for data based on a query and category
         :param media_id: id of the media to search for
         :param category: category of the search query, e.g., 'movie' or 'tv'
         :return: list of T or None
         """
         if endpoint_class := self.ENDPOINTS.get(category):
             request = endpoint_class.alternative(media_id)
+            return self.request(endpoint=request)
+        else:
+            print(f"Endpoint for category '{category}' not found.")
+            return []
+
+    def translations(self, media_id: int, category: str) -> list[T] | None:
+        """
+        Searches for data based on a query and category
+        :param media_id: id of the media to search for
+        :param category: category of the search query, e.g., 'movie' or 'tv'
+        :return: list of T or None
+        """
+        if endpoint_class := self.ENDPOINTS.get(category):
+            request = endpoint_class.translations(media_id)
             return self.request(endpoint=request)
         else:
             print(f"Endpoint for category '{category}' not found.")
@@ -262,6 +288,16 @@ class DbOnline(TmdbAPI):
                     for alt in alternative:
                         if ManageTitles.fuzzyit(str1=self.query, str2=alt.title) > 95:
                             return result
+
+            for result in results:
+                translations = self.translations(media_id=result.id, category=self.category)
+                if translations:
+                    for tr in translations:
+                        if tr.data:
+                            title = tr.data.name or tr.data.title
+                            if title:
+                                if ManageTitles.fuzzyit(self.query, title) > 95:
+                                    return result
         return False
 
     def results_in_string(self, tmdb_id: int, imdb_id: int, tvdb_id: int) -> MediaResult:
