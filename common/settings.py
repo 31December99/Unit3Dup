@@ -454,7 +454,7 @@ class Config(BaseModel):
                     section[field] = Validate.integer(value=section[field], field_name=field)
 
                 if field in ['QBIT_PASS', 'TRASM_PASS', 'RTORR_PASS', 'QBIT_USER', 'TRASM_USER', 'RTORR_USER',
-                             'TORRENT_CLIENT', 'TAG', 'CATEGORY_MOVIE','CATEGORY_TV', 'RTORR_HOST']:
+                            'TORRENT_CLIENT', 'TAG',  'RTORR_HOST']:
                     section[field] = Validate.string(value=section[field], field_name=field)
 
                 if field in ['SHARED_TRASM_PATH', 'SHARED_QBIT_PATH', 'SHARED_RTORR_PATH']:
