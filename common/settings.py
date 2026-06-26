@@ -24,7 +24,7 @@ user_tags_file = "tags_list.json"
 user_sign_file = "sign_list.json"
 bane_file = "ban_list.json"
 
-version = "0.13.0"
+version = "0.13.1"
 
 if os.name == "nt":
     WATCHER_DESTINATION_PATH: Path = Path(
@@ -454,7 +454,7 @@ class Config(BaseModel):
                     section[field] = Validate.integer(value=section[field], field_name=field)
 
                 if field in ['QBIT_PASS', 'TRASM_PASS', 'RTORR_PASS', 'QBIT_USER', 'TRASM_USER', 'RTORR_USER',
-                             'TORRENT_CLIENT', 'TAG', 'CATEGORY_MOVIE','CATEGORY_TV', 'RTORR_HOST']:
+                            'TORRENT_CLIENT', 'TAG',  'RTORR_HOST']:
                     section[field] = Validate.string(value=section[field], field_name=field)
 
                 if field in ['SHARED_TRASM_PATH', 'SHARED_QBIT_PATH', 'SHARED_RTORR_PATH']:
