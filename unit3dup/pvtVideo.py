@@ -78,6 +78,20 @@ class Video:
             build_description = Build(extracted_frames=extracted_frames_webp+extracted_frames, filename= self.display_name)
             self.description = build_description.description()
 
+            if config_settings.user_preferences.MY_SIGN:
+                self.description += f"""
+            [center]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/center]
+            [center][img=250]{config_settings.user_preferences.MY_SIGN}[/img][/center]
+            [center][b]{config_settings.user_preferences.MY_TEXT_1}[/b][/center]
+            [center]
+            {config_settings.user_preferences.MY_TEXT_2}
+            [/center]
+            [center]
+            {config_settings.user_preferences.MY_TEXT_3}
+            [/center]
+            [center][url={config_settings.user_preferences.MY_URL}]Tutte le mie release[/url][/center]
+            """
+
             if self.trailer_key:
                 self.description += (f"[b][spoiler=Spoiler: PLAY TRAILER][center][youtube]{self.trailer_key}[/youtube]"
                                      f"[/center][/spoiler][/b]")

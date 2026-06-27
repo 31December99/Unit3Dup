@@ -24,7 +24,7 @@ user_tags_file = "tags_list.json"
 user_sign_file = "sign_list.json"
 bane_file = "ban_list.json"
 
-version = "0.13.2"
+version = "0.14.0"
 
 if os.name == "nt":
     WATCHER_DESTINATION_PATH: Path = Path(
@@ -151,7 +151,11 @@ class UserPreferences(BaseModel):
     CACHE_DBONLINE: bool = False
     PERSONAL_RELEASE: bool = False
     FAST_LOAD: int = 0
-
+    MY_SIGN: str | None = None
+    MY_URL: str | None = None
+    MY_TEXT_1: str | None = None
+    MY_TEXT_2: str | None = None
+    MY_TEXT_3: str | None = None
 
 class Options(BaseModel):
     FTPX_USER: str = "user"
@@ -669,7 +673,12 @@ class Load:
                 "CACHE_DBONLINE": "False",
                 "PERSONAL_RELEASE": "False",
                 "FAST_LOAD": "0",
-                "RELEASER_SIGN": ""
+                "RELEASER_SIGN": "",
+                "MY_SIGN": "",
+                "MY_URL": "",
+                "MY_TEXT_1": "",
+                "MY_TEXT_2": "",
+                "MY_TEXT_3": ""
             },
             "options": {
                 "FTPX_USER": "user",
