@@ -81,7 +81,7 @@ class Video:
             if config_settings.user_preferences.MY_SIGN:
                 self.description += f"""
             [center]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/center]
-            [center][img]{config_settings.user_preferences.MY_SIGN}[/img][/center]
+            [center][img=250]{config_settings.user_preferences.MY_SIGN}[/img][/center]
             [center][b]{config_settings.user_preferences.MY_TEXT_1}[/b][/center]
             [center]
             {config_settings.user_preferences.MY_TEXT_2}
