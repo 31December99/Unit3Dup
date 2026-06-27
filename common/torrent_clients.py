@@ -189,28 +189,20 @@ class QbittorrentClient(TorrClient):
             # append the category Movie to the shared path
             if 'movie' in content.category.lower():
                 torr_location = os.path.join(torr_location, config_settings.torrent_client_config.CATEGORY_MOVIE)
-
         else:
             # otherwise set torr_location using the cli path
             torr_location = os.path.dirname(content.torrent_path)
 
-        if not torrent:
-            with open(archive_path, "rb") as file_buffer:
-                torrent_data = file_buffer.read()
+        # We have to read the info_hash from the downloaded torrent file
+        # because the tracker randomizes it so it's not the same as the torf instance
+        with open(archive_path, "rb") as file_buffer:
+            torrent_data = file_buffer.read()
 
-                info = bencode2.bdecode(torrent_data)[b"info"]
-                info_hash = hashlib.sha1(bencode2.bencode(info)).hexdigest()
-                file_buffer.seek(0)
-                self._add_torrent_and_tag(torrent_bytes=file_buffer.read(), save_path=str(torr_location),
-                                          info_hash=info_hash, category=content.category)
-        else:
-            info = torrent.mytorr.metainfo["info"]
-            info_hash = hashlib.sha1(
-                bencode2.bencode(info)
-            ).hexdigest()
-            with open(archive_path, "rb") as file_buffer:
-                self._add_torrent_and_tag(torrent_bytes=file_buffer.read(), save_path=str(torr_location),
-                                          info_hash=info_hash, category=content.category)
+            info = bencode2.bdecode(torrent_data)[b"info"]
+            info_hash = hashlib.sha1(bencode2.bencode(info)).hexdigest()
+            file_buffer.seek(0)
+            self._add_torrent_and_tag(torrent_bytes=file_buffer.read(), save_path=str(torr_location),
+                                      info_hash=info_hash, category=content.category)
 
 
 class RTorrentClient(TorrClient):
