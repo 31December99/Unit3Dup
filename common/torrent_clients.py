@@ -176,19 +176,28 @@ class QbittorrentClient(TorrClient):
 
         self.client.torrents_add_tags(tags=config_settings.torrent_client_config.TAG, torrent_hashes=info_hash)
 
+    @staticmethod
+    def _get_category(content: Media) -> str:
+        category = content.category.lower()
+
+        if "tv" in category:
+            return config_settings.torrent_client_config.CATEGORY_TV
+
+        if "movie" in category:
+            return config_settings.torrent_client_config.CATEGORY_MOVIE
+
+        return ""
+
     def send_to_client(self, tracker_data_response: str, torrent: Mytorrent, content: Media, archive_path: str):
+
+        # Get the category from the media
+        category = self._get_category(content)
 
         # Check if shared path exists
         if config_settings.torrent_client_config.SHARED_QBIT_PATH:
             torr_location = config_settings.torrent_client_config.SHARED_QBIT_PATH
-
-            # append the category Serie to the shared path
-            if 'tv' in content.category.lower():
-                torr_location = os.path.join(torr_location, config_settings.torrent_client_config.CATEGORY_TV)
-
-            # append the category Movie to the shared path
-            if 'movie' in content.category.lower():
-                torr_location = os.path.join(torr_location, config_settings.torrent_client_config.CATEGORY_MOVIE)
+            if category:
+                torr_location = os.path.join(torr_location, category)
         else:
             # otherwise set torr_location using the cli path
             torr_location = os.path.dirname(content.torrent_path)
@@ -202,7 +211,7 @@ class QbittorrentClient(TorrClient):
             info_hash = hashlib.sha1(bencode2.bencode(info)).hexdigest()
             file_buffer.seek(0)
             self._add_torrent_and_tag(torrent_bytes=file_buffer.read(), save_path=str(torr_location),
-                                      info_hash=info_hash, category=content.category)
+                                      info_hash=info_hash, category=category)
 
 
 class RTorrentClient(TorrClient):
