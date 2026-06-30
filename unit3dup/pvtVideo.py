@@ -75,8 +75,10 @@ class Video:
             custom_console.bot_log("Done.")
 
             # Build the description
+            # Header
+            self.description+= config_settings.user_preferences.MY_TEXT_H
             build_description = Build(extracted_frames=extracted_frames_webp+extracted_frames, filename= self.display_name)
-            self.description = build_description.description()
+            self.description+= build_description.description()
 
             if config_settings.user_preferences.MY_SIGN:
                 self.description += f"""

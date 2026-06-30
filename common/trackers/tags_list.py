@@ -9,6 +9,7 @@ TAGS_LIST = {
     "BDMUX": "remux",
     "DVDMUX": "remux",
 
+    "WEB": "source",
     "WEB-DL": "source",
     "WEBDL": "source",
     "WEB-DLRIP": "source",

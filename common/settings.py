@@ -24,7 +24,7 @@ user_tags_file = "tags_list.json"
 user_sign_file = "sign_list.json"
 bane_file = "ban_list.json"
 
-version = "0.14.1"
+version = "0.14.2"
 
 if os.name == "nt":
     WATCHER_DESTINATION_PATH: Path = Path(
@@ -153,6 +153,7 @@ class UserPreferences(BaseModel):
     FAST_LOAD: int = 0
     MY_SIGN: str | None = None
     MY_URL: str | None = None
+    MY_TEXT_H: str | None = None
     MY_TEXT_1: str | None = None
     MY_TEXT_2: str | None = None
     MY_TEXT_3: str | None = None
@@ -678,7 +679,8 @@ class Load:
                 "MY_URL": "",
                 "MY_TEXT_1": "",
                 "MY_TEXT_2": "",
-                "MY_TEXT_3": ""
+                "MY_TEXT_3": "",
+                "MY_TEXT_H": "[center]━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[/center]"
             },
             "options": {
                 "FTPX_USER": "user",
