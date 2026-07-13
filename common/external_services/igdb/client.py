@@ -7,7 +7,7 @@ from common.external_services.igdb.core.models.search import Game
 from common.external_services.igdb.core.api import IGDBapi
 
 from unit3dup.media import Media
-from view import custom_console
+from unit3dup.view import custom_console
 
 class IGDBViewer:
     def __init__(self):

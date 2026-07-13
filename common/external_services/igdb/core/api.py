@@ -3,7 +3,7 @@
 from urllib.parse import urljoin
 from common.external_services.sessions.session import MyHttp
 from common import config_settings
-from view import custom_console
+from unit3dup.view import custom_console
 
 class IGDBapi:
 

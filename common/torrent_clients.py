@@ -16,8 +16,7 @@ import transmission_rpc
 from unit3dup.pvtTorrent import Mytorrent
 from unit3dup import config_settings
 from unit3dup.media import Media
-
-from view import custom_console
+from unit3dup.view import custom_console
 
 
 class TorrClient(ABC):

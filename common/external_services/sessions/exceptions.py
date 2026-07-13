@@ -3,7 +3,7 @@
 import httpx
 from functools import wraps
 from typing import Callable, Any
-from view import custom_console
+from unit3dup.view import custom_console
 
 
 class HttpError(Exception):

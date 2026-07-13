@@ -7,7 +7,7 @@ from pathlib import Path
 from PIL import Image
 
 from common import config_settings
-from view import custom_console
+from unit3dup.view import custom_console
 
 class VideoFrame:
     def __init__(self, video_path: str, num_screenshots: int):

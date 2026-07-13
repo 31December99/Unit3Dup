@@ -3,7 +3,7 @@ import re
 from common.utility import ManageTitles
 from common.mediainfo import MediaFile
 from unit3dup.media import Media
-from view import custom_console
+from unit3dup.view import custom_console
 
 # From hdr format
 hdr_map = {

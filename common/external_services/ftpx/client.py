@@ -9,7 +9,7 @@ from common.external_services.ftpx.core.models.list import FTPDirectory
 from common.external_services.ftpx.core.ftpx_service import FtpX
 from common import config_settings
 
-from view import custom_console
+from unit3dup.view import custom_console
 
 class Folder:
     """

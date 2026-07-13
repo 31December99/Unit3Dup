@@ -11,8 +11,7 @@ from unit3dup.pvtDocu import PdfImages
 from unit3dup import config_settings, Load
 from unit3dup.pvtVideo import Video
 from unit3dup.media import Media
-
-from view import custom_console
+from unit3dup.view import custom_console
 
 
 class UploadBot:

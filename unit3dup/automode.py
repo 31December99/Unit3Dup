@@ -2,7 +2,7 @@
 
 import os
 from common.utility import ManageTitles
-from view import custom_console
+from unit3dup.view import custom_console
 
 from unit3dup.media import Media
 

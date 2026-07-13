@@ -15,7 +15,7 @@ from common.external_services.ftpx.core.menu import Menu
 from common.external_services.ftpx.client import Client
 from common.extractor import Extractor
 
-from view import custom_console
+from unit3dup.view import custom_console
 
 
 class Bot:

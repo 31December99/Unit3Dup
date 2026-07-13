@@ -7,7 +7,7 @@ from common.title import Guessit
 from common.utility import ManageTitles, System
 from common.mediainfo import MediaFile
 from common import title
-from view import custom_console
+from unit3dup.view import custom_console
 
 
 class Media:

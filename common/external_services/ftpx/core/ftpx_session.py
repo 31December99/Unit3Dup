@@ -6,7 +6,7 @@ from rich.progress import Progress
 
 from ftplib import FTP_TLS, all_errors
 from common import config_settings
-from view import custom_console
+from unit3dup.view import custom_console
 
 class FtpXCmds(FTP_TLS):
     def __init__(self):

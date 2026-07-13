@@ -14,8 +14,7 @@ from common import config_settings
 from unit3dup.pvtTorrent import Mytorrent
 from unit3dup.duplicate import Duplicate
 from unit3dup.media import Media
-
-from view import custom_console
+from unit3dup.view import custom_console
 
 
 class UserContent:

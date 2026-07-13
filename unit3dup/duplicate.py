@@ -8,8 +8,7 @@ from common.trackers.trackers import TRACKData
 from common.constants import my_language
 from common import title
 
-from view import custom_console
-
+from unit3dup.view import custom_console
 from unit3dup.media_manager.MediaInfoManager import MediaInfoManager
 from unit3dup.torrent import Torrent
 from unit3dup import config_settings

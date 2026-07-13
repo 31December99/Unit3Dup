@@ -8,8 +8,7 @@ from common.settings import Load, DEFAULT_JSON_PATH, USER_TAGS_PATH, USER_SIGN_P
 from unit3dup.torrent import View
 from unit3dup import pvtTracker
 from unit3dup.bot import Bot
-
-from view import custom_console
+from unit3dup.view import custom_console
 
 
 def main():

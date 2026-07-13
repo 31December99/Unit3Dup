@@ -5,7 +5,7 @@ import httpx
 import diskcache as dc
 import logging
 from common.external_services.sessions.exceptions import exception_handler
-from view import custom_console
+from unit3dup.view import custom_console
 
 ENABLE_LOG = False
 logging.getLogger("httpx").setLevel(logging.CRITICAL)

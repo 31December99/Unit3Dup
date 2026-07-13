@@ -14,7 +14,7 @@ from common.constants import my_language
 from common.utility import System
 
 from unit3dup.media_manager.common import UserContent
-from view import custom_console
+from unit3dup.view import custom_console
 
 
 class TorrentManager:

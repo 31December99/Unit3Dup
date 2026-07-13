@@ -6,7 +6,7 @@ from .response import YouTubeSearchResponse, Thumbnails, Id, Item, PageInfo, Sni
 
 from common import config_settings
 from common.utility import ManageTitles
-from view import custom_console
+from unit3dup.view import custom_console
 
 
 class YtTrailer:

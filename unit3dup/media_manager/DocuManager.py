@@ -10,7 +10,7 @@ from unit3dup.upload import UploadBot
 from unit3dup import config_settings
 from unit3dup.media import Media
 
-from view import custom_console
+from unit3dup.view import custom_console
 
 class DocuManager:
 

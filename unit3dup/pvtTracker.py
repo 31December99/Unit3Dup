@@ -4,7 +4,7 @@ import time
 import requests
 
 from urllib.parse import urljoin
-from view import custom_console
+from unit3dup.view import custom_console
 from common.trackers.data import trackers_api_data
 
 

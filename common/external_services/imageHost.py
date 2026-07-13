@@ -7,7 +7,7 @@ import requests
 
 from abc import ABC, abstractmethod
 from common import config_settings
-from view import custom_console
+from unit3dup.view import custom_console
 
 
 class ImageUploader(ABC):

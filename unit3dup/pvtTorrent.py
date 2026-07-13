@@ -8,8 +8,7 @@ from tqdm import tqdm
 from common.trackers.data import trackers_api_data
 from unit3dup.media import Media
 from unit3dup import config_settings
-
-from view import custom_console
+from unit3dup.view import custom_console
 
 class HashProgressBar(tqdm):
     def callback(self, mytorr, path, current_num_hashed, total_pieces):

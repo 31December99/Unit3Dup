@@ -27,7 +27,7 @@ from common.external_services.tvdb import TVDB
 from common.utility import ManageTitles
 
 from unit3dup.media import Media
-from view import custom_console
+from unit3dup.view import custom_console
 
 from unit3dup import config_settings
 
