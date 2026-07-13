@@ -3,7 +3,28 @@ requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-dynamic = ["dependencies"]
+dynamic = []
+dependencies = [
+"guessit==3.8.0",
+"pymediainfo==7.0.1",
+"qbittorrent-api==2026.6.0",
+"pydantic==2.13.4",
+"requests==2.34.2",
+"rich==15.0.0",
+"torf==4.3.1",
+"tqdm==4.68.2",
+"thefuzz==0.22.1",
+"Unidecode==1.4.0",
+"pillow==12.2.0",
+"patool==4.0.5",
+"diskcache==5.6.3",
+"httpx==0.28.1",
+"transmission-rpc==7.0.11",
+"pathvalidate==3.3.1",
+"bencode2==0.3.30",
+"rtorrent-rpc==0.9.7",
+"tvdb-v4-official==1.1.0"
+]
 name = "Unit3Dup"
 version = "0.15.0"
 description = "An uploader for the Unit3D torrent tracker"
