@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 import json
 
-from common.torrent_clients import TransmissionClient, QbittorrentClient, RTorrentClient
-from common.command import CommandLine
-from common.settings import Load, DEFAULT_JSON_PATH, USER_TAGS_PATH, USER_SIGN_PATH, BAN_TAGS_PATH, version
+from unit3dup.common.torrent_clients import TransmissionClient, QbittorrentClient, RTorrentClient
+from unit3dup.common.command import CommandLine
+from unit3dup.common.settings import Load, DEFAULT_JSON_PATH, USER_TAGS_PATH, USER_SIGN_PATH, BAN_TAGS_PATH, version
 
 from unit3dup.torrent import View
 from unit3dup import pvtTracker

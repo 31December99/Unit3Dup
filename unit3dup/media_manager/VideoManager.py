@@ -2,10 +2,10 @@
 from argparse import Namespace
 import os
 
-from common.external_services.theMovieDB.core.api import DbOnline
-from common.bittorrent import BittorrentData
-from common.tags import SearchTags
-from common import title
+from unit3dup.common.external_services.theMovieDB.core.api import DbOnline
+from unit3dup.common.bittorrent import BittorrentData
+from unit3dup.common.tags import SearchTags
+from unit3dup.common import title
 
 from unit3dup.media_manager.common import UserContent
 from unit3dup.upload import UploadBot

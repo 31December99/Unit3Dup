@@ -3,9 +3,8 @@
 import argparse
 import os
 
-from common.external_services.theMovieDB.core.api import DbOnline
-from common.bittorrent import BittorrentData
-
+from unit3dup.common.external_services.theMovieDB.core.api import DbOnline
+from unit3dup.common.bittorrent import BittorrentData
 from unit3dup.media_manager.common import UserContent
 from unit3dup.media import Media
 

@@ -3,10 +3,10 @@ import guessit
 import argparse
 import requests
 
-from common.utility import ManageTitles, System
-from common.trackers.trackers import TRACKData
-from common.constants import my_language
-from common import title
+from unit3dup.common.utility import ManageTitles, System
+from unit3dup.common.trackers.trackers import TRACKData
+from unit3dup.common.constants import my_language
+from unit3dup.common import title
 
 from unit3dup.view import custom_console
 from unit3dup.media_manager.MediaInfoManager import MediaInfoManager

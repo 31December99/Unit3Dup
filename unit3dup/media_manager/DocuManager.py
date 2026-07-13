@@ -2,14 +2,12 @@
 from argparse import Namespace
 import os
 
-from common.bittorrent import BittorrentData
-
+from unit3dup.common.bittorrent import BittorrentData
 from unit3dup.media_manager.common import UserContent
 from unit3dup.pvtDocu import PdfImages
 from unit3dup.upload import UploadBot
 from unit3dup import config_settings
 from unit3dup.media import Media
-
 from unit3dup.view import custom_console
 
 class DocuManager:

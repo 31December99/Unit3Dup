@@ -2,8 +2,8 @@
 from argparse import Namespace
 import os
 
-from common.external_services.igdb.client import IGDBClient
-from common.bittorrent import BittorrentData
+from unit3dup.common.external_services.igdb.client import IGDBClient
+from unit3dup.common.bittorrent import BittorrentData
 
 from unit3dup.media_manager.common import UserContent
 from unit3dup.upload import UploadBot

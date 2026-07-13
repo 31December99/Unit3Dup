@@ -2,11 +2,11 @@
 import os
 import re
 
-from common.external_services.igdb.core.tags import crew_patterns, platform_patterns
-from common.title import Guessit
-from common.utility import ManageTitles, System
-from common.mediainfo import MediaFile
-from common import title
+from unit3dup.common.external_services.igdb.core.tags import crew_patterns, platform_patterns
+from unit3dup.common.title import Guessit
+from unit3dup.common.utility import ManageTitles, System
+from unit3dup.common.mediainfo import MediaFile
+from unit3dup.common import title
 from unit3dup.view import custom_console
 
 

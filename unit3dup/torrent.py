@@ -3,8 +3,8 @@ import re
 import time
 import requests
 
-from common.trackers.trackers import TRACKData
-from common.database import Database
+from unit3dup.common.trackers.trackers import TRACKData
+from unit3dup.common.database import Database
 from unit3dup import pvtTracker
 from unit3dup.view import custom_console
 

@@ -4,7 +4,7 @@ import json
 import os
 import re
 
-from common.utility import ManageTitles, System
+from unit3dup.common.utility import ManageTitles, System
 from unit3dup.automode import Auto
 from unit3dup.media import Media
 

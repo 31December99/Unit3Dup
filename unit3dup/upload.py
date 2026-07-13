@@ -3,9 +3,8 @@ from argparse import Namespace
 import requests
 import json
 
-from common.external_services.igdb.core.models.search import Game
-from common.trackers.trackers import TRACKData
-
+from unit3dup.common.external_services.igdb.core.models.search import Game
+from unit3dup.common.trackers.trackers import TRACKData
 from unit3dup.pvtTracker import Unit3d
 from unit3dup.pvtDocu import PdfImages
 from unit3dup import config_settings, Load

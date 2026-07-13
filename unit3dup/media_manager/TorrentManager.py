@@ -5,14 +5,11 @@ from unit3dup.media_manager.VideoManager import VideoManager
 from unit3dup.media_manager.GameManager import GameManager
 from unit3dup.media_manager.DocuManager import DocuManager
 from unit3dup.media_manager.SeedManager import SeedManager
-
 from unit3dup import config_settings
 from unit3dup.media import Media
-
-from common.bittorrent import BittorrentData
-from common.constants import my_language
-from common.utility import System
-
+from unit3dup.common.bittorrent import BittorrentData
+from unit3dup.common.constants import my_language
+from unit3dup.common.utility import System
 from unit3dup.media_manager.common import UserContent
 from unit3dup.view import custom_console
 

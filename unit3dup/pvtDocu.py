@@ -5,7 +5,7 @@ import diskcache
 import subprocess
 import unicodedata
 
-from common.external_services.imageHost import Build
+from unit3dup.common.external_services.imageHost import Build
 from unit3dup.view import custom_console
 from unit3dup import config_settings
 from PIL import Image

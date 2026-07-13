@@ -4,8 +4,8 @@ import os.path
 
 import diskcache
 
-from common.external_services.imageHost import Build
-from common.frames import VideoFrame
+from unit3dup.common.external_services.imageHost import Build
+from unit3dup.common.frames import VideoFrame
 
 from unit3dup.view import custom_console
 from unit3dup import config_settings

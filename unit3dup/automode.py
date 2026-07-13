@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 
 import os
-from common.utility import ManageTitles
+from unit3dup.common.utility import ManageTitles
 from unit3dup.view import custom_console
-
 from unit3dup.media import Media
 
 class Auto:

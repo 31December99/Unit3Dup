@@ -9,12 +9,10 @@ import shutil
 from unit3dup.media import Media
 from unit3dup.media_manager.ContentManager import ContentManager
 from unit3dup.media_manager.TorrentManager import TorrentManager
-
-from common.external_services.ftpx.core.models.list import FTPDirectory
-from common.external_services.ftpx.core.menu import Menu
-from common.external_services.ftpx.client import Client
-from common.extractor import Extractor
-
+from unit3dup.common.external_services.ftpx.core.models.list import FTPDirectory
+from unit3dup.common.external_services.ftpx.core.menu import Menu
+from unit3dup.common.external_services.ftpx.client import Client
+from unit3dup.common.extractor import Extractor
 from unit3dup.view import custom_console
 
 
