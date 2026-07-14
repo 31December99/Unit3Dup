@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 from pathlib import Path
 import argparse
 import os
@@ -9,11 +8,14 @@ import shutil
 from unit3dup.media import Media
 from unit3dup.media_manager.ContentManager import ContentManager
 from unit3dup.media_manager.TorrentManager import TorrentManager
+from unit3dup.common.settings import USER_TAGS_PATH, USER_SIGN_PATH, BAN_TAGS_PATH
 from unit3dup.common.external_services.ftpx.core.models.list import FTPDirectory
 from unit3dup.common.external_services.ftpx.core.menu import Menu
 from unit3dup.common.external_services.ftpx.client import Client
+from unit3dup.common.utility import System
 from unit3dup.common.extractor import Extractor
 from unit3dup.view import custom_console
+from unit3dup.common.bot_config import BotConfig
 
 
 class Bot:
@@ -27,8 +29,8 @@ class Bot:
     """
 
     # Bot Manager
-    def __init__(self, path: str, cli: argparse.Namespace, trackers_name_list: list, tags_list = None, mode="man",
-                 torrent_archive_path = None, sign_list= None, ban_list= None):
+    def __init__(self, path: str, cli: BotConfig, trackers_name_list: list, mode="man", torrent_archive_path=None):
+
         """
         Initializes the Bot instance with path, command-line interface object, and mode
 
@@ -40,13 +42,12 @@ class Bot:
         self.trackers_name_list = trackers_name_list
         self.torrent_archive_path = torrent_archive_path
         self.content_manager = None
-        self.tags_list: dict = tags_list
-        self.sign_list: dict = sign_list
-        self.ban_list: dict = ban_list
+        self.tags_list: dict = System.load_tags(path=USER_TAGS_PATH)
+        self.sign_list: dict = System.load_tags(path=USER_SIGN_PATH)
+        self.ban_list: dict = System.load_tags(path=BAN_TAGS_PATH)
         self.path = path.strip()
         self.cli = cli
         self.mode = mode
-
 
     def contents(self) -> bool | list[Media]:
         """
@@ -93,7 +94,6 @@ class Bot:
 
         return contents
 
-
     def run(self) -> bool:
         """
         processes the files using the TorrentManager and SeedManager
@@ -118,8 +118,7 @@ class Bot:
             torrent_manager.run(trackers_name_list=self.trackers_name_list)
         return True
 
-
-    def watcher(self, duration: int, watcher_path: str,  destination_path: str)-> bool:
+    def watcher(self, duration: int, watcher_path: str, destination_path: str) -> bool:
         """
         Monitors the watcher path for new files, moves them to the destination folder,
         then uploads them to the tracker
@@ -191,8 +190,7 @@ class Bot:
             custom_console.bot_log("Exiting...")
         return True
 
-
-    def ftp(self)-> None:
+    def ftp(self) -> None:
         """
         Connects to a remote FTP server and interacts with files.
 

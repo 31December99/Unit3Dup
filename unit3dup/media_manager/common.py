@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
 import bencode2
-import argparse
 import requests
 
 from concurrent.futures import ThreadPoolExecutor
@@ -9,6 +8,7 @@ from concurrent.futures import ThreadPoolExecutor
 from unit3dup.common.torrent_clients import TransmissionClient, QbittorrentClient, RTorrentClient
 from unit3dup.common.trackers.data import trackers_api_data
 from unit3dup.common.bittorrent import BittorrentData
+from unit3dup.common.bot_config import BotConfig
 from unit3dup.common.utility import ManageTitles
 from unit3dup.common import config_settings
 from unit3dup.pvtTorrent import Mytorrent
@@ -138,7 +138,7 @@ class UserContent:
         return None
 
     @staticmethod
-    def is_duplicate(content: Media, tracker_name: str, cli: argparse.Namespace) -> bool:
+    def is_duplicate(content: Media, tracker_name: str, cli: BotConfig) -> bool:
         """
            Search for a duplicate. Delta = config.SIZE_TH
 
@@ -160,7 +160,7 @@ class UserContent:
             return False
 
     @staticmethod
-    def can_ressed(content: Media, tracker_name: str, cli: argparse.Namespace, tmdb_id: int) -> list[requests.Response]:
+    def can_ressed(content: Media, tracker_name: str, cli: BotConfig, tmdb_id: int) -> list[requests.Response]:
         """
            Search for a duplicate and compare with the user content. Delta = config.SIZE_TH
 
@@ -238,8 +238,8 @@ class UserContent:
             return None
 
         custom_console.bot_log(f"\nSending {message} torrents to the "
-                                       f"{config_settings.torrent_client_config.TORRENT_CLIENT.upper()} client "
-                                       f"... Please wait")
+                               f"{config_settings.torrent_client_config.TORRENT_CLIENT.upper()} client "
+                               f"... Please wait")
 
         client = UserContent.get_client()
 

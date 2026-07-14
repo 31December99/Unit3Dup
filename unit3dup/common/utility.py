@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
+import json
 import os
 import re
 import unicodedata
 
 from datetime import datetime
+from pathlib import Path
+
 from thefuzz import fuzz
 
 from unit3dup.common.external_services.igdb.core.tags import additions
@@ -392,3 +395,13 @@ class System:
 
         return (round(total_size / (1024 ** 3), 2), 'GB') if total_size > 1024 ** 3 \
             else (round(total_size / (1024 ** 2), 2), 'MB')
+
+    @staticmethod
+    def load_tags(path: Path):
+        # Load Tags list
+        try:
+            with open(path, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except FileNotFoundError:
+            print(
+                f"User tags file {path} not found. Please update your configuration file")

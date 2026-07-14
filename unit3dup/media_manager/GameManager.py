@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from argparse import Namespace
 import os
 
 from unit3dup.common.external_services.igdb.client import IGDBClient
@@ -10,10 +9,12 @@ from unit3dup.upload import UploadBot
 from unit3dup import config_settings
 from unit3dup.media import Media
 from unit3dup.view import custom_console
+from unit3dup.common.bot_config import BotConfig
+
 
 class GameManager:
 
-    def __init__(self, contents: list["Media"], cli: Namespace):
+    def __init__(self, contents: list["Media"], cli: BotConfig):
         """
         Initialize the GameManager with the given contents
 
@@ -22,10 +23,10 @@ class GameManager:
             cli (argparse.Namespace): user flag Command line
         """
         self.contents: list[Media] = contents
-        self.cli: Namespace = cli
+        self.cli: BotConfig = cli
         self.igdb = IGDBClient()
 
-    def process(self, selected_tracker: str, tracker_name_list: list,  tracker_archive: str) -> list[BittorrentData]:
+    def process(self, selected_tracker: str, tracker_name_list: list, tracker_archive: str) -> list[BittorrentData]:
         """
         Process the game contents to filter duplicates and create torrents
 
@@ -45,14 +46,13 @@ class GameManager:
             custom_console.bot_error_log("Game upload works only with the '-f' flag.You need to specify a folder name.")
             return []
 
-
         #  Init the torrent list
         bittorrent_list = []
         for content in self.contents:
             # get the archive path
             archive = os.path.join(tracker_archive, selected_tracker)
             os.makedirs(archive, exist_ok=True)
-            torrent_filepath = os.path.join(tracker_archive,selected_tracker, f"{content.torrent_name}.torrent")
+            torrent_filepath = os.path.join(tracker_archive, selected_tracker, f"{content.torrent_name}.torrent")
 
             # Filter contents based on existing torrents or duplicates
             if self.cli.watcher:
@@ -61,8 +61,7 @@ class GameManager:
                 continue
 
             torrent_response = UserContent.torrent(content=content, tracker_name_list=tracker_name_list,
-                                                       selected_tracker=selected_tracker, this_path=torrent_filepath)
-
+                                                   selected_tracker=selected_tracker, this_path=torrent_filepath)
 
             # Skip if it is a duplicate
             if ((self.cli.duplicate or config_settings.user_preferences.DUPLICATE_ON)
@@ -79,7 +78,7 @@ class GameManager:
                 continue
 
             # Tracker instance
-            unit3d_up = UploadBot(content=content, tracker_name=selected_tracker, cli = self.cli)
+            unit3d_up = UploadBot(content=content, tracker_name=selected_tracker, cli=self.cli)
 
             # Get the data
             unit3d_up.data_game(igdb=game_data_results)
@@ -90,7 +89,8 @@ class GameManager:
                 continue
 
             # Send to the tracker
-            tracker_response, tracker_message = unit3d_up.send(torrent_archive=torrent_filepath, nfo_path=content.game_nfo)
+            tracker_response, tracker_message = unit3d_up.send(torrent_archive=torrent_filepath,
+                                                               nfo_path=content.game_nfo)
 
             bittorrent_list.append(
                 BittorrentData(
@@ -98,7 +98,6 @@ class GameManager:
                     torrent_response=torrent_response,
                     content=content,
                     tracker_message=tracker_message,
-                    archive_path = torrent_filepath,
+                    archive_path=torrent_filepath,
                 ))
         return bittorrent_list
-

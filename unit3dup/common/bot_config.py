@@ -2,15 +2,16 @@
 
 from dataclasses import dataclass, fields
 
+
 @dataclass(slots=True)
 class BotConfig:
-
     # Config commands
     # check: bool = False
 
     # Upload commands
     upload: str | None = None
-    folder: str | None = None
+    mode: str | None = None
+    folder: str = None
     scan: str | None = None
     buildtags: bool = False
     reseed: bool = False

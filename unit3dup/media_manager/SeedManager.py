@@ -1,21 +1,23 @@
 # -*- coding: utf-8 -*-
 
-import argparse
 import os
 
 from unit3dup.common.external_services.theMovieDB.core.api import DbOnline
 from unit3dup.common.bittorrent import BittorrentData
+from unit3dup.common.bot_config import BotConfig
 from unit3dup.media_manager.common import UserContent
 from unit3dup.media import Media
 
+
 class SeedManager:
-    def __init__(self, contents: list[Media], cli: argparse.Namespace):
+    def __init__(self, contents: list[Media], cli: BotConfig):
 
-         self.contents = contents
-         # Command line
-         self.cli = cli
+        self.contents = contents
+        # Command line
+        self.cli: BotConfig = cli
 
-    def process(self, selected_tracker: str, trackers_name_list: list, tracker_archive: str) -> list[BittorrentData] | None:
+    def process(self, selected_tracker: str, trackers_name_list: list, tracker_archive: str) -> list[
+                                                                                                    BittorrentData] | None:
 
         # Data list for the torrent client
         bittorrent_list = []
@@ -32,7 +34,7 @@ class SeedManager:
                 db_online = DbOnline(media=content, category=content.category, no_title=self.cli.notitle)
                 db = db_online.media_result
 
-                torrents = UserContent.can_ressed(content=content, tracker_name=selected_tracker,cli=self.cli,
+                torrents = UserContent.can_ressed(content=content, tracker_name=selected_tracker, cli=self.cli,
                                                   tmdb_id=db.video_id)
 
                 for t in torrents:

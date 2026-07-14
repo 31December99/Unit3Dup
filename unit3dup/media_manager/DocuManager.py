@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-from argparse import Namespace
 import os
 
 from unit3dup.common.bittorrent import BittorrentData
+from unit3dup.common.bot_config import BotConfig
 from unit3dup.media_manager.common import UserContent
 from unit3dup.pvtDocu import PdfImages
 from unit3dup.upload import UploadBot
@@ -10,12 +10,13 @@ from unit3dup import config_settings
 from unit3dup.media import Media
 from unit3dup.view import custom_console
 
+
 class DocuManager:
 
-    def __init__(self, contents: list[Media], cli: Namespace):
+    def __init__(self, contents: list[Media], cli: BotConfig):
         self._my_tmdb = None
         self.contents: list['Media'] = contents
-        self.cli: Namespace = cli
+        self.cli: BotConfig = cli
 
     def process(self, selected_tracker: str, tracker_name_list: list, tracker_archive: str) -> list[BittorrentData]:
 
@@ -29,7 +30,7 @@ class DocuManager:
             # get the archive path
             archive = os.path.join(tracker_archive, selected_tracker)
             os.makedirs(archive, exist_ok=True)
-            torrent_filepath = os.path.join(tracker_archive,selected_tracker, f"{content.torrent_name}.torrent")
+            torrent_filepath = os.path.join(tracker_archive, selected_tracker, f"{content.torrent_name}.torrent")
 
             if self.cli.watcher:
                 if os.path.exists(content.torrent_path):
@@ -56,9 +57,8 @@ class DocuManager:
             docu_info = PdfImages(content.file_name)
             docu_info.build_info()
 
-
             # Tracker payload
-            unit3d_up = UploadBot(content=content, tracker_name=selected_tracker, cli = self.cli)
+            unit3d_up = UploadBot(content=content, tracker_name=selected_tracker, cli=self.cli)
 
             # Upload
             unit3d_up.data_docu(document_info=docu_info)

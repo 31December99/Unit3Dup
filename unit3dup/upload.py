@@ -1,9 +1,9 @@
 import pprint
-from argparse import Namespace
 import requests
 import json
 
 from unit3dup.common.external_services.igdb.core.models.search import Game
+from unit3dup.common.bot_config import BotConfig
 from unit3dup.common.trackers.trackers import TRACKData
 from unit3dup.pvtTracker import Unit3d
 from unit3dup.pvtDocu import PdfImages
@@ -14,7 +14,7 @@ from unit3dup.view import custom_console
 
 
 class UploadBot:
-    def __init__(self, content: Media, tracker_name: str, cli: Namespace):
+    def __init__(self, content: Media, tracker_name: str, cli: BotConfig):
         self.cli = cli
         self.content = content
         self.tracker_name = tracker_name
@@ -84,7 +84,6 @@ class UploadBot:
             custom_console.bot_error_log(f"Category ID {self.content.category} not found")
         return _id
 
-
     def data(self, show_id: int, imdb_id: int, tvdb_id: int, show_keywords_list: str,
              video_info: Video) -> Unit3d | None:
 
@@ -105,7 +104,6 @@ class UploadBot:
                                                  or int(self.cli.personal))
         self.tracker.data["internal"] = int(self.cli.internal)
         self.tracker.data["mod_queue_opt_in"] = int(self.cli.moderation)
-
 
         # skip upload if the key is missing
         if self.category_id():

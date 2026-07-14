@@ -1,27 +1,28 @@
 # -*- coding: utf-8 -*-
 
-import argparse
 from unit3dup.media_manager.VideoManager import VideoManager
 from unit3dup.media_manager.GameManager import GameManager
 from unit3dup.media_manager.DocuManager import DocuManager
 from unit3dup.media_manager.SeedManager import SeedManager
 from unit3dup import config_settings
 from unit3dup.media import Media
+from unit3dup.common.settings import USER_TAGS_PATH, USER_SIGN_PATH, BAN_TAGS_PATH
 from unit3dup.common.bittorrent import BittorrentData
 from unit3dup.common.constants import my_language
 from unit3dup.common.utility import System
+from unit3dup.common.bot_config import BotConfig
 from unit3dup.media_manager.common import UserContent
 from unit3dup.view import custom_console
 
 
 class TorrentManager:
-    def __init__(self, cli: argparse.Namespace, tracker_archive: str, tags_list: dict, sign_list: dict, ban_list: dict):
+    def __init__(self, cli: BotConfig, tracker_archive: str, tags_list: dict, sign_list: dict, ban_list: dict):
 
         self.preferred_lang = my_language(config_settings.user_preferences.PREFERRED_LANG)
         self.tracker_archive = tracker_archive
-        self.tags_list: dict = tags_list
-        self.sign_list: dict = sign_list
-        self.ban_list: dict = ban_list
+        self.tags_list: dict = System.load_tags(path=USER_TAGS_PATH)
+        self.sign_list: dict = System.load_tags(path=USER_SIGN_PATH)
+        self.ban_list: dict = System.load_tags(path=BAN_TAGS_PATH)
 
         self.videos: list[Media] = []
         self.games: list[Media] = []

@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
-from argparse import Namespace
 import os
 
 from unit3dup.common.external_services.theMovieDB.core.api import DbOnline
 from unit3dup.common.bittorrent import BittorrentData
 from unit3dup.common.tags import SearchTags
+from unit3dup.common.bot_config import BotConfig
 from unit3dup.common import title
 
 from unit3dup.media_manager.common import UserContent
@@ -17,7 +17,7 @@ from unit3dup.view import custom_console
 
 class VideoManager:
 
-    def __init__(self, contents: list[Media], cli: Namespace, tags_list: dict, sign_list: dict, ban_list: dict):
+    def __init__(self, contents: list[Media], cli: BotConfig, tags_list: dict, sign_list: dict, ban_list: dict):
         """
         Initialize the VideoManager with the given contents
 
@@ -28,7 +28,7 @@ class VideoManager:
 
         self.torrent_found: bool = False
         self.contents: list[Media] = contents
-        self.cli: Namespace = cli
+        self.cli: BotConfig = cli
         self.tags_list: dict = tags_list
         self.sign_list: dict = sign_list
         self.ban_list: dict = ban_list
@@ -54,7 +54,7 @@ class VideoManager:
             if self.cli.buildtags:
                 guess_filename = title.Guessit(content.title_sanitize_tags)
                 guess = guess_filename.guessit
-                tags_position = config_settings.user_preferences.TAGS_POSITION_SERIE if content.category=='tv'\
+                tags_position = config_settings.user_preferences.TAGS_POSITION_SERIE if content.category == 'tv' \
                     else config_settings.user_preferences.TAGS_POSITION_MOVIE
                 search_tags = SearchTags(filename=content.title,
                                          title=guess.get("title", None),
@@ -69,7 +69,6 @@ class VideoManager:
                                          media=content,
                                          )
                 content.display_name, tags_dictionary = search_tags.process()
-
 
             # get the archive path
             archive = os.path.join(tracker_archive, selected_tracker)
@@ -122,7 +121,7 @@ class VideoManager:
 
                 # Get the data
                 processed_data = unit3d_up.data(show_id=db.video_id, imdb_id=db.imdb_id, tvdb_id=db.tvdb_id,
-                               show_keywords_list=db.keywords_list, video_info=video_info)
+                                                show_keywords_list=db.keywords_list, video_info=video_info)
 
                 # Do not upload if an error occurs
                 if not processed_data:

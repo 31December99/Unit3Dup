@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
-import json
-
-from unit3dup.common.settings import Load, DEFAULT_JSON_PATH, USER_TAGS_PATH, USER_SIGN_PATH, BAN_TAGS_PATH, version
+from unit3dup.common.settings import Load, DEFAULT_JSON_PATH, version
 from unit3dup.common.torrent_clients import TransmissionClient, QbittorrentClient, RTorrentClient
 from unit3dup.common.command import CommandLine
 from unit3dup.common.bot_config import BotConfig
@@ -92,38 +90,9 @@ def main():
                 custom_console.bot_error_log(f"You need to set a favorite 'torrent_client' in the config file")
                 exit(1)
 
-    # Load User Tags list
-    tags_list = None
-    if cli.buildtags:
-        try:
-            with open(USER_TAGS_PATH, "r", encoding="utf-8") as f:
-                tags_list = json.load(f)
-        except FileNotFoundError:
-            custom_console.bot_error_log(
-                f"User tags file {USER_TAGS_PATH} not found. Please update your configuration file")
-
-    # Load User Sign list
-    sign_list = None
-    try:
-        with open(USER_SIGN_PATH, "r", encoding="utf-8") as f:
-            sign_list = json.load(f)
-    except FileNotFoundError:
-        custom_console.bot_error_log(
-            f"User sign file {USER_SIGN_PATH} not found. Please update your configuration file")
-
-    # Load Ban list
-    ban_list = None
-    try:
-        with open(BAN_TAGS_PATH, "r", encoding="utf-8") as f:
-            ban_list = json.load(f)
-    except FileNotFoundError:
-        custom_console.bot_error_log(
-            f"Ban list file {BAN_TAGS_PATH} not found. Please update your configuration file")
-
     # Manual upload mode
     if cli.upload:
-        bot = Bot(path=cli.upload, cli=cli, trackers_name_list=tracker_name_list,
-                  torrent_archive_path=tracker_archive, tags_list=tags_list, sign_list=sign_list, ban_list=ban_list)
+        bot = Bot(path=cli.upload, cli=cli, trackers_name_list=tracker_name_list, torrent_archive_path=tracker_archive)
         bot.run()
 
     # Manual folder mode
@@ -134,16 +103,13 @@ def main():
             mode="folder",
             trackers_name_list=tracker_name_list,
             torrent_archive_path=tracker_archive,
-            tags_list=tags_list,
-            sign_list=sign_list,
-            ban_list=ban_list
         )
         bot.run()
 
     # Auto mode
     if cli.scan and not cli.ftp:
         bot = Bot(path=cli.scan, cli=cli, mode="auto", trackers_name_list=tracker_name_list,
-                  torrent_archive_path=tracker_archive, tags_list=tags_list, sign_list=sign_list, ban_list=ban_list)
+                  torrent_archive_path=tracker_archive)
         bot.run()
 
     # Watcher
