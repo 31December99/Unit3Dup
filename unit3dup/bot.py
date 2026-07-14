@@ -29,15 +29,13 @@ class Bot:
     """
 
     # Bot Manager
-    def __init__(self, path: str, cli: BotConfig, trackers_name_list: list, mode="man", torrent_archive_path=None):
+    def __init__(self,cli: BotConfig, trackers_name_list: list, torrent_archive_path: str):
 
         """
         Initializes the Bot instance with path, command-line interface object, and mode
 
         Args:
-            path (str): The path to the directory or file to be managed
             cli (argparse.Namespace): The command-line arguments object
-            mode (str): The mode of operation, default is 'man'
         """
         self.trackers_name_list = trackers_name_list
         self.torrent_archive_path = torrent_archive_path
@@ -45,54 +43,64 @@ class Bot:
         self.tags_list: dict = System.load_tags(path=USER_TAGS_PATH)
         self.sign_list: dict = System.load_tags(path=USER_SIGN_PATH)
         self.ban_list: dict = System.load_tags(path=BAN_TAGS_PATH)
-        self.path = path.strip()
+        self.path = (cli.scan or cli.folder or cli.upload or "").strip()
         self.cli = cli
-        self.mode = mode
+        if self.cli.scan:
+            self.cli.mode = "auto"
 
-    def contents(self) -> bool | list[Media]:
+        if self.cli.folder:
+            self.cli.mode = "folder"
+
+        if self.cli.upload:
+            self.cli.mode = "man"
+
+
+    def contents(self) -> list[Media]:
         """
         Start the process of analyzing and processing media files
-        This method retrieves media files
+-        This method retrieves media files
         """
         custom_console.panel_message("Analyzing your media files... Please wait")
 
         # Check permission
-        try:
-            os.stat(self.path)
-        except PermissionError:
-            custom_console.bot_error_log(f"Permission denied: {self.path}")
-            return False
-        except FileNotFoundError:
-            custom_console.bot_error_log(f"Path not found: {self.path}")
-            return False
+        if self.path:
+            try:
+                os.stat(self.path)
+            except PermissionError:
+                custom_console.bot_error_log(f"Permission denied: {self.path}")
+                return []
+            except FileNotFoundError:
+                custom_console.bot_error_log(f"Path not found: {self.path}")
+                return []
 
-        # Exists
-        if not os.path.exists(self.path):
-            custom_console.bot_error_log("Path doesn't exist")
-            return False
+            # Exists
+            if not os.path.exists(self.path):
+                custom_console.bot_error_log("Path doesn't exist")
+                return []
 
-        # Get a Files list with basic attributes and create a content object for each
-        self.content_manager: ContentManager = ContentManager(path=self.path, mode=self.mode, cli=self.cli)
-        contents = self.content_manager.process()
+            # Get a Files list with basic attributes and create a content object for each
+            self.content_manager: ContentManager = ContentManager(path=self.path, mode=self.cli.mode, cli=self.cli)
+            contents = self.content_manager.process()
 
-        # -u requires a single file
-        if not contents:
-            custom_console.bot_error_log("There are no Media to process")
-            return False
+            # -u requires a single file
+            if not contents:
+                custom_console.bot_error_log("There are no Media to process")
+                return []
 
-        # we got a handled exception
-        if contents is None:
-            exit(1)
+            # we got a handled exception
+            if contents is None:
+                exit(1)
 
-        # -f requires at least one file
-        if not contents:
-            custom_console.bot_error_log(f"There are no Files to process. Try using -scan")
-            exit(1)
+            # -f requires at least one file
+            if not contents:
+                custom_console.bot_error_log(f"There are no Files to process. Try using -scan")
+                exit(1)
 
-        # Print the list of files being processed
-        custom_console.bot_process_table_log(contents)
+            # Print the list of files being processed
+            custom_console.bot_process_table_log(contents)
+            return contents
 
-        return contents
+        return []
 
     def run(self) -> bool:
         """
@@ -231,7 +239,7 @@ class Bot:
 
         if ftp_client.download_to_local_path:
             self.path = os.path.dirname(ftp_client.download_to_local_path)
-            self.mode = 'folder'
+            self.cli.mode = 'folder'
             # Upload -f process
             # Decompress .rar files if the flags are set
             extractor = Extractor(compressed_media__path=self.path)

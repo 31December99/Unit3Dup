@@ -10,7 +10,7 @@ class BotConfig:
 
     # Upload commands
     upload: str | None = None
-    mode: str | None = None
+    mode: str = None
     folder: str = None
     scan: str | None = None
     buildtags: bool = False
