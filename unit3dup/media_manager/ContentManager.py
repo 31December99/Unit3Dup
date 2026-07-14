@@ -5,11 +5,12 @@ import os
 import re
 
 from unit3dup.common.utility import ManageTitles, System
+from unit3dup.common.bot_config import BotConfig
 from unit3dup.automode import Auto
 from unit3dup.media import Media
 
 class ContentManager:
-    def __init__(self, path: str, mode: str, cli: argparse.Namespace):
+    def __init__(self, path: str, mode: str, cli: BotConfig):
         """
         Args:
             path (str): The path to the media files or directories
