@@ -6,10 +6,11 @@ import unicodedata
 
 from datetime import datetime
 from pathlib import Path
-
 from thefuzz import fuzz
 
 from unit3dup.common.external_services.igdb.core.tags import additions
+from unit3dup.common.bot_config import BotConfig
+
 
 
 class ManageTitles:
@@ -405,3 +406,34 @@ class System:
         except FileNotFoundError:
             print(
                 f"User tags file {path} not found. Please update your configuration file")
+
+    @staticmethod
+    def get_torrent_archive_path(config) -> str:
+
+        # Get the torrent archive path
+        if config.user_preferences.TORRENT_ARCHIVE_PATH:
+            return config.user_preferences.TORRENT_ARCHIVE_PATH
+        else:
+            return '.'
+
+    @staticmethod
+    def get_tracker_name_list(cli: BotConfig, config) -> list[str]:
+
+        # Check if the tracker name exists
+        # /// Load the list of the registered trackers
+        if not config.tracker_config.MULTI_TRACKER:
+            print(f"No tracker name provided. Please update your configuration file")
+            exit(1)
+
+        if cli.tracker:
+            if not any(cli.tracker.upper() in tracker.upper() for tracker in config.tracker_config.MULTI_TRACKER):
+                print(
+                    f"Tracker '{cli.tracker}' not found. Please update your configuration file")
+                exit()
+            return [cli.tracker.upper()]
+
+        if cli.mt:
+            return config.tracker_config.MULTI_TRACKER
+        print(
+            f"No tracker specified in configuration file. Please update your configuration file")
+        exit()
