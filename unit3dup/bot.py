@@ -8,11 +8,9 @@ import shutil
 from unit3dup.media import Media
 from unit3dup.media_manager.ContentManager import ContentManager
 from unit3dup.media_manager.TorrentManager import TorrentManager
-from unit3dup.common.settings import USER_TAGS_PATH, USER_SIGN_PATH, BAN_TAGS_PATH
 from unit3dup.common.external_services.ftpx.core.models.list import FTPDirectory
 from unit3dup.common.external_services.ftpx.core.menu import Menu
 from unit3dup.common.external_services.ftpx.client import Client
-from unit3dup.common.utility import System
 from unit3dup.common.extractor import Extractor
 from unit3dup.view import custom_console
 from unit3dup.common.bot_config import BotConfig
@@ -30,7 +28,6 @@ class Bot:
 
     # Bot Manager
     def __init__(self,cli: BotConfig, trackers_name_list: list, torrent_archive_path: str):
-
         """
         Initializes the Bot instance with path, command-line interface object, and mode
 
@@ -40,9 +37,7 @@ class Bot:
         self.trackers_name_list = trackers_name_list
         self.torrent_archive_path = torrent_archive_path
         self.content_manager = None
-        self.tags_list: dict = System.load_tags(path=USER_TAGS_PATH)
-        self.sign_list: dict = System.load_tags(path=USER_SIGN_PATH)
-        self.ban_list: dict = System.load_tags(path=BAN_TAGS_PATH)
+
         self.path = (cli.scan or cli.folder or cli.upload or "").strip()
         self.cli = cli
         if self.cli.scan:
@@ -113,8 +108,8 @@ class Bot:
             return False
 
         # Instance a new run
-        torrent_manager = TorrentManager(cli=self.cli, tracker_archive=self.torrent_archive_path,
-                                         tags_list=self.tags_list, sign_list=self.sign_list, ban_list=self.ban_list)
+        torrent_manager = TorrentManager(cli=self.cli, tracker_archive=self.torrent_archive_path)
+
         # Process the torrents content (files)
         torrent_manager.process(contents=contents)
 

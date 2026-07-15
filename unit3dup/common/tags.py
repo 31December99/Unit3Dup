@@ -2,8 +2,10 @@
 import re
 from unit3dup.common.utility import ManageTitles
 from unit3dup.common.mediainfo import MediaFile
+from unit3dup.common.settings import Load
 from unit3dup.media import Media
 from unit3dup.view import custom_console
+
 
 # From hdr format
 hdr_map = {
@@ -71,8 +73,7 @@ TAG_NORMALIZE = {
 
 class SearchTags(object):
     def __init__(self, filename, title: str, year: str, season: int, episode: int,
-                 media: Media, tags_position: list, tags_list: dict, sign_list: dict, ban_list: dict,
-                 releaser_sign: str):
+                 media: Media, tags_position: list, releaser_sign: str):
 
         self.mediafile: MediaFile = media.mediafile
         self.tags_position = tags_position
@@ -85,9 +86,9 @@ class SearchTags(object):
         self.year = year
         self.tags_dict = {}
 
-        self.TAG_TYPES: dict = tags_list
-        self.SIGNS_LIST: dict = sign_list
-        self.BAN_LIST: dict = ban_list
+        self.TAG_TYPES: dict = Load().tags_list
+        self.SIGNS_LIST: dict = Load().sign_list
+        self.BAN_LIST: dict = Load().ban_list
 
     @staticmethod
     def normalize_version_tag(tag: str) -> str:

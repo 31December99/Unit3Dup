@@ -17,7 +17,7 @@ from unit3dup.view import custom_console
 
 class VideoManager:
 
-    def __init__(self, contents: list[Media], cli: BotConfig, tags_list: dict, sign_list: dict, ban_list: dict):
+    def __init__(self, contents: list[Media], cli: BotConfig):
         """
         Initialize the VideoManager with the given contents
 
@@ -29,9 +29,6 @@ class VideoManager:
         self.torrent_found: bool = False
         self.contents: list[Media] = contents
         self.cli: BotConfig = cli
-        self.tags_list: dict = tags_list
-        self.sign_list: dict = sign_list
-        self.ban_list: dict = ban_list
 
     def process(self, selected_tracker: str, tracker_name_list: list, tracker_archive: str) -> list[BittorrentData]:
         """
@@ -63,10 +60,7 @@ class VideoManager:
                                          episode=content.guess_episode,
                                          releaser_sign=config_settings.user_preferences.RELEASER_SIGN,
                                          tags_position=tags_position,
-                                         tags_list=self.tags_list,
-                                         sign_list=self.sign_list,
-                                         ban_list=self.ban_list,
-                                         media=content,
+                                         media=content
                                          )
                 content.display_name, tags_dictionary = search_tags.process()
 

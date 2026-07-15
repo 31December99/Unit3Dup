@@ -15,6 +15,7 @@ from unit3dup.common.trackers.signs_list import SIGNS_LIST
 from unit3dup.common.trackers.tags_list import TAGS_LIST
 from unit3dup.common.trackers.ban_list import BAN_LIST
 from unit3dup.common.trackers import tracker_list
+from unit3dup.common.utility import System
 
 from unit3dup.common.utility import ManageTitles
 from unit3dup.common import trackers
@@ -549,6 +550,10 @@ class Load:
 
     def _load_config(self):
         self.config = self.load_config()
+        self.tags_list: dict = System.load_tags(path=USER_TAGS_PATH)
+        self.sign_list: dict = System.load_tags(path=USER_SIGN_PATH)
+        self.ban_list: dict = System.load_tags(path=BAN_TAGS_PATH)
+
 
     @staticmethod
     def create_tags_list_file(path: Path):
