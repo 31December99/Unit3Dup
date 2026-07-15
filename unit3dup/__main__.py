@@ -21,7 +21,7 @@ def main():
     custom_console.bot_question_log(f"Unit3Dup {version} Checking your configuration file.. \n")
 
     # Load user configuration data
-    config = Load().load_config()
+    config = Load().config
     custom_console.bot_log(f"[Configuration] '{DEFAULT_JSON_PATH}'")
     custom_console.bot_log(f"[*.torrent Archive] '{config.user_preferences.TORRENT_ARCHIVE_PATH}'")
     custom_console.bot_log(f"[Images,Tmdb cache] '{config.user_preferences.CACHE_PATH}'")
