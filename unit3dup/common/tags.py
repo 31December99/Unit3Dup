@@ -3,6 +3,7 @@ import re
 from unit3dup.common.utility import ManageTitles
 from unit3dup.common.mediainfo import MediaFile
 from unit3dup.common.settings import Load
+from unit3dup.common import title
 from unit3dup.media import Media
 from unit3dup.view import custom_console
 
@@ -72,23 +73,28 @@ TAG_NORMALIZE = {
 
 
 class SearchTags(object):
-    def __init__(self, filename, title: str, year: str, season: int, episode: int,
-                 media: Media, tags_position: list, releaser_sign: str):
+    def __init__(self, media: Media):
 
         self.mediafile: MediaFile = media.mediafile
-        self.tags_position = tags_position
-        self.releaser_sign = releaser_sign
+        self.releaser_sign = Load().config.user_preferences.RELEASER_SIGN
         self.media: Media = media
-        self.filename = filename
-        self.episode = episode
-        self.season = season
-        self.title = title
-        self.year = year
+        self.filename = media.file_name
         self.tags_dict = {}
+
+        guess_filename = title.Guessit(media.title_sanitize_tags)
+        guess = guess_filename.guessit
+
+        self.title = guess.get("title", None)
+        self.year = guess.get("year", "")
+
+        self.season =  media.guess_season
+        self.episode = media.guess_episode
 
         self.TAG_TYPES: dict = Load().tags_list
         self.SIGNS_LIST: dict = Load().sign_list
         self.BAN_LIST: dict = Load().ban_list
+        self.tags_position = Load().config.user_preferences.TAGS_POSITION_SERIE if media.category == 'tv' \
+            else Load().config.user_preferences.TAGS_POSITION_MOVIE
 
     @staticmethod
     def normalize_version_tag(tag: str) -> str:

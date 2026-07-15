@@ -5,8 +5,6 @@ from unit3dup.common.external_services.theMovieDB.core.api import DbOnline
 from unit3dup.common.bittorrent import BittorrentData
 from unit3dup.common.tags import SearchTags
 from unit3dup.common.bot_config import BotConfig
-from unit3dup.common import title
-
 from unit3dup.media_manager.common import UserContent
 from unit3dup.upload import UploadBot
 from unit3dup import config_settings
@@ -49,19 +47,7 @@ class VideoManager:
         for content in self.contents:
             # /// User request to build the title; overwriting display_name
             if self.cli.buildtags:
-                guess_filename = title.Guessit(content.title_sanitize_tags)
-                guess = guess_filename.guessit
-                tags_position = config_settings.user_preferences.TAGS_POSITION_SERIE if content.category == 'tv' \
-                    else config_settings.user_preferences.TAGS_POSITION_MOVIE
-                search_tags = SearchTags(filename=content.title,
-                                         title=guess.get("title", None),
-                                         year=guess.get("year", ""),
-                                         season=content.guess_season,
-                                         episode=content.guess_episode,
-                                         releaser_sign=config_settings.user_preferences.RELEASER_SIGN,
-                                         tags_position=tags_position,
-                                         media=content
-                                         )
+                search_tags = SearchTags(media=content)
                 content.display_name, tags_dictionary = search_tags.process()
 
             # get the archive path
