@@ -14,7 +14,7 @@ class CommandLine:
     def __init__(self):
 
         # Load config
-        config = Load().load_config()
+        config = Load().config
 
         # /////////////////////////
         # Main parser

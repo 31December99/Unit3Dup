@@ -1,3 +1,3 @@
 from unit3dup.common.settings import Load
 
-config = Load().load_config().tracker_config
+config = Load().config.tracker_config
