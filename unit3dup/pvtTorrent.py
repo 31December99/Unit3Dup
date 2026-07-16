@@ -18,24 +18,33 @@ class HashProgressBar(tqdm):
 
 class Mytorrent:
 
-    def __init__(self, contents: Media, meta: str, trackers_list = None):
+    # def __init__(self, contents: Media, meta: str, trackers_list = None):
+    def __init__(self, contents: Media, meta: str, tracker_name: str):
+
+
+        self.tracker_name = tracker_name.upper()
 
         self.torrent_path = contents.torrent_path
-        self.trackers_list = trackers_list
+        # self.trackers_list = trackers_list
 
-        announces = []
-        # one tracker at time
-        for tracker_name in trackers_list:
-            announce = trackers_api_data[tracker_name.upper()]['announce'] if tracker_name else None
-            announces.append([announce])
+        # announces = []
+        # # one tracker at time
+        # for tracker_name in trackers_list:
+        #     announce = trackers_api_data[tracker_name.upper()]['announce'] if tracker_name else None
+        #     announces.append([announce])
+
+
+        announce = trackers_api_data[self.tracker_name]['announce']
 
         self.metainfo = json.loads(meta)
-        self.mytorr = torf.Torrent(path=contents.torrent_path, trackers=announces)
+        # self.mytorr = torf.Torrent(path=contents.torrent_path, trackers=announces)
+        self.mytorr = torf.Torrent(path=contents.torrent_path, trackers=announce)
         self.mytorr.comment = config_settings.user_preferences.TORRENT_COMMENT
         self.mytorr.name = contents.torrent_name
         self.mytorr.created_by = "https://github.com/31December99/Unit3Dup"
         self.mytorr.private = True
-        self.mytorr.source= trackers_api_data[trackers_list[0]]['source']
+        # self.mytorr.source= trackers_api_data[trackers_list[0]]['source']
+        self.mytorr.source= trackers_api_data[self.tracker_name]['source']
         self.mytorr.segments = 16 * 1024 * 1024
 
 
@@ -43,7 +52,8 @@ class Mytorrent:
         # Calculate the torrent size
         size = round(self.mytorr.size / (1024 ** 3), 2)
         # Print a message for the user
-        custom_console.print(f"\n{self.trackers_list} {self.mytorr.name} - {size} GB")
+        # custom_console.print(f"\n{self.trackers_list} {self.mytorr.name} - {size} GB")
+        custom_console.print(f"\n'{self.tracker_name}' {self.mytorr.name} - {size} GB")
         # Hashing
         with HashProgressBar() as progress:
             try:
