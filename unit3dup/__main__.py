@@ -44,6 +44,15 @@ def main():
             if tracker.get_alive(alive=True, perPage=1):
                 custom_console.bot_log(f"Tracker -> '{tracker_data.upper()}' Online")
 
+    # Send content to the multi_tracker list
+    if cli.mt:
+        tracker_name_list = config.tracker_config.MULTI_TRACKER
+        for tracker_data in tracker_name_list[1:]:
+            tracker = pvtTracker.Unit3d(tracker_name=tracker_data)
+            if tracker.get_alive(alive=True, perPage=1):
+                custom_console.bot_log(f"Tracker -> '{tracker_data.upper()}' Online")
+
+
     # Test both clients only if used
     if cli.noseed is False and cli.noup is False or cli.reseed is True:
         # /// Test the torrent clients
