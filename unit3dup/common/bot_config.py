@@ -16,7 +16,7 @@ class BotConfig:
     buildtags: bool = False
     reseed: bool = False
     watcher: bool = False
-    notitle: str | None = None
+    notitle: str = None
 
     tracker: str = "itt"
     mt: bool = False
