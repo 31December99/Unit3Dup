@@ -408,13 +408,12 @@ class System:
                 f"User tags file {path} not found. Please update your configuration file")
 
     @staticmethod
-    def get_torrent_archive_path(config) -> str:
+    def get_torrent_archive_path(tracker_archive, selected_tracker, torrent_name: str) -> str:
+        # Fix the tracker_archive path
+        archive = os.path.join(tracker_archive, selected_tracker.upper())
+        os.makedirs(archive, exist_ok=True)
+        return os.path.join(tracker_archive, selected_tracker, f"{torrent_name}.torrent")
 
-        # Get the torrent archive path
-        if config.user_preferences.TORRENT_ARCHIVE_PATH:
-            return config.user_preferences.TORRENT_ARCHIVE_PATH
-        else:
-            return '.'
 
     @staticmethod
     def get_tracker_name_list(cli: BotConfig, config) -> list[str]:

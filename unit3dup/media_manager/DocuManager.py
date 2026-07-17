@@ -3,6 +3,7 @@ import os
 
 from unit3dup.common.bittorrent import BittorrentData
 from unit3dup.common.bot_config import BotConfig
+from unit3dup.common.utility import System
 from unit3dup.media_manager.common import UserContent
 from unit3dup.pvtDocu import PdfImages
 from unit3dup.upload import UploadBot
@@ -27,10 +28,9 @@ class DocuManager:
         #  Init the torrent list
         bittorrent_list = []
         for content in self.contents:
+
             # get the archive path
-            archive = os.path.join(tracker_archive, selected_tracker)
-            os.makedirs(archive, exist_ok=True)
-            torrent_filepath = os.path.join(tracker_archive, selected_tracker, f"{content.torrent_name}.torrent")
+            torrent_filepath = System.get_torrent_archive_path(tracker_archive, selected_tracker, content.torrent_name)
 
             if self.cli.watcher:
                 if os.path.exists(content.torrent_path):

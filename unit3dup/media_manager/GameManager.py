@@ -3,13 +3,14 @@ import os
 
 from unit3dup.common.external_services.igdb.client import IGDBClient
 from unit3dup.common.bittorrent import BittorrentData
+from unit3dup.common.bot_config import BotConfig
+from unit3dup.common.utility import System
 
 from unit3dup.media_manager.common import UserContent
 from unit3dup.upload import UploadBot
 from unit3dup import config_settings
 from unit3dup.media import Media
 from unit3dup.view import custom_console
-from unit3dup.common.bot_config import BotConfig
 
 
 class GameManager:
@@ -50,9 +51,8 @@ class GameManager:
         bittorrent_list = []
         for content in self.contents:
             # get the archive path
-            archive = os.path.join(tracker_archive, selected_tracker)
-            os.makedirs(archive, exist_ok=True)
-            torrent_filepath = os.path.join(tracker_archive, selected_tracker, f"{content.torrent_name}.torrent")
+            # get the archive path
+            torrent_filepath = System.get_torrent_archive_path(tracker_archive, selected_tracker, content.torrent_name)
 
             # Filter contents based on existing torrents or duplicates
             if self.cli.watcher:

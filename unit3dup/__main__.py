@@ -81,14 +81,15 @@ def main():
         bot = Bot(
             cli=cli,
             trackers_name_list=tracker_name_list,
-            torrent_archive_path=System.get_torrent_archive_path(config=config),
+            torrent_archive_path=config.user_preferences.TORRENT_ARCHIVE_PATH,
         )
         bot.run()
 
     # Watcher
     if cli.watcher:
         bot = Bot(cli=cli, trackers_name_list=tracker_name_list,
-                  torrent_archive_path=System.get_torrent_archive_path(config=config))
+                  torrent_archive_path=config.user_preferences.TORRENT_ARCHIVE_PATH)
+
 
         bot.watcher(duration=config.user_preferences.WATCHER_INTERVAL,
                     watcher_path=config.user_preferences.WATCHER_PATH,
@@ -97,7 +98,8 @@ def main():
     # ftp and upload
     if cli.ftp:
         bot = Bot(cli=cli, trackers_name_list=tracker_name_list,
-                  torrent_archive_path=System.get_torrent_archive_path(config=config))
+                  torrent_archive_path=config.user_preferences.TORRENT_ARCHIVE_PATH)
+
         bot.ftp()
 
     # Commands list: commands not necessary for upload but may be useful
