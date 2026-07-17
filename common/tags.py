@@ -147,7 +147,6 @@ class SearchTags(object):
 
         # Remove banned items from categories
         self.tags_position = [x.lower() for x in self.tags_position if x not in self.BAN_LIST]
-
         # loop sorted TAG_TYPES dictionary
         for i, (tag, category) in enumerate(
                 sorted(self.TAG_TYPES.items(), key=lambda x: len(x[0]), reverse=True)
@@ -181,6 +180,12 @@ class SearchTags(object):
         # /// Tags with no categories
         # Identify PartX
         norm = self.normalize_part_tag(self.filename)
+
+        # Remove duplicate regex (findall)
+        # es WEB-DL
+        if self.tags_dict.get("source", None):
+            self.tags_dict["source"] = list(dict.fromkeys(self.tags_dict["source"]))
+
         if norm:
             # Skip if it is part of title es: "Wicked.Parte.2.2025.iTA" Title = Wicked Parte 2
             if not any(t in self.title.lower() for t in ['part', 'parte']):
