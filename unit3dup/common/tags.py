@@ -185,6 +185,12 @@ class SearchTags(object):
                     matches[0] = normalized_tag
                 self.tags_dict.setdefault(category, []).append(matches[0])
 
+
+        # Remove duplicate regex (findall)
+        # es WEB-DL
+        if self.tags_dict.get("source", None):
+            self.tags_dict["source"] = list(dict.fromkeys(self.tags_dict["source"]))
+
         # /// Tags with no categories
         # Identify PartX
         norm = self.normalize_part_tag(self.filename)
