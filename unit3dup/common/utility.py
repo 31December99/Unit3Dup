@@ -412,7 +412,7 @@ class System:
         # Fix the tracker_archive path
         archive = os.path.join(tracker_archive, selected_tracker.upper())
         os.makedirs(archive, exist_ok=True)
-        return os.path.join(tracker_archive, selected_tracker, f"{torrent_name}.torrent")
+        return os.path.join(str(archive), f"{torrent_name}.torrent")
 
 
     @staticmethod
