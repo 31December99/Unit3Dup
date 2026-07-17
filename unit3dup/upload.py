@@ -7,10 +7,13 @@ from unit3dup.common.bot_config import BotConfig
 from unit3dup.common.trackers.trackers import TRACKData
 from unit3dup.pvtTracker import Unit3d
 from unit3dup.pvtDocu import PdfImages
-from unit3dup import config_settings, Load
 from unit3dup.pvtVideo import Video
 from unit3dup.media import Media
 from unit3dup.view import custom_console
+
+from unit3dup.common.settings import Load
+
+config_settings = Load().config
 
 
 class UploadBot:

@@ -28,7 +28,9 @@ from unit3dup.common.utility import ManageTitles
 from unit3dup.media import Media
 from unit3dup.view import custom_console
 
-from unit3dup import config_settings
+from unit3dup.common.settings import Load
+
+config_settings = Load().config
 
 base_url = "https://api.themoviedb.org/3"
 ENABLE_LOG = True
@@ -475,7 +477,7 @@ class DbOnline(TmdbAPI):
         if results.tvdb_id:
             custom_console.bot_warning_log(f"'TVDB ID'........ '{results.tvdb_id}'")
         custom_console.bot_log(f"'TMDB KEYWORDS'.. {results.keywords_list}")
-        if results.trailer_key.upper() in  ['SKIPPED', 'NOT AVAILABLE']:
+        if results.trailer_key.upper() in ['SKIPPED', 'NOT AVAILABLE']:
             custom_console.bot_log(f"'TRAILER' ....... {results.trailer_key}")
         else:
             custom_console.bot_log(f"'TRAILER' ....... https://www.youtube.com/watch?v={results.trailer_key}")

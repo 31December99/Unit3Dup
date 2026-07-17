@@ -11,8 +11,11 @@ from unit3dup.common import title
 from unit3dup.view import custom_console
 from unit3dup.media_manager.MediaInfoManager import MediaInfoManager
 from unit3dup.torrent import Torrent
-from unit3dup import config_settings
 from unit3dup.media import Media
+
+from unit3dup.common.settings import Load
+
+config_settings = Load().config
 
 
 class CompareTitles:

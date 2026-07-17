@@ -1,7 +1,10 @@
 import json
 import os
 import sqlite3
-from unit3dup import config_settings
+
+from unit3dup.common.settings import Load
+
+config_settings = Load().config
 
 # Torrent attributes
 create_table_sql = ('\n'

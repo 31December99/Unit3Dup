@@ -7,8 +7,12 @@ import unicodedata
 
 from unit3dup.common.external_services.imageHost import Build
 from unit3dup.view import custom_console
-from unit3dup import config_settings
 from PIL import Image
+
+from unit3dup.common.settings import Load
+
+config_settings = Load().config
+
 
 class PdfImages:
     """
@@ -21,14 +25,15 @@ class PdfImages:
         self.file_name: str = file_name
 
         # Screenshots samples
-        samples_n: int = config_settings.user_preferences.NUMBER_OF_SCREENSHOTS\
+        samples_n: int = config_settings.user_preferences.NUMBER_OF_SCREENSHOTS \
             if 2 <= config_settings.user_preferences.NUMBER_OF_SCREENSHOTS <= 10 else 4
 
         # Description
         self.description: str = ''
 
         # description cache
-        self.docu_cache = diskcache.Cache(str(os.path.join(config_settings.user_preferences.CACHE_PATH, "covers.cache")))
+        self.docu_cache = diskcache.Cache(
+            str(os.path.join(config_settings.user_preferences.CACHE_PATH, "covers.cache")))
 
     @staticmethod
     def sanitize_filename(filename: str) -> str:
@@ -37,7 +42,6 @@ class PdfImages:
         # replace special chars with those in list
         sanitized_filename = "".join(c if c.isalnum() or c in ['.', '-', '_'] else "_" for c in normalized_filename)
         return sanitized_filename
-
 
     def extract(self) -> list['Image']:
         images = []
@@ -50,7 +54,7 @@ class PdfImages:
         command = [
             "pdftocairo",
             "-q",  # Silent
-            "-singlefile", # do not add digit
+            "-singlefile",  # do not add digit
             "-png",
             "-f", "1",
             "-l", "1",
@@ -63,10 +67,11 @@ class PdfImages:
             custom_console.bot_error_log(f"It was not possible to extract any page from '{self.file_name}'")
             exit(1)
         except FileNotFoundError:
-            custom_console.bot_error_log(f"It was not possible to find 'xpdf'. Please check your system PATH or install it.")
+            custom_console.bot_error_log(
+                f"It was not possible to find 'xpdf'. Please check your system PATH or install it.")
             exit(1)
 
-        output_name+='.png'
+        output_name += '.png'
         with open(output_name, "rb") as img_file:
             img_data = img_file.read()
             images.append(img_data)
@@ -95,13 +100,12 @@ class PdfImages:
             extracted_frames = self.extract()
             custom_console.bot_log("Done.")
             # Create a new description
-            build_description = Build(extracted_frames=extracted_frames, filename = self.file_name)
+            build_description = Build(extracted_frames=extracted_frames, filename=self.file_name)
             self.description = build_description.description()
 
         # Write the new description to the cache
         if config_settings.user_preferences.CACHE_SCR:
-            self.docu_cache[self.file_name] = {'description' : self.description}
-
+            self.docu_cache[self.file_name] = {'description': self.description}
 
     def load_cache(self, file_name: str):
         # Check if the item is in the cache

@@ -8,14 +8,17 @@ from unit3dup.common.external_services.imageHost import Build
 from unit3dup.common.frames import VideoFrame
 
 from unit3dup.view import custom_console
-from unit3dup import config_settings
 from unit3dup.media import Media
+
+from unit3dup.common.settings import Load
+
+config_settings = Load().config
 
 
 class Video:
     """ Build a description for the torrent page: screenshots, mediainfo, trailers, metadata """
 
-    def __init__(self, media: Media,  tmdb_id: int, trailer_key=None):
+    def __init__(self, media: Media, tmdb_id: int, trailer_key=None):
         self.media = media
         self.file_name: str = media.file_name
         self.display_name: str = media.display_name
@@ -68,17 +71,20 @@ class Video:
             extracted_frames_webp = []
             if config_settings.user_preferences.WEBP_ENABLED:
                 extracted_frames_webp = self.video_frames.create_webp_from_video(video_path=self.file_name,
-                                                    start_time=90,
-                                                    duration=10,
-                                                    output_path=
-                                                    os.path.join(config_settings.user_preferences.CACHE_PATH,"file.webp"))
+                                                                                 start_time=90,
+                                                                                 duration=10,
+                                                                                 output_path=
+                                                                                 os.path.join(
+                                                                                     config_settings.user_preferences.CACHE_PATH,
+                                                                                     "file.webp"))
             custom_console.bot_log("Done.")
 
             # Build the description
             # Header
-            self.description+= config_settings.user_preferences.MY_TEXT_H
-            build_description = Build(extracted_frames=extracted_frames_webp+extracted_frames, filename= self.display_name)
-            self.description+= build_description.description()
+            self.description += config_settings.user_preferences.MY_TEXT_H
+            build_description = Build(extracted_frames=extracted_frames_webp + extracted_frames,
+                                      filename=self.display_name)
+            self.description += build_description.description()
 
             if config_settings.user_preferences.MY_SIGN:
                 self.description += f"""

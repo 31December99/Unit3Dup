@@ -1,6 +1,9 @@
 import tvdb_v4_official
 from unit3dup.common.utility import ManageTitles
-from unit3dup import config_settings
+
+from unit3dup.common.settings import Load
+
+config_settings = Load().config
 
 
 class TVDB:
@@ -11,11 +14,11 @@ class TVDB:
         self.filtered_results = []
 
     def search(self, query: str) -> dict | None:
-        show_type=''
+        show_type = ''
         if self.category == "tv":
-            show_type='series'
+            show_type = 'series'
         if self.category == "movie":
-            show_type='movie'
+            show_type = 'movie'
         results = self.api.search(query=query, type=show_type)
         self.filtered_results = [item for item in results]
         for item in self.filtered_results:
@@ -28,7 +31,7 @@ class TVDB:
                     imdb_id = remote_id.get('id').lower().replace('tt', '')
             score = ManageTitles.fuzzyit(str1=query, str2=title)
             if score > 95:
-                return {'tvdb_id' : item.get('tvdb_id'), 'imdb_id': imdb_id}
+                return {'tvdb_id': item.get('tvdb_id'), 'imdb_id': imdb_id}
             if translations:
                 title_ita = translations.get('ita', None)
                 if title_ita:

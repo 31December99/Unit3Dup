@@ -7,8 +7,12 @@ from tqdm import tqdm
 
 from unit3dup.common.trackers.data import trackers_api_data
 from unit3dup.media import Media
-from unit3dup import config_settings
 from unit3dup.view import custom_console
+
+from unit3dup.common.settings import Load
+
+config_settings = Load().config
+
 
 class HashProgressBar(tqdm):
     def callback(self, mytorr, path, current_num_hashed, total_pieces):
@@ -16,11 +20,11 @@ class HashProgressBar(tqdm):
         self.total = 100
         self.update(int(progress_percentage) - self.n)
 
+
 class Mytorrent:
 
     # def __init__(self, contents: Media, meta: str, trackers_list = None):
     def __init__(self, contents: Media, meta: str, tracker_name: str):
-
 
         self.tracker_name = tracker_name.upper()
 
@@ -33,7 +37,6 @@ class Mytorrent:
         #     announce = trackers_api_data[tracker_name.upper()]['announce'] if tracker_name else None
         #     announces.append([announce])
 
-
         announce = trackers_api_data[self.tracker_name]['announce']
 
         self.metainfo = json.loads(meta)
@@ -44,9 +47,8 @@ class Mytorrent:
         self.mytorr.created_by = "https://github.com/31December99/Unit3Dup"
         self.mytorr.private = True
         # self.mytorr.source= trackers_api_data[trackers_list[0]]['source']
-        self.mytorr.source= trackers_api_data[self.tracker_name]['source']
+        self.mytorr.source = trackers_api_data[self.tracker_name]['source']
         self.mytorr.segments = 16 * 1024 * 1024
-
 
     def hash(self):
         # Calculate the torrent size
