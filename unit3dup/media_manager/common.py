@@ -125,14 +125,12 @@ class UserContent:
                                                       selected_tracker=selected_tracker)
             # False if we need Update the torrent file
             if different:
-                # my_torrent = Mytorrent(contents=content, meta=content.metainfo, trackers_list=tracker_name_list)
-                my_torrent = Mytorrent(contents=content, meta=content.metainfo, tracker_name=selected_tracker)
+                my_torrent = Mytorrent(contents=content, tracker_name=selected_tracker)
                 my_torrent.hash()
                 return my_torrent if my_torrent.write(overwrite=True, full_path=this_path) else None
         else:
             # Crea a new torrent file
-            # my_torrent = Mytorrent(contents=content, meta=content.metainfo, trackers_list=tracker_name_list)
-            my_torrent = Mytorrent(contents=content, meta=content.metainfo, tracker_name=selected_tracker)
+            my_torrent = Mytorrent(contents=content, tracker_name=selected_tracker)
             my_torrent.hash()
             return my_torrent if my_torrent.write(overwrite=False, full_path=this_path) else None
 
@@ -255,10 +253,29 @@ class UserContent:
 
     @staticmethod
     def download_file(url: str, destination_path: str) -> bool:
-        download = requests.get(url)
-        if download.status_code == 200:
-            # File archived
+        try:
+            response = requests.get(url, timeout=30)
+            response.raise_for_status()
+
             with open(destination_path, "wb") as file:
-                file.write(download.content)
+                file.write(response.content)
+
             return True
-        return False
+
+        except requests.exceptions.Timeout:
+            custom_console.bot_error_log(
+                f"Torrent download timeout after 30s: {url}"
+            )
+            return False
+
+        except requests.exceptions.HTTPError as e:
+            custom_console.bot_error_log(
+                f"Torrent download HTTP error: {e}"
+            )
+            return False
+
+        except requests.RequestException as e:
+            custom_console.bot_error_log(
+                f"Torrent download failed: {e}"
+            )
+            return False
