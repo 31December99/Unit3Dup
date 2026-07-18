@@ -33,11 +33,16 @@ class Video:
 
         # Load the video frames
         # if web_enabled is off set the number of screenshots to an even number
-        if not config_settings.user_preferences.WEBP_ENABLED:
-            if config_settings.user_preferences.NUMBER_OF_SCREENSHOTS % 2 != 0:
-                config_settings.user_preferences.NUMBER_OF_SCREENSHOTS += 1
+        screenshots = config_settings.user_preferences.NUMBER_OF_SCREENSHOTS
+        if not config_settings.user_preferences.WEBP_ENABLED and screenshots % 2:
+            screenshots += 1
+        samples_n = max(2, min(screenshots, 10))
 
-        samples_n = max(2, min(config_settings.user_preferences.NUMBER_OF_SCREENSHOTS, 10))
+        # if not config_settings.user_preferences.WEBP_ENABLED:
+        #     if config_settings.user_preferences.NUMBER_OF_SCREENSHOTS % 2 != 0:
+        #         config_settings.user_preferences.NUMBER_OF_SCREENSHOTS += 1
+        # samples_n = max(2, min(config_settings.user_preferences.NUMBER_OF_SCREENSHOTS, 10))
+
         self.video_frames: VideoFrame = VideoFrame(self.file_name, num_screenshots=samples_n)
 
         # Init
