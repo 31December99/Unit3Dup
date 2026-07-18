@@ -111,8 +111,13 @@ class VideoManager:
                     custom_console.bot_warning_log(f"No Upload active. Done.")
                     continue
 
-                # Send to the tracker
+                # Send data to the tracker
                 tracker_response, tracker_message = unit3d_up.send(torrent_archive=torrent_filepath)
+
+                # Download the updated torrent file from the tracker
+                # # https://github.com/HDInnovations/UNIT3D/pull/4910/files
+                if tracker_response:
+                    UserContent.download_file(url=tracker_response, destination_path=torrent_filepath)
 
                 # Store response for the torrent clients
                 bittorrent_list.append(

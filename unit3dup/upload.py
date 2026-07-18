@@ -24,10 +24,13 @@ class UploadBot:
         self.tracker_data = TRACKData.load_from_module(tracker_name=tracker_name)
         self.tracker = Unit3d(tracker_name=tracker_name)
         self.sign = (
-            f"[url=https://github.com/31December99/Unit3Dup][code][color=#00BFFF][size=14]Uploaded with Unit3Dup"
-            f" {Load.version}[/size][/color][/code][/url]")
+            "[url=https://github.com/31December99/Unit3Dup]"
+            "[code][color=#00BFFF][size=14]"
+            f"Uploaded with Unit3Dup {Load.version}"
+            "[/size][/color][/code][/url]"
+        )
 
-    def message(self, tracker_response: requests.Response, torrent_archive: str):
+    def message(self, tracker_response: requests.Response):
 
         name_error = ''
         info_hash_error = ''
@@ -40,10 +43,6 @@ class UploadBot:
             custom_console.bot_log(
                 f"\n[RESPONSE]-> '{self.tracker_name}'.....{tracker_response_body['message'].upper()}\n\n")
             custom_console.rule()
-            # https://github.com/HDInnovations/UNIT3D/pull/4910/files
-            # 08/09/2025
-            # We have to download the torrent file to get the new random info_hash generated
-            self.download_file(url=tracker_response_body["data"], destination_path=torrent_archive)
             return tracker_response_body["data"], {}
 
         elif tracker_response.status_code == 401:
@@ -109,13 +108,15 @@ class UploadBot:
         self.tracker.data["mod_queue_opt_in"] = int(self.cli.moderation)
 
         # skip upload if the key is missing
-        if self.category_id():
-            self.tracker.data["category_id"] = self.category_id()
+        category_id = self.category_id()
+        if category_id:
+            self.tracker.data["category_id"] = category_id
         else:
             return None
 
-        if self.resolution_id():
-            self.tracker.data["resolution_id"] = self.resolution_id()
+        resolution_id = self.resolution_id()
+        if resolution_id:
+            self.tracker.data["resolution_id"] = resolution_id
         else:
             return None
 
@@ -130,7 +131,7 @@ class UploadBot:
         self.tracker.data["anonymous"] = int(config_settings.user_preferences.ANON)
         self.tracker.data["description"] = igdb.description + self.sign if igdb else "Sorry, there is no valid IGDB"
         self.tracker.data["type_id"] = self.tracker_data.type_id.get(igdb_platform) if igdb_platform else 1
-        self.tracker.data["igdb"] = igdb.id if igdb else 1,  # need zero not one ( fix tracker)
+        self.tracker.data["igdb"] = igdb.id if igdb else 1  # need zero not one ( fix tracker)
         self.tracker.data["personal_release"] = (int(config_settings.user_preferences.PERSONAL_RELEASE)
                                                  or int(self.cli.personal))
         return self.tracker
@@ -153,14 +154,4 @@ class UploadBot:
         tracker_response = self.tracker.upload_t(data=self.tracker.data, torrent_archive_path=torrent_archive,
                                                  nfo_path=nfo_path)
 
-        return self.message(tracker_response=tracker_response, torrent_archive=torrent_archive)
-
-    @staticmethod
-    def download_file(url: str, destination_path: str) -> bool:
-        download = requests.get(url)
-        if download.status_code == 200:
-            # File archived
-            with open(destination_path, "wb") as file:
-                file.write(download.content)
-            return True
-        return False
+        return self.message(tracker_response=tracker_response)
