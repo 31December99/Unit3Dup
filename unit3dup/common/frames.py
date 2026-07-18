@@ -5,6 +5,7 @@ import io
 
 from pathlib import Path
 from PIL import Image
+from PIL.Image import Image as PILImage
 
 from unit3dup.common import config_settings
 from unit3dup.view import custom_console
@@ -38,7 +39,7 @@ class VideoFrame:
 
         return frames_in_bytes, is_hd
 
-    def image_to_bytes(self, frame: Image) -> bytes:
+    def image_to_bytes(self, frame: PILImage) -> bytes:
         """
         Convert an image to bytes
 
@@ -56,7 +57,7 @@ class VideoFrame:
         return buffered.getvalue()
 
     @staticmethod
-    def resize_image(image: Image, width: int = 650) -> Image:
+    def resize_image(image: PILImage, width: int = 650) -> PILImage:
         """
         Resize the image while maintaining aspect ratio
 
@@ -123,7 +124,7 @@ class VideoFrame:
             exit(1)
         return duration
 
-    def _extract_frame(self, time_: float) -> Image:
+    def _extract_frame(self, time_: float) -> PILImage:
         """
         Extract a single frame from the video at the specified time
 
