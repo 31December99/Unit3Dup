@@ -93,8 +93,13 @@ class SearchTags(object):
         self.TAG_TYPES: dict = Load().tags_list
         self.SIGNS_LIST: dict = Load().sign_list
         self.BAN_LIST: dict = Load().ban_list
-        self.tags_position = Load().config.user_preferences.TAGS_POSITION_SERIE if media.category == 'tv' \
+
+        self.tags_position = (
+            Load().config.user_preferences.TAGS_POSITION_SERIE
+            if media.category == 'tv'
             else Load().config.user_preferences.TAGS_POSITION_MOVIE
+        )
+
 
     @staticmethod
     def normalize_version_tag(tag: str) -> str:
