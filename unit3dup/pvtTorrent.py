@@ -1,52 +1,36 @@
 # -*- coding: utf-8 -*-
 
-import json
 import os
 import torf
 from tqdm import tqdm
 
 from unit3dup.common.trackers.data import trackers_api_data
-from unit3dup.media import Media
-from unit3dup.view import custom_console
-
 from unit3dup.common.settings import Load
+from unit3dup.view import custom_console
+from unit3dup.media import Media
 
 config_settings = Load().config
 
 
 class HashProgressBar(tqdm):
     def callback(self, mytorr, path, current_num_hashed, total_pieces):
-        progress_percentage = (current_num_hashed / total_pieces) * 100
-        self.total = 100
-        self.update(int(progress_percentage) - self.n)
+        if total_pieces:
+            self.total = total_pieces
+            self.update(current_num_hashed - self.n)
 
 
 class Mytorrent:
-
-    # def __init__(self, contents: Media, meta: str, trackers_list = None):
-    def __init__(self, contents: Media, meta: str, tracker_name: str):
-
+    def __init__(self, contents: Media, tracker_name: str):
         self.tracker_name = tracker_name.upper()
-
         self.torrent_path = contents.torrent_path
-        # self.trackers_list = trackers_list
-
-        # announces = []
-        # # one tracker at time
-        # for tracker_name in trackers_list:
-        #     announce = trackers_api_data[tracker_name.upper()]['announce'] if tracker_name else None
-        #     announces.append([announce])
 
         announce = trackers_api_data[self.tracker_name]['announce']
 
-        self.metainfo = json.loads(meta)
-        # self.mytorr = torf.Torrent(path=contents.torrent_path, trackers=announces)
         self.mytorr = torf.Torrent(path=contents.torrent_path, trackers=announce)
         self.mytorr.comment = config_settings.user_preferences.TORRENT_COMMENT
         self.mytorr.name = contents.torrent_name
         self.mytorr.created_by = "https://github.com/31December99/Unit3Dup"
         self.mytorr.private = True
-        # self.mytorr.source= trackers_api_data[trackers_list[0]]['source']
         self.mytorr.source = trackers_api_data[self.tracker_name]['source']
         self.mytorr.segments = 16 * 1024 * 1024
 
@@ -54,10 +38,15 @@ class Mytorrent:
         # Calculate the torrent size
         size = round(self.mytorr.size / (1024 ** 3), 2)
         # Print a message for the user
-        # custom_console.print(f"\n{self.trackers_list} {self.mytorr.name} - {size} GB")
         custom_console.print(f"\n'{self.tracker_name}' {self.mytorr.name} - {size} GB")
         # Hashing
-        with HashProgressBar() as progress:
+        with HashProgressBar(
+                desc="Hashing pieces",
+                unit="piece",
+                unit_scale=True,
+                bar_format="{desc}: {bar} {n_fmt}/{total_fmt} pieces [{elapsed}<{remaining}, {rate_fmt}]",
+                colour="#39FF14",
+        ) as progress:
             try:
                 self.mytorr.generate(threads=4, callback=progress.callback, interval=0)
             except torf.TorfError as e:
