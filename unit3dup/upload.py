@@ -2,6 +2,7 @@ import pprint
 import requests
 import json
 
+from unit3dup.common.external_services.theMovieDB.core.api import DbOnline
 from unit3dup.common.external_services.igdb.core.models.search import Game
 from unit3dup.common.bot_config import BotConfig
 from unit3dup.common.trackers.trackers import TRACKData
@@ -86,14 +87,14 @@ class UploadBot:
             custom_console.bot_error_log(f"Category ID {self.content.category} not found")
         return _id
 
-    def data(self, show_id: int, imdb_id: int, tvdb_id: int, show_keywords_list: str,
-             video_info: Video) -> Unit3d | None:
+    def data(self, db_online: DbOnline, video_info: Video) -> Unit3d | None:
 
         self.tracker.data["name"] = self.content.display_name
-        self.tracker.data["tmdb"] = show_id
-        self.tracker.data["imdb"] = imdb_id if imdb_id else 0
-        self.tracker.data["tvdb"] = tvdb_id if tvdb_id and self.content.category == 'tv' else None
-        self.tracker.data["keywords"] = show_keywords_list
+        self.tracker.data["tmdb"] = db_online.media_result.video_id
+        self.tracker.data["imdb"] = db_online.media_result.imdb_id if db_online.media_result.imdb_id else 0
+        self.tracker.data[
+            "tvdb"] = db_online.media_result.tvdb_id if db_online.media_result.tvdb_id and self.content.category == 'tv' else None
+        self.tracker.data["keywords"] = db_online.media_result.keywords_list
         self.tracker.data["category_id"] = self.tracker_data.category.get(self.content.category)
         self.tracker.data["anonymous"] = int(config_settings.user_preferences.ANON)
         self.tracker.data["mediainfo"] = video_info.mediainfo

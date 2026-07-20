@@ -73,14 +73,15 @@ class VideoManager:
 
                 # Search for VIDEO ID
                 db_online = DbOnline(media=content, no_title=self.cli.notitle)
-                db = db_online.media_result
+                # db = db_online.media_result
 
                 # If it is 'None' we skipped the imdb search (-notitle)
-                if not db:
+                if not db_online.media_result:
                     continue
 
                 # Get meta from the media video
-                video_info = Video(media=content, tmdb_id=db.video_id, trailer_key=db.trailer_key)
+                # video_info = Video(media=content, tmdb_id=db.video_id, trailer_key=db.trailer_key)
+                video_info = Video(media=content, db_online=db_online)
                 video_info.build_info()
 
                 # Tags found ( -b flag)
