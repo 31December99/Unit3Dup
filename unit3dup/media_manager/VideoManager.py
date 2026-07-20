@@ -72,7 +72,7 @@ class VideoManager:
                     continue
 
                 # Search for VIDEO ID
-                db_online = DbOnline(media=content, category=content.category, no_title=self.cli.notitle)
+                db_online = DbOnline(media=content, no_title=self.cli.notitle)
                 db = db_online.media_result
 
                 # If it is 'None' we skipped the imdb search (-notitle)

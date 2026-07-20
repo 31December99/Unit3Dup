@@ -10,16 +10,19 @@ from unit3dup.automode import Auto
 from unit3dup.media import Media
 
 class ContentManager:
-    def __init__(self, path: str, mode: str, cli: BotConfig):
+    def __init__(self, cli: BotConfig, path: str):
         """
         Args:
-            path (str): The path to the media files or directories
-            mode (str):  mode 'manual' or 'automatic'
+            cli (str): Flags CLI from the user command line
         """
-        self.path = path
-        self.mode = mode
-        self.cli = cli
 
+        # The path to the media files or directories
+        self.path: str = os.path.normpath(path)
+
+        # mode (str):  mode 'manual' or 'automatic'
+        self.mode = cli.mode
+
+        self.cli = cli
         self.languages: list[str] | None = None
         self.display_name: str | None = None
         self.meta_info_list: list[dict] = []
@@ -39,7 +42,6 @@ class ContentManager:
         self.igdb_id: int  = 0
         self.generate_title: str | None = None
 
-        self.path: str = os.path.normpath(path)
         self.auto = Auto(path=self.path, mode=self.mode)
         self.media_list = self.auto.upload() if self.mode in ["man", "folder"] else self.auto.scan()
 

@@ -238,11 +238,11 @@ class TmdbAPI(MyHttp):
 
 
 class DbOnline(TmdbAPI):
-    def __init__(self, media: Media, category: str, no_title: str) -> None:
+    def __init__(self, media: Media, no_title = None) -> None:
         super().__init__()
         self.media = media
+        self.category = media.category
         self.query = media.guess_title
-        self.category = category
         self.imdb_id = None
         self.tvdb_id = None
 

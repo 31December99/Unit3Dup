@@ -74,7 +74,7 @@ class Bot:
                 return []
 
             # Get a Files list with basic attributes and create a content object for each
-            self.content_manager: ContentManager = ContentManager(path=self.path, mode=self.cli.mode, cli=self.cli)
+            self.content_manager: ContentManager = ContentManager(cli=self.cli, path=self.path)
             contents = self.content_manager.process()
 
             # -u requires a single file

@@ -38,11 +38,6 @@ class Video:
             screenshots += 1
         samples_n = max(2, min(screenshots, 10))
 
-        # if not config_settings.user_preferences.WEBP_ENABLED:
-        #     if config_settings.user_preferences.NUMBER_OF_SCREENSHOTS % 2 != 0:
-        #         config_settings.user_preferences.NUMBER_OF_SCREENSHOTS += 1
-        # samples_n = max(2, min(config_settings.user_preferences.NUMBER_OF_SCREENSHOTS, 10))
-
         self.video_frames: VideoFrame = VideoFrame(self.file_name, num_screenshots=samples_n)
 
         # Init
