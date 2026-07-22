@@ -2,17 +2,15 @@ import pprint
 import requests
 import json
 
-from unit3dup.common.external_services.theMovieDB.core.api import DbOnline
 from unit3dup.common.external_services.igdb.core.models.search import Game
-from unit3dup.common.bot_config import BotConfig
 from unit3dup.common.trackers.trackers import TRACKData
+from unit3dup.common.bot_config import BotConfig
+from unit3dup.common.settings import Load
+from unit3dup.view import custom_console
 from unit3dup.pvtTracker import Unit3d
 from unit3dup.pvtDocu import PdfImages
-from unit3dup.pvtVideo import Video
 from unit3dup.media import Media
-from unit3dup.view import custom_console
 
-from unit3dup.common.settings import Load
 
 config_settings = Load().config
 
@@ -87,19 +85,19 @@ class UploadBot:
             custom_console.bot_error_log(f"Category ID {self.content.category} not found")
         return _id
 
-    def data(self, db_online: DbOnline, video_info: Video) -> Unit3d | None:
+    def data(self, content: Media) -> Unit3d | None:
 
         self.tracker.data["name"] = self.content.display_name
-        self.tracker.data["tmdb"] = db_online.media_result.video_id
-        self.tracker.data["imdb"] = db_online.media_result.imdb_id if db_online.media_result.imdb_id else 0
+        self.tracker.data["tmdb"] = content.media_result.video_id
+        self.tracker.data["imdb"] = content.media_result.imdb_id if content.media_result.imdb_id else 0
         self.tracker.data[
-            "tvdb"] = db_online.media_result.tvdb_id if db_online.media_result.tvdb_id and self.content.category == 'tv' else None
-        self.tracker.data["keywords"] = db_online.media_result.keywords_list
+            "tvdb"] = content.media_result.tvdb_id if content.media_result.tvdb_id and self.content.category == 'tv' else None
+        self.tracker.data["keywords"] = content.media_result.keywords_list
         self.tracker.data["category_id"] = self.tracker_data.category.get(self.content.category)
         self.tracker.data["anonymous"] = int(config_settings.user_preferences.ANON)
-        self.tracker.data["mediainfo"] = video_info.mediainfo
-        self.tracker.data["description"] = video_info.description + self.sign
-        self.tracker.data["sd"] = video_info.is_hd
+        self.tracker.data["mediainfo"] = content.mediafile.info
+        self.tracker.data["description"] = content.torrent_description + self.sign
+        self.tracker.data["sd"] = content.is_hd
         self.tracker.data["type_id"] = self.tracker_data.filter_type(self.content.file_name)
         self.tracker.data["season_number"] = self.content.guess_season
         self.tracker.data["episode_number"] = (self.content.guess_episode if not self.content.torrent_pack else 0)
@@ -150,9 +148,9 @@ class UploadBot:
                                                  or int(self.cli.personal))
         return self.tracker
 
-    def send(self, torrent_archive: str, nfo_path=None):
+    def send(self,nfo_path=None):
 
-        tracker_response = self.tracker.upload_t(data=self.tracker.data, torrent_archive_path=torrent_archive,
+        tracker_response = self.tracker.upload_t(data=self.tracker.data, torrent_archive_path=self.content.torrent_metadata_path,
                                                  nfo_path=nfo_path)
 
         return self.message(tracker_response=tracker_response)

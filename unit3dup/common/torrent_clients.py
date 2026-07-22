@@ -32,7 +32,7 @@ class TorrClient(ABC):
         pass
 
     @abstractmethod
-    def send_to_client(self, tracker_data_response: str, torrent: Mytorrent, content: Media, archive_path: str):
+    def send_to_client(self, tracker_data_response: str, content: Media, archive_path: str):
         pass
 
     @staticmethod
@@ -190,7 +190,7 @@ class QbittorrentClient(TorrClient):
 
         return ""
 
-    def send_to_client(self, tracker_data_response: str, torrent: Mytorrent, content: Media, archive_path: str):
+    def send_to_client(self, tracker_data_response: str, content: Media, archive_path: str):
 
         # Get the category from the media
         category = self._get_category(content)

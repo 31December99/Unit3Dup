@@ -89,8 +89,7 @@ class GameManager:
                 continue
 
             # Send to the tracker
-            tracker_response, tracker_message = unit3d_up.send(torrent_archive=torrent_filepath,
-                                                               nfo_path=content.game_nfo)
+            tracker_response, tracker_message = unit3d_up.send(nfo_path=content.game_nfo)
 
             # Download the updated torrent file from the tracker
             # # https://github.com/HDInnovations/UNIT3D/pull/4910/files
@@ -100,7 +99,6 @@ class GameManager:
             bittorrent_list.append(
                 BittorrentData(
                     tracker_response=tracker_response,
-                    torrent_response=torrent_response,
                     content=content,
                     tracker_message=tracker_message,
                     archive_path=torrent_filepath,

@@ -37,7 +37,7 @@ class DocuManager:
                     custom_console.bot_log(f"Watcher Active.. skip the old upload '{content.file_name}'")
                 continue
 
-            torrent_response = UserContent.torrent(content=content, tracker_name_list=tracker_name_list,
+            UserContent.torrent(content=content, tracker_name_list=tracker_name_list,
                                                    selected_tracker=selected_tracker, this_path=torrent_filepath)
 
             # Skip if it is a duplicate
@@ -64,7 +64,7 @@ class DocuManager:
             unit3d_up.data_docu(document_info=docu_info)
 
             # Get the data
-            tracker_response, tracker_message = unit3d_up.send(torrent_archive=torrent_filepath)
+            tracker_response, tracker_message = unit3d_up.send()
 
             # Download the updated torrent file from the tracker
             # # https://github.com/HDInnovations/UNIT3D/pull/4910/files
@@ -74,7 +74,6 @@ class DocuManager:
             bittorrent_list.append(
                 BittorrentData(
                     tracker_response=tracker_response,
-                    torrent_response=torrent_response,
                     content=content,
                     tracker_message=tracker_message,
                     archive_path=torrent_filepath,

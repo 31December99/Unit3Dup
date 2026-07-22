@@ -31,7 +31,7 @@ class SeedManager:
                 os.makedirs(archive, exist_ok=True)
                 torrent_filepath = os.path.join(tracker_archive, selected_tracker, f"{content.torrent_name}.torrent")
                 # Search for tmdb ID
-                db_online = DbOnline(media=content, category=content.category, no_title=self.cli.notitle)
+                db_online = DbOnline(media=content, no_title=self.cli.notitle)
                 db = db_online.media_result
 
                 torrents = UserContent.can_ressed(content=content, tracker_name=selected_tracker, cli=self.cli,
@@ -40,7 +40,6 @@ class SeedManager:
                 for t in torrents:
                     bittorrent_list.append(BittorrentData(
                         tracker_response=t['attributes']['download_link'],
-                        torrent_response=None,
                         content=content,
                         tracker_message={},
                         archive_path=torrent_filepath,

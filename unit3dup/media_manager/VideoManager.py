@@ -62,7 +62,8 @@ class VideoManager:
                         custom_console.bot_log(f"Watcher Active.. skip the old upload '{content.file_name}'")
                         continue
 
-                torrent_response = UserContent.torrent(content=content, tracker_name_list=tracker_name_list,
+                # Create a new torrent
+                UserContent.torrent(content=content, tracker_name_list=tracker_name_list,
                                                        selected_tracker=selected_tracker, this_path=torrent_filepath)
 
                 # Skip(S) if it is a duplicate or let the user choose to continue (C)
@@ -73,16 +74,18 @@ class VideoManager:
 
                 # Search for VIDEO ID
                 db_online = DbOnline(media=content, no_title=self.cli.notitle)
-                # db = db_online.media_result
+                content.media_result = db_online.media_result
 
                 # If it is 'None' we skipped the imdb search (-notitle)
                 if not db_online.media_result:
                     continue
 
                 # Get meta from the media video
-                # video_info = Video(media=content, tmdb_id=db.video_id, trailer_key=db.trailer_key)
-                video_info = Video(media=content, db_online=db_online)
+                video_info = Video(media=content, tmdb_id=content.media_result.video_id,
+                              trailer_key=content.media_result.trailer_key)
                 video_info.build_info()
+                content.torrent_description = video_info.description
+                content.is_hd = video_info.is_hd
 
                 # Tags found ( -b flag)
                 if tags_dictionary:
@@ -100,8 +103,7 @@ class VideoManager:
                 unit3d_up = UploadBot(content=content, tracker_name=selected_tracker, cli=self.cli)
 
                 # Get the data
-                processed_data = unit3d_up.data(show_id=db.video_id, imdb_id=db.imdb_id, tvdb_id=db.tvdb_id,
-                                                show_keywords_list=db.keywords_list, video_info=video_info)
+                processed_data = unit3d_up.data(content=content)
 
                 # Do not upload if an error occurs
                 if not processed_data:
@@ -113,21 +115,20 @@ class VideoManager:
                     continue
 
                 # Send data to the tracker
-                tracker_response, tracker_message = unit3d_up.send(torrent_archive=torrent_filepath)
+                tracker_response, tracker_message = unit3d_up.send()
 
                 # Download the updated torrent file from the tracker
                 # # https://github.com/HDInnovations/UNIT3D/pull/4910/files
                 if tracker_response:
-                    UserContent.download_file(url=tracker_response, destination_path=torrent_filepath)
+                    UserContent.download_file(url=tracker_response, destination_path=content.torrent_metadata_path)
 
                 # Store response for the torrent clients
                 bittorrent_list.append(
                     BittorrentData(
                         tracker_response=tracker_response,
-                        torrent_response=torrent_response,
                         content=content,
                         tracker_message=tracker_message,
-                        archive_path=torrent_filepath,
+                        archive_path=content.torrent_metadata_path,
                     ))
 
         # // end content

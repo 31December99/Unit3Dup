@@ -3,10 +3,12 @@ import os
 import re
 
 from unit3dup.common.external_services.igdb.core.tags import crew_patterns, platform_patterns
-from unit3dup.common.title import Guessit
+from unit3dup.common.external_services.mediaresult import MediaResult
 from unit3dup.common.utility import ManageTitles, System
 from unit3dup.common.mediainfo import MediaFile
+from unit3dup.common.title import Guessit
 from unit3dup.common import title
+
 from unit3dup.view import custom_console
 
 
@@ -54,6 +56,10 @@ class Media:
         self._tvdb_id: int | None = None
         self._igdb_id: int | None = None
         self._generate_title: str | None = None
+        self._media_result: MediaResult | None = None
+        self._torrent_description: str = ''
+        self._torrent_metadata_path: str = ''
+        self._is_hd: int = 0
 
     @property
     def title_sanitized(self) -> str:
@@ -213,7 +219,39 @@ class Media:
                 )
 
     @property
-    def guess_title(self) -> str:
+    def media_result(self) -> MediaResult | None:
+        return self._media_result
+
+    @media_result.setter
+    def media_result(self, result: MediaResult):
+        self._media_result = result
+
+    @property
+    def torrent_metadata_path(self) -> str:
+        return self._torrent_metadata_path
+
+    @torrent_metadata_path.setter
+    def torrent_metadata_path(self, torrent_metadata_path: str):
+        self._torrent_metadata_path = torrent_metadata_path
+
+    @property
+    def torrent_description(self) -> str:
+        return self._torrent_description
+
+    @torrent_description.setter
+    def torrent_description(self, torrent_description: str):
+        self._torrent_description = torrent_description
+
+    @property
+    def is_hd(self) -> int:
+        return self._is_hd
+
+    @is_hd.setter
+    def is_hd(self, is_hd: int):
+        self._is_hd = is_hd
+
+    @property
+    def guess_title(self) -> str | None:
         if not self._guess_title:
             self._guess_title = title.Guessit(self.title_sanitized).guessit_title.strip()
         return self._guess_title

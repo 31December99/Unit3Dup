@@ -190,7 +190,7 @@ class UserContent:
                 if client:
                     client.send_to_client(
                         tracker_data_response=bittorrent_file.tracker_response,
-                        torrent=bittorrent_file.torrent_response,
+                        # torrent=bittorrent_file.torrent_response,
                         content=bittorrent_file.content,
                         archive_path=bittorrent_file.archive_path,
                     )

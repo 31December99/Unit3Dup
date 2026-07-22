@@ -4,7 +4,6 @@ import os.path
 
 import diskcache
 
-from unit3dup.common.external_services.theMovieDB.core.api import DbOnline
 from unit3dup.common.external_services.imageHost import Build
 from unit3dup.common.frames import VideoFrame
 
@@ -19,14 +18,14 @@ config_settings = Load().config
 class Video:
     """ Build a description for the torrent page: screenshots, mediainfo, trailers, metadata """
 
-    def __init__(self, media: Media, db_online: DbOnline):
+    def __init__(self, media: Media, tmdb_id: int, trailer_key: str):
 
         self.media = media
         self.file_name: str = media.file_name
         self.display_name: str = media.display_name
 
-        self.tmdb_id: int = db_online.media_result.video_id
-        self.trailer_key: str = db_online.media_result.trailer_key
+        self.tmdb_id: int = tmdb_id
+        self.trailer_key: str = trailer_key
         self.cache = diskcache.Cache(str(config_settings.user_preferences.CACHE_PATH))
 
         # Create a cache key for tmdb_id
