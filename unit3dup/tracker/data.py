@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from unit3dup.common import config_settings
+from unit3dup.config.settings import Load
 
+config_settings = Load().config
 
 trackers_api_data = {
     'ITT':
@@ -18,7 +19,7 @@ trackers_api_data = {
             "url": config_settings.tracker_config.SIS_URL,
             "api_key": config_settings.tracker_config.SIS_APIKEY,
             "pass_key": config_settings.tracker_config.SIS_PID,
-            "announce":  f"{config_settings.tracker_config.SIS_URL}/announce/{config_settings.tracker_config.SIS_PID}",
+            "announce": f"{config_settings.tracker_config.SIS_URL}/announce/{config_settings.tracker_config.SIS_PID}",
             "source": "ShareIsland",
         }
     ,
@@ -41,4 +42,3 @@ trackers_api_data = {
         }
 
 }
-

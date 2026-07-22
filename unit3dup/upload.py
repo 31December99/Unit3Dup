@@ -3,14 +3,14 @@ import requests
 import json
 
 from unit3dup.external_services.igdb.core.models.search import Game
-from unit3dup.trackers_data.trackers import TRACKData
-from unit3dup.common.bot_config import BotConfig
-from unit3dup.common.settings import Load
+from unit3dup.tracker.trackers import TRACKData
+from unit3dup.config.bot_config import BotConfig
 from unit3dup.view import custom_console
-from unit3dup.pvtTracker import Unit3d
+from unit3dup.tracker.pvtTracker import Unit3d
 from unit3dup.pvtDocu import PdfImages
 from unit3dup.media import Media
 
+from unit3dup.config.settings import Load
 
 config_settings = Load().config
 
@@ -148,9 +148,10 @@ class UploadBot:
                                                  or int(self.cli.personal))
         return self.tracker
 
-    def send(self,nfo_path=None):
+    def send(self, nfo_path=None):
 
-        tracker_response = self.tracker.upload_t(data=self.tracker.data, torrent_archive_path=self.content.torrent_metadata_path,
+        tracker_response = self.tracker.upload_t(data=self.tracker.data,
+                                                 torrent_archive_path=self.content.torrent_metadata_path,
                                                  nfo_path=nfo_path)
 
         return self.message(tracker_response=tracker_response)

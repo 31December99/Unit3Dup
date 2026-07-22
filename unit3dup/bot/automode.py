@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import os
-from unit3dup.common.utility import ManageTitles
+from unit3dup.utility import ManageTitles
 from unit3dup.view import custom_console
 from unit3dup.media import Media
 

@@ -5,7 +5,7 @@ import requests
 
 from urllib.parse import urljoin
 from unit3dup.view import custom_console
-from unit3dup.trackers_data.data import trackers_api_data
+from unit3dup.tracker.data import trackers_api_data
 
 
 class Myhttp:

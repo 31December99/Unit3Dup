@@ -4,8 +4,8 @@ import os
 import torf
 from tqdm import tqdm
 
-from unit3dup.trackers_data.data import trackers_api_data
-from unit3dup.common.settings import Load
+from unit3dup.tracker.data import trackers_api_data
+from unit3dup.config.settings import Load
 from unit3dup.view import custom_console
 from unit3dup.media import Media
 

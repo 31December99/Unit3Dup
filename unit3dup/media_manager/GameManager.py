@@ -3,8 +3,8 @@ import os
 
 from unit3dup.external_services.igdb.client import IGDBClient
 from unit3dup.torrent.bittorrent import BittorrentData
-from unit3dup.common.bot_config import BotConfig
-from unit3dup.common.utility import System
+from unit3dup.config.bot_config import BotConfig
+from unit3dup.utility import System
 
 from unit3dup.media_manager.common import UserContent
 from unit3dup.upload import UploadBot

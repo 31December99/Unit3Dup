@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from dataclasses import dataclass
-from unit3dup.common.utility import ManageTitles
+from unit3dup.utility import ManageTitles
 from . import tracker_list
 
 @dataclass

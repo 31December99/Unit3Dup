@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
-from unit3dup.common.settings import Load, DEFAULT_JSON_PATH, version
+from unit3dup.config.settings import Load, DEFAULT_JSON_PATH, version
 from unit3dup.torrent.torrent_clients import TransmissionClient, QbittorrentClient, RTorrentClient
 from unit3dup.bot.command import CommandLine
-from unit3dup.common.bot_config import BotConfig
-from unit3dup.common.utility import System
+from unit3dup.config.bot_config import BotConfig
+from unit3dup.utility import System
 
 from unit3dup.torrent.torrent import View
-from unit3dup import pvtTracker
+from unit3dup.tracker import pvtTracker
 from unit3dup.bot.bot import Bot
 from unit3dup.view import custom_console
 
@@ -52,7 +52,6 @@ def main():
             if tracker.get_alive(alive=True, perPage=1):
                 custom_console.bot_log(f"Tracker -> '{tracker_data.upper()}' Online")
 
-
     # Test both clients only if used
     if cli.noseed is False and cli.noup is False or cli.reseed is True:
         # /// Test the torrent clients
@@ -89,7 +88,6 @@ def main():
     if cli.watcher:
         bot = Bot(cli=cli, trackers_name_list=tracker_name_list,
                   torrent_archive_path=config.user_preferences.TORRENT_ARCHIVE_PATH)
-
 
         bot.watcher(duration=config.user_preferences.WATCHER_INTERVAL,
                     watcher_path=config.user_preferences.WATCHER_PATH,

@@ -1,7 +1,6 @@
 import tvdb_v4_official
-from unit3dup.common.utility import ManageTitles
-
-from unit3dup.common.settings import Load
+from unit3dup.utility import ManageTitles
+from unit3dup.config.settings import Load
 
 config_settings = Load().config
 

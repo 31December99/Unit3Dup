@@ -6,9 +6,12 @@ import io
 from pathlib import Path
 from PIL import Image
 from PIL.Image import Image as PILImage
-
-from unit3dup.common import config_settings
 from unit3dup.view import custom_console
+
+from unit3dup.config.settings import Load
+
+config_settings = Load().config
+
 
 class VideoFrame:
     def __init__(self, video_path: str, num_screenshots: int):
@@ -49,7 +52,7 @@ class VideoFrame:
         """
         image = self.resize_image(frame)
         buffered = io.BytesIO()
-        user_compress_level: int = config_settings.user_preferences.COMPRESS_SCSHOT\
+        user_compress_level: int = config_settings.user_preferences.COMPRESS_SCSHOT \
             if 0 <= config_settings.user_preferences.COMPRESS_SCSHOT <= 9 else 4
         image.save(
             buffered, format="PNG", optimize=True, compress_level=user_compress_level
@@ -191,7 +194,7 @@ class VideoFrame:
             "-vf", f"fps=7",
             "-c:v", "libwebp",
             "-quality", "50",
-            "-loop", "0", # infinite
+            "-loop", "0",  # infinite
             "-f", "webp",
             output_path
         ]
@@ -219,4 +222,3 @@ class VideoFrame:
                                          f"Please verify if your file is corrupted")
 
         return None
-

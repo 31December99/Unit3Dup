@@ -3,7 +3,7 @@ import re
 import os
 
 from pymediainfo import MediaInfo
-from unit3dup.common.utility import ManageTitles
+from unit3dup.utility import ManageTitles
 
 class MediaFile:
     """

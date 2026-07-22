@@ -13,11 +13,11 @@ from abc import ABC, abstractmethod
 import qbittorrentapi
 import transmission_rpc
 
-from unit3dup.pvtTorrent import Mytorrent
+from unit3dup.torrent.pvtTorrent import Mytorrent
 from unit3dup.media import Media
 from unit3dup.view import custom_console
 
-from unit3dup.common.settings import Load
+from unit3dup.config.settings import Load
 
 config_settings = Load().config
 

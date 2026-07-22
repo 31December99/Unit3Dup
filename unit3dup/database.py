@@ -2,7 +2,7 @@ import json
 import os
 import sqlite3
 
-from unit3dup.common.settings import Load
+from unit3dup.config.settings import Load
 
 config_settings = Load().config
 

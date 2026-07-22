@@ -4,7 +4,7 @@ import os
 
 from unit3dup.external_services.theMovieDB.core.api import DbOnline
 from unit3dup.torrent.bittorrent import BittorrentData
-from unit3dup.common.bot_config import BotConfig
+from unit3dup.config.bot_config import BotConfig
 from unit3dup.media_manager.common import UserContent
 from unit3dup.media import Media
 

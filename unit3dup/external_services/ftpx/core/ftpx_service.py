@@ -4,7 +4,7 @@ from datetime import datetime
 
 from unit3dup.external_services.ftpx.core.ftpx_session import FtpXCmds
 from unit3dup.external_services.ftpx.core.models.list import FTPDirectory
-from unit3dup.common.utility import MyString
+from unit3dup.utility import MyString
 
 
 class FtpX(FtpXCmds):

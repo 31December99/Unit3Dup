@@ -13,7 +13,7 @@ from unit3dup.external_services.ftpx.core.menu import Menu
 from unit3dup.external_services.ftpx.client import Client
 from unit3dup.media_files.extractor import Extractor
 from unit3dup.view import custom_console
-from unit3dup.common.bot_config import BotConfig
+from unit3dup.config.bot_config import BotConfig
 
 
 class Bot:

@@ -4,9 +4,11 @@ import requests
 
 from .response import YouTubeSearchResponse, Thumbnails, Id, Item, PageInfo, Snippet
 
-from unit3dup.common import config_settings
-from unit3dup.common.utility import ManageTitles
+from unit3dup.utility import ManageTitles
 from unit3dup.view import custom_console
+from unit3dup.config.settings import Load
+
+config_settings = Load().config
 
 
 class YtTrailer:

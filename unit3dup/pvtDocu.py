@@ -9,7 +9,7 @@ from unit3dup.external_services.imageHost import Build
 from unit3dup.view import custom_console
 from PIL import Image
 
-from unit3dup.common.settings import Load
+from unit3dup.config.settings import Load
 
 config_settings = Load().config
 

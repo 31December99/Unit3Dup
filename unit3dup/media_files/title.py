@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import guessit
-from unit3dup.common.utility import ManageTitles
+from unit3dup.utility import ManageTitles
 
 
 class Guessit:

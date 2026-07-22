@@ -2,8 +2,8 @@
 import os
 import argparse
 
-from unit3dup.common.utility import System
-from unit3dup.common.settings import Load
+from unit3dup.utility import System
+from unit3dup.config.settings import Load
 
 
 class CommandLine:

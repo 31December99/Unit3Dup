@@ -6,15 +6,18 @@ import requests
 from concurrent.futures import ThreadPoolExecutor
 
 from unit3dup.torrent.torrent_clients import TransmissionClient, QbittorrentClient, RTorrentClient
-from unit3dup.trackers_data.data import trackers_api_data
+from unit3dup.tracker.data import trackers_api_data
 from unit3dup.torrent.bittorrent import BittorrentData
-from unit3dup.common.bot_config import BotConfig
-from unit3dup.common.utility import ManageTitles
-from unit3dup.common import config_settings
-from unit3dup.pvtTorrent import Mytorrent
+from unit3dup.config.bot_config import BotConfig
+from unit3dup.utility import ManageTitles
+from unit3dup.torrent.pvtTorrent import Mytorrent
 from unit3dup.duplicate import Duplicate
 from unit3dup.media import Media
 from unit3dup.view import custom_console
+
+from unit3dup.config.settings import Load
+
+config_settings = Load().config
 
 
 class UserContent:

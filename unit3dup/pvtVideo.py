@@ -10,7 +10,7 @@ from unit3dup.media_files.frames import VideoFrame
 from unit3dup.view import custom_console
 from unit3dup.media import Media
 
-from unit3dup.common.settings import Load
+from unit3dup.config.settings import Load
 
 config_settings = Load().config
 

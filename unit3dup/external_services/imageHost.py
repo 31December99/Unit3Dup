@@ -6,8 +6,11 @@ import time
 import requests
 
 from abc import ABC, abstractmethod
-from unit3dup.common import config_settings
 from unit3dup.view import custom_console
+
+from unit3dup.config.settings import Load
+
+config_settings = Load().config
 
 
 class ImageUploader(ABC):
@@ -40,7 +43,7 @@ class ImageUploader(ABC):
             try:
                 upload_n += 1
                 response = requests.post(
-                    self.get_endpoint(), data = data, files = files, timeout = self.timeout
+                    self.get_endpoint(), data=data, files=files, timeout=self.timeout
                 )
                 response.raise_for_status()
                 return response.json()
@@ -56,7 +59,7 @@ class ImageUploader(ABC):
             except json.decoder.JSONDecodeError as e:
                 # or Maintenance mode
                 custom_console.bot_log(f"[{self.__class__.__name__}] JSONDecodeError"
-                       f" Connection issue. Please check your connection or the website")
+                                       f" Connection issue. Please check your connection or the website")
                 break
             except requests.exceptions.Timeout:
                 custom_console.bot_log(
@@ -84,8 +87,8 @@ class ImageUploader(ABC):
 
 
 class ImgBB(ImageUploader):
+    priority = config_settings.user_preferences.IMGBB_PRIORITY
 
-    priority= config_settings.user_preferences.IMGBB_PRIORITY
     def get_endpoint(self) -> str:
         return "https://api.imgbb.com/1/upload"
 
@@ -100,8 +103,8 @@ class ImgBB(ImageUploader):
 
 
 class Freeimage(ImageUploader):
-
     priority = config_settings.user_preferences.FREE_IMAGE_PRIORITY
+
     def get_endpoint(self) -> str:
         return "https://freeimage.host/api/1/upload"
 
@@ -117,8 +120,8 @@ class Freeimage(ImageUploader):
 
 
 class PtScreens(ImageUploader):
+    priority = config_settings.user_preferences.PTSCREENS_PRIORITY
 
-    priority= config_settings.user_preferences.PTSCREENS_PRIORITY
     def get_endpoint(self) -> str:
         return "https://ptscreens.com/api/1/upload"
 
@@ -133,8 +136,8 @@ class PtScreens(ImageUploader):
 
 
 class LensDump(ImageUploader):
+    priority = config_settings.user_preferences.LENSDUMP_PRIORITY
 
-    priority= config_settings.user_preferences.LENSDUMP_PRIORITY
     def get_endpoint(self) -> str:
         return "https://lensdump.com/api/1/upload"
 
@@ -149,8 +152,8 @@ class LensDump(ImageUploader):
 
 
 class ImgFi(ImageUploader):
+    priority = config_settings.user_preferences.IMGFI_PRIORITY
 
-    priority= config_settings.user_preferences.IMGFI_PRIORITY
     def get_endpoint(self) -> str:
         return "https://imgfi.com/api/1/upload"
 
@@ -163,9 +166,10 @@ class ImgFi(ImageUploader):
     def get_field_name(self) -> str:
         return 'source'
 
-class PassIMA(ImageUploader):
 
-    priority= config_settings.user_preferences.PASSIMA_PRIORITY
+class PassIMA(ImageUploader):
+    priority = config_settings.user_preferences.PASSIMA_PRIORITY
+
     def get_endpoint(self) -> str:
         return "https://passtheima.ge/api/1/upload"
 
@@ -180,8 +184,8 @@ class PassIMA(ImageUploader):
 
 
 class ImaRide(ImageUploader):
+    priority = config_settings.user_preferences.IMARIDE_PRIORITY
 
-    priority= config_settings.user_preferences.IMARIDE_PRIORITY
     def get_endpoint(self) -> str:
         return "https://www.imageride.net/api/1/upload"
 
@@ -193,6 +197,7 @@ class ImaRide(ImageUploader):
 
     def get_field_name(self) -> str:
         return 'source'
+
 
 class ImageUploaderFallback:
     def __init__(self, uploader):
@@ -251,6 +256,7 @@ class ImageUploaderFallback:
 
         return None
 
+
 class Build:
     """
     - Upload screenshots and create a new description
@@ -265,13 +271,12 @@ class Build:
         # Host APi keys
         self.IMGBB_KEY = config_settings.tracker_config.IMGBB_KEY
         self.FREE_IMAGE_KEY = config_settings.tracker_config.FREE_IMAGE_KEY
-        self.LENSDUMP_KEY= config_settings.tracker_config.LENSDUMP_KEY
-        self.PTSCREENS_KEY= config_settings.tracker_config.PTSCREENS_KEY
+        self.LENSDUMP_KEY = config_settings.tracker_config.LENSDUMP_KEY
+        self.PTSCREENS_KEY = config_settings.tracker_config.PTSCREENS_KEY
         self.IMGFI_KEY = config_settings.tracker_config.IMGFI_KEY
         self.PASSIMA_KEY = config_settings.tracker_config.PASSIMA_KEY
         self.IMARIDE_KEY = config_settings.tracker_config.IMARIDE_KEY
         self.extracted_frames = extracted_frames
-
 
     def description(self) -> str:
         description = "[center]\n"
@@ -285,10 +290,10 @@ class Build:
 
             master_uploaders = [
                 ImgBB(img_bytes, self.IMGBB_KEY, image_name=image_name),
-                Freeimage(img_bytes, self.FREE_IMAGE_KEY,image_name=image_name),
-                PtScreens(img_bytes, self.PTSCREENS_KEY,image_name=image_name),
-                LensDump(img_bytes, self.LENSDUMP_KEY,image_name=image_name),
-                ImgFi(img_bytes, self.IMGFI_KEY,image_name=image_name),
+                Freeimage(img_bytes, self.FREE_IMAGE_KEY, image_name=image_name),
+                PtScreens(img_bytes, self.PTSCREENS_KEY, image_name=image_name),
+                LensDump(img_bytes, self.LENSDUMP_KEY, image_name=image_name),
+                ImgFi(img_bytes, self.IMGFI_KEY, image_name=image_name),
                 PassIMA(img_bytes, self.PASSIMA_KEY, image_name=image_name),
                 ImaRide(img_bytes, self.IMARIDE_KEY, image_name=image_name),
             ]
@@ -321,4 +326,3 @@ class Build:
         # Append the new URL to the description string
         description += "\n[/center]"
         return description
-

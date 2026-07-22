@@ -23,12 +23,11 @@ from unit3dup.external_services.trailers.api import YtTrailer
 from unit3dup.external_services.sessions.agents import Agent
 from unit3dup.external_services.theMovieDB import config
 from unit3dup.external_services.tvdb import TVDB
-from unit3dup.common.utility import ManageTitles
+from unit3dup.utility import ManageTitles
 
 from unit3dup.media import Media
 from unit3dup.view import custom_console
-
-from unit3dup.common.settings import Load
+from unit3dup.config.settings import Load
 
 config_settings = Load().config
 

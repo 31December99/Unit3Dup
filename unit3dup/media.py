@@ -4,7 +4,7 @@ import re
 
 from unit3dup.external_services.igdb.core.tags import crew_patterns, platform_patterns
 from unit3dup.external_services.mediaresult import MediaResult
-from unit3dup.common.utility import ManageTitles, System
+from unit3dup.utility import ManageTitles, System
 from unit3dup.media_files.mediainfo import MediaFile
 from unit3dup.media_files.title import Guessit
 from unit3dup.media_files import title

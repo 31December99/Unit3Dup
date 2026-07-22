@@ -5,8 +5,10 @@ import time
 from rich.progress import Progress
 
 from ftplib import FTP_TLS, all_errors
-from unit3dup.common import config_settings
 from unit3dup.view import custom_console
+from unit3dup.config.settings import Load
+
+config_settings = Load().config
 
 class FtpXCmds(FTP_TLS):
     def __init__(self):

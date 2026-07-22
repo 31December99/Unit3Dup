@@ -5,7 +5,9 @@ from rich.panel import Panel
 from rich.text import Text
 from rich.table import Table
 
-from unit3dup.common import config_settings
+from unit3dup.config.settings import Load
+
+config_settings = Load().config
 
 class CustomConsole(Console):
     def __init__(self):
