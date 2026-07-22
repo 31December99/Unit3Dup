@@ -6,7 +6,7 @@ from unit3dup.media_manager.DocuManager import DocuManager
 from unit3dup.media_manager.SeedManager import SeedManager
 from unit3dup import config_settings
 from unit3dup.media import Media
-from unit3dup.common.bittorrent import BittorrentData
+from unit3dup.torrent.bittorrent import BittorrentData
 from unit3dup.common.constants import my_language
 from unit3dup.common.utility import System
 from unit3dup.common.bot_config import BotConfig

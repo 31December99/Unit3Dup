@@ -3,14 +3,14 @@ import guessit
 import requests
 
 from unit3dup.common.utility import ManageTitles, System
-from unit3dup.common.trackers.trackers import TRACKData
+from unit3dup.trackers_data.trackers import TRACKData
 from unit3dup.common.bot_config import BotConfig
 from unit3dup.common.constants import my_language
-from unit3dup.common import title
+from unit3dup.media_files import title
 
 from unit3dup.view import custom_console
 from unit3dup.media_manager.MediaInfoManager import MediaInfoManager
-from unit3dup.torrent import Torrent
+from unit3dup.torrent.torrent import Torrent
 from unit3dup.media import Media
 
 from unit3dup.common.settings import Load

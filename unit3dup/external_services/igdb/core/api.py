@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from urllib.parse import urljoin
-from unit3dup.common.external_services.sessions.session import MyHttp
+from unit3dup.external_services.sessions.session import MyHttp
 from unit3dup.common import config_settings
 from unit3dup.view import custom_console
 

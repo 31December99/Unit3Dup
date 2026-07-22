@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 
-from unit3dup.common.bittorrent import BittorrentData
+from unit3dup.torrent.bittorrent import BittorrentData
 from unit3dup.common.bot_config import BotConfig
 from unit3dup.common.utility import System
 from unit3dup.media_manager.common import UserContent

@@ -3,8 +3,8 @@ from thefuzz import fuzz
 from rich.align import Align
 from rich.table import Table
 
-from unit3dup.common.external_services.igdb.core.models.search import Game
-from unit3dup.common.external_services.igdb.core.api import IGDBapi
+from unit3dup.external_services.igdb.core.models.search import Game
+from unit3dup.external_services.igdb.core.api import IGDBapi
 from unit3dup.media import Media
 from unit3dup.view import custom_console
 

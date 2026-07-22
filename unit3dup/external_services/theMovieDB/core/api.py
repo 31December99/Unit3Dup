@@ -6,23 +6,23 @@ from datetime import datetime
 import diskcache
 from typing import TypeVar
 
-from unit3dup.common.external_services.theMovieDB.core.models.tvshow.alternative import Alternative
-from unit3dup.common.external_services.theMovieDB.core.models.tvshow.translations import Translation
-from unit3dup.common.external_services.theMovieDB.core.models.movie.translations import Translation
-from unit3dup.common.external_services.theMovieDB.core.models.tvshow.details import TVShowDetails
-from unit3dup.common.external_services.theMovieDB.core.models.movie.details import MovieDetails
-from unit3dup.common.external_services.theMovieDB.core.models.movie.nowplaying import NowPlaying
-from unit3dup.common.external_services.theMovieDB.core.models.tvshow.on_the_air import OnTheAir
-from unit3dup.common.external_services.theMovieDB.core.models.tvshow.tvshow import TvShow
-from unit3dup.common.external_services.theMovieDB.core.models.movie.movie import Movie
-from unit3dup.common.external_services.theMovieDB.core.keywords import Keyword
-from unit3dup.common.external_services.theMovieDB.core.videos import Videos
-from unit3dup.common.external_services.mediaresult import MediaResult
-from unit3dup.common.external_services.sessions.session import MyHttp
-from unit3dup.common.external_services.trailers.api import YtTrailer
-from unit3dup.common.external_services.sessions.agents import Agent
-from unit3dup.common.external_services.theMovieDB import config
-from unit3dup.common.external_services.tvdb import TVDB
+from unit3dup.external_services.theMovieDB.core.models.tvshow.alternative import Alternative
+from unit3dup.external_services.theMovieDB.core.models.tvshow.translations import Translation
+from unit3dup.external_services.theMovieDB.core.models.movie.translations import Translation
+from unit3dup.external_services.theMovieDB.core.models.tvshow.details import TVShowDetails
+from unit3dup.external_services.theMovieDB.core.models.movie.details import MovieDetails
+from unit3dup.external_services.theMovieDB.core.models.movie.nowplaying import NowPlaying
+from unit3dup.external_services.theMovieDB.core.models.tvshow.on_the_air import OnTheAir
+from unit3dup.external_services.theMovieDB.core.models.tvshow.tvshow import TvShow
+from unit3dup.external_services.theMovieDB.core.models.movie.movie import Movie
+from unit3dup.external_services.theMovieDB.core.keywords import Keyword
+from unit3dup.external_services.theMovieDB.core.videos import Videos
+from unit3dup.external_services.mediaresult import MediaResult
+from unit3dup.external_services.sessions.session import MyHttp
+from unit3dup.external_services.trailers.api import YtTrailer
+from unit3dup.external_services.sessions.agents import Agent
+from unit3dup.external_services.theMovieDB import config
+from unit3dup.external_services.tvdb import TVDB
 from unit3dup.common.utility import ManageTitles
 
 from unit3dup.media import Media

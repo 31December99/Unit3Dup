@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 import os
 
-from unit3dup.common.external_services.igdb.client import IGDBClient
-from unit3dup.common.bittorrent import BittorrentData
+from unit3dup.external_services.igdb.client import IGDBClient
+from unit3dup.torrent.bittorrent import BittorrentData
 from unit3dup.common.bot_config import BotConfig
 from unit3dup.common.utility import System
 

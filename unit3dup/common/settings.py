@@ -11,14 +11,14 @@ from pathvalidate import sanitize_filepath
 from urllib.parse import urlparse
 from pathlib import Path
 
-from unit3dup.common.trackers.signs_list import SIGNS_LIST
-from unit3dup.common.trackers.tags_list import TAGS_LIST
-from unit3dup.common.trackers.ban_list import BAN_LIST
-from unit3dup.common.trackers import tracker_list
+from unit3dup.trackers_data.signs_list import SIGNS_LIST
+from unit3dup.trackers_data.tags_list import TAGS_LIST
+from unit3dup.trackers_data.ban_list import BAN_LIST
+from unit3dup.trackers_data import tracker_list
 from unit3dup.common.utility import System
 
 from unit3dup.common.utility import ManageTitles
-from unit3dup.common import trackers
+from unit3dup.trackers_data import trackers
 
 config_file = "Unit3Dbot.json"
 user_tags_file = "tags_list.json"

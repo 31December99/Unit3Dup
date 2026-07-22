@@ -5,8 +5,8 @@ from rich.prompt import Prompt
 from rich.table import Table
 from rich.text import Text
 
-from unit3dup.common.external_services.ftpx.core.models.list import FTPDirectory
-from unit3dup.common.external_services.ftpx.core.ftpx_service import FtpX
+from unit3dup.external_services.ftpx.core.models.list import FTPDirectory
+from unit3dup.external_services.ftpx.core.ftpx_service import FtpX
 from unit3dup.common import config_settings
 from unit3dup.view import custom_console
 

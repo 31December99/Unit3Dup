@@ -2,8 +2,8 @@ import pprint
 import requests
 import json
 
-from unit3dup.common.external_services.igdb.core.models.search import Game
-from unit3dup.common.trackers.trackers import TRACKData
+from unit3dup.external_services.igdb.core.models.search import Game
+from unit3dup.trackers_data.trackers import TRACKData
 from unit3dup.common.bot_config import BotConfig
 from unit3dup.common.settings import Load
 from unit3dup.view import custom_console

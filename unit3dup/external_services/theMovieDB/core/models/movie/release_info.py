@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from unit3dup.common.external_services import logger
+from unit3dup.external_services import logger
 
 
 @dataclass

@@ -6,7 +6,7 @@ import re
 
 from unit3dup.common.utility import ManageTitles, System
 from unit3dup.common.bot_config import BotConfig
-from unit3dup.automode import Auto
+from unit3dup.bot.automode import Auto
 from unit3dup.media import Media
 
 class ContentManager:

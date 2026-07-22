@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 import re
 from unit3dup.common.utility import ManageTitles
-from unit3dup.common.mediainfo import MediaFile
+from unit3dup.media_files.mediainfo import MediaFile
 from unit3dup.common.settings import Load
-from unit3dup.common import title
+from unit3dup.media_files import title
 from unit3dup.media import Media
 from unit3dup.view import custom_console
 

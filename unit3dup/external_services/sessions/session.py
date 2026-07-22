@@ -4,7 +4,7 @@ import json
 import httpx
 import diskcache as dc
 import logging
-from unit3dup.common.external_services.sessions.exceptions import exception_handler
+from unit3dup.external_services.sessions.exceptions import exception_handler
 from unit3dup.view import custom_console
 
 ENABLE_LOG = False

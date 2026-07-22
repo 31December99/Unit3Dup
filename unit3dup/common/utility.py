@@ -8,7 +8,7 @@ from datetime import datetime
 from pathlib import Path
 from thefuzz import fuzz
 
-from unit3dup.common.external_services.igdb.core.tags import additions
+from unit3dup.external_services.igdb.core.tags import additions
 from unit3dup.common.bot_config import BotConfig
 
 

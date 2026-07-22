@@ -5,9 +5,9 @@ import requests
 
 from concurrent.futures import ThreadPoolExecutor
 
-from unit3dup.common.torrent_clients import TransmissionClient, QbittorrentClient, RTorrentClient
-from unit3dup.common.trackers.data import trackers_api_data
-from unit3dup.common.bittorrent import BittorrentData
+from unit3dup.torrent.torrent_clients import TransmissionClient, QbittorrentClient, RTorrentClient
+from unit3dup.trackers_data.data import trackers_api_data
+from unit3dup.torrent.bittorrent import BittorrentData
 from unit3dup.common.bot_config import BotConfig
 from unit3dup.common.utility import ManageTitles
 from unit3dup.common import config_settings
