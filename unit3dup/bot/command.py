@@ -2,7 +2,7 @@
 import os
 import argparse
 
-from unit3dup.utility import System
+from unit3dup.shared.utility import System
 from unit3dup.config.settings import Load
 
 
@@ -90,7 +90,6 @@ class CommandLine:
         search_group.add_argument("-m", "--mediainfo", type=str, help="Show MediaInfo")
         search_group.add_argument("-int", "--internal", action="store_true", help="Internal Release")
         search_group.add_argument("-mod", "--moderation", action="store_true", help="In moderation")
-
 
         # /////////////////////////
         # Filter Options

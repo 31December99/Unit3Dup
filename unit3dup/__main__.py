@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
-from unit3dup.config.settings import Load, DEFAULT_JSON_PATH, version
-from unit3dup.torrent.torrent_clients import TransmissionClient, QbittorrentClient, RTorrentClient
+from unit3dup.external.torrent.torrent_clients import TransmissionClient, QbittorrentClient, RTorrentClient
+from unit3dup.external.torrent.torrent import View
+from unit3dup.external.tracker import pvtTracker
+
+from unit3dup.bot.bot import Bot
 from unit3dup.bot.command import CommandLine
 from unit3dup.config.bot_config import BotConfig
-from unit3dup.utility import System
+from unit3dup.config.settings import Load, DEFAULT_JSON_PATH, version
 
-from unit3dup.torrent.torrent import View
-from unit3dup.tracker import pvtTracker
-from unit3dup.bot.bot import Bot
+from unit3dup.shared.utility import System
 from unit3dup.view import custom_console
 
 

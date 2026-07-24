@@ -14,11 +14,11 @@ from pathlib import Path
 from unit3dup.config.signs_list import SIGNS_LIST
 from unit3dup.config.tags_list import TAGS_LIST
 from unit3dup.config.ban_list import BAN_LIST
-from unit3dup.tracker import tracker_list
-from unit3dup.utility import System
+from unit3dup.external.tracker import tracker_list
+from unit3dup.external.tracker import trackers
 
-from unit3dup.utility import ManageTitles
-from unit3dup.tracker import trackers
+from unit3dup.shared.utility import System
+from unit3dup.shared.utility import ManageTitles
 
 config_file = "Unit3Dbot.json"
 user_tags_file = "tags_list.json"
@@ -157,6 +157,7 @@ class UserPreferences(BaseModel):
     MY_TEXT_1: str | None = None
     MY_TEXT_2: str | None = None
     MY_TEXT_3: str | None = None
+
 
 class Options(BaseModel):
     FTPX_USER: str = "user"
@@ -459,7 +460,7 @@ class Config(BaseModel):
                     section[field] = Validate.integer(value=section[field], field_name=field)
 
                 if field in ['QBIT_PASS', 'TRASM_PASS', 'RTORR_PASS', 'QBIT_USER', 'TRASM_USER', 'RTORR_USER',
-                            'TORRENT_CLIENT', 'TAG',  'RTORR_HOST']:
+                             'TORRENT_CLIENT', 'TAG', 'RTORR_HOST']:
                     section[field] = Validate.string(value=section[field], field_name=field)
 
                 if field in ['SHARED_TRASM_PATH', 'SHARED_QBIT_PATH', 'SHARED_RTORR_PATH']:
@@ -554,7 +555,6 @@ class Load:
         self.sign_list: dict = System.load_tags(path=USER_SIGN_PATH)
         self.ban_list: dict = System.load_tags(path=BAN_TAGS_PATH)
 
-
     @staticmethod
     def create_tags_list_file(path: Path):
         """
@@ -602,7 +602,7 @@ class Load:
                 "AST_URL": "https://arabicsource.net",
                 "AST_APIKEY": "no_key",
                 "AST_PID": "no_key",
-                "MULTI_TRACKER": ["itt","sis","ptt","ast"],
+                "MULTI_TRACKER": ["itt", "sis", "ptt", "ast"],
                 "TMDB_APIKEY": "no_key",
                 "TVDB_APIKEY": "no_key",
                 "IMGBB_KEY": "no_key",

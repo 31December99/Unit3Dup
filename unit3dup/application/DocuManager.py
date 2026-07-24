@@ -1,0 +1,84 @@
+# -*- coding: utf-8 -*-
+import os
+
+from unit3dup.external.torrent.bittorrent import BittorrentData
+from unit3dup.external.media import Media
+from unit3dup.external.document.pvtDocu import PdfImages
+from unit3dup.external.upload import UploadBot
+
+from unit3dup.config.bot_config import BotConfig
+from unit3dup.shared.utility import System
+from unit3dup.application.user_content import UserContent
+from unit3dup import config_settings
+
+from unit3dup.view import custom_console
+
+
+class DocuManager:
+
+    def __init__(self, contents: list[Media], cli: BotConfig):
+        self._my_tmdb = None
+        self.contents: list['Media'] = contents
+        self.cli: BotConfig = cli
+
+    def process(self, selected_tracker: str, tracker_name_list: list, tracker_archive: str) -> list[BittorrentData]:
+
+        # -multi : no announce_list . One announce for multi tracker
+        if self.cli.mt:
+            tracker_name_list = [selected_tracker.upper()]
+
+        #  Init the torrent list
+        bittorrent_list = []
+        for content in self.contents:
+
+            # get the archive path
+            content.torrent_metadata_path = System.get_torrent_archive_path(tracker_archive, selected_tracker, content.torrent_name)
+
+            if self.cli.watcher:
+                if os.path.exists(content.torrent_path):
+                    custom_console.bot_log(f"Watcher Active.. skip the old upload '{content.file_name}'")
+                continue
+
+            UserContent.torrent(content=content, tracker_name_list=tracker_name_list,
+                                selected_tracker=selected_tracker, this_path=content.torrent_metadata_path)
+
+            # Skip if it is a duplicate
+            if ((self.cli.duplicate or config_settings.user_preferences.DUPLICATE_ON)
+                    and UserContent.is_duplicate(content=content, tracker_name=selected_tracker, cli=self.cli)):
+                continue
+
+            # print the title will be shown on the torrent page
+            custom_console.bot_log(f"'DISPLAYNAME'...{{{content.display_name}}}\n")
+
+            # Don't upload if -noup is set to True
+            if self.cli.noup:
+                custom_console.bot_warning_log(f"No Upload active. Done.")
+                continue
+
+            # Get the cover image
+            docu_info = PdfImages(content.file_name)
+            docu_info.build_info()
+
+            # Tracker payload
+            unit3d_up = UploadBot(content=content, tracker_name=selected_tracker, cli=self.cli)
+
+            # Upload
+            unit3d_up.data_docu(document_info=docu_info)
+
+            # Get the data
+            tracker_response, tracker_message = unit3d_up.send()
+
+            # Download the updated torrent file from the tracker
+            # # https://github.com/HDInnovations/UNIT3D/pull/4910/files
+            if tracker_response:
+                UserContent.download_file(url=tracker_response, destination_path=content.torrent_metadata_path)
+
+            bittorrent_list.append(
+                BittorrentData(
+                    tracker_response=tracker_response,
+                    content=content,
+                    tracker_message=tracker_message,
+                    archive_path=content.torrent_metadata_path,
+                ))
+
+        return bittorrent_list

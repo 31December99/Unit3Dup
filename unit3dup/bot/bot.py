@@ -5,13 +5,13 @@ import os
 import time
 import shutil
 
-from unit3dup.media import Media
-from unit3dup.media_manager.ContentManager import ContentManager
-from unit3dup.media_manager.TorrentManager import TorrentManager
-from unit3dup.external_services.ftpx.core.models.list import FTPDirectory
-from unit3dup.external_services.ftpx.core.menu import Menu
-from unit3dup.external_services.ftpx.client import Client
-from unit3dup.media_files.extractor import Extractor
+from unit3dup.application.ContentManager import ContentManager
+from unit3dup.application.TorrentManager import TorrentManager
+from unit3dup.external.ftpx.core.models.list import FTPDirectory
+from unit3dup.external.media_files.extractor import Extractor
+from unit3dup.external.ftpx.core.menu import Menu
+from unit3dup.external.ftpx.client import Client
+from unit3dup.external.media import Media
 from unit3dup.view import custom_console
 from unit3dup.config.bot_config import BotConfig
 
@@ -27,7 +27,7 @@ class Bot:
     """
 
     # Bot Manager
-    def __init__(self,cli: BotConfig, trackers_name_list: list, torrent_archive_path: str):
+    def __init__(self, cli: BotConfig, trackers_name_list: list, torrent_archive_path: str):
         """
         Initializes the Bot instance with path, command-line interface object, and mode
 
@@ -48,7 +48,6 @@ class Bot:
 
         if self.cli.upload:
             self.cli.mode = "man"
-
 
     def contents(self) -> list[Media]:
         """

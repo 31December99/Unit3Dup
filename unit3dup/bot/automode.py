@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 
 import os
-from unit3dup.utility import ManageTitles
+from unit3dup.shared.utility import ManageTitles
+from unit3dup.external.media import Media
 from unit3dup.view import custom_console
-from unit3dup.media import Media
+
 
 class Auto:
     """
@@ -89,9 +90,8 @@ class Auto:
         return [
             result
             for media_path in files_path + subfolders_path
-            if (result := Media(folder=self.path,subfolder=media_path)) is not None
+            if (result := Media(folder=self.path, subfolder=media_path)) is not None
         ]
-
 
     def depth_walker(self, path) -> int:
         """
