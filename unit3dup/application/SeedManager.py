@@ -2,7 +2,7 @@
 
 import os
 
-from unit3dup.external.theMovieDB.core.api import DbOnline
+from unit3dup.external.movie_db.api import DbOnline
 from unit3dup.external.torrent.bittorrent import BittorrentData
 from unit3dup.external.media import Media
 

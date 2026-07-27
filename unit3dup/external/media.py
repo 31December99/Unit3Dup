@@ -3,11 +3,11 @@ import os
 import re
 
 from unit3dup.external.igdb.core.tags import crew_patterns, platform_patterns
-from unit3dup.external.mediaresult import MediaResult
+from unit3dup.external.movie_db.mediaresult import MediaResult
 from unit3dup.shared.utility import ManageTitles, System
-from unit3dup.external.media_files.mediainfo import MediaFile
-from unit3dup.external.media_files.title import Guessit
-from unit3dup.external.media_files import title
+from unit3dup.external.video.media_service.mediainfo import MediaFile
+from unit3dup.external.video.media_service.title import Guessit
+from unit3dup.external.video.media_service import title
 
 from unit3dup.view import custom_console
 

@@ -1,467 +1,1150 @@
 # -*- coding: utf-8 -*-
+
 import re
 import time
-import requests
+from typing import Any
 
-from unit3dup.external.tracker.trackers import TRACKData
 from unit3dup.external.tracker import pvtTracker
-from unit3dup.external.database import Database
+from unit3dup.external.tracker.database import Database
+from unit3dup.external.tracker.trackers import TRACKData
 from unit3dup.view import custom_console
 
 
 class Torrent:
+    """
+    High-level interface for searching and filtering torrents
+    on a Unit3D tracker
+    """
 
     def __init__(self, tracker_name: str):
+        self.per_page = 100
 
-        self.perPage = 100
-        self.tracker = pvtTracker.Unit3d(tracker_name=tracker_name)
-        self.database = Database(db_file=tracker_name)
+        self.tracker = pvtTracker.Unit3d(
+            tracker_name=tracker_name
+        )
 
-    def get_unique_id(self, media_info: str) -> str:
-        # Divido per campi
-        raw_media = media_info.split("\r")
-        unique_id = "-" * 40
-        if len(raw_media) > 1:
-            match = re.search(r"Unique ID\s+:\s+(\d+)", media_info)
-            if match:
-                unique_id = match.group(1)
-        return unique_id
+        self.database = Database(
+            db_file=tracker_name
+        )
 
-    def search(self, keyword: str) -> requests.Response:
-        # The user does not always include the '-' (hyphen) in the title
+    # ------------------------------------------------------------------
+    # Utility
+    # ------------------------------------------------------------------
+
+    @staticmethod
+    def get_unique_id(media_info: str) -> str:
+        """
+        Extract the Unique ID from a MediaInfo string
+
+        Returns:
+            str: Unique ID if found, otherwise 40 dashes
+        """
+
+        default_id = "-" * 40
+
+        if not media_info:
+            return default_id
+
+        match = re.search(
+            r"Unique ID\s+:\s+(\d+)",
+            media_info
+        )
+
+        return (
+            match.group(1)
+            if match
+            else default_id
+        )
+
+    # ------------------------------------------------------------------
+    # Search
+    # ------------------------------------------------------------------
+
+    def search(self, keyword: str) -> dict[str, Any] | None:
+        """
+        Search torrents by name
+        """
+
+        # The user does not always include '-' in the title.
         keyword = keyword.replace("-", " ")
-        return self.tracker.get_name(name=keyword, perPage=self.perPage)
 
-    def get_by_description(self, description: str) -> requests.Response:
+        return self.tracker.get_name(
+            name=keyword,
+            perPage=self.per_page
+        )
+
+    # ------------------------------------------------------------------
+    # Text filters
+    # ------------------------------------------------------------------
+
+    def get_by_description(
+        self,
+        description: str
+    ) -> dict[str, Any] | None:
+
         return self.tracker.get_description(
-            description=description, perPage=self.perPage
+            description=description,
+            perPage=self.per_page
         )
 
-    def get_by_bdinfo(self, bd_info: str) -> requests.Response:
-        return self.tracker.get_bdinfo(bdinfo=bd_info, perPage=self.perPage)
+    def get_by_bdinfo(
+        self,
+        bd_info: str
+    ) -> dict[str, Any] | None:
 
-    def get_by_uploader(self, username: str) -> requests.Response:
-        return self.tracker.get_uploader(uploader=username, perPage=self.perPage)
+        return self.tracker.get_bdinfo(
+            bdinfo=bd_info,
+            perPage=self.per_page
+        )
 
-    def get_by_start_year(self, start_year: str) -> requests.Response:
-        return self.tracker.start_year(start_year=start_year, perPage=self.perPage)
+    def get_by_uploader(
+        self,
+        username: str
+    ) -> dict[str, Any] | None:
 
-    def get_by_end_year(self, end_year: str) -> requests.Response:
-        return self.tracker.end_year(end_year=end_year, perPage=self.perPage)
+        return self.tracker.get_uploader(
+            uploader=username,
+            perPage=self.per_page
+        )
 
-    def get_by_mediainfo(self, mediainfo: str) -> requests.Response:
-        return self.tracker.get_mediainfo(mediainfo=mediainfo, perPage=self.perPage)
+    def get_by_start_year(
+        self,
+        start_year: str
+    ) -> dict[str, Any] | None:
 
-    def get_by_types(self, type_name: str) -> requests.Response:
+        return self.tracker.after_start_year(
+            start_year=start_year,
+            perPage=self.per_page
+        )
+
+    def get_by_end_year(
+        self,
+        end_year: str
+    ) -> dict[str, Any] | None:
+
+        return self.tracker.before_end_year(
+            end_year=end_year,
+            perPage=self.per_page
+        )
+
+    def get_by_mediainfo(
+        self,
+        mediainfo: str
+    ) -> dict[str, Any] | None:
+
+        return self.tracker.get_mediainfo(
+            mediainfo=mediainfo,
+            perPage=self.per_page
+        )
+
+    def get_by_filename(
+        self,
+        file_name: str
+    ) -> dict[str, Any] | None:
+
+        return self.tracker.get_filename(
+            file_name=file_name,
+            perPage=self.per_page
+        )
+
+    # ------------------------------------------------------------------
+    # Type / Resolution
+    # ------------------------------------------------------------------
+
+    def get_by_types(
+        self,
+        type_id: str
+    ) -> dict[str, Any] | None:
+
         return self.tracker.get_types(
-            type_id=type_name, perPage=self.perPage
+            type_id=type_id,
+            perPage=self.per_page
         )
 
-    def get_by_res(self, resolution_id: str) -> requests.Response:
+    def get_by_res(
+        self,
+        resolution_id: str
+    ) -> dict[str, Any] | None:
+
         return self.tracker.get_res(
-            res_id=resolution_id, perPage=self.perPage
+            res_id=resolution_id,
+            perPage=self.per_page
         )
 
-    def get_by_filename(self, file_name: str) -> requests.Response:
-        return self.tracker.get_filename(file_name=file_name, perPage=self.perPage)
+    # ------------------------------------------------------------------
+    # External IDs
+    # ------------------------------------------------------------------
 
-    def get_by_tmdb_id(self, tmdb_id: int) -> requests.Response:
-        return self.tracker.get_tmdb(tmdb_id=tmdb_id, perPage=self.perPage)
+    def get_by_tmdb_id(
+        self,
+        tmdb_id: int
+    ) -> dict[str, Any] | None:
 
-    def get_by_imdb_id(self, imdb_id: int) -> requests.Response:
-        return self.tracker.get_imdb(imdb_id=imdb_id, perPage=self.perPage)
+        return self.tracker.get_tmdb(
+            tmdb_id=tmdb_id,
+            perPage=self.per_page
+        )
 
-    def get_by_igdb_id(self, imdb_id: int) -> requests.Response:
-        return self.tracker.get_igdb(igdb_id=imdb_id, perPage=self.perPage)
+    def get_by_imdb_id(
+        self,
+        imdb_id: int
+    ) -> dict[str, Any] | None:
 
-    def get_by_tvdb_id(self, tvdb_id: int) -> requests.Response:
-        return self.tracker.get_tvdb(tvdb_id=tvdb_id, perPage=self.perPage)
+        return self.tracker.get_imdb(
+            imdb_id=imdb_id,
+            perPage=self.per_page
+        )
 
-    def get_by_mal_id(self, mal_id: int) -> requests.Response:
-        return self.tracker.get_mal(mal_id=mal_id, perPage=self.perPage)
+    def get_by_igdb_id(
+        self,
+        igdb_id: int
+    ) -> dict[str, Any] | None:
 
-    def get_by_playlist_id(self, playlist_id: int) -> requests.Response:
+        return self.tracker.get_igdb(
+            igdb_id=igdb_id,
+            perPage=self.per_page
+        )
+
+    def get_by_tvdb_id(
+        self,
+        tvdb_id: int
+    ) -> dict[str, Any] | None:
+
+        return self.tracker.get_tvdb(
+            tvdb_id=tvdb_id,
+            perPage=self.per_page
+        )
+
+    def get_by_mal_id(
+        self,
+        mal_id: int
+    ) -> dict[str, Any] | None:
+
+        return self.tracker.get_mal(
+            mal_id=mal_id,
+            perPage=self.per_page
+        )
+
+    # ------------------------------------------------------------------
+    # Playlist / Collection
+    # ------------------------------------------------------------------
+
+    def get_by_playlist_id(
+        self,
+        playlist_id: int
+    ) -> dict[str, Any] | None:
+
         return self.tracker.get_playlist_id(
-            playlist_id=playlist_id, perPage=self.perPage
+            playlist_id=playlist_id,
+            perPage=self.per_page
         )
 
-    def get_by_collection_id(self, collection_id: int) -> requests.Response:
+    def get_by_collection_id(
+        self,
+        collection_id: int
+    ) -> dict[str, Any] | None:
+
         return self.tracker.get_collection_id(
-            collection_id=collection_id, perPage=self.perPage
+            collection_id=collection_id,
+            perPage=self.per_page
         )
 
-    def get_by_freeleech(self, freeleech: int) -> requests.Response:
-        return self.tracker.get_freeleech(freeleech=freeleech, perPage=self.perPage)
+    # ------------------------------------------------------------------
+    # Torrent properties
+    # ------------------------------------------------------------------
 
-    def get_by_season(self, season: int) -> requests.Response:
-        return self.tracker.get_season_number(se_number=season, perPage=self.perPage)
+    def get_by_freeleech(
+        self,
+        freeleech: int
+    ) -> dict[str, Any] | None:
 
-    def get_by_episode(self, episode: int) -> requests.Response:
-        return self.tracker.get_episode_number(ep_number=episode, perPage=self.perPage)
+        return self.tracker.get_freeleech(
+            freeleech=freeleech,
+            perPage=self.per_page
+        )
 
-    def get_alive(self) -> requests.Response:
-        return self.tracker.get_alive(alive=True, perPage=self.perPage)
+    def get_by_season(
+        self,
+        season: int
+    ) -> dict[str, Any] | None:
 
-    def get_dead(self) -> requests.Response:
-        return self.tracker.get_dead(dead=True, perPage=self.perPage)
+        return self.tracker.get_season_number(
+            se_number=season,
+            perPage=self.per_page
+        )
 
-    def get_dying(self) -> requests.Response:
-        return self.tracker.get_dying(dying=True, perPage=self.perPage)
+    def get_by_episode(
+        self,
+        episode: int
+    ) -> dict[str, Any] | None:
 
-    def get_doubleup(self) -> requests.Response:
-        return self.tracker.get_double_up(double_up=True, perPage=self.perPage)
+        return self.tracker.get_episode_number(
+            ep_number=episode,
+            perPage=self.per_page
+        )
 
-    def get_featured(self) -> requests.Response:
-        return self.tracker.get_featured(featured=True, perPage=self.perPage)
+    # ------------------------------------------------------------------
+    # Status filters
+    # ------------------------------------------------------------------
 
-    def get_refundable(self) -> requests.Response:
-        return self.tracker.get_refundable(refundable=True, perPage=self.perPage)
+    def get_alive(self) -> dict[str, Any] | None:
+        return self.tracker.get_alive(
+            alive=True,
+            perPage=self.per_page
+        )
 
-    def get_stream(self) -> requests.Response:
-        return self.tracker.get_stream(stream=True, perPage=self.perPage)
+    def get_dead(self) -> dict[str, Any] | None:
+        return self.tracker.get_dead(
+            dead=True,
+            perPage=self.per_page
+        )
 
-    def get_sd(self) -> requests.Response:
-        return self.tracker.get_sd(sd=True, perPage=self.perPage)
+    def get_dying(self) -> dict[str, Any] | None:
+        return self.tracker.get_dying(
+            dying=True,
+            perPage=self.per_page
+        )
 
-    def get_highspeed(self) -> requests.Response:
-        return self.tracker.get_highspeed(highspeed=True, perPage=self.perPage)
+    def get_doubleup(self) -> dict[str, Any] | None:
+        return self.tracker.get_double_up(
+            double_up=True,
+            perPage=self.per_page
+        )
 
-    def get_internal(self) -> requests.Response:
-        return self.tracker.get_internal(internal=True, perPage=self.perPage)
+    def get_featured(self) -> dict[str, Any] | None:
+        return self.tracker.get_featured(
+            featured=True,
+            perPage=self.per_page
+        )
 
-    def get_personal(self) -> requests.Response:
+    def get_refundable(self) -> dict[str, Any] | None:
+        return self.tracker.get_refundable(
+            refundable=True,
+            perPage=self.per_page
+        )
+
+    def get_stream(self) -> dict[str, Any] | None:
+        return self.tracker.get_stream(
+            stream=True,
+            perPage=self.per_page
+        )
+
+    def get_sd(self) -> dict[str, Any] | None:
+        return self.tracker.get_sd(
+            sd=True,
+            perPage=self.per_page
+        )
+
+    def get_highspeed(self) -> dict[str, Any] | None:
+        return self.tracker.get_highspeed(
+            highspeed=True,
+            perPage=self.per_page
+        )
+
+    def get_internal(self) -> dict[str, Any] | None:
+        return self.tracker.get_internal(
+            internal=True,
+            perPage=self.per_page
+        )
+
+    def get_personal(self) -> dict[str, Any] | None:
         return self.tracker.get_personal_release(
-            personalRelease=True, perPage=self.perPage
+            personalRelease=True,
+            perPage=self.per_page
         )
 
-    # Filter 'Combo'
-    def get_by_tmdb_res(self, tmdb_id: int, resolution_id: str) -> requests.Response:
-        return self.tracker.get_tmdb_res(tmdb_id=tmdb_id, res_id=resolution_id, perPage=self.perPage)
+    # ------------------------------------------------------------------
+    # Combo filters
+    # ------------------------------------------------------------------
+
+    def get_by_tmdb_res(
+        self,
+        tmdb_id: int,
+        resolution_id: str
+    ) -> dict[str, Any] | None:
+
+        return self.tracker.get_tmdb_res(
+            tmdb_id=tmdb_id,
+            res_id=resolution_id,
+            perPage=self.per_page
+        )
 
 
 class View(Torrent):
+    """
+    Presentation layer for torrent searches and filters.
+    """
 
     def __init__(self, tracker_name: str):
-        super().__init__(tracker_name=tracker_name)
+        super().__init__(
+            tracker_name=tracker_name
+        )
 
-        # Load the constant tracker
-        self.tracker_data = TRACKData.load_from_module(tracker_name=tracker_name)
+        self.tracker_data = (
+            TRACKData.load_from_module(
+                tracker_name=tracker_name
+            )
+        )
+
         self.tracker_name = tracker_name
 
         print()
 
-    def get_unique_id(self, media_info: str) -> str:
-        # Divido per campi
-        raw_media = media_info.split("\r")
-        unique_id = "-" * 40
-        if len(raw_media) > 1:
-            match = re.search(r"Unique ID\s+:\s+(\d+)", media_info)
-            if match:
-                unique_id = match.group(1)
-        return unique_id
+    # ------------------------------------------------------------------
+    # Output helpers
+    # ------------------------------------------------------------------
 
-    def print_info(self, tracker_data: dict):
-        data = [item for item in tracker_data["data"]]
-        for item in data:
-            # Ottengo media info
-            media_info = item["attributes"]["media_info"]
-            unique_id = (
-                self.get_unique_id(media_info=media_info) if media_info else "-" * 40
+    def print_info(
+        self,
+        tracker_data: dict[str, Any]
+    ) -> None:
+        """
+        Print detailed information about torrents.
+        """
+
+        for item in tracker_data.get("data", []):
+            attributes = item.get(
+                "attributes",
+                {}
             )
+
+            media_info = attributes.get(
+                "media_info",
+                ""
+            )
+
+            unique_id = self.get_unique_id(
+                media_info
+            )
+
+            release_year = attributes.get(
+                "release_year"
+            )
+
+            name = attributes.get(
+                "name",
+                "Unknown"
+            )
+
             print(
-                f"[{str(item['attributes']['release_year'])}] - [{unique_id}]"
-                f" -> {item['attributes']['name']}"
+                f"[{release_year}] "
+                f"- [{unique_id}] "
+                f"-> {name}"
             )
 
-    def print_normal(self, tracker_data: dict, save=False):
-        data = [item for item in tracker_data["data"]]
-        for item in data:
-            if item['attributes']['tmdb_id'] != 0:
-                if not item['attributes']['release_year']:
-                    release_year = 'release year not available'
-                else:
-                    release_year = item['attributes']['release_year']
+    def print_normal(
+        self,
+        tracker_data: dict[str, Any],
+        save: bool = False
+    ) -> None:
+        """
+        Print normal torrent information.
+        """
 
-                media = f"{self.tracker_name} - TMDB: {item['attributes']['tmdb_id']} - {release_year}"
+        for item in tracker_data.get("data", []):
+            attributes = item.get(
+                "attributes",
+                {}
+            )
 
-            elif item['attributes']['igdb_id'] != 0:
-                media = f"{self.tracker_name} IGDB: {item['attributes']['igdb_id']}"
+            tmdb_id = attributes.get(
+                "tmdb_id",
+                0
+            )
+
+            igdb_id = attributes.get(
+                "igdb_id",
+                0
+            )
+
+            release_year = attributes.get(
+                "release_year"
+            )
+
+            name = attributes.get(
+                "name",
+                "Unknown"
+            )
+
+            if tmdb_id != 0:
+                release_year = (
+                    release_year
+                    if release_year
+                    else "release year not available"
+                )
+
+                media = (
+                    f"{self.tracker_name} - "
+                    f"TMDB: {tmdb_id} - "
+                    f"{release_year}"
+                )
+
+            elif igdb_id != 0:
+                media = (
+                    f"{self.tracker_name} "
+                    f"IGDB: {igdb_id}"
+                )
+
             else:
-                media = f"{self.tracker_name} DOC:"
+                media = (
+                    f"{self.tracker_name} DOC:"
+                )
 
-            # Print a data to the console
-            custom_console.bot_log(f"\n {media} - {item['attributes']['name']}")
-            # Save torrent data into database by -db flag
+            custom_console.bot_log(
+                f"\n {media} - {name}"
+            )
+
             if save:
-                self.database.write(item['attributes'])
+                self.database.write(
+                    attributes
+                )
 
-    def page_view(self, tracker_data: dict, tracker: pvtTracker.Tracker, info=False, inkey=True, save=False):
+    # ------------------------------------------------------------------
+    # Pagination
+    # ------------------------------------------------------------------
 
-        self.print_normal(tracker_data, save=save) if not info else self.print_info(tracker_data)
+    def page_view(
+        self,
+        tracker_data: dict[str, Any],
+        info: bool = False,
+        inkey: bool = True,
+        save: bool = False
+    ) -> None:
+        """
+        Display API results page by page.
+        """
+
+        if not tracker_data:
+            custom_console.bot_warning_log(
+                "No results returned by tracker."
+            )
+            return
+
+        printer = (
+            self.print_info
+            if info
+            else self.print_normal
+        )
+
+        printer(
+            tracker_data,
+            save=save
+        ) if not info else printer(
+            tracker_data
+        )
+
         page = 0
+
         while True:
-            if not tracker_data["links"]["next"]:
+            links = tracker_data.get(
+                "links",
+                {}
+            )
+
+            next_url = links.get(
+                "next"
+            )
+
+            if not next_url:
                 break
 
-            # Wait for user input if inkey is True
             page += 1
+
             if inkey:
                 custom_console.bot_question_log(
-                    f"\n Prossima Pagina '{page}' - Premi un tasto per continuare, Q(quit) - "
+                    f"\nProssima pagina '{page}' "
+                    f"- Premi un tasto per continuare, "
+                    f"Q (quit) - "
                 )
+
                 if input().lower() == "q":
                     break
+
             else:
-                # otherwise wait for 2 seconds ( 30 request/ 60sec max) dirty
+                # API rate limit protection.
                 time.sleep(2)
+
             print()
-            custom_console.rule(f"\n[bold blue]'Page -> {page}'", style="#ea00d9")
-            tracker_data = tracker.next(url=tracker_data["links"]["next"])
-            (
-                self.print_normal(tracker_data, save=save)
-                if not info
-                else self.print_info(tracker_data)
+
+            custom_console.rule(
+                f"\n[bold blue]'Page -> {page}'",
+                style="#ea00d9"
             )
 
-    def view_search(self, keyword: str, info=False, inkey=True, save=False):
-        tracker_data = self.search(keyword=keyword)
-        custom_console.log(f"Searching.. '{keyword}'")
-        (
-            self.page_view(tracker_data=tracker_data, tracker=self.tracker, inkey=inkey, save=save)
-            if not info
-            else self.page_view(
-                tracker_data=tracker_data, tracker=self.tracker, info=True
+            tracker_data = self.tracker.next(
+                url=next_url
             )
+
+            if not tracker_data:
+                break
+
+            printer(
+                tracker_data,
+                save=save
+            ) if not info else printer(
+                tracker_data
+            )
+
+    # ------------------------------------------------------------------
+    # Search views
+    # ------------------------------------------------------------------
+
+    def view_search(
+        self,
+        keyword: str,
+        info: bool = False,
+        inkey: bool = True,
+        save: bool = False
+    ) -> None:
+
+        tracker_data = self.search(
+            keyword=keyword
         )
 
-    def view_by_description(self, description: str):
-        tracker_data = self.get_by_description(description=description)
-        custom_console.bot_log(f"Filter by the torrent's description.. '{description.upper()}'")
-        self.page_view(tracker_data=tracker_data, tracker=self.tracker)
+        custom_console.log(
+            f"Searching.. '{keyword}'"
+        )
 
-    def view_by_bdinfo(self, bdinfo: str):
-        tracker_data = self.get_by_bdinfo(bd_info=bdinfo)
+        self.page_view(
+            tracker_data=tracker_data,
+            info=info,
+            inkey=inkey,
+            save=save
+        )
 
-        custom_console.bot_log(f"Filter by the torrent's BDInfo.. '{bdinfo.upper()}'")
-        self.page_view(tracker_data=tracker_data, tracker=self.tracker)
+    def view_by_description(
+        self,
+        description: str
+    ) -> None:
 
-    def view_by_uploader(self, username: str, save=False):
-        tracker_data = self.get_by_uploader(username=username)
-        custom_console.bot_log(f"Filter by the torrent uploader's username.. '{username.upper()}'")
-        self.page_view(tracker_data=tracker_data, tracker=self.tracker, save=save)
+        tracker_data = self.get_by_description(
+            description=description
+        )
 
-    def view_by_start_year(self, startyear: str):
-        tracker_data = self.get_by_start_year(start_year=startyear)
         custom_console.bot_log(
-            f"StartYear torrents.. Return only torrents whose content was released"
-            f" after or in the given year '{startyear.upper()}'"
+            "Filter by torrent description.. "
+            f"'{description.upper()}'"
         )
-        self.page_view(tracker_data=tracker_data, tracker=self.tracker)
 
-    def view_by_end_year(self, end_year: str):
-        tracker_data = self.tracker.end_year(end_year=end_year)
+        self.page_view(
+            tracker_data=tracker_data
+        )
+
+    def view_by_bdinfo(
+        self,
+        bdinfo: str
+    ) -> None:
+
+        tracker_data = self.get_by_bdinfo(
+            bd_info=bdinfo
+        )
+
         custom_console.bot_log(
-            f"EndYear torrents.. Return only torrents whose content was released before or in the given year"
-            f"'{end_year.upper()}'"
+            "Filter by torrent BDInfo.. "
+            f"'{bdinfo.upper()}'"
         )
-        self.page_view(tracker_data=tracker_data, tracker=self.tracker)
 
-    def view_by_mediainfo(self, mediainfo: str):
-        tracker_data = self.get_by_mediainfo(mediainfo=mediainfo)
+        self.page_view(
+            tracker_data=tracker_data
+        )
+
+    def view_by_uploader(
+        self,
+        username: str,
+        save: bool = False
+    ) -> None:
+
+        tracker_data = self.get_by_uploader(
+            username=username
+        )
+
         custom_console.bot_log(
-            f"Mediainfo torrents.. Filter by the torrent's mediaInfo.. '{mediainfo.upper()}'"
+            "Filter by torrent uploader.. "
+            f"'{username.upper()}'"
         )
-        if tracker_data:
-            self.page_view(tracker_data=tracker_data, tracker=self.tracker)
 
-    def view_by_types(self, type_name: str):
-        if type_name not in self.tracker_data.type_id.keys():
-            custom_console.bot_error_log(f"Type not available for '{type_name}' try:")
-            custom_console.bot_warning_log(";".join(list(self.tracker_data.type_id.keys())[:-1]))
-            exit()
+        self.page_view(
+            tracker_data=tracker_data,
+            save=save
+        )
+
+    def view_by_start_year(
+        self,
+        start_year: str
+    ) -> None:
+
+        tracker_data = self.get_by_start_year(
+            start_year=start_year
+        )
+
+        custom_console.bot_log(
+            "StartYear torrents.. "
+            "Return torrents released after "
+            f"or in '{start_year}'"
+        )
+
+        self.page_view(
+            tracker_data=tracker_data
+        )
+
+    def view_by_end_year(
+        self,
+        end_year: str
+    ) -> None:
+
+        tracker_data = self.get_by_end_year(
+            end_year=end_year
+        )
+
+        custom_console.bot_log(
+            "EndYear torrents.. "
+            "Return torrents released before "
+            f"or in '{end_year}'"
+        )
+
+        self.page_view(
+            tracker_data=tracker_data
+        )
+
+    def view_by_mediainfo(
+        self,
+        mediainfo: str
+    ) -> None:
+
+        tracker_data = self.get_by_mediainfo(
+            mediainfo=mediainfo
+        )
+
+        custom_console.bot_log(
+            "Mediainfo torrents.. "
+            "Filter by MediaInfo.. "
+            f"'{mediainfo.upper()}'"
+        )
+
+        self.page_view(
+            tracker_data=tracker_data
+        )
+
+    # ------------------------------------------------------------------
+    # Type / Resolution views
+    # ------------------------------------------------------------------
+
+    def view_by_types(
+        self,
+        type_name: str
+    ) -> None:
+
+        if type_name not in self.tracker_data.type_id:
+            custom_console.bot_error_log(
+                f"Type not available for '{type_name}'."
+            )
+
+            custom_console.bot_warning_log(
+                ";".join(
+                    self.tracker_data.type_id.keys()
+                )
+            )
+
+            return
+
+        type_id = str(
+            self.tracker_data.type_id[
+                type_name
+            ]
+        )
+
         tracker_data = self.get_by_types(
-            type_name=str(self.tracker_data.type_id.get(type_name))
+            type_id=type_id
         )
-        custom_console.bot_log(
-            f"Types torrents.. Filter by the torrent's type.. '{type_name.upper()}'"
-        )
-        if tracker_data:
-            self.page_view(tracker_data=tracker_data, tracker=self.tracker)
-
-    def view_by_res(self, res_name: str):
-        if res_name not in self.tracker_data.resolution.keys():
-            custom_console.bot_error_log(f"Resolution not available for '{res_name}' try:")
-            custom_console.bot_warning_log(";".join(list(self.tracker_data.resolution.keys())[:-1]))
-            exit()
-        tracker_data = self.get_by_res(resolution_id=str(self.tracker_data.resolution.get(res_name)))
 
         custom_console.bot_log(
-            f"Resolutions torrents.. Filter by the torrent's resolution.. '{res_name.upper()}'"
+            "Types torrents.. "
+            f"Filter by type '{type_name.upper()}'"
         )
-        if tracker_data:
-            self.page_view(tracker_data=tracker_data, tracker=self.tracker)
 
-    def view_by_filename(self, file_name: str):
-        tracker_data = self.get_by_filename(file_name=file_name)
+        self.page_view(
+            tracker_data=tracker_data
+        )
+
+    def view_by_res(
+        self,
+        res_name: str
+    ) -> None:
+
+        if res_name not in self.tracker_data.resolution:
+            custom_console.bot_error_log(
+                f"Resolution not available "
+                f"for '{res_name}'."
+            )
+
+            custom_console.bot_warning_log(
+                ";".join(
+                    self.tracker_data.resolution.keys()
+                )
+            )
+
+            return
+
+        resolution_id = str(
+            self.tracker_data.resolution[
+                res_name
+            ]
+        )
+
+        tracker_data = self.get_by_res(
+            resolution_id=resolution_id
+        )
+
         custom_console.bot_log(
-            f"Filename torrents.. Filter by the torrent's filename.. '{file_name.upper()}'"
+            "Resolution torrents.. "
+            f"Filter by resolution "
+            f"'{res_name.upper()}'"
         )
-        if tracker_data:
-            self.page_view(tracker_data=tracker_data, tracker=self.tracker)
 
-    def view_by_tmdb_id(self, tmdb_id: int):
-        tracker_data = self.get_by_tmdb_id(tmdb_id=tmdb_id)
-        custom_console.bot_log(f"TMDB torrents.. Filter by the torrent's tmdb.. '{tmdb_id}'")
-        if tracker_data:
-            self.page_view(tracker_data=tracker_data, tracker=self.tracker)
+        self.page_view(
+            tracker_data=tracker_data
+        )
 
-    def view_by_imdb_id(self, imdb_id: int):
-        tracker_data = self.get_by_imdb_id(imdb_id=imdb_id)
-        custom_console.bot_log(f"IMDB torrents.. Filter by the torrent's imdb.. '{imdb_id}'")
-        if tracker_data:
-            self.page_view(tracker_data=tracker_data, tracker=self.tracker)
+    # ------------------------------------------------------------------
+    # ID filters
+    # ------------------------------------------------------------------
 
-    def view_by_tvdb_id(self, tvdb_id: int):
-        tracker_data = self.get_by_tvdb_id(tvdb_id=tvdb_id)
-        custom_console.bot_log(f"TVDB torrents.. Filter by the torrent's tvdb.. '{tvdb_id}'")
-        if tracker_data:
-            self.page_view(tracker_data=tracker_data, tracker=self.tracker)
+    def view_by_filename(
+        self,
+        file_name: str
+    ) -> None:
 
-    def view_by_mal_id(self, mal_id: int):
-        tracker_data = self.get_by_mal_id(mal_id=mal_id)
-        custom_console.bot_log(f"MAL torrents.. Filter by the torrent's mal.. '{mal_id}'")
-        if tracker_data:
-            self.page_view(tracker_data=tracker_data, tracker=self.tracker)
+        tracker_data = self.get_by_filename(
+            file_name=file_name
+        )
 
-    def view_by_playlist_id(self, playlist_id: int):
-        tracker_data = self.get_by_playlist_id(playlist_id=playlist_id)
         custom_console.bot_log(
-            f"Playlist torrents.. Return only torrents within the playlist of the given ID.. '{playlist_id}'"
+            "Filename torrents.. "
+            f"Filter by filename "
+            f"'{file_name.upper()}'"
         )
-        if tracker_data:
-            self.page_view(tracker_data=tracker_data, tracker=self.tracker)
 
-    def view_by_collection_id(self, collection_id: int):
-        tracker_data = self.get_by_collection_id(collection_id=collection_id)
+        self.page_view(
+            tracker_data=tracker_data
+        )
+
+    def view_by_tmdb_id(
+        self,
+        tmdb_id: int
+    ) -> None:
+
+        tracker_data = self.get_by_tmdb_id(
+            tmdb_id=tmdb_id
+        )
+
         custom_console.bot_log(
-            f"Collection torrents.. Return only torrents within the collection of the given ID.. '{collection_id}'"
+            "TMDB torrents.. "
+            f"Filter by TMDB '{tmdb_id}'"
         )
-        if tracker_data:
-            self.page_view(tracker_data=tracker_data, tracker=self.tracker)
 
-    def view_by_freeleech(self, freeleech: int):
-        tracker_data = self.get_by_freeleech(freeleech=freeleech)
+        self.page_view(
+            tracker_data=tracker_data
+        )
+
+    def view_by_imdb_id(
+        self,
+        imdb_id: int
+    ) -> None:
+
+        tracker_data = self.get_by_imdb_id(
+            imdb_id=imdb_id
+        )
+
         custom_console.bot_log(
-            f"Freeleech torrents.. Filter by the torrent's freeleech discount (0-100).. '{freeleech}'"
+            "IMDB torrents.. "
+            f"Filter by IMDB '{imdb_id}'"
         )
-        if tracker_data:
-            self.page_view(tracker_data=tracker_data, tracker=self.tracker)
 
-    def view_by_season(self, season: int):
-        tracker_data = self.get_by_season(season=season)
-        custom_console.bot_log(f"Seasons torrents.. Filter by the torrent's seasons.. '{season}'")
-        if tracker_data:
-            self.page_view(tracker_data=tracker_data, tracker=self.tracker)
+        self.page_view(
+            tracker_data=tracker_data
+        )
 
-    def view_by_episode(self, episode: int):
-        tracker_data = self.get_by_episode(episode=episode)
-        custom_console.bot_log(f"Episode torrents.. Filter by the torrent's episode.. '{episode}'")
-        if tracker_data:
-            self.page_view(tracker_data=tracker_data, tracker=self.tracker)
+    def view_by_tvdb_id(
+        self,
+        tvdb_id: int
+    ) -> None:
 
-    def view_alive(self):
-        tracker_data = self.get_alive()
-        custom_console.bot_log(f"Alive torrents.. Filter by if the torrent has 1 or more seeders")
-        if tracker_data:
-            self.page_view(tracker_data=tracker_data, tracker=self.tracker)
+        tracker_data = self.get_by_tvdb_id(
+            tvdb_id=tvdb_id
+        )
 
-    def view_dead(self):
-        tracker_data = self.get_dead()
-        custom_console.bot_log(f"Dead torrents.. Filter by if the torrent has 0 seeders")
-        if tracker_data:
-            self.page_view(tracker_data=tracker_data, tracker=self.tracker, info=True)
-
-    def view_dying(self):
-        tracker_data = self.get_dying()
         custom_console.bot_log(
-            f"Dying torrents.. Filter by if the torrent has 1 seeder and has been downloaded more than 3 times"
+            "TVDB torrents.. "
+            f"Filter by TVDB '{tvdb_id}'"
         )
-        if tracker_data:
-            self.page_view(tracker_data=tracker_data, tracker=self.tracker)
 
-    def view_doubleup(self):
-        tracker_data = self.get_doubleup()
+        self.page_view(
+            tracker_data=tracker_data
+        )
+
+    def view_by_mal_id(
+        self,
+        mal_id: int
+    ) -> None:
+
+        tracker_data = self.get_by_mal_id(
+            mal_id=mal_id
+        )
+
         custom_console.bot_log(
-            f"DoubleUp torrents.. Filter by if the torrent offers double upload"
+            "MAL torrents.. "
+            f"Filter by MAL '{mal_id}'"
         )
-        if tracker_data:
-            self.page_view(tracker_data=tracker_data, tracker=self.tracker)
 
-    def view_featured(self):
-        tracker_data = self.get_featured()
+        self.page_view(
+            tracker_data=tracker_data
+        )
+
+    # ------------------------------------------------------------------
+    # Playlist / Collection
+    # ------------------------------------------------------------------
+
+    def view_by_playlist_id(
+        self,
+        playlist_id: int
+    ) -> None:
+
+        tracker_data = self.get_by_playlist_id(
+            playlist_id=playlist_id
+        )
+
         custom_console.bot_log(
-            f"Featured torrents.. Filter by if the torrent is featured on the front page"
+            "Playlist torrents.. "
+            f"Playlist ID '{playlist_id}'"
         )
-        if tracker_data:
-            self.page_view(tracker_data=tracker_data, tracker=self.tracker)
 
-    def view_refundable(self):
-        tracker_data = self.get_refundable()
-        custom_console.bot_log(f"Refundable torrents.. Filter by if the torrent is refundable")
-        if tracker_data:
-            self.page_view(tracker_data=tracker_data, tracker=self.tracker)
+        self.page_view(
+            tracker_data=tracker_data
+        )
 
-    def view_stream(self):
-        tracker_data = self.get_stream()
+    def view_by_collection_id(
+        self,
+        collection_id: int
+    ) -> None:
+
+        tracker_data = self.get_by_collection_id(
+            collection_id=collection_id
+        )
+
         custom_console.bot_log(
-            f"Stream torrents.. Filter by if the torrent's content is stream-optimised"
+            "Collection torrents.. "
+            f"Collection ID '{collection_id}'"
         )
-        if tracker_data:
-            self.page_view(tracker_data=tracker_data, tracker=self.tracker)
 
-    def view_sd(self):
-        tracker_data = self.get_sd()
+        self.page_view(
+            tracker_data=tracker_data
+        )
+
+    # ------------------------------------------------------------------
+    # Torrent filters
+    # ------------------------------------------------------------------
+
+    def view_by_freeleech(
+        self,
+        freeleech: int
+    ) -> None:
+
+        tracker_data = self.get_by_freeleech(
+            freeleech=freeleech
+        )
+
         custom_console.bot_log(
-            f"Standard torrents.. Filter by if the torrent's content is standard definition"
+            "Freeleech torrents.. "
+            f"Freeleech '{freeleech}'"
         )
-        if tracker_data:
-            self.page_view(tracker_data=tracker_data, tracker=self.tracker)
 
-    def view_highspeed(self):
-        tracker_data = self.get_highspeed()
+        self.page_view(
+            tracker_data=tracker_data
+        )
+
+    def view_by_season(
+        self,
+        season: int
+    ) -> None:
+
+        tracker_data = self.get_by_season(
+            season=season
+        )
+
         custom_console.bot_log(
-            f"Highspeed torrents.. Filter by if the torrent has seeders whose IP address has been registered"
-            f" as a seedbox"
+            f"Season torrents.. '{season}'"
         )
-        if tracker_data:
-            self.page_view(tracker_data=tracker_data, tracker=self.tracker)
 
-    def view_internal(self):
-        tracker_data = self.get_internal()
+        self.page_view(
+            tracker_data=tracker_data
+        )
+
+    def view_by_episode(
+        self,
+        episode: int
+    ) -> None:
+
+        tracker_data = self.get_by_episode(
+            episode=episode
+        )
+
         custom_console.bot_log(
-            f"Internal torrents.. Filter by if the torrent is an internal release"
+            f"Episode torrents.. '{episode}'"
         )
-        if tracker_data:
-            self.page_view(tracker_data=tracker_data, tracker=self.tracker)
 
-    def view_personal(self):
-        tracker_data = self.get_personal()
+        self.page_view(
+            tracker_data=tracker_data
+        )
+
+    # ------------------------------------------------------------------
+    # Boolean filters
+    # ------------------------------------------------------------------
+
+    def view_alive(self) -> None:
+        self._view_boolean_filter(
+            self.get_alive(),
+            "Alive torrents.. "
+            "Filter by torrents with 1+ seeders."
+        )
+
+    def view_dead(self) -> None:
+        self._view_boolean_filter(
+            self.get_dead(),
+            "Dead torrents.. "
+            "Filter by torrents with 0 seeders.",
+            info=True
+        )
+
+    def view_dying(self) -> None:
+        self._view_boolean_filter(
+            self.get_dying(),
+            "Dying torrents.. "
+            "Filter by torrents with 1 seeder "
+            "and more than 3 downloads."
+        )
+
+    def view_doubleup(self) -> None:
+        self._view_boolean_filter(
+            self.get_doubleup(),
+            "DoubleUp torrents.. "
+            "Filter by double upload."
+        )
+
+    def view_featured(self) -> None:
+        self._view_boolean_filter(
+            self.get_featured(),
+            "Featured torrents.. "
+            "Filter by featured torrents."
+        )
+
+    def view_refundable(self) -> None:
+        self._view_boolean_filter(
+            self.get_refundable(),
+            "Refundable torrents.. "
+            "Filter by refundable torrents."
+        )
+
+    def view_stream(self) -> None:
+        self._view_boolean_filter(
+            self.get_stream(),
+            "Stream torrents.. "
+            "Filter by stream-optimised content."
+        )
+
+    def view_sd(self) -> None:
+        self._view_boolean_filter(
+            self.get_sd(),
+            "Standard torrents.. "
+            "Filter by standard-definition content."
+        )
+
+    def view_highspeed(self) -> None:
+        self._view_boolean_filter(
+            self.get_highspeed(),
+            "Highspeed torrents.. "
+            "Filter by seedbox seeders."
+        )
+
+    def view_internal(self) -> None:
+        self._view_boolean_filter(
+            self.get_internal(),
+            "Internal torrents.. "
+            "Filter by internal releases."
+        )
+
+    def view_personal(self) -> None:
+        self._view_boolean_filter(
+            self.get_personal(),
+            "Personal Release torrents.. "
+            "Filter by uploader-created content."
+        )
+
+    # ------------------------------------------------------------------
+    # Boolean filter helper
+    # ------------------------------------------------------------------
+
+    def _view_boolean_filter(
+        self,
+        tracker_data: dict[str, Any] | None,
+        message: str,
+        info: bool = False
+    ) -> None:
+
         custom_console.bot_log(
-            f"Personal Release torrents.. Filter by if the torrent's content is created by the uploader"
+            message
         )
+
         if tracker_data:
-            self.page_view(tracker_data=tracker_data, tracker=self.tracker)
+            self.page_view(
+                tracker_data=tracker_data,
+                info=info
+            )
 
-    # Filter 'Combo'
-    def view_tmdb_res(self, tmdb_id: int, res_name: str) -> requests.Response | None:
+    # ------------------------------------------------------------------
+    # Combo filters
+    # ------------------------------------------------------------------
 
-        # Filter by TMDB and Resolution
-        if res_name not in self.tracker_data.resolution.keys():
-            custom_console.bot_error_log(f"Resolution not available for '{res_name}' try:")
-            custom_console.bot_warning_log(";".join(list(self.tracker_data.resolution.keys())[:-1]))
-            exit()
+    def view_tmdb_res(
+        self,
+        tmdb_id: int,
+        res_name: str
+    ) -> None:
+        """
+        Filter torrents by TMDB ID and resolution.
+        """
 
-        tracker_data = self.get_by_tmdb_res(tmdb_id=tmdb_id,
-                                            resolution_id=str(self.tracker_data.resolution.get(res_name)))
+        if res_name not in self.tracker_data.resolution:
+            custom_console.bot_error_log(
+                f"Resolution not available "
+                f"for '{res_name}'."
+            )
+
+            custom_console.bot_warning_log(
+                ";".join(
+                    self.tracker_data.resolution.keys()
+                )
+            )
+
+            return
+
+        resolution_id = str(
+            self.tracker_data.resolution[
+                res_name
+            ]
+        )
+
+        tracker_data = self.get_by_tmdb_res(
+            tmdb_id=tmdb_id,
+            resolution_id=resolution_id
+        )
+
+        custom_console.bot_log(
+            "TMDB + Resolution torrents.. "
+            f"TMDB '{tmdb_id}' - "
+            f"Resolution '{res_name.upper()}'"
+        )
+
         if tracker_data:
-            self.page_view(tracker_data=tracker_data, tracker=self.tracker)
+            self.page_view(
+                tracker_data=tracker_data
+            )

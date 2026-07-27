@@ -186,7 +186,7 @@ class IGDBClient:
                 mygame = self.game_description(mygame=mygame[0])
                 return mygame
 
-    def broader(self, game_title: str) -> (list, str):
+    def broader(self, game_title: str) -> tuple[list, str]:
         # The title has been previously cleaned, but there are some words that
         # I can't tell if they are part of the original title
         # Try to search with the first words of the title

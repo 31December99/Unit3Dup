@@ -2,18 +2,19 @@
 import guessit
 import requests
 
-from unit3dup.shared.utility import ManageTitles, System
-from unit3dup.external.tracker.trackers import TRACKData
-from unit3dup.config.bot_config import BotConfig
-from unit3dup.config.constants import my_language
-from unit3dup.external.media_files import title
-
-from unit3dup.view import custom_console
 from unit3dup.application.MediaInfoManager import MediaInfoManager
+from unit3dup.shared.utility import ManageTitles, System
+
+from unit3dup.external.tracker.trackers import TRACKData
+from unit3dup.external.video.media_service import title
 from unit3dup.external.torrent.torrent import Torrent
 from unit3dup.external.media import Media
 
+from unit3dup.config.constants import my_language
+from unit3dup.config.bot_config import BotConfig
 from unit3dup.config.settings import Load
+
+from unit3dup.view import custom_console
 
 config_settings = Load().config
 

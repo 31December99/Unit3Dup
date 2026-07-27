@@ -4,7 +4,7 @@ import os
 from unit3dup.external.torrent.bittorrent import BittorrentData
 from unit3dup.external.media import Media
 from unit3dup.external.document.pvtDocu import PdfImages
-from unit3dup.external.upload import UploadBot
+from unit3dup.external.tracker.upload import UploadBot
 
 from unit3dup.config.bot_config import BotConfig
 from unit3dup.shared.utility import System

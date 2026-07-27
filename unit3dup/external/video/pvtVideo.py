@@ -4,7 +4,7 @@ import os.path
 
 import diskcache
 
-from unit3dup.external.media_files.frames import VideoFrame
+from unit3dup.external.video.media_service.frames import VideoFrame
 from unit3dup.external.imageHost import Build
 from unit3dup.external.media import Media
 

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from unit3dup.external.sessions.session import MyHttp
+from unit3dup.external.http_client import BaseHttpClient as MyHttp
 from unit3dup.view import custom_console
 from unit3dup.config.settings import Load
 from urllib.parse import urljoin

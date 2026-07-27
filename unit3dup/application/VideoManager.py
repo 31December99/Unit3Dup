@@ -2,11 +2,11 @@
 import os
 
 from unit3dup.external.torrent.bittorrent import BittorrentData
-from unit3dup.external.theMovieDB.core.api import DbOnline
-from unit3dup.external.media_files.tags import SearchTags
+from unit3dup.external.video.media_service.tags import SearchTags
 from unit3dup.external.video.pvtVideo import Video
+from unit3dup.external.movie_db.api import DbOnline
 from unit3dup.external.media import Media
-from unit3dup.external.upload import UploadBot
+from unit3dup.external.tracker.upload import UploadBot
 
 from unit3dup.application.user_content import UserContent
 from unit3dup.config.bot_config import BotConfig
@@ -53,8 +53,8 @@ class VideoManager:
                 content.display_name, tags_dictionary = search_tags.process()
 
             # get the archive path
-            content.torrent_metadata_path = System.get_torrent_archive_path(tracker_archive, selected_tracker, content.torrent_name)
-
+            content.torrent_metadata_path = System.get_torrent_archive_path(tracker_archive, selected_tracker,
+                                                                            content.torrent_name)
 
             # Filter contents based on existing torrents or duplicates
             if UserContent.is_preferred_language(content=content):

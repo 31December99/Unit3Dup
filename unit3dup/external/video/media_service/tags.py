@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 import re
 from unit3dup.shared.utility import ManageTitles
-from unit3dup.external.media_files.mediainfo import MediaFile
-from unit3dup.external.media_files import title
+from unit3dup.external.video.media_service.mediainfo import MediaFile
+from unit3dup.external.video.media_service import title
 from unit3dup.external.media import Media
 from unit3dup.view import custom_console
 

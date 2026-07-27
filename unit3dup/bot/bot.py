@@ -8,7 +8,7 @@ import shutil
 from unit3dup.application.ContentManager import ContentManager
 from unit3dup.application.TorrentManager import TorrentManager
 from unit3dup.external.ftpx.core.models.list import FTPDirectory
-from unit3dup.external.media_files.extractor import Extractor
+from unit3dup.external.video.media_service.extractor import Extractor
 from unit3dup.external.ftpx.core.menu import Menu
 from unit3dup.external.ftpx.client import Client
 from unit3dup.external.media import Media
