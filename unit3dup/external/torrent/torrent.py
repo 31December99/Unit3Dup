@@ -16,7 +16,10 @@ class Torrent:
     on a Unit3D tracker
     """
 
-    def __init__(self, tracker_name: str):
+    def __init__(
+        self,
+        tracker_name: str
+    ):
         self.per_page = 100
 
         self.tracker = pvtTracker.Unit3d(
@@ -27,12 +30,10 @@ class Torrent:
             db_file=tracker_name
         )
 
-    # ------------------------------------------------------------------
-    # Utility
-    # ------------------------------------------------------------------
-
     @staticmethod
-    def get_unique_id(media_info: str) -> str:
+    def get_unique_id(
+        media_info: str
+    ) -> str:
         """
         Extract the Unique ID from a MediaInfo string
 
@@ -56,26 +57,23 @@ class Torrent:
             else default_id
         )
 
-    # ------------------------------------------------------------------
-    # Search
-    # ------------------------------------------------------------------
-
-    def search(self, keyword: str) -> dict[str, Any] | None:
+    def search(
+        self,
+        keyword: str
+    ) -> dict[str, Any] | None:
         """
         Search torrents by name
         """
 
-        # The user does not always include '-' in the title.
-        keyword = keyword.replace("-", " ")
+        keyword = keyword.replace(
+            "-",
+            " "
+        )
 
         return self.tracker.get_name(
             name=keyword,
             perPage=self.per_page
         )
-
-    # ------------------------------------------------------------------
-    # Text filters
-    # ------------------------------------------------------------------
 
     def get_by_description(
         self,
@@ -147,10 +145,6 @@ class Torrent:
             perPage=self.per_page
         )
 
-    # ------------------------------------------------------------------
-    # Type / Resolution
-    # ------------------------------------------------------------------
-
     def get_by_types(
         self,
         type_id: str
@@ -170,10 +164,6 @@ class Torrent:
             res_id=resolution_id,
             perPage=self.per_page
         )
-
-    # ------------------------------------------------------------------
-    # External IDs
-    # ------------------------------------------------------------------
 
     def get_by_tmdb_id(
         self,
@@ -225,10 +215,6 @@ class Torrent:
             perPage=self.per_page
         )
 
-    # ------------------------------------------------------------------
-    # Playlist / Collection
-    # ------------------------------------------------------------------
-
     def get_by_playlist_id(
         self,
         playlist_id: int
@@ -248,10 +234,6 @@ class Torrent:
             collection_id=collection_id,
             perPage=self.per_page
         )
-
-    # ------------------------------------------------------------------
-    # Torrent properties
-    # ------------------------------------------------------------------
 
     def get_by_freeleech(
         self,
@@ -283,79 +265,104 @@ class Torrent:
             perPage=self.per_page
         )
 
-    # ------------------------------------------------------------------
-    # Status filters
-    # ------------------------------------------------------------------
+    def get_alive(
+        self
+    ) -> dict[str, Any] | None:
 
-    def get_alive(self) -> dict[str, Any] | None:
         return self.tracker.get_alive(
             alive=True,
             perPage=self.per_page
         )
 
-    def get_dead(self) -> dict[str, Any] | None:
+    def get_dead(
+        self
+    ) -> dict[str, Any] | None:
+
         return self.tracker.get_dead(
             dead=True,
             perPage=self.per_page
         )
 
-    def get_dying(self) -> dict[str, Any] | None:
+    def get_dying(
+        self
+    ) -> dict[str, Any] | None:
+
         return self.tracker.get_dying(
             dying=True,
             perPage=self.per_page
         )
 
-    def get_doubleup(self) -> dict[str, Any] | None:
+    def get_doubleup(
+        self
+    ) -> dict[str, Any] | None:
+
         return self.tracker.get_double_up(
             double_up=True,
             perPage=self.per_page
         )
 
-    def get_featured(self) -> dict[str, Any] | None:
+    def get_featured(
+        self
+    ) -> dict[str, Any] | None:
+
         return self.tracker.get_featured(
             featured=True,
             perPage=self.per_page
         )
 
-    def get_refundable(self) -> dict[str, Any] | None:
+    def get_refundable(
+        self
+    ) -> dict[str, Any] | None:
+
         return self.tracker.get_refundable(
             refundable=True,
             perPage=self.per_page
         )
 
-    def get_stream(self) -> dict[str, Any] | None:
+    def get_stream(
+        self
+    ) -> dict[str, Any] | None:
+
         return self.tracker.get_stream(
             stream=True,
             perPage=self.per_page
         )
 
-    def get_sd(self) -> dict[str, Any] | None:
+    def get_sd(
+        self
+    ) -> dict[str, Any] | None:
+
         return self.tracker.get_sd(
             sd=True,
             perPage=self.per_page
         )
 
-    def get_highspeed(self) -> dict[str, Any] | None:
+    def get_highspeed(
+        self
+    ) -> dict[str, Any] | None:
+
         return self.tracker.get_highspeed(
             highspeed=True,
             perPage=self.per_page
         )
 
-    def get_internal(self) -> dict[str, Any] | None:
+    def get_internal(
+        self
+    ) -> dict[str, Any] | None:
+
         return self.tracker.get_internal(
             internal=True,
             perPage=self.per_page
         )
 
-    def get_personal(self) -> dict[str, Any] | None:
+    def get_personal(
+        self
+    ) -> dict[str, Any] | None:
+
         return self.tracker.get_personal_release(
             personalRelease=True,
             perPage=self.per_page
         )
-
-    # ------------------------------------------------------------------
-    # Combo filters
-    # ------------------------------------------------------------------
 
     def get_by_tmdb_res(
         self,
@@ -372,10 +379,13 @@ class Torrent:
 
 class View(Torrent):
     """
-    Presentation layer for torrent searches and filters.
+    Presentation layer for torrent searches and filters
     """
 
-    def __init__(self, tracker_name: str):
+    def __init__(
+        self,
+        tracker_name: str
+    ):
         super().__init__(
             tracker_name=tracker_name
         )
@@ -390,19 +400,18 @@ class View(Torrent):
 
         print()
 
-    # ------------------------------------------------------------------
-    # Output helpers
-    # ------------------------------------------------------------------
-
     def print_info(
         self,
         tracker_data: dict[str, Any]
     ) -> None:
         """
-        Print detailed information about torrents.
+        Print detailed information about torrents
         """
 
-        for item in tracker_data.get("data", []):
+        for item in tracker_data.get(
+            "data",
+            []
+        ):
             attributes = item.get(
                 "attributes",
                 {}
@@ -438,10 +447,13 @@ class View(Torrent):
         save: bool = False
     ) -> None:
         """
-        Print normal torrent information.
+        Print normal torrent information
         """
 
-        for item in tracker_data.get("data", []):
+        for item in tracker_data.get(
+            "data",
+            []
+        ):
             attributes = item.get(
                 "attributes",
                 {}
@@ -499,19 +511,15 @@ class View(Torrent):
                     attributes
                 )
 
-    # ------------------------------------------------------------------
-    # Pagination
-    # ------------------------------------------------------------------
-
     def page_view(
         self,
-        tracker_data: dict[str, Any],
+        tracker_data: dict[str, Any] | None,
         info: bool = False,
         inkey: bool = True,
         save: bool = False
     ) -> None:
         """
-        Display API results page by page.
+        Display API results page by page
         """
 
         if not tracker_data:
@@ -520,18 +528,15 @@ class View(Torrent):
             )
             return
 
-        printer = (
-            self.print_info
-            if info
-            else self.print_normal
-        )
-
-        printer(
-            tracker_data,
-            save=save
-        ) if not info else printer(
-            tracker_data
-        )
+        if info:
+            self.print_info(
+                tracker_data
+            )
+        else:
+            self.print_normal(
+                tracker_data,
+                save=save
+            )
 
         page = 0
 
@@ -552,8 +557,8 @@ class View(Torrent):
 
             if inkey:
                 custom_console.bot_question_log(
-                    f"\nProssima pagina '{page}' "
-                    f"- Premi un tasto per continuare, "
+                    f"\nNext page '{page}' "
+                    f"- Press any key to continue, "
                     f"Q (quit) - "
                 )
 
@@ -561,7 +566,6 @@ class View(Torrent):
                     break
 
             else:
-                # API rate limit protection.
                 time.sleep(2)
 
             print()
@@ -578,16 +582,15 @@ class View(Torrent):
             if not tracker_data:
                 break
 
-            printer(
-                tracker_data,
-                save=save
-            ) if not info else printer(
-                tracker_data
-            )
-
-    # ------------------------------------------------------------------
-    # Search views
-    # ------------------------------------------------------------------
+            if info:
+                self.print_info(
+                    tracker_data
+                )
+            else:
+                self.print_normal(
+                    tracker_data,
+                    save=save
+                )
 
     def view_search(
         self,
@@ -725,10 +728,6 @@ class View(Torrent):
             tracker_data=tracker_data
         )
 
-    # ------------------------------------------------------------------
-    # Type / Resolution views
-    # ------------------------------------------------------------------
-
     def view_by_types(
         self,
         type_name: str
@@ -804,10 +803,6 @@ class View(Torrent):
         self.page_view(
             tracker_data=tracker_data
         )
-
-    # ------------------------------------------------------------------
-    # ID filters
-    # ------------------------------------------------------------------
 
     def view_by_filename(
         self,
@@ -900,10 +895,6 @@ class View(Torrent):
             tracker_data=tracker_data
         )
 
-    # ------------------------------------------------------------------
-    # Playlist / Collection
-    # ------------------------------------------------------------------
-
     def view_by_playlist_id(
         self,
         playlist_id: int
@@ -939,10 +930,6 @@ class View(Torrent):
         self.page_view(
             tracker_data=tracker_data
         )
-
-    # ------------------------------------------------------------------
-    # Torrent filters
-    # ------------------------------------------------------------------
 
     def view_by_freeleech(
         self,
@@ -996,18 +983,20 @@ class View(Torrent):
             tracker_data=tracker_data
         )
 
-    # ------------------------------------------------------------------
-    # Boolean filters
-    # ------------------------------------------------------------------
+    def view_alive(
+        self
+    ) -> None:
 
-    def view_alive(self) -> None:
         self._view_boolean_filter(
             self.get_alive(),
             "Alive torrents.. "
             "Filter by torrents with 1+ seeders."
         )
 
-    def view_dead(self) -> None:
+    def view_dead(
+        self
+    ) -> None:
+
         self._view_boolean_filter(
             self.get_dead(),
             "Dead torrents.. "
@@ -1015,7 +1004,10 @@ class View(Torrent):
             info=True
         )
 
-    def view_dying(self) -> None:
+    def view_dying(
+        self
+    ) -> None:
+
         self._view_boolean_filter(
             self.get_dying(),
             "Dying torrents.. "
@@ -1023,65 +1015,85 @@ class View(Torrent):
             "and more than 3 downloads."
         )
 
-    def view_doubleup(self) -> None:
+    def view_doubleup(
+        self
+    ) -> None:
+
         self._view_boolean_filter(
             self.get_doubleup(),
             "DoubleUp torrents.. "
             "Filter by double upload."
         )
 
-    def view_featured(self) -> None:
+    def view_featured(
+        self
+    ) -> None:
+
         self._view_boolean_filter(
             self.get_featured(),
             "Featured torrents.. "
             "Filter by featured torrents."
         )
 
-    def view_refundable(self) -> None:
+    def view_refundable(
+        self
+    ) -> None:
+
         self._view_boolean_filter(
             self.get_refundable(),
             "Refundable torrents.. "
             "Filter by refundable torrents."
         )
 
-    def view_stream(self) -> None:
+    def view_stream(
+        self
+    ) -> None:
+
         self._view_boolean_filter(
             self.get_stream(),
             "Stream torrents.. "
             "Filter by stream-optimised content."
         )
 
-    def view_sd(self) -> None:
+    def view_sd(
+        self
+    ) -> None:
+
         self._view_boolean_filter(
             self.get_sd(),
             "Standard torrents.. "
             "Filter by standard-definition content."
         )
 
-    def view_highspeed(self) -> None:
+    def view_highspeed(
+        self
+    ) -> None:
+
         self._view_boolean_filter(
             self.get_highspeed(),
             "Highspeed torrents.. "
             "Filter by seedbox seeders."
         )
 
-    def view_internal(self) -> None:
+    def view_internal(
+        self
+    ) -> None:
+
         self._view_boolean_filter(
             self.get_internal(),
             "Internal torrents.. "
             "Filter by internal releases."
         )
 
-    def view_personal(self) -> None:
+    def view_personal(
+        self
+    ) -> None:
+
         self._view_boolean_filter(
             self.get_personal(),
             "Personal Release torrents.. "
             "Filter by uploader-created content."
         )
-
-    # ------------------------------------------------------------------
-    # Boolean filter helper
-    # ------------------------------------------------------------------
 
     def _view_boolean_filter(
         self,
@@ -1100,17 +1112,13 @@ class View(Torrent):
                 info=info
             )
 
-    # ------------------------------------------------------------------
-    # Combo filters
-    # ------------------------------------------------------------------
-
     def view_tmdb_res(
         self,
         tmdb_id: int,
         res_name: str
     ) -> None:
         """
-        Filter torrents by TMDB ID and resolution.
+        Filter torrents by TMDB ID and resolution
         """
 
         if res_name not in self.tracker_data.resolution:
