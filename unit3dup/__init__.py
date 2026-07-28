@@ -15,12 +15,15 @@ from unit3dup.external.tracker.upload import UploadBot
 from unit3dup.external.media import Media
 
 from unit3dup.view import custom_console
-from unit3dup.config.settings import Load
+from unit3dup.config.settings import Load,DEFAULT_JSON_PATH, version
 
 config_settings = Load().config
+version = version
 
 __all__ = [
     "config_settings",
+    "DEFAULT_JSON_PATH",
+    "version",
     "ContentManager",
     "DbOnline",
     "Mytorrent",
