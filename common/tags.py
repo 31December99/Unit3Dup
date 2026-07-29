@@ -8,6 +8,7 @@ from view import custom_console
 # From hdr format
 hdr_map = {
     "DOLBY VISION": "DV",
+    "DOLBY VISION DV": "DV",
     "DOLBY VISION HDR": "DV HDR",
     "DOLBY VISION HDR10": "DV HDR10",
     "DOLBY VISION HDR10+": "DV HDR10+",
