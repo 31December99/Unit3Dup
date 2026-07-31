@@ -319,63 +319,44 @@ class SearchTags(object):
                 matrix_coefficients = video.get('matrix_coefficients', "")
                 bit_depth = video.get('bit_depth', "")
                 transfer_characteristics = video.get('transfer_characteristics', "")
-
-                # Check HDR
+                # Check hdr
                 if hdr_format_commercial:
-                    hdr_key = hdr_format_commercial.upper()
+                    hdr = ''
+                    if hdr_format_commercial.upper() in hdr_map:
+                        hdr = hdr_map[hdr_format_commercial.upper()]
 
-                    if hdr_key in hdr_map:
-                        hdr = hdr_map[hdr_key]
-                    else:
+                    # if hdr not in hdr_map:
+                    if not hdr:
                         custom_console.bot_warning_log(
-                            f"<> HDR Warning: '{hdr_format_commercial}' not found in hdr_map"
-                        )
-                        hdr = ''
+                            f"<> HDR Warning: '{hdr_format_commercial}' not found in hdr_map")
+                    else:
+                        custom_console.bot_log(f"Hdr format: '{hdr_format}'")
+                        custom_console.bot_log(f"Hdr format commercial: '{hdr_format_commercial}'")
 
-                    # Check Dolby Vision
                     if 'DOLBY VISION' in hdr_format_commercial.upper() or 'DOLBY VISION' in hdr_format.upper():
-                        # Search for fake remux / hybrid Dolby Vision
-                        if any(
-                                "dvhe.08" in s or "Profile 8" in s
-                                for s in other_hdr_format
-                        ):
+                        # Search for fake remux
+                        if any("dvhe.08" in s or "Profile 8" in s for s in other_hdr_format):
                             if self.tags_dict.get('remux', ''):
                                 remux = self.tags_dict.get('remux', '')
                                 remux.append('HYBRID')
                                 self.tags_dict.update({'remux': remux})
-
                                 custom_console.bot_warning_log(
-                                    f"<> Warning: HYBRID REMUX with {other_hdr_format}"
-                                )
-
+                                    f"<> Warning: HYBRID REMUX with {other_hdr_format}")
                                 hdr = f"DOLBY VISION {hdr}"
-                                return {category: hdr_map.get(hdr, '*HDR')}
-                        hdr = f"DOLBY VISION {hdr}"
+                                return {category: f"{hdr_map.get(hdr, '*HDR')}"}
 
+                        hdr = f"DOLBY VISION {hdr}"
                     return {category: hdr_map.get(hdr, '*HDR')}
                 else:
                     if "2020" in colour_primaries and "2020" in matrix_coefficients:
-                        if (
-                                bit_depth == 10
-                                and transfer_characteristics.strip() == 'PQ'
-                        ):
+                        if bit_depth == 10 and transfer_characteristics.strip() == 'PQ':
                             return {category: 'PQ10'}
                         else:
-                            custom_console.bot_warning_log(
-                                "<> PQ10 Warning:"
-                            )
-                            custom_console.bot_log(
-                                f"colour_primaries: {colour_primaries}"
-                            )
-                            custom_console.bot_log(
-                                f"matrix_coefficients: {matrix_coefficients}"
-                            )
-                            custom_console.bot_log(
-                                f"bit_depth: |{bit_depth}|"
-                            )
-                            custom_console.bot_log(
-                                f"transfer_characteristics: |{transfer_characteristics}|"
-                            )
+                            custom_console.bot_warning_log(f"<> PQ10 Warning:")
+                            custom_console.bot_log(f"colour_primaries: {colour_primaries}")
+                            custom_console.bot_log(f"matrix_coefficients: {matrix_coefficients}")
+                            custom_console.bot_log(f"bit_depth: |{bit_depth}|")
+                            custom_console.bot_log(f"transfer_characteristics: |{transfer_characteristics}|")
 
         return {}
 
