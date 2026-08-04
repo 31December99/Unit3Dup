@@ -147,6 +147,7 @@ SIGNS_LIST = {
     "LFI": "releaser",
     "LICDOM": "releaser",
     "LOZIO-MIRCREW": "releaser",
+    "L0G1N": "releaser",
     "LULLOZZO": "releaser",
     "LZ": "releaser",
     "LZ59": "releaser",
