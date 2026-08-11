@@ -48,7 +48,6 @@ class CommandLine:
         upload_group.add_argument("-u", "--upload", type=str, help="Upload path")
         upload_group.add_argument("-f", "--folder", type=str, help="Upload folder")
         upload_group.add_argument("-scan", "--scan", type=str, help="Scan folder")
-        upload_group.add_argument("-b", "--buildtags", action="store_true", help="Auto build title")
         upload_group.add_argument("-reseed", "--reseed", action="store_true", help="Reseed folder")
         upload_group.add_argument("-watcher", "--watcher", action="store_true", help="Start watcher")
         upload_group.add_argument("-notitle", "--notitle", type=str, help="Manual title")

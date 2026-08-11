@@ -92,13 +92,12 @@ def main():
 
     # Load User Tags list
     tags_list = None
-    if cli.args.buildtags:
-        try:
-            with open(USER_TAGS_PATH, "r", encoding="utf-8") as f:
-                tags_list = json.load(f)
-        except FileNotFoundError:
-            custom_console.bot_error_log(
-                f"User tags file {USER_TAGS_PATH} not found. Please update your configuration file")
+    try:
+        with open(USER_TAGS_PATH, "r", encoding="utf-8") as f:
+            tags_list = json.load(f)
+    except FileNotFoundError:
+        custom_console.bot_error_log(
+            f"User tags file {USER_TAGS_PATH} not found. Please update your configuration file")
 
     # Load User Sign list
     sign_list = None
