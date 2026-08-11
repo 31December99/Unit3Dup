@@ -23,8 +23,8 @@ class UploadBot:
         self.tracker_data = TRACKData.load_from_module(tracker_name=tracker_name)
         self.tracker = Unit3d(tracker_name=tracker_name)
         self.sign = (
-            f"[url=https://github.com/31December99/Unit3Dup][code][color=#00BFFF][size=14]Uploaded with Unit3Dup"
-            f" {Load.version}[/size][/color][/code][/url]")
+            f"[quote][url=https://github.com/31December99/Unit3Dup][color=#00BFFF][size=14]Uploaded with Unit3Dup"
+            f" {Load.version}[/size][/color][/url][/quote]")
 
     def message(self, tracker_response: requests.Response, torrent_archive: str):
 
@@ -54,11 +54,7 @@ class UploadBot:
             custom_console.bot_error_log(self.content.file_name)
 
         elif tracker_response.status_code == 404:
-            if _message.get("type_id", None):
-                name_error = _message["type_id"]
-            else:
-                name_error = _message
-            error_message = f"{self.__class__.__name__} - {name_error}"
+            error_message = f"{self.__class__.__name__} - {_message}"
 
         elif tracker_response.status_code == 500:
             custom_console.bot_error_log(f"{self.__class__.__name__} HTTP 500 Internal Tracker Error\n")

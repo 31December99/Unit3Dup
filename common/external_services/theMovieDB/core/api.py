@@ -384,7 +384,7 @@ class DbOnline(TmdbAPI):
 
     def tvdb_search(self) -> dict | None:
         tvdb = TVDB(category=self.category)
-        return tvdb.search(query=self.query)
+        return tvdb.search(query=self.query, query_year=self.media.guess_filename.guessit_year)
 
     def manual_search(self) -> MediaResult | None:
         """

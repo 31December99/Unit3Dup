@@ -21,7 +21,7 @@ def main():
     custom_console.bot_question_log(f"Unit3Dup {version} Checking your configuration file.. \n")
 
     # Load user configuration data
-    config = Load().load_config()
+    config = Load().config
     custom_console.bot_log(f"[Configuration] '{DEFAULT_JSON_PATH}'")
     custom_console.bot_log(f"[*.torrent Archive] '{config.user_preferences.TORRENT_ARCHIVE_PATH}'")
     custom_console.bot_log(f"[Images,Tmdb cache] '{config.user_preferences.CACHE_PATH}'")
@@ -92,13 +92,12 @@ def main():
 
     # Load User Tags list
     tags_list = None
-    if cli.args.buildtags:
-        try:
-            with open(USER_TAGS_PATH, "r", encoding="utf-8") as f:
-                tags_list = json.load(f)
-        except FileNotFoundError:
-            custom_console.bot_error_log(
-                f"User tags file {USER_TAGS_PATH} not found. Please update your configuration file")
+    try:
+        with open(USER_TAGS_PATH, "r", encoding="utf-8") as f:
+            tags_list = json.load(f)
+    except FileNotFoundError:
+        custom_console.bot_error_log(
+            f"User tags file {USER_TAGS_PATH} not found. Please update your configuration file")
 
     # Load User Sign list
     sign_list = None
@@ -147,7 +146,7 @@ def main():
     # Watcher
     if cli.args.watcher:
         bot = Bot(path='', cli=cli.args, mode="auto", trackers_name_list=tracker_name_list,
-                  torrent_archive_path=tracker_archive)
+                  torrent_archive_path=tracker_archive, tags_list=tags_list, sign_list=sign_list, ban_list=ban_list)
 
         bot.watcher(duration=config.user_preferences.WATCHER_INTERVAL,
                     watcher_path=config.user_preferences.WATCHER_PATH,

@@ -126,12 +126,14 @@ class UserContent:
                                                       selected_tracker=selected_tracker)
             # False if we need Update the torrent file
             if different:
-                my_torrent = Mytorrent(contents=content, meta=content.metainfo, trackers_list=tracker_name_list)
+                # my_torrent = Mytorrent(contents=content, meta=content.metainfo, trackers_list=tracker_name_list)
+                my_torrent = Mytorrent(contents=content, meta=content.metainfo, tracker_name=selected_tracker)
                 my_torrent.hash()
                 return my_torrent if my_torrent.write(overwrite=True, full_path=this_path) else None
         else:
             # Crea a new torrent file
-            my_torrent = Mytorrent(contents=content, meta=content.metainfo, trackers_list=tracker_name_list)
+            # my_torrent = Mytorrent(contents=content, meta=content.metainfo, trackers_list=tracker_name_list)
+            my_torrent = Mytorrent(contents=content, meta=content.metainfo, tracker_name=selected_tracker)
             my_torrent.hash()
             return my_torrent if my_torrent.write(overwrite=False, full_path=this_path) else None
 

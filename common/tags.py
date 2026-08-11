@@ -8,6 +8,7 @@ from view import custom_console
 # From hdr format
 hdr_map = {
     "DOLBY VISION": "DV",
+    "DOLBY VISION DV": "DV",
     "DOLBY VISION HDR": "DV HDR",
     "DOLBY VISION HDR10": "DV HDR10",
     "DOLBY VISION HDR10+": "DV HDR10+",
@@ -147,7 +148,6 @@ class SearchTags(object):
 
         # Remove banned items from categories
         self.tags_position = [x.lower() for x in self.tags_position if x not in self.BAN_LIST]
-
         # loop sorted TAG_TYPES dictionary
         for i, (tag, category) in enumerate(
                 sorted(self.TAG_TYPES.items(), key=lambda x: len(x[0]), reverse=True)
@@ -181,6 +181,12 @@ class SearchTags(object):
         # /// Tags with no categories
         # Identify PartX
         norm = self.normalize_part_tag(self.filename)
+
+        # Remove duplicate regex (findall)
+        # es WEB-DL
+        if self.tags_dict.get("source", None):
+            self.tags_dict["source"] = list(dict.fromkeys(self.tags_dict["source"]))
+
         if norm:
             # Skip if it is part of title es: "Wicked.Parte.2.2025.iTA" Title = Wicked Parte 2
             if not any(t in self.title.lower() for t in ['part', 'parte']):
@@ -301,6 +307,7 @@ class SearchTags(object):
             return {category: codec_translated}
         return codec_translated
 
+
     def mediainfo_hdr(self, category: str) -> dict:
         if self.mediafile.video_track:
             for video in self.mediafile.video_track:
@@ -311,16 +318,20 @@ class SearchTags(object):
                 matrix_coefficients = video.get('matrix_coefficients', "")
                 bit_depth = video.get('bit_depth', "")
                 transfer_characteristics = video.get('transfer_characteristics', "")
-
                 # Check hdr
                 if hdr_format_commercial:
                     hdr = ''
                     if hdr_format_commercial.upper() in hdr_map:
                         hdr = hdr_map[hdr_format_commercial.upper()]
-                        # Check dolby vision
-                    if hdr not in hdr_map:
+
+                    # if hdr not in hdr_map:
+                    if not hdr:
                         custom_console.bot_warning_log(
                             f"<> HDR Warning: '{hdr_format_commercial}' not found in hdr_map")
+                    else:
+                        custom_console.bot_log(f"Hdr format: '{hdr_format}'")
+                        custom_console.bot_log(f"Hdr format commercial: '{hdr_format_commercial}'")
+
                     if 'DOLBY VISION' in hdr_format_commercial.upper() or 'DOLBY VISION' in hdr_format.upper():
                         # Search for fake remux
                         if any("dvhe.08" in s or "Profile 8" in s for s in other_hdr_format):
