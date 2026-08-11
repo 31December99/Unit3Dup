@@ -23,8 +23,8 @@ class UploadBot:
         self.tracker_data = TRACKData.load_from_module(tracker_name=tracker_name)
         self.tracker = Unit3d(tracker_name=tracker_name)
         self.sign = (
-            f"[code][url=https://github.com/31December99/Unit3Dup][color=#00BFFF][size=14]Uploaded with Unit3Dup"
-            f" {Load.version}[/size][/color][/url][/code]")
+            f"[quote][url=https://github.com/31December99/Unit3Dup][color=#00BFFF][size=14]Uploaded with Unit3Dup"
+            f" {Load.version}[/size][/color][/url][/quote]")
 
     def message(self, tracker_response: requests.Response, torrent_archive: str):
 

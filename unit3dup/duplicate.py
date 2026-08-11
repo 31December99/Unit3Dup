@@ -16,14 +16,14 @@ from unit3dup import config_settings
 from unit3dup.media import Media
 
 
-
 class CompareTitles:
 
-    def __init__(self, tracker_file: guessit, content_file: guessit):
+    def __init__(self, tracker_file: guessit, content_file: guessit, pack: str | None):
         self.content_screen_size = 0
         self.tracker_screen_size = 0
         self.tracker_file = tracker_file
         self.content_file = content_file
+        self.pack = pack
         self.tracker_date = tracker_file.guessit_year
         self.content_date = content_file.guessit_year
         self.ratio = ManageTitles.fuzzyit(
@@ -33,10 +33,13 @@ class CompareTitles:
     def same_season(self) -> bool:
 
         # Compare season and episode only if it is a serie
-        # Return true if they have at least the same season and episode otherwise false
+        # Return true if they have at least the same season and episode (with no pack) otherwise false
         if self.content_file.guessit_season and self.tracker_file.guessit_season:
             same_season = self.content_file.guessit_season == self.tracker_file.guessit_season
-            same_episode = self.content_file.guessit_episode == self.tracker_file.guessit_episode
+            if not self.pack:
+                same_episode = self.content_file.guessit_episode == self.tracker_file.guessit_episode
+            else:
+                same_episode = True
             return same_season and same_episode
         else:
             # always return true if it's a movie
@@ -47,7 +50,6 @@ class CompareTitles:
         Return True if they have the same year,seasons,title
         Returns: boolean
         """
-
         # only test the year if both have it
         if self.content_file.guessit_year and self.tracker_file.guessit_year:
             same_year = self.content_file.guessit_year == self.tracker_file.guessit_year
@@ -60,10 +62,9 @@ class CompareTitles:
         return False
 
 
-
 class Duplicate:
 
-    def __init__(self, content: Media, tracker_name: str,  cli: argparse.Namespace):
+    def __init__(self, content: Media, tracker_name: str, cli: argparse.Namespace):
 
         # User content from the scan process
         self.content: Media = content
@@ -125,35 +126,32 @@ class Duplicate:
     def process(self):
         return self.search(torrent=self.torrent_info.search(self.query.guessit_title))
 
+    def process_dead_torrents(self, tmdb_id: int) -> list[requests.Response] | None:
+        # Get the dead torrents
+        torrents = self.torrent_info.get_by_tmdb_id(tmdb_id=tmdb_id)
+        dead_torrents = []
 
-    def process_dead_torrents(self, tmdb_id: int)-> list[requests.Response] | None:
-         # Get the dead torrents
-         torrents = self.torrent_info.get_by_tmdb_id(tmdb_id=tmdb_id)
-         dead_torrents = []
+        # print a list of dead torrents
+        print()
+        for dead in torrents['data']:
+            custom_console.bot_log(f"'(Dead)' {dead['attributes']['name']}")
 
-         # print a list of dead torrents
-         print()
-         for dead in torrents['data']:
-             custom_console.bot_log(f"'(Dead)' {dead['attributes']['name']}")
-
-         # Iterate through each torrent
-         print()
-         for dead in torrents['data']:
-             # Test if it's a duplicate ( it's fine for reseeding)
-             if self._process_tracker_data(dead):
-                 if not config_settings.user_preferences.SKIP_DUPLICATE:
-                     # (C) it's fine for seeding
-                     if not self.user_choose():
-                         dead_torrents.append(dead)
-                     else:
-                         # (S) Skip
-                         continue
-                 else:
-                     # if skip_duplicate is on -> autoskip user choose
-                     return None
-         return dead_torrents
-
-
+        # Iterate through each torrent
+        print()
+        for dead in torrents['data']:
+            # Test if it's a duplicate ( it's fine for reseeding)
+            if self._process_tracker_data(dead):
+                if not config_settings.user_preferences.SKIP_DUPLICATE:
+                    # (C) it's fine for seeding
+                    if not self.user_choose():
+                        dead_torrents.append(dead)
+                    else:
+                        # (S) Skip
+                        continue
+                else:
+                    # if skip_duplicate is on -> autoskip user choose
+                    return None
+        return dead_torrents
 
     def search(self, torrent: requests) -> bool:
         # Compare and return a result
@@ -166,7 +164,6 @@ class Duplicate:
                     # if skip_duplicate is on -> autoskip user choose
                     return True
         return False
-
 
     @staticmethod
     def user_choose() -> bool:
@@ -190,7 +187,6 @@ class Duplicate:
             custom_console.bot_error_log("\nOperation cancelled. Bye !")
             exit(1)
 
-
     def get_resolution_by_num(self, res_id: int) -> str:
         return next((key for key, value in self.resolutions.items() if value == res_id), None)
 
@@ -199,8 +195,7 @@ class Duplicate:
         # Skip duplicate check if the size is out of the threshold
 
         size = round(size / (1024 ** 3), 2) if self.size_unit == 'GB' else round(size / (1024 ** 2), 2)
-        return round(abs(self.content_size - size) / max(self.content_size, size) * 100,2)
-
+        return round(abs(self.content_size - size) / max(self.content_size, size) * 100, 2)
 
     def _print_output(self, value: dict, delta_size: int, size_th: int):
 
@@ -253,24 +248,23 @@ class Duplicate:
 
         custom_console.bot_log(f"Size_TH: {size_th}%")
         custom_console.bot_log(f"Your file - size: '{self.content_size} GB' - "
-                              f"'{self.content.display_name}' - ")
-
+                               f"'{self.content.display_name}' - ")
 
         custom_console.bot_log(output)
 
     def _process_tracker_data(self, data_from_the_tracker) -> bool:
 
-        if CompareTitles(tracker_file=title.Guessit(data_from_the_tracker['attributes']['name']),
-                         content_file=self.query).process():
+        compare_title = CompareTitles(tracker_file=title.Guessit(data_from_the_tracker['attributes']['name']),
+                                      pack=self.content.pack, content_file=self.query)
 
-
+        if compare_title.process():
             delta_size = self._calculate_threshold(size=data_from_the_tracker['attributes']["size"])
             if delta_size > config_settings.user_preferences.SIZE_TH:
                 # Not a Duplicate
                 return False
             else:
                 self._print_output(value=data_from_the_tracker['attributes'], delta_size=delta_size,
-                                   size_th = config_settings.user_preferences.SIZE_TH)
+                                   size_th=config_settings.user_preferences.SIZE_TH)
                 return True
 
         return False

@@ -307,7 +307,6 @@ class SearchTags(object):
             return {category: codec_translated}
         return codec_translated
 
-        return {}
 
     def mediainfo_hdr(self, category: str) -> dict:
         if self.mediafile.video_track:
