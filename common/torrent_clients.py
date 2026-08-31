@@ -167,7 +167,7 @@ class QbittorrentClient(TorrClient):
         if category == 'movie':
             category = config_settings.torrent_client_config.CATEGORY_MOVIE
         if category == 'tv':
-            category = config_settings.torrent_client_config.CATEGORY_MOVIE
+            category = config_settings.torrent_client_config.CATEGORY_TV
 
         try:
             self.client.torrents_set_category(category=category, torrent_hashes=info_hash)

@@ -854,7 +854,7 @@ class JsonConfig:
 
     def validate_json(self) -> dict:
         try:
-            with open(self.default_json_path, 'r') as file:
+            with open(self.default_json_path, 'r', encoding='utf-8') as file:
                 json_data = file.read()
                 return json.loads(json_data)
 
@@ -926,7 +926,7 @@ class JsonConfig:
         """
 
         # Open the configuration file
-        with open(self.default_json_path, 'r') as file:
+        with open(self.default_json_path, 'r', encoding='utf-8') as file:
             lines = file.readlines()
 
         # Test the line value

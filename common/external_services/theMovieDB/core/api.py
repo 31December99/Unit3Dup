@@ -383,8 +383,16 @@ class DbOnline(TmdbAPI):
         return search_results
 
     def tvdb_search(self) -> dict | None:
-        tvdb = TVDB(category=self.category)
-        return tvdb.search(query=self.query, query_year=self.media.guess_filename.guessit_year)
+        # TVDB is optional: skip the lookup when no key is configured
+        api_key = config_settings.tracker_config.TVDB_APIKEY
+        if not api_key or api_key == 'no_key':
+            return None
+        try:
+            tvdb = TVDB(category=self.category)
+            return tvdb.search(query=self.query, query_year=self.media.guess_filename.guessit_year)
+        except Exception as tvdb_error:
+            custom_console.bot_warning_log(f"[TVDB] lookup skipped: {tvdb_error}")
+            return None
 
     def manual_search(self) -> MediaResult | None:
         """
